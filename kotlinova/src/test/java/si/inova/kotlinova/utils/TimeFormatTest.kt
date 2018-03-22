@@ -23,4 +23,17 @@ class TimeFormatTest {
         assertEquals("150:00:00", TimeFormat.toHoursMinutesSeconds(540000, context))
         assertEquals("01:30:32", TimeFormat.toHoursMinutesSeconds(5432, context))
     }
+
+    @Test
+    fun toMinutesSeconds() {
+        val context = RuntimeEnvironment.application
+
+        assertEquals("00:00", TimeFormat.toMinutesSeconds(0, context))
+        assertEquals("01:00", TimeFormat.toMinutesSeconds(60, context))
+        assertEquals("00:01", TimeFormat.toMinutesSeconds(1, context))
+        assertEquals("02:38", TimeFormat.toMinutesSeconds(158, context))
+        assertEquals("150:00", TimeFormat.toMinutesSeconds(9000, context))
+        assertEquals("01:30", TimeFormat.toMinutesSeconds(90, context))
+    }
+
 }
