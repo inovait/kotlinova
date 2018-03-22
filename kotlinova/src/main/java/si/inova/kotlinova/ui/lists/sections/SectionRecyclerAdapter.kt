@@ -48,6 +48,21 @@ open class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
         recyclerSection.onAttachedToRecycler(SectionPassListUpdateCallback(sections.size - 1))
     }
 
+    fun getSectionIndexAtPosition(position: Int): Int {
+        var sectionStart = 0
+        for ((index, section) in sections.withIndex()) {
+            val sectionEnd = sectionStart + section.itemCount
+
+            if (sectionEnd > position) {
+                return index
+            }
+
+            sectionStart = sectionEnd
+        }
+
+        throw IndexOutOfBoundsException("Position not in any section: $position")
+    }
+
     private fun getInnerPosition(position: Int): Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0
         for (section in sections) {
