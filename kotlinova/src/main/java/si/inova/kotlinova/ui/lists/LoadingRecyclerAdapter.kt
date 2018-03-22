@@ -17,6 +17,7 @@ private const val VIEW_TYPE_LOADING = 888
  *
  * @author Matej Drobnic
  */
+@Deprecated(message = "Use LoadingSection with SectionRecyclerAdapter instead")
 abstract class LoadingRecyclerAdapter<VH : RecyclerView.ViewHolder>(private val context: Context) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     open var displayLoading = false
