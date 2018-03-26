@@ -35,5 +35,4 @@ class TimeFormatTest {
         assertEquals("150:00", TimeFormat.toMinutesSeconds(9000, context))
         assertEquals("01:30", TimeFormat.toMinutesSeconds(90, context))
     }
-
 }
