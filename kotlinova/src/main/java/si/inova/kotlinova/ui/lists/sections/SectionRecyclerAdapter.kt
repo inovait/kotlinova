@@ -112,7 +112,7 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         throw IndexOutOfBoundsException("Position not in any section: $position")
     }
 
-    private fun getInnerPosition(position: Int):
+    protected fun getInnerPosition(position: Int):
         Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0
         for (section in sections) {
@@ -127,6 +127,15 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
 
         throw IndexOutOfBoundsException("Position not in any section: $position")
+    }
+
+    fun getSectionStart(section: RecyclerSection<*>): Int {
+        val sectionIndex = sections.indexOf(section)
+        if (sectionIndex < 0) {
+            throw IllegalArgumentException("Unknown section: $section")
+        }
+
+        return getSectionStart(sectionIndex)
     }
 
     private fun getSectionStart(sectionIndex: Int): Int {

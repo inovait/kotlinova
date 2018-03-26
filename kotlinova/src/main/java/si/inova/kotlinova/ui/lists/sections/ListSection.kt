@@ -14,7 +14,7 @@ import timber.log.Timber
 abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH>(),
     ListDiffProvider<T> {
     final var data: List<T>? = null
-        private set
+        protected set
 
     /**
      * When set to *true*, all items in the list will be refreshed on the next change
