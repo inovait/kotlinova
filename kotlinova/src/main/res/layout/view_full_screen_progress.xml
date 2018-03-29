@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2016, Connected Travel, LLC – All Rights Reserved.
+  ~
+  ~ All information contained herein is property of Connected Travel, LLC including, but
+  ~ not limited to, technical and intellectual concepts which may be embodied within.
+  ~
+  ~ Dissemination or reproduction of this material is strictly forbidden unless prior written
+  ~ permission, via license, is obtained from Connected Travel, LLC.   If permission is obtained,
+  ~ this notice, and any other such legal notices, must remain unaltered.
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ProgressBar
+        android:id="@+id/progress_bar_internal"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible" />
+
+</merge>
