@@ -1,5 +1,6 @@
 package si.inova.kotlinova.testing
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.widget.FrameLayout
@@ -28,6 +29,7 @@ fun createFragmentTestActivity(): ActivityController<FragmentTestActivity> {
     return Robolectric.buildActivity(FragmentTestActivity::class.java)
 }
 
+@SuppressLint("ResourceType")
 fun ActivityController<FragmentTestActivity>.startDaggerFragment(fragment: Fragment) {
     create()
     get()
