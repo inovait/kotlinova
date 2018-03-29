@@ -23,6 +23,13 @@ android {
             allOpen {
                 annotation("si.inova.kotlinova.testing.OpenForTesting")
             }
+
+            /*
+            MultiDex is only needed on debug builds.
+            For release builds, proguard can remove enough methods to make it unnecessary.
+             */
+            multiDexEnabled true
+
         }
 
         release {
