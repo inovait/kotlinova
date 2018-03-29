@@ -1,0 +1,105 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: "kotlin-allopen"
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        debug {
+            allOpen {
+                annotation("si.inova.kotlinova.testing.OpenForTesting")
+            }
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+kotlin {
+    /**
+     * This looks scary, but coroutines are only experimental in a sense that
+     * there may be future (non-breaking) API changes.
+     *
+     * Otherwise they are completely stable, backwards compatible and ready to use in production.
+     *
+     * Source: https://stackoverflow.com/a/46240340 (written by coroutines project member)
+     */
+    experimental {
+        coroutines "enable"
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "androidx.core:core-ktx:${versions.ktx}"
+
+    implementation "com.android.support:appcompat-v7:${versions.androidSupportLib}"
+    implementation "com.android.support:recyclerview-v7:${versions.androidSupportLib}"
+
+    implementation "android.arch.lifecycle:extensions:${versions.architectureComponents}"
+    kapt "android.arch.lifecycle:compiler:${versions.architectureComponents}"
+    implementation "com.google.code.gson:gson:${versions.gson}"
+
+    implementation "com.google.dagger:dagger:${versions.dagger}"
+    implementation "com.google.dagger:dagger-android:${versions.dagger}"
+    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
+
+    implementation "com.jakewharton.timber:timber:${versions.timber}"
+
+    implementation "com.google.firebase:firebase-auth:${versions.playServices}"
+    implementation "com.google.firebase:firebase-firestore:${versions.playServices}"
+    implementation "com.google.firebase:firebase-storage:${versions.playServices}"
+    implementation "com.google.firebase:firebase-messaging:${versions.playServices}"
+    implementation "com.google.android.gms:play-services-location:${versions.playServices}"
+
+    testImplementation project(':kotlinova-testutils')
+    testImplementation "junit:junit:${versions.junit}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    testImplementation "org.robolectric:robolectric:${versions.roboletric}"
+    testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
+    testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
+    testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
+
+    androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
+}
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency { details ->
+            // Sometimes external libraries could include outdated support library.
+            // Force all of the primary support libraries to use the same version.
+            if (details.requested.group == 'com.android.support'
+                    && details.requested.name != 'multidex'
+                    && details.requested.name != 'multidex-instrumentation') {
+                details.useVersion versions.androidSupportLib
+            }
+        }
+    }
+}
