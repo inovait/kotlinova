@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FullScreenProgressBar">
+        <attr name="visibleAtStart" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="AspectRatioImageView">
+        <attr name="fixedMultiplier" format="float" />
+        <attr name="fixedDimension" format="enum">
+            <enum name="width" value="0" />
+            <enum name="height" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

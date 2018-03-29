@@ -1,0 +1,87 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-allopen'
+
+android {
+    compileSdkVersion 27
+
+
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        debug {
+            allOpen {
+                annotation("si.inova.kotlinova.testing.OpenForTesting")
+            }
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+kotlin {
+    /**
+     * This looks scary, but coroutines are only experimental in a sense that
+     * there may be future (non-breaking) API changes.
+     *
+     * Otherwise they are completely stable, backwards compatible and ready to use in production.
+     *
+     * Source: https://stackoverflow.com/a/46240340 (written by coroutines project member)
+     */
+    experimental {
+        coroutines "enable"
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency { details ->
+            // Sometimes external libraries could include outdated support library.
+            // Force all of the primary support libraries to use the same version.
+            if (details.requested.group == 'com.android.support'
+                    && details.requested.name != 'multidex'
+                    && details.requested.name != 'multidex-instrumentation') {
+                details.useVersion versions.androidSupportLib
+            }
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(":kotlinova")
+    implementation "com.android.support:appcompat-v7:${versions.androidSupportLib}"
+
+    // Libraries are only meant to be compiled into unit tests. Mark them as compileOnly to not
+    // include them into any dex files
+    compileOnly "com.google.firebase:firebase-firestore:${versions.playServices}"
+    compileOnly "com.google.firebase:firebase-storage:${versions.playServices}"
+
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    compileOnly "androidx.core:core-ktx:${versions.ktx}"
+
+    compileOnly "com.google.dagger:dagger:${versions.dagger}"
+    compileOnly "com.google.dagger:dagger-android:${versions.dagger}"
+    compileOnly "com.google.dagger:dagger-android-support:${versions.dagger}"
+
+    compileOnly "junit:junit:${versions.junit}"
+    compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    compileOnly "org.robolectric:robolectric:${versions.roboletric}"
+    compileOnly "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
+    compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
+    compileOnly "android.arch.core:core-testing:${versions.architectureComponents}"
+}
