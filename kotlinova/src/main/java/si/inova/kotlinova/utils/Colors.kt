@@ -43,3 +43,12 @@ fun lightenColor(color: Int, multiplier: Double): Int {
 
     return Color.argb(a, r, g, b)
 }
+
+/**
+ * @return Luminance of the color between 0-1
+ */
+fun colorLuminance(color: Int): Double {
+    return 0.2126 * Color.red(color) / 255 +
+            0.7152 * Color.green(color) / 255 +
+            0.0722 * Color.blue(color) / 255
+}
