@@ -2,6 +2,7 @@ package si.inova.kotlinova.ui.lists
 
 import android.os.Parcelable
 import android.support.v7.widget.RecyclerView
+import si.inova.kotlinova.ui.lists.sections.ListSection
 import si.inova.kotlinova.ui.state.StateSaver
 import si.inova.kotlinova.ui.state.StateSavingComponent
 
@@ -9,7 +10,7 @@ import si.inova.kotlinova.ui.state.StateSavingComponent
  * State saver that saves [RecyclerView]'s state and then loads it at any point in time
  * (whenever data is reloaded).
  *
- * You must manually call [notifyRecyclerViewLoaded]&#40;) or if you are using [ListAdapter], you can
+ * You must manually call [notifyRecyclerViewLoaded]&#40;) or if you are using [ListAdapter] or [ListSection], you can
  * instead call [attach]&#40;) to automatically load data when ListAdapter receives new data.
  *
  * @author Matej Drobnic
@@ -42,5 +43,9 @@ class RecyclerStateSaver(
 
     fun attach(listAdapter: ListAdapter<*, *>) {
         listAdapter.listUpdateListener = this::notifyRecyclerViewLoaded
+    }
+
+    fun attach(listSection: ListSection<*, *>) {
+        listSection.listUpdateListener = this::notifyRecyclerViewLoaded
     }
 }
