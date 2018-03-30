@@ -63,7 +63,8 @@ open class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
         throw IndexOutOfBoundsException("Position not in any section: $position")
     }
 
-    private fun getInnerPosition(position: Int): Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
+    private fun getInnerPosition(position: Int):
+            Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0
         for (section in sections) {
             val sectionEnd = sectionStart + section.itemCount
