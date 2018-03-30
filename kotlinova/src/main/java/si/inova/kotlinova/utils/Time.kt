@@ -37,3 +37,5 @@ object TimeFormat {
         return context.getString(R.string.time_minutes_seconds, minutes, leftSeconds)
     }
 }
+
+const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
