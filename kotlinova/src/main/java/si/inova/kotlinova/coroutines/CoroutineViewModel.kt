@@ -52,7 +52,8 @@ abstract class CoroutineViewModel : ViewModel() {
     suspend fun <T, L : MutableLiveData<Resource<T>>> CoroutineScope.acquireResource(
         resource: L,
         currentValue: T? = null,
-        unique: Boolean = true, block: suspend CoroutineScope.(L) -> Unit
+        unique: Boolean = true,
+        block: suspend CoroutineScope.(L) -> Unit
     ) {
         // Make sure job cancellation runs on the same thread to prevent thread clashes
         withContext<Unit>(UI) {

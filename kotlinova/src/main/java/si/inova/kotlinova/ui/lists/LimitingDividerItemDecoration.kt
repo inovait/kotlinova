@@ -141,7 +141,9 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
     }
 
     override fun getItemOffsets(
-        outRect: Rect, view: View, parent: RecyclerView,
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
         state: RecyclerView.State?
     ) {
         val position = parent.getChildAdapterPosition(view)
