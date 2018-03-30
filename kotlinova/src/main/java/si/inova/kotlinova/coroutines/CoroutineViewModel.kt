@@ -52,22 +52,27 @@ abstract class CoroutineViewModel : ViewModel() {
     suspend fun <T> CoroutineScope.acquireResource(
         resource: MutableLiveData<Resource<T>>,
         currentValue: T? = null,
-        block: suspend CoroutineScope.(MutableLiveData<Resource<T>>) -> Unit
+        unique: Boolean = true,
+        block: suspend CoroutineScope.(
+            MutableLiveData<Resource<T>>
+        ) -> Unit
     ) {
         // Make sure job cancellation runs on the same thread to prevent thread clashes
         withContext<Unit>(UI) {
-            // To prevent threading issues, only one job can handle one resource at a time
-            // Cancel active job first.
-            val currentJobForThatResource = activeJobs.remove(resource)
-            currentJobForThatResource?.let {
-                it.cancel(OwnershipTransferredException())
-                it.join()
-            }
+            if (unique) {
+                // To prevent threading issues, only one job can handle one resource at a time
+                // Cancel active job first.
+                val currentJobForThatResource = activeJobs.remove(resource)
+                currentJobForThatResource?.let {
+                    it.cancel(OwnershipTransferredException())
+                    it.join()
+                }
 
-            // If this resource can be controlled from outside, we need to reset
-            // it first.
-            if (resource is ExtendedMediatorLiveData) {
-                resource.removeAllSources()
+                // If this resource can be controlled from outside, we need to reset
+                // it first.
+                if (resource is ExtendedMediatorLiveData) {
+                    resource.removeAllSources()
+                }
             }
 
             @Suppress("UNCHECKED_CAST")
