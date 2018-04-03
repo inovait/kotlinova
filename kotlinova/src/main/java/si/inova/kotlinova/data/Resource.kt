@@ -1,5 +1,7 @@
 package si.inova.kotlinova.data
 
+import android.arch.lifecycle.LiveData
+
 /**
  * @author Matej Drobnic
  */
@@ -16,3 +18,7 @@ val <T> Resource<T>.value: T?
         this is Resource.Loading -> data
         else -> null
     }
+
+fun isAnyLoading(vararg resource: LiveData<*>): Boolean {
+    return resource.any { it.value is Resource.Loading<*> }
+}
