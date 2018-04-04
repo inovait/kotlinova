@@ -1,3 +1,6 @@
+/**
+ * @author Matej Drobnic
+ */
 @file:JvmName("ListUtils")
 
 package si.inova.kotlinova.utils
@@ -5,9 +8,6 @@ package si.inova.kotlinova.utils
 import java.util.Random
 
 private val RANDOM by lazy { Random() }
-/**
- * @author Matej Drobnic
- */
 
 /**
  * @return A shallow copy of the list
