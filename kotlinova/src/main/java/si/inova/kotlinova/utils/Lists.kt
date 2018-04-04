@@ -4,6 +4,7 @@ package si.inova.kotlinova.utils
 
 import java.util.Random
 
+private val RANDOM by lazy { Random() }
 /**
  * @author Matej Drobnic
  */
@@ -18,4 +19,7 @@ fun <T> List<T>.copy(): List<T> {
     }
 }
 
-fun <E> List<E>.getRandomElement() = this[Random().nextInt(this.size)]
+/**
+ * @return Random element of the list
+ */
+fun <E> List<E>.getRandomElement() = this[RANDOM.nextInt(this.size)]
