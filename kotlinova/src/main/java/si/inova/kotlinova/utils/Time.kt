@@ -7,6 +7,7 @@ import si.inova.kotlinova.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 /**
@@ -39,6 +40,10 @@ object TimeFormat {
 
         return context.getString(R.string.time_minutes_seconds, minutes, leftSeconds)
     }
+}
+
+fun Date.toCalendar(): Calendar {
+    return Calendar.getInstance().apply { time = this@toCalendar }
 }
 
 const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

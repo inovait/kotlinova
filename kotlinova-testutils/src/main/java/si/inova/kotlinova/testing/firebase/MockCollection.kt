@@ -3,10 +3,13 @@ package si.inova.kotlinova.testing.firebase
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.Answers
 
 /**
  * @author Matej Drobnic
@@ -63,7 +66,7 @@ class MockCollection<T>() {
     }
 
     fun toColRef(): CollectionReference {
-        return mock {
+        return mock(defaultAnswer = Answers.RETURNS_SELF) {
             whenever(it.document()).then {
                 val name = nextId
 
@@ -79,6 +82,15 @@ class MockCollection<T>() {
             }
 
             whenever(it.get()).thenReturn(Tasks.forResult(snapshotOfAllEntries))
+
+            whenever(it.addSnapshotListener(any())).thenAnswer {
+                @Suppress("UNCHECKED_CAST")
+                val listener = it.arguments[0] as EventListener<QuerySnapshot>
+                listener.onEvent(toQuerySnapshot(), null)
+
+                val registration: ListenerRegistration = mock()
+                registration
+            }
         }
     }
 }
