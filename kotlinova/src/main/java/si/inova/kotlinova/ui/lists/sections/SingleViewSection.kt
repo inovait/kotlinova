@@ -41,6 +41,7 @@ class SingleViewSection(
             if (value) {
                 updateCallback?.onInserted(0, 1)
             } else {
+                singletonHolder = null
                 updateCallback?.onRemoved(0, 1)
             }
         }
