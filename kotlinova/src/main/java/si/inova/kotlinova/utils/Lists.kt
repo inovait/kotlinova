@@ -2,6 +2,8 @@
 
 package si.inova.kotlinova.utils
 
+import java.util.Random
+
 /**
  * @author Matej Drobnic
  */
@@ -15,3 +17,5 @@ fun <T> List<T>.copy(): List<T> {
         it
     }
 }
+
+fun <E> List<E>.getRandomElement() = this[Random().nextInt(this.size)]
