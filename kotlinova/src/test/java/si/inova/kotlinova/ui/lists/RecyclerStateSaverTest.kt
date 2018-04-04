@@ -4,6 +4,8 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -13,6 +15,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+import si.inova.kotlinova.ui.lists.sections.ListSection
 import si.inova.kotlinova.ui.state.StateSaverManager
 import si.inova.kotlinova.ui.state.StateSavingComponent
 
@@ -91,6 +94,27 @@ class RecyclerStateSaverTest {
         assertNotNull(listAdapter.listUpdateListener)
 
         listAdapter.listUpdateListener!!.invoke()
+
+        verify(layoutManager!!).onRestoreInstanceState(testParcelable)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun restoringListSection() {
+        val testParcelable = StringParcelable("Test")
+        whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
+                .thenReturn(testParcelable)
+
+        val listSection: ListSection<Any, DummyViewHolder> = mock()
+
+        lateinit var updateListener: () -> Unit
+        doAnswer {
+            updateListener = it.arguments[0] as () -> Unit
+        }.whenever(listSection).listUpdateListener = any()
+        recyclerStateSaver.attach(listSection)
+        verify(listSection).listUpdateListener = any()
+
+        updateListener.invoke()
 
         verify(layoutManager!!).onRestoreInstanceState(testParcelable)
     }

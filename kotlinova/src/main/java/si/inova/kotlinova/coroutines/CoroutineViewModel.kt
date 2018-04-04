@@ -49,13 +49,11 @@ abstract class CoroutineViewModel : ViewModel() {
      * 3. Automatically handles cancellation exceptions
      * 4. Automatically forwards exceptions to the resource as [Resource.Error]
      */
-    suspend fun <T> CoroutineScope.acquireResource(
-        resource: MutableLiveData<Resource<T>>,
+    suspend fun <T, L : MutableLiveData<Resource<T>>> CoroutineScope.acquireResource(
+        resource: L,
         currentValue: T? = null,
         unique: Boolean = true,
-        block: suspend CoroutineScope.(
-            MutableLiveData<Resource<T>>
-        ) -> Unit
+        block: suspend CoroutineScope.(L) -> Unit
     ) {
         // Make sure job cancellation runs on the same thread to prevent thread clashes
         withContext<Unit>(UI) {
@@ -70,7 +68,7 @@ abstract class CoroutineViewModel : ViewModel() {
 
                 // If this resource can be controlled from outside, we need to reset
                 // it first.
-                if (resource is ExtendedMediatorLiveData) {
+                if (resource is ExtendedMediatorLiveData<*>) {
                     resource.removeAllSources()
                 }
             }
