@@ -57,7 +57,7 @@ class SingleViewSection(
     fun updateView(callback: (View) -> Unit) {
         viewUpdateCallbacks.addLast(callback)
         if (displayed) {
-            updateCallback?.onChanged(0, 0, null)
+            updateCallback?.onChanged(0, 1, null)
         }
     }
 
