@@ -28,6 +28,8 @@ class SingleViewSection(
 
     private val viewUpdateCallbacks = LinkedList<(View) -> Unit>()
 
+    private var singletonHolder: SingleViewHolder? = null
+
     final var displayed: Boolean = true
         set(value) {
             if (value == field) {
@@ -56,13 +58,19 @@ class SingleViewSection(
 
     fun updateView(callback: (View) -> Unit) {
         viewUpdateCallbacks.addLast(callback)
+
         if (displayed) {
             updateCallback?.onChanged(0, 1, null)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SingleViewHolder =
-            SingleViewHolder(createView(parent))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SingleViewHolder {
+        return if (singletonHolder == null) {
+            SingleViewHolder(createView(parent)).also { singletonHolder = it }
+        } else {
+            singletonHolder!!
+        }
+    }
 
     override fun onBindViewHolder(holder: SingleViewHolder, position: Int) {
         viewUpdateCallbacks.forEach { it.invoke(holder.itemView) }
