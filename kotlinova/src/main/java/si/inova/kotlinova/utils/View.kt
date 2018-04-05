@@ -11,7 +11,7 @@ import android.support.v4.view.AsyncLayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 
 /**
  * @author Matej Drobnic

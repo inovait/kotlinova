@@ -6,7 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewPropertyAnimator
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import si.inova.kotlinova.R
 import si.inova.kotlinova.time.TimeProvider
 import kotlin.math.max
