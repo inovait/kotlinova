@@ -4,6 +4,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
@@ -15,6 +16,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import si.inova.kotlinova.testing.LocalFunction0
 import si.inova.kotlinova.ui.lists.sections.ListSection
+import si.inova.kotlinova.ui.lists.sections.SectionRecyclerAdapter
 
 /**
  * @author Matej Drobnic
@@ -101,6 +103,37 @@ class AutoLoadHandlerTest {
         verifyZeroInteractions(callback)
     }
 
+    @Test
+    fun ignoreSectionPlaceholders() {
+        val adapter: SectionRecyclerAdapter = mock()
+        whenever(recyclerView.adapter).thenReturn(adapter)
+        whenever(adapter.realItemCount).thenReturn(2)
+
+        autoLoadHandler = AutoLoadHandler(recyclerView, listSection)
+        autoLoadHandler.setCallback(callback)
+
+        moveToIndex(2)
+        listLoadCallback!!.invoke()
+
+        verify(callback).invoke()
+    }
+
+    @Test
+    fun notAtBottomWithSectionAdapter() {
+        val adapter: SectionRecyclerAdapter = mock()
+        whenever(recyclerView.adapter).thenReturn(adapter)
+        whenever(adapter.realItemCount).thenReturn(10)
+
+        autoLoadHandler = AutoLoadHandler(recyclerView, listSection)
+        autoLoadHandler.setCallback(callback)
+
+        moveToIndex(2)
+        listLoadCallback!!.invoke()
+
+        verifyZeroInteractions(callback)
+    }
+
+
     private fun moveToBottom() {
         whenever(layoutManager.itemCount).thenReturn(10)
         whenever(layoutManager.childCount).thenReturn(5)
@@ -112,4 +145,11 @@ class AutoLoadHandlerTest {
         whenever(layoutManager.childCount).thenReturn(5)
         whenever(layoutManager.findFirstVisibleItemPosition()).thenReturn(0)
     }
+
+    private fun moveToIndex(index: Int) {
+        whenever(layoutManager.itemCount).thenReturn(10)
+        whenever(layoutManager.childCount).thenReturn(0)
+        whenever(layoutManager.findFirstVisibleItemPosition()).thenReturn(index)
+    }
+
 }

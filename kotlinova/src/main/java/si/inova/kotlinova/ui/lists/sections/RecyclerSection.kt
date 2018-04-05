@@ -44,4 +44,13 @@ abstract class RecyclerSection<VH : RecyclerView.ViewHolder> {
     fun onAttachedToRecycler(callback: ListUpdateCallback) {
         updateCallback = callback
     }
+
+    /**
+     * Whether this section only contains placeholder items (items from this adapter will not
+     * be counted towards "real item count")
+     *
+     * @see SectionRecyclerAdapter.realItemCount
+     */
+    val sectionContainsPlaceholderItems: Boolean
+        get() = false
 }

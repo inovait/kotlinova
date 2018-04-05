@@ -268,6 +268,23 @@ class SectionRecyclerAdapterTest {
         }
     }
 
+    @Test
+    fun realItemCount() {
+        sectionA.updateSize(2)
+        sectionB.updateSize(4)
+        sectionC.updateSize(6)
+
+        assertEquals(2 + 4 + 6, sectionedRecyclerAdapter.realItemCount)
+        assertEquals(2 + 4 + 6, sectionedRecyclerAdapter.itemCount)
+
+        val placeholderSection = PlaceholderTestSection()
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+        placeholderSection.updateSize(20)
+
+        assertEquals(2 + 4 + 6, sectionedRecyclerAdapter.realItemCount)
+        assertEquals(2 + 4 + 6 + 20, sectionedRecyclerAdapter.itemCount)
+    }
+
     private class TestSection : RecyclerSection<TestSectionViewHolder>() {
         var data: MutableList<Int> = ArrayList()
 
@@ -298,6 +315,11 @@ class SectionRecyclerAdapterTest {
 
         override val itemCount: Int
             get() = data.size
+    }
+
+    private class PlaceholderTestSection : TestSection() {
+        override val sectionContainsPlaceholderItems: Boolean
+            get() = true
     }
 
     private class TestSectionWithDifferentItemTypes : TestSection() {
