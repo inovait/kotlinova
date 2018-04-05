@@ -322,7 +322,6 @@ class SectionRecyclerAdapterTest {
         }
     }
 
-
     private class TestSection : RecyclerSection<TestSectionViewHolder>() {
         var data: MutableList<Int> = ArrayList()
 

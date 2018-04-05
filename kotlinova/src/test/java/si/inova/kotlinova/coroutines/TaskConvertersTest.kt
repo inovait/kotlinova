@@ -145,7 +145,6 @@ class TaskConvertersTest {
         val afterSubscribeCallback: LocalFunction0<Unit> = mock()
         val beforeUnsubscribeCallback: LocalFunction0<Unit> = mock()
 
-
         async(UI) {
             data.awaitFirstValue(
                     runAfterObserve = afterSubscribeCallback,

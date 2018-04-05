@@ -133,7 +133,6 @@ class AutoLoadHandlerTest {
         verifyZeroInteractions(callback)
     }
 
-
     private fun moveToBottom() {
         whenever(layoutManager.itemCount).thenReturn(10)
         whenever(layoutManager.childCount).thenReturn(5)
@@ -151,5 +150,4 @@ class AutoLoadHandlerTest {
         whenever(layoutManager.childCount).thenReturn(0)
         whenever(layoutManager.findFirstVisibleItemPosition()).thenReturn(index)
     }
-
 }
