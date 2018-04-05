@@ -120,6 +120,17 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onInserted(position: Int, count: Int) {
             val sectionStart = getSectionStart(sectionIndex)
+
+            val section = sections[sectionIndex]
+            val nextSection = sections.elementAtOrNull(sectionIndex + 1)
+            if (section.blendsIntoPlaceholders &&
+                    nextSection is PlaceholderSection &&
+                    (position + count) == section.itemCount) {
+                nextSection.removePlaceholdersFromStart(count)
+                notifyItemRangeChanged(position + sectionStart, count)
+                return
+            }
+
             notifyItemRangeInserted(position + sectionStart, count)
         }
 

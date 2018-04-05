@@ -18,6 +18,8 @@ class PlaceholderSection(
 ) : RecyclerSection<PlaceholderSection.PlaceholderViewHolder>() {
     private val handler = Handler()
 
+    private var placeholderCount = Short.MAX_VALUE.toInt()
+
     private var actuallyDisplayed: Boolean = true
 
     final var displayed: Boolean = true
@@ -36,16 +38,21 @@ class PlaceholderSection(
 
             if (value) {
                 actuallyDisplayed = true
-                updateCallback?.onInserted(0, Short.MAX_VALUE.toInt())
+                placeholderCount = Short.MAX_VALUE.toInt()
+                updateCallback?.onInserted(0, placeholderCount)
             } else {
                 hideDelayed()
             }
         }
 
+    fun removePlaceholdersFromStart(numRemoved: Int) {
+        placeholderCount -= numRemoved
+    }
+
     private fun hideDelayed() {
         handler.postDelayed(HIDE_DELAY) {
             actuallyDisplayed = false
-            updateCallback?.onRemoved(0, Short.MAX_VALUE.toInt())
+            updateCallback?.onRemoved(0, placeholderCount)
         }
     }
 
@@ -59,7 +66,7 @@ class PlaceholderSection(
     override val itemCount: Int
         get() {
             return if (actuallyDisplayed) {
-                Short.MAX_VALUE.toInt()
+                placeholderCount
             } else {
                 0
             }

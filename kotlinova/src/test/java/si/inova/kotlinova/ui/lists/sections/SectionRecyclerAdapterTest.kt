@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.only
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -15,6 +17,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
 import org.robolectric.RobolectricTestRunner
+import si.inova.kotlinova.R
 
 /**
  * @author Matej Drobnic
@@ -285,6 +288,41 @@ class SectionRecyclerAdapterTest {
         assertEquals(2 + 4 + 6 + 20, sectionedRecyclerAdapter.itemCount)
     }
 
+    @Test
+    fun placeholderBlending() {
+        val blendingSection = BlendingSection()
+        val placeholderSection = PlaceholderSection(R.layout.single_container)
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        assertEquals(Short.MAX_VALUE.toInt(), sectionedRecyclerAdapter.itemCount)
+        blendingSection.updateSize(10)
+
+        verify(adapterDataObserver, only()).onItemRangeChanged(0, 10, null)
+        assertEquals(Short.MAX_VALUE.toInt(), sectionedRecyclerAdapter.itemCount)
+    }
+
+    @Test
+    fun doNotBlendPlaceholdersWhenNotOnEnd() {
+        val blendingSection = BlendingSection()
+        val placeholderSection = PlaceholderSection(R.layout.single_container)
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        inOrder(adapterDataObserver) {
+            blendingSection.updateSize(10)
+            verify(adapterDataObserver).onItemRangeChanged(0, 10, null)
+
+            blendingSection.data.add(1, 10)
+            blendingSection.updateCallback!!.onInserted(1, 1)
+
+            verify(adapterDataObserver).onItemRangeInserted(1, 1)
+
+            assertEquals(Short.MAX_VALUE.toInt() + 1, sectionedRecyclerAdapter.itemCount)
+        }
+    }
+
+
     private class TestSection : RecyclerSection<TestSectionViewHolder>() {
         var data: MutableList<Int> = ArrayList()
 
@@ -315,6 +353,11 @@ class SectionRecyclerAdapterTest {
 
         override val itemCount: Int
             get() = data.size
+    }
+
+    private class BlendingSection : TestSection() {
+        override val blendsIntoPlaceholders: Boolean
+            get() = true
     }
 
     private class PlaceholderTestSection : TestSection() {
