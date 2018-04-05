@@ -14,8 +14,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import si.inova.kotlinova.utils.map
 import si.inova.kotlinova.testing.LocalFunction0
+import si.inova.kotlinova.utils.map
 
 /**
  * @author Matej Drobnic
@@ -97,9 +97,9 @@ class TaskConvertersTest {
 
         data.value = 10
         val task = async(UI) {
-            data.awaitFirstValue(ignoreExistingValue = true) {
+            data.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
-            }
+            })
         }
 
         assertEquals(20, task.getCompleted())
@@ -114,9 +114,9 @@ class TaskConvertersTest {
 
         data.value = 10
         val task = async(UI) {
-            mappedData.awaitFirstValue(ignoreExistingValue = true) {
+            mappedData.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
-            }
+            })
         }
 
         assertEquals(100, task.getCompleted())
