@@ -46,7 +46,7 @@ fun Date.toCalendar(): Calendar {
     return Calendar.getInstance().apply { time = this@toCalendar }
 }
 
-const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ"
 // SimpleDateFormat is not thread-safe. Use ThreadLocal to bind it to separate threads.
 val ISO_8601_DATE_FORMAT_HOLDER =
         threadLocal { SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault()) }
