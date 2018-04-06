@@ -33,9 +33,11 @@ class BackstackFragment : NestedAnimatedFragment() {
                 .apply {
                     if (useBackStack) {
                         addToBackStack(null)
+                        commit()
+                    } else {
+                        commitNow()
                     }
                 }
-                .commit()
     }
 
     companion object {
