@@ -10,7 +10,7 @@ class ThrottlingClickListener(private val block: (View) -> Unit) : View.OnClickL
     private var lastClickTime: Long = 0
 
     override fun onClick(view: View) {
-        if (SystemClock.elapsedRealtime() - lastClickTime < 500) {
+        if (SystemClock.elapsedRealtime() - lastClickTime < MINIMUM_TIME_BETWEEN_CLICKS) {
             return
         }
         lastClickTime = SystemClock.elapsedRealtime()
@@ -18,3 +18,5 @@ class ThrottlingClickListener(private val block: (View) -> Unit) : View.OnClickL
         block(view)
     }
 }
+
+private const val MINIMUM_TIME_BETWEEN_CLICKS = 500
