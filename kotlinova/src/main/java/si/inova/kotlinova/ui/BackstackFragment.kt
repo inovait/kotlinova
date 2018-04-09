@@ -24,15 +24,12 @@ class BackstackFragment : NestedAnimatedFragment(), ResettableFragment {
     }
 
     override fun resetFragment() {
-        var popBackStacked = false
         while (childFragmentManager.backStackEntryCount > 0) {
-            popBackStacked = childFragmentManager.popBackStackImmediate()
+            childFragmentManager.popBackStackImmediate()
         }
-        if (!popBackStacked) {
-            val currentFragment = childFragmentManager.findFragmentById(R.id.container)
-            if (currentFragment is ResettableFragment) {
-                currentFragment.resetFragment()
-            }
+        val currentFragment = childFragmentManager.findFragmentById(R.id.container)
+        if (currentFragment is ResettableFragment) {
+            currentFragment.resetFragment()
         }
     }
 

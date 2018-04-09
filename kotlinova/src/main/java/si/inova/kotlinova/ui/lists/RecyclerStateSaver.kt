@@ -31,6 +31,10 @@ class RecyclerStateSaver(
         return recycler.layoutManager?.onSaveInstanceState()
     }
 
+    fun ignoreNextRestore() {
+        alreadyRestored = true
+    }
+
     fun notifyRecyclerViewLoaded() {
         if (alreadyRestored) {
             return
