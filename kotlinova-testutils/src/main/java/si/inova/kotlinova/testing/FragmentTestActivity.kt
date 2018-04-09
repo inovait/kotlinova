@@ -15,6 +15,7 @@ import si.inova.kotlinova.ui.ActivityWithFragments
  */
 class FragmentTestActivity : ActivityWithFragments(), HasSupportFragmentInjector {
 
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(FrameLayout(this).apply { id = 1 })

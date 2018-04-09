@@ -1,14 +1,3 @@
-/*
- * Copyright © 2016, Connected Travel, LLC – All Rights Reserved.
- *
- * All information contained herein is property of Connected Travel, LLC including, but
- * not limited to, technical and intellectual concepts which may be embodied within.
- *
- * Dissemination or reproduction of this material is strictly forbidden unless prior written
- * permission, via license, is obtained from Connected Travel, LLC.   If permission is obtained,
- * this notice, and any other such legal notices, must remain unaltered.
- */
-
 package si.inova.kotlinova.ui.views
 
 import android.content.Context
@@ -17,7 +6,7 @@ import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewPropertyAnimator
-import androidx.view.isVisible
+import androidx.core.view.isVisible
 import si.inova.kotlinova.R
 import si.inova.kotlinova.time.TimeProvider
 import kotlin.math.max
