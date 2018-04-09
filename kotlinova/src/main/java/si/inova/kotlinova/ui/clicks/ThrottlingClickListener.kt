@@ -4,6 +4,9 @@ import android.os.SystemClock
 import android.view.View
 
 /**
+ * Click listener that only gets triggered at most every 500 milliseconds. Use this to take care
+ * of user spamming clicks.
+ *
  * @author Jan Grah
  */
 class ThrottlingClickListener(private val block: (View) -> Unit) : View.OnClickListener {
