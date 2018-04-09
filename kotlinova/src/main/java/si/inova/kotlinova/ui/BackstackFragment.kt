@@ -14,13 +14,26 @@ import si.inova.kotlinova.ui.components.NestedAnimatedFragment
  *
  * @author Matej Drobnic
  */
-class BackstackFragment : NestedAnimatedFragment() {
+class BackstackFragment : NestedAnimatedFragment(), ResettableFragment {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.single_container, container, false)
+    }
+
+    override fun resetFragment() {
+        var popBackStacked = false
+        while (childFragmentManager.backStackEntryCount > 0) {
+            popBackStacked = childFragmentManager.popBackStackImmediate()
+        }
+        if (!popBackStacked) {
+            val currentFragment = childFragmentManager.findFragmentById(R.id.container)
+            if (currentFragment is ResettableFragment) {
+                currentFragment.resetFragment()
+            }
+        }
     }
 
     fun addFragment(fragment: Fragment) {
