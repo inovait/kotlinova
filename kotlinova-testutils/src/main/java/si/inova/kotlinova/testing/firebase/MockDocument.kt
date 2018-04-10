@@ -33,6 +33,16 @@ class MockDocument<T>(val key: String) {
         return collection
     }
 
+    fun <C> createSubCollection(name: String, data: List<Pair<String, C>>): MockCollection<C> {
+        val collection = createSubCollection<C>(name)
+
+        for (item in data) {
+            collection.insertObject(item.first, item.second)
+        }
+
+        return collection
+    }
+
     private fun getSnapshot(key: String, value: T?): QueryDocumentSnapshot = mock {
         whenever(it.exists()).thenReturn(value != null)
 

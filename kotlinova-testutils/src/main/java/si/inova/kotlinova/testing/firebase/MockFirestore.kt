@@ -27,7 +27,7 @@ class MockFirestore {
             whenever(it.collection(any())).then {
                 val name = it.arguments[0] as String
 
-                collections[name] ?: throw IllegalArgumentException("Collection does not exist")
+                collections[name] ?: MockCollection<Any>().toColRef()
             }
         }
     }

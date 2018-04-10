@@ -6,6 +6,7 @@ import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.widget.ImageView
 import si.inova.kotlinova.R
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -64,8 +65,10 @@ class AspectRatioImageView @JvmOverloads constructor(
 
     @SuppressLint("SwitchIntDef")
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width: Int
+        val height: Int
         if (fixedDimension == DIMENSION_WIDTH) {
-            val width = when (MeasureSpec.getMode(widthMeasureSpec)) {
+            width = when (MeasureSpec.getMode(widthMeasureSpec)) {
                 MeasureSpec.EXACTLY -> MeasureSpec.getSize(widthMeasureSpec)
                 MeasureSpec.AT_MOST -> min(maxWidth, MeasureSpec.getSize(widthMeasureSpec))
                 else -> {
@@ -74,12 +77,9 @@ class AspectRatioImageView @JvmOverloads constructor(
                 }
             }
 
-            setMeasuredDimension(
-                    width,
-                    (width * fixedMultiplier).roundToInt()
-            )
+            height = (width * fixedMultiplier).roundToInt()
         } else {
-            val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
+            height = when (MeasureSpec.getMode(heightMeasureSpec)) {
                 MeasureSpec.EXACTLY -> MeasureSpec.getSize(heightMeasureSpec)
                 MeasureSpec.AT_MOST -> min(maxHeight, MeasureSpec.getSize(heightMeasureSpec))
                 else -> {
@@ -88,11 +88,13 @@ class AspectRatioImageView @JvmOverloads constructor(
                 }
             }
 
-            setMeasuredDimension(
-                    (height * fixedMultiplier).roundToInt(),
-                    height
-            )
+            width = (height * fixedMultiplier).roundToInt()
         }
+
+        setMeasuredDimension(
+                max(min(width, maxWidth), minimumWidth),
+                max(min(height, maxHeight), minimumHeight)
+        )
     }
 
     companion object {

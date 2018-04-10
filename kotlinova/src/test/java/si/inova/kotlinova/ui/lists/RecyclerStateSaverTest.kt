@@ -110,9 +110,10 @@ class RecyclerStateSaverTest {
         lateinit var updateListener: () -> Unit
         doAnswer {
             updateListener = it.arguments[0] as () -> Unit
-        }.whenever(listSection).listUpdateListener = any()
+        }.whenever(listSection).addUpdateListener(any())
+
         recyclerStateSaver.attach(listSection)
-        verify(listSection).listUpdateListener = any()
+        verify(listSection).addUpdateListener(any())
 
         updateListener.invoke()
 

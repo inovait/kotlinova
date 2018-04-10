@@ -40,9 +40,8 @@ fun <T, R> ObservablePaginatedQuery<T>.mapList(
     val originalQuery = this
 
     return object : ObservablePaginatedQuery<R> {
-        override val data: LiveData<Resource<List<R>>>
-            get() {
-                return originalQuery.data.map {
+        override val data: LiveData<Resource<List<R>>> =
+                originalQuery.data.map {
                     if (it == null) {
                         throw NullPointerException()
                     }
@@ -56,7 +55,6 @@ fun <T, R> ObservablePaginatedQuery<T>.mapList(
                         )
                     }
                 }
-            }
 
         override val isAtEnd: Boolean
             get() = originalQuery.isAtEnd
@@ -64,5 +62,11 @@ fun <T, R> ObservablePaginatedQuery<T>.mapList(
         override fun loadNextPage() {
             return originalQuery.loadNextPage()
         }
+    }
+}
+
+fun <T> ObservablePaginatedQuery<T>.filter(predicate: (T) -> Boolean): ObservablePaginatedQuery<T> {
+    return mapList {
+        it.filter(predicate)
     }
 }
