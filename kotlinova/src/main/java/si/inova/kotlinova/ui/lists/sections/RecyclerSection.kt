@@ -44,4 +44,20 @@ abstract class RecyclerSection<VH : RecyclerView.ViewHolder> {
     fun onAttachedToRecycler(callback: ListUpdateCallback) {
         updateCallback = callback
     }
+
+    /**
+     * Whether this section only contains placeholder items (items from this adapter will not
+     * be counted towards "real item count")
+     *
+     * @see SectionRecyclerAdapter.realItemCount
+     */
+    val sectionContainsPlaceholderItems: Boolean
+        get() = false
+
+    /**
+     * Whether this section can blend into placeholders that are positioned after this section.
+     * If *true*, placeholder crossfade animation is played instead of insert animation.
+     */
+    val blendsIntoPlaceholders: Boolean
+        get() = false
 }

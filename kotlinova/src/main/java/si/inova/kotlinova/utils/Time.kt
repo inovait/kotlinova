@@ -4,7 +4,11 @@ package si.inova.kotlinova.utils
 
 import android.content.Context
 import si.inova.kotlinova.R
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 /**
  * @author Matej Drobnic
@@ -37,3 +41,15 @@ object TimeFormat {
         return context.getString(R.string.time_minutes_seconds, minutes, leftSeconds)
     }
 }
+
+fun Date.toCalendar(): Calendar {
+    return Calendar.getInstance().apply { time = this@toCalendar }
+}
+
+const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ"
+// SimpleDateFormat is not thread-safe. Use ThreadLocal to bind it to separate threads.
+val ISO_8601_DATE_FORMAT_HOLDER =
+        threadLocal { SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault()) }
+
+inline val ISO_8601_DATE_FORMAT: DateFormat
+    get() = ISO_8601_DATE_FORMAT_HOLDER.get()

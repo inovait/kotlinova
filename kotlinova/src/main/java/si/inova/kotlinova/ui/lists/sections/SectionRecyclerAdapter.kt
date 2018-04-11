@@ -3,6 +3,7 @@ package si.inova.kotlinova.ui.lists.sections
 import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import si.inova.kotlinova.testing.OpenForTesting
 
 /**
  * Wrapper adapter for RecyclerView that can display different subsequent sections.
@@ -12,7 +13,8 @@ import android.view.ViewGroup
  *
  * @author Matej Drobnic
  */
-open class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+@OpenForTesting
+class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val sections = ArrayList<RecyclerSection<out RecyclerView.ViewHolder>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -25,6 +27,20 @@ open class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
     override fun getItemCount(): Int {
         return sections.sumBy { it.itemCount }
     }
+
+    /**
+     * Count of all items in this adapter, excluding placeholder items
+     */
+    val realItemCount: Int
+        get() {
+            return sections.sumBy {
+                if (it.sectionContainsPlaceholderItems) {
+                    0
+                } else {
+                    it.itemCount
+                }
+            }
+        }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val (section, innerPosition) = getInnerPosition(position)
@@ -42,7 +58,7 @@ open class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
         return index * MAX_SECTION_VIEW_TYPE_COUNT + innerViewType
     }
 
-    fun attachSection(recyclerSection: RecyclerSection<out RecyclerView.ViewHolder>) {
+    final fun attachSection(recyclerSection: RecyclerSection<out RecyclerView.ViewHolder>) {
         sections.add(recyclerSection)
 
         recyclerSection.onAttachedToRecycler(SectionPassListUpdateCallback(sections.size - 1))
@@ -104,6 +120,17 @@ open class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
 
         override fun onInserted(position: Int, count: Int) {
             val sectionStart = getSectionStart(sectionIndex)
+
+            val section = sections[sectionIndex]
+            val nextSection = sections.elementAtOrNull(sectionIndex + 1)
+            if (section.blendsIntoPlaceholders &&
+                    nextSection is PlaceholderSection &&
+                    (position + count) == section.itemCount) {
+                nextSection.removePlaceholdersFromStart(count)
+                notifyItemRangeChanged(position + sectionStart, count)
+                return
+            }
+
             notifyItemRangeInserted(position + sectionStart, count)
         }
 

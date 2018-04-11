@@ -3,7 +3,10 @@ package si.inova.kotlinova.coroutines
 import android.arch.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
@@ -14,8 +17,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import si.inova.kotlinova.utils.map
 import si.inova.kotlinova.testing.LocalFunction0
+import si.inova.kotlinova.utils.map
 
 /**
  * @author Matej Drobnic
@@ -97,9 +100,9 @@ class TaskConvertersTest {
 
         data.value = 10
         val task = async(UI) {
-            data.awaitFirstValue(ignoreExistingValue = true) {
+            data.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
-            }
+            })
         }
 
         assertEquals(20, task.getCompleted())
@@ -114,9 +117,9 @@ class TaskConvertersTest {
 
         data.value = 10
         val task = async(UI) {
-            mappedData.awaitFirstValue(ignoreExistingValue = true) {
+            mappedData.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
-            }
+            })
         }
 
         assertEquals(100, task.getCompleted())
@@ -133,5 +136,31 @@ class TaskConvertersTest {
 
         assertTrue(task.isCompleted)
         assertEquals(10, task.getCompleted())
+    }
+
+    @Test
+    fun testAwaitFirstValueCallbacks() {
+        val data = spy(MutableLiveData<Int>())
+
+        val afterSubscribeCallback: LocalFunction0<Unit> = mock()
+        val beforeUnsubscribeCallback: LocalFunction0<Unit> = mock()
+
+        async(UI) {
+            data.awaitFirstValue(
+                    runAfterObserve = afterSubscribeCallback,
+                    runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
+            )
+        }
+
+        inOrder(data, afterSubscribeCallback, beforeUnsubscribeCallback) {
+            verify(data).observeForever(any())
+            verify(afterSubscribeCallback).invoke()
+            verifyNoMoreInteractions()
+
+            data.value = 10
+
+            verify(beforeUnsubscribeCallback).invoke()
+            verify(data).removeObserver(any())
+        }
     }
 }

@@ -23,10 +23,7 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
     @Volatile
     var forceUpdateAllItems = true
 
-    /**
-     * Callback that gets called after [RecyclerView] received updated data.
-     */
-    var listUpdateListener: (() -> Unit)? = null
+    private val updateListeners = ArrayList<() -> Unit>()
 
     private val asyncListDiffComputer = AsyncListDiffComputer()
 
@@ -42,7 +39,7 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
                 result.dispatchUpdatesTo(it)
             }
             forceUpdateAllItems = false
-            listUpdateListener?.invoke()
+            updateListeners.forEach { it.invoke() }
         }
     }
 
@@ -52,6 +49,22 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = data?.elementAtOrNull(position) ?: return
         onBindViewHolder(holder, position, item)
+    }
+
+    /**
+     * Add callback that gets called after [RecyclerView] received updated data.
+     */
+    fun addUpdateListener(listener: () -> Unit) {
+        updateListeners.add(listener)
+    }
+
+    /**
+     * Remove added update listener.
+     *
+     * @see addUpdateListener
+     */
+    fun removeUpdateListener(listener: () -> Unit) {
+        updateListeners.remove(listener)
     }
 
     abstract fun onBindViewHolder(holder: VH, position: Int, item: T)

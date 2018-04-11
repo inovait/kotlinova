@@ -5,6 +5,7 @@ package si.inova.kotlinova.testing
  */
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.createInstance
 import kotlinx.coroutines.experimental.Deferred
@@ -17,6 +18,12 @@ import org.mockito.Mockito
 import org.robolectric.shadows.ShadowSystemClock
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.toChannel
+import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
+import si.inova.kotlinova.data.value
+import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.utils.ISO_8601_DATE_FORMAT
+import java.util.Calendar
 
 infix fun <T> Comparable<T>.isGreaterThan(other: T) {
     assertTrue("$this is greater than $other", this > other)
@@ -58,4 +65,25 @@ fun <T, R : Any> assertIs(test: R?, expectedClass: Class<T>) {
             "Object should be ${expectedClass.name}, but is ${test?.javaClass?.name}",
             test != null && expectedClass.isAssignableFrom(test.javaClass)
     )
+}
+
+fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
+    return TimeProvider.currentCalendar().apply { set(year, month + 1, day) }
+}
+
+fun isoFromDate(day: Int, month: Int, year: Int): String {
+    return ISO_8601_DATE_FORMAT.format(calendarFromDate(day, month, year).time)
+}
+
+fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
+    val observer = Observer<Resource<List<T>>> {}
+
+    data.observeForever(observer)
+    while (!isAtEnd) {
+        loadNextPage()
+    }
+
+    val result = data.value!!.value!!
+    data.removeObserver(observer)
+    return result
 }

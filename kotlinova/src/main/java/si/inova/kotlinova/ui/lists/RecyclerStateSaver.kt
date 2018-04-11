@@ -50,6 +50,6 @@ class RecyclerStateSaver(
     }
 
     fun attach(listSection: ListSection<*, *>) {
-        listSection.listUpdateListener = this::notifyRecyclerViewLoaded
+        listSection.addUpdateListener(this::notifyRecyclerViewLoaded)
     }
 }

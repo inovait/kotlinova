@@ -9,7 +9,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
-import si.inova.kotlinova.data.pagination.PaginatedQuery
 
 /**
  * @author Matej Drobnic
@@ -94,7 +93,7 @@ class ObservableFirebasePaginatedQuery<T>(
 }
 
 /**
- * Convenience operator that converts regular [Query] into [PaginatedQuery]
+ * Convenience operator that converts regular [Query] into [ObservablePaginatedQuery]
  */
 inline fun <reified T> Query.paginateObservable(
     itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
