@@ -43,9 +43,11 @@ class BackstackFragment : NestedAnimatedFragment(), ResettableFragment {
                 .apply {
                     if (useBackStack) {
                         addToBackStack(null)
+                        commit()
+                    } else {
+                        commitNow()
                     }
                 }
-                .commit()
     }
 
     companion object {
