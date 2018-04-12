@@ -1,72 +1,80 @@
 package si.inova.kotlinova.data.pagination
 
-import android.arch.lifecycle.LiveData
+import io.reactivex.Flowable
 import si.inova.kotlinova.data.Resource
-import si.inova.kotlinova.utils.map
 
 /**
  * Query that broadcasts its data asynchronously and automatically notifies observers when
- * any data in the query changed
+ * any data in the query changed.
  *
+ * To start loading data, you must call [loadFirstPage()][loadFirstPage] first.
+ **
  */
 interface ObservablePaginatedQuery<T> {
-    val data: LiveData<Resource<List<T>>>
+    val data: Flowable<Resource<List<T>>>
     val isAtEnd: Boolean
 
     /**
-     * Load next page of this query. Note that this method does NOT block or suspend, it returns
-     * immediately and data is later updated asynchronously.
+     * Load first page of the query. Function will not return until the page is fully loaded.
      */
-    fun loadNextPage()
+    suspend fun loadFirstPage()
+
+    /**
+     * Load next page of this query. Function will not return until the page is fully loaded.
+     */
+    suspend fun loadNextPage()
 }
 
 /**
- * Map all data in the paginated query into different data
+ * Apply operations on raw observable of this query
  */
-inline fun <T, R> ObservablePaginatedQuery<T>.map(
-    crossinline mapMethod: (T) -> R
-): ObservablePaginatedQuery<R> {
-    return this.mapList {
-        it.map(mapMethod)
-    }
-}
+inline fun <I, O> ObservablePaginatedQuery<I>.mutateRaw(
+    converter: Flowable<Resource<List<I>>>.() -> Flowable<Resource<List<O>>>
+): ObservablePaginatedQuery<O> {
+    val original = this
+    val mutatedData = with(data) { converter() }
 
-/**
- * Map entire query page at once
- */
-fun <T, R> ObservablePaginatedQuery<T>.mapList(
-    mapMethod: (List<T>) -> List<R>
-): ObservablePaginatedQuery<R> {
-    val originalQuery = this
-
-    return object : ObservablePaginatedQuery<R> {
-        override val data: LiveData<Resource<List<R>>> =
-                originalQuery.data.map {
-                    if (it == null) {
-                        throw NullPointerException()
-                    }
-
-                    when (it) {
-                        is Resource.Error -> Resource.Error<List<R>>(it.exception)
-                        is Resource.Success -> Resource.Success(mapMethod(it.data))
-                        else -> throw UnsupportedOperationException(
-                                "ObservablePaginatedQuery only supports " +
-                                        "Resource.Error and Resource.Success"
-                        )
-                    }
-                }
-
+    return object : ObservablePaginatedQuery<O> {
+        override val data: Flowable<Resource<List<O>>>
+            get() = mutatedData
         override val isAtEnd: Boolean
-            get() = originalQuery.isAtEnd
+            get() = original.isAtEnd
 
-        override fun loadNextPage() {
-            return originalQuery.loadNextPage()
+        override suspend fun loadFirstPage() {
+            original.loadFirstPage()
+        }
+
+        override suspend fun loadNextPage() {
+            original.loadNextPage()
         }
     }
 }
 
-fun <T> ObservablePaginatedQuery<T>.filter(predicate: (T) -> Boolean): ObservablePaginatedQuery<T> {
-    return mapList {
-        it.filter(predicate)
+/**
+ * Apply operations on whole list of this query
+ */
+inline fun <I, O> ObservablePaginatedQuery<I>.mutate(crossinline converter: (List<I>) -> List<O>):
+    ObservablePaginatedQuery<O> {
+    return mutateRaw {
+        map { resource ->
+            when (resource) {
+                is Resource.Success -> Resource.Success(converter(resource.data))
+                is Resource.Error -> Resource.Error<List<O>>(resource.exception)
+                else -> throw IllegalStateException(
+                    "ObservablePaginatedQuery only supports" +
+                        "Resource.Success and Resource.Error. Found: $resource"
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Apply operations on single element of this query
+ */
+inline fun <I, O> ObservablePaginatedQuery<I>.map(crossinline converter: (I) -> O):
+    ObservablePaginatedQuery<O> {
+    return mutate { list ->
+        list.map(converter)
     }
 }

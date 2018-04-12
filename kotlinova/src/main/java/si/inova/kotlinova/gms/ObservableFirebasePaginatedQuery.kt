@@ -1,14 +1,19 @@
 package si.inova.kotlinova.gms
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.sync.Mutex
+import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
+import si.inova.kotlinova.rx.OnDemandProvider
+import si.inova.kotlinova.utils.awaitUnlockIfLocked
+import si.inova.kotlinova.utils.use
 
 /**
  * @author Matej Drobnic
@@ -19,23 +24,25 @@ class ObservableFirebasePaginatedQuery<T>(
     private val baseQuery: Query,
     private val targetClass: Class<T>,
     private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
-) : EventListener<QuerySnapshot>,
-        ObservablePaginatedQuery<Pair<String, T>>,
-        MutableLiveData<Resource<List<Pair<String, T>>>>() {
+) : OnDemandProvider<Resource<List<Pair<String, T>>>>(UI),
+    EventListener<QuerySnapshot>,
+    ObservablePaginatedQuery<Pair<String, T>> {
 
     private var currentQuery: Query? = null
     private var currentListenerRegistration: ListenerRegistration? = null
     private var numItemsFetched = 0
 
     private var waitingForFirstValue: Boolean = false
+    private var loadingLatch = Mutex(false)
 
-    init {
+    override suspend fun loadFirstPage() {
+        numItemsFetched = 0
         loadNextPage()
     }
 
-    override fun loadNextPage() {
+    override suspend fun loadNextPage() = data.use {
         if (isAtEnd || waitingForFirstValue) {
-            return
+            return@use
         }
 
         waitingForFirstValue = true
@@ -47,20 +54,20 @@ class ObservableFirebasePaginatedQuery<T>(
         val newQuery = baseQuery.limit(numItemsFetched.toLong())
         currentQuery = newQuery
 
-        if (hasActiveObservers()) {
-            currentListenerRegistration = newQuery.addSnapshotListener(this)
-        }
+        loadingLatch.lock()
+        currentListenerRegistration = newQuery.addSnapshotListener(this)
+        loadingLatch.awaitUnlockIfLocked()
     }
 
-    override val data: LiveData<Resource<List<Pair<String, T>>>>
-        get() = this
+    override val data: Flowable<Resource<List<Pair<String, T>>>>
+        get() = flowable
 
     override var isAtEnd = false
         private set
 
     override fun onEvent(snapshot: QuerySnapshot?, e: FirebaseFirestoreException?) {
         if (e != null) {
-            postValue(Resource.Error(e))
+            send(Resource.Error(e))
             return
         }
 
@@ -69,9 +76,11 @@ class ObservableFirebasePaginatedQuery<T>(
                 Pair(it.id, it.toObject(targetClass))
             }
 
-            postValue(Resource.Success(data))
+            send(Resource.Success(data))
 
             if (waitingForFirstValue) {
+                loadingLatch.unlock()
+
                 isAtEnd = data.size < numItemsFetched
                 waitingForFirstValue = false
             } else {
@@ -82,11 +91,12 @@ class ObservableFirebasePaginatedQuery<T>(
         }
     }
 
-    override fun onActive() {
-        currentListenerRegistration = currentQuery?.addSnapshotListener(this)
+    override suspend fun CoroutineScope.onActive() {
+        currentListenerRegistration =
+            currentQuery?.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
     }
 
-    override fun onInactive() {
+    override suspend fun CoroutineScope.onInactive() {
         currentListenerRegistration?.remove()
         currentListenerRegistration = null
     }

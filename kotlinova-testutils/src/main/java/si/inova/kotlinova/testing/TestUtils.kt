@@ -5,13 +5,14 @@ package si.inova.kotlinova.testing
  */
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.createInstance
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.first
+import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.mockito.ArgumentMatcher
 import org.mockito.Mockito
@@ -20,7 +21,6 @@ import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
-import si.inova.kotlinova.data.value
 import si.inova.kotlinova.time.TimeProvider
 import si.inova.kotlinova.utils.ISO_8601_DATE_FORMAT
 import java.util.Calendar
@@ -62,8 +62,8 @@ suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> 
 
 fun <T, R : Any> assertIs(test: R?, expectedClass: Class<T>) {
     assertTrue(
-            "Object should be ${expectedClass.name}, but is ${test?.javaClass?.name}",
-            test != null && expectedClass.isAssignableFrom(test.javaClass)
+        "Object should be ${expectedClass.name}, but is ${test?.javaClass?.name}",
+        test != null && expectedClass.isAssignableFrom(test.javaClass)
     )
 }
 
@@ -76,14 +76,24 @@ fun isoFromDate(day: Int, month: Int, year: Int): String {
 }
 
 fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
-    val observer = Observer<Resource<List<T>>> {}
+    var receivedValue: Resource<List<T>>? = null
 
-    data.observeForever(observer)
-    while (!isAtEnd) {
-        loadNextPage()
+    val subscriber = data.subscribe {
+        receivedValue = it
     }
 
-    val result = data.value!!.value!!
-    data.removeObserver(observer)
-    return result
+    runBlocking {
+        loadFirstPage()
+
+        while (!isAtEnd) {
+            loadNextPage()
+        }
+    }
+
+    assertNotNull("Received no value from the paginated query", receivedValue)
+
+    assertIs(receivedValue, Resource.Success::class.java)
+
+    subscriber.dispose()
+    return (receivedValue as Resource.Success).data
 }
