@@ -4,9 +4,11 @@ package si.inova.kotlinova.utils
 
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
+import org.reactivestreams.Publisher
 
 /**
  * @author Matej Drobnic
@@ -88,6 +90,20 @@ fun <T> MediatorLiveData<T>.addSource(source: LiveData<T>) {
     }
 }
 
+/**
+ * Add Rx source to the [MediatorLiveData].
+ */
+fun <T> MediatorLiveData<T>.addSource(source: Publisher<T>, onChanged: (T?) -> Unit) {
+    addSource(source.toLiveData(), onChanged)
+}
+
+/**
+ * Add Rx source to the [MediatorLiveData] that just forwards its value to MediatorLiveData's value.
+ */
+fun <T> MediatorLiveData<T>.addSource(source: Publisher<T>) {
+    addSource(source.toLiveData())
+}
+
 fun <S, R> LiveData<S>.map(transformation: (S?) -> R?): LiveData<R> {
     return Transformations.map(this, transformation)
 }
@@ -104,4 +120,8 @@ fun <S, R> LiveData<S>.mapIfNotNull(transformation: (S?) -> R?): LiveData<R> {
         }
     }
     return resultLiveData
+}
+
+fun <T> Publisher<T>.toLiveData(): LiveData<T> {
+    return LiveDataReactiveStreams.fromPublisher(this)
 }
