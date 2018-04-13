@@ -11,6 +11,7 @@ import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
+import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.data.ExtendedMediatorLiveData
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.exceptions.OwnershipTransferredException
@@ -34,7 +35,7 @@ abstract class CoroutineViewModel : ViewModel() {
      * Launch automatically-cancelled job
      */
     fun launchManaged(
-        context: CoroutineContext = UI,
+        context: CoroutineContext = CommonPool,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ): Job {
@@ -69,8 +70,10 @@ abstract class CoroutineViewModel : ViewModel() {
 
                 // If this resource can be controlled from outside, we need to reset
                 // it first.
-                if (resource is ExtendedMediatorLiveData<*>) {
-                    resource.removeAllSources()
+                if (resource is ExtendedMediatorLiveData<*> && resource.hasAnySources()) {
+                    withContext(UI) {
+                        resource.removeAllSources()
+                    }
                 }
             }
         }
@@ -79,14 +82,14 @@ abstract class CoroutineViewModel : ViewModel() {
         activeJobs.put(resource as MutableLiveData<Resource<*>>, coroutineContext[Job]!!)
 
         try {
-            resource.value = Resource.Loading(currentValue)
+            resource.postValue(Resource.Loading(currentValue))
             block(resource)
         } catch (_: OwnershipTransferredException) {
             // Do nothing. New owner will set their own values.
         } catch (_: CancellationException) {
-            resource.value = Resource.Cancelled<T>()
+            resource.postValue(Resource.Cancelled<T>())
         } catch (e: Exception) {
-            resource.value = Resource.Error<T>(e)
+            resource.postValue(Resource.Error<T>(e))
         } finally {
             activeJobs.remove(resource)
         }

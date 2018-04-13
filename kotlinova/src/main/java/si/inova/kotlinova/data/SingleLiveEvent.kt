@@ -63,12 +63,10 @@ open class SingleLiveEvent<T> : MutableLiveData<T>() {
     /**
      * Used for cases where T is Void, to make calls cleaner.
      */
-    @MainThread
     fun call() {
-        value = null
+        postValue(null)
     }
 
-    @MainThread
     operator fun invoke() {
         call()
     }
