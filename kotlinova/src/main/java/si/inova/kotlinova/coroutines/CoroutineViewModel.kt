@@ -9,7 +9,8 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 import si.inova.kotlinova.data.ExtendedMediatorLiveData
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.exceptions.OwnershipTransferredException
@@ -27,6 +28,7 @@ abstract class CoroutineViewModel : ViewModel() {
     protected val parentJob: Job = Job()
 
     private val activeJobs = SimpleArrayMap<MutableLiveData<Resource<*>>, Job>()
+    private val jobSelectionMutex = Mutex()
 
     /**
      * Launch automatically-cancelled job
@@ -55,9 +57,8 @@ abstract class CoroutineViewModel : ViewModel() {
         unique: Boolean = true,
         block: suspend CoroutineScope.(L) -> Unit
     ) {
-        // Make sure job cancellation runs on the same thread to prevent thread clashes
-        withContext<Unit>(UI) {
-            if (unique) {
+        if (unique) {
+            jobSelectionMutex.withLock {
                 // To prevent threading issues, only one job can handle one resource at a time
                 // Cancel active job first.
                 val currentJobForThatResource = activeJobs.remove(resource)
@@ -72,10 +73,10 @@ abstract class CoroutineViewModel : ViewModel() {
                     resource.removeAllSources()
                 }
             }
-
-            @Suppress("UNCHECKED_CAST")
-            activeJobs.put(resource as MutableLiveData<Resource<*>>, coroutineContext[Job]!!)
         }
+
+        @Suppress("UNCHECKED_CAST")
+        activeJobs.put(resource as MutableLiveData<Resource<*>>, coroutineContext[Job]!!)
 
         try {
             resource.value = Resource.Loading(currentValue)
@@ -83,9 +84,9 @@ abstract class CoroutineViewModel : ViewModel() {
         } catch (_: OwnershipTransferredException) {
             // Do nothing. New owner will set their own values.
         } catch (_: CancellationException) {
-            resource.value = Resource.Cancelled()
+            resource.value = Resource.Cancelled<T>()
         } catch (e: Exception) {
-            resource.value = Resource.Error(e)
+            resource.value = Resource.Error<T>(e)
         } finally {
             activeJobs.remove(resource)
         }
