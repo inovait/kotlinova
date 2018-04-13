@@ -93,7 +93,7 @@ fun <T> MediatorLiveData<T>.addSource(source: LiveData<T>) {
 /**
  * Add Rx source to the [MediatorLiveData].
  */
-fun <T> MediatorLiveData<T>.addSource(source: Publisher<T>, onChanged: (T?) -> Unit) {
+fun <T, S> MediatorLiveData<T>.addSource(source: Publisher<S>, onChanged: (S?) -> Unit) {
     addSource(source.toLiveData(), onChanged)
 }
 
