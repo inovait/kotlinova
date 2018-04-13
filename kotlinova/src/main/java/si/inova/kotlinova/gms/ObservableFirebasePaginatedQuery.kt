@@ -66,6 +66,13 @@ class ObservableFirebasePaginatedQuery<T>(
         private set
 
     override fun onEvent(snapshot: QuerySnapshot?, e: FirebaseFirestoreException?) {
+        if (!isActive) {
+            // Event was received after we went inactive
+            // ignore it
+
+            return
+        }
+
         if (e != null) {
             send(Resource.Error(e))
             return
