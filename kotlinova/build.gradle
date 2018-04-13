@@ -41,6 +41,7 @@ android {
     testOptions {
         unitTests {
             includeAndroidResources = true
+            returnDefaultValues = true
         }
     }
 }
@@ -97,6 +98,7 @@ dependencies {
     testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
     testImplementation "com.github.Plastix.RxSchedulerRule:rx2:${versions.rxSchedulerRule}"
 
+    androidTestImplementation project(':kotlinova-testutils')
     androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"

@@ -4,6 +4,8 @@ package si.inova.kotlinova.coroutines
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.os.Looper
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import kotlinx.coroutines.experimental.withContext
 
@@ -42,7 +44,14 @@ suspend fun <T> LiveData<T>.awaitFirstValue(
 
             continuation.invokeOnCompletion {
                 runAfterCompletionBeforeRemoveObserver?.invoke()
-                this@awaitFirstValue.removeObserver(observer)
+
+                if (Looper.myLooper() == Looper.getMainLooper()) {
+                    this@awaitFirstValue.removeObserver(observer)
+                } else {
+                    launch(UI) {
+                        this@awaitFirstValue.removeObserver(observer)
+                    }
+                }
             }
         }
     }

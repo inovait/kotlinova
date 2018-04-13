@@ -11,17 +11,23 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import si.inova.kotlinova.testing.ImmediateDispatcherRule
 import si.inova.kotlinova.testing.LocalFunction0
+import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.utils.map
 
 /**
  * @author Matej Drobnic
  */
-@RunWith(RobolectricTestRunner::class)
 class LiveDataCoroutinesTest {
+    @get:Rule
+    val threadErrorRule = UncaughtExceptionThrowRule()
+
+    @get:Rule
+    val dispatcher = ImmediateDispatcherRule()
+
     @Test
     fun testAwaitFirstValue() {
         val data = MutableLiveData<Int>()
@@ -111,8 +117,8 @@ class LiveDataCoroutinesTest {
 
         async(UI) {
             data.awaitFirstValue(
-                    runAfterObserve = afterSubscribeCallback,
-                    runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
+                runAfterObserve = afterSubscribeCallback,
+                runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
             )
         }
 
