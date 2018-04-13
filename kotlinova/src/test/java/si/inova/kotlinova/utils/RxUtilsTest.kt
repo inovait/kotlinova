@@ -3,6 +3,7 @@ package si.inova.kotlinova.utils
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.github.plastix.rxschedulerrule.RxSchedulerRule
 import io.reactivex.Flowable
 import io.reactivex.functions.Action
@@ -35,6 +36,34 @@ class RxUtilsTest {
             verifyNoMoreInteractions()
 
             flowable.use(action)
+
+            verify(onSubscribe).accept(any())
+            verify(action).invoke()
+            verify(onDispose).run()
+
+            verifyNoMoreInteractions()
+        }
+    }
+
+    @Test
+    fun useWithException() {
+        val onSubscribe: Consumer<in Subscription> = mock()
+        val onDispose: Action = mock()
+        val action: () -> Unit = mock()
+
+        whenever(action.invoke()).thenThrow(RuntimeException())
+
+        val flowable = Flowable.never<Unit>()
+            .doOnSubscribe(onSubscribe)
+            .doFinally(onDispose)
+
+        inOrder(onSubscribe, action, onDispose) {
+            verifyNoMoreInteractions()
+
+            try {
+                flowable.use(action)
+            } catch (e: Exception) {
+            }
 
             verify(onSubscribe).accept(any())
             verify(action).invoke()

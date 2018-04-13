@@ -26,6 +26,9 @@ inline fun <T> Publisher<T>.use(block: () -> Unit) {
         override fun onError(t: Throwable?) = Unit
     })
 
-    block()
-    subscription?.cancel()
+    try {
+        block()
+    } finally {
+        subscription?.cancel()
+    }
 }
