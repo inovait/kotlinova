@@ -439,6 +439,24 @@ class OnDemandProviderTest {
     }
 
     @Test
+    fun bufferLastItemThroughMultipleDebounces() {
+        val subscriber = testProvider.flowable.subscribe()
+        testProvider.sendPublic(33)
+        testProvider.sendPublic(77)
+
+        subscriber.dispose()
+
+        testProvider.flowable.subscribe().dispose()
+        testProvider.flowable.subscribe().dispose()
+        testProvider.flowable.subscribe().dispose()
+        testProvider.flowable.subscribe().dispose()
+
+        val lateConsumer: Consumer<Int> = mock()
+        testProvider.flowable.subscribe(lateConsumer)
+        verify(lateConsumer, only()).accept(77)
+    }
+
+    @Test
     fun noItemBufferingAfterDispose() {
         val subscriber = testProvider.flowable.subscribe()
         testProvider.sendPublic(33)

@@ -83,7 +83,7 @@ abstract class OnDemandProvider<T>(
                     }
                 }
             } else {
-                val curValue = lastValue.getAndSet(null)
+                val curValue = lastValue.get()
 
                 if (curValue != null) {
                     emitter.onNext(curValue)
