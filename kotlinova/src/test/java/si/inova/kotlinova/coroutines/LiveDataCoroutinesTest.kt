@@ -1,62 +1,32 @@
 package si.inova.kotlinova.coroutines
 
 import android.arch.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.android.gms.tasks.Tasks
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import si.inova.kotlinova.testing.ImmediateDispatcherRule
 import si.inova.kotlinova.testing.LocalFunction0
+import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.utils.map
 
 /**
  * @author Matej Drobnic
  */
-@RunWith(RobolectricTestRunner::class)
-class TaskConvertersTest {
-    @Test
-    fun testTaskAwaitResult1() = runBlocking {
-        val task = Tasks.forResult("SUCCESS")
-        assertEquals("SUCCESS", task.await())
-    }
+class LiveDataCoroutinesTest {
+    @get:Rule
+    val threadErrorRule = UncaughtExceptionThrowRule()
 
-    @Test
-    fun testTaskAwaitResult2() = runBlocking {
-        val task = TaskCompletionSource<String>()
-        val result = async(Unconfined) { task.task.await() }
-
-        task.setResult("SUCCESS")
-
-        assertEquals("SUCCESS", result.await())
-    }
-
-    @Test(expected = NoSuchElementException::class)
-    fun testTaskAwaitException1() = runBlocking<Unit> {
-        val task = Tasks.forException<String>(NoSuchElementException())
-
-        task.await()
-    }
-
-    @Test(expected = NoSuchElementException::class)
-    fun testTaskAwaitException2() = runBlocking<Unit> {
-        val task = TaskCompletionSource<String>()
-        val result = async(Unconfined) { task.task.await() }
-
-        task.setException(NoSuchElementException())
-
-        result.await()
-    }
+    @get:Rule
+    val dispatcher = ImmediateDispatcherRule()
 
     @Test
     fun testAwaitFirstValue() {
@@ -147,8 +117,8 @@ class TaskConvertersTest {
 
         async(UI) {
             data.awaitFirstValue(
-                    runAfterObserve = afterSubscribeCallback,
-                    runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
+                runAfterObserve = afterSubscribeCallback,
+                runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
             )
         }
 

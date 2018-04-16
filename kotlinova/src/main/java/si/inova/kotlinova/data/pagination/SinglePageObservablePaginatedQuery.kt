@@ -1,7 +1,8 @@
 package si.inova.kotlinova.data.pagination
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.subjects.BehaviorSubject
 import si.inova.kotlinova.data.Resource
 
 /**
@@ -9,15 +10,18 @@ import si.inova.kotlinova.data.Resource
  *
  * @author Matej Drobnic
  */
-class SinglePageObservablePaginatedQuery<T>(providedData: List<T>) : ObservablePaginatedQuery<T> {
+
+class SinglePageObservablePaginatedQuery<T>(private val providedData: List<T>) :
+    ObservablePaginatedQuery<T> {
+
     override val isAtEnd: Boolean = true
 
-    private val _data = MutableLiveData<Resource<List<T>>>()
-    override val data: LiveData<Resource<List<T>>> = _data
+    private val _data = BehaviorSubject.create<Resource<List<T>>>()
+    override val data: Flowable<Resource<List<T>>> = _data.toFlowable(BackpressureStrategy.LATEST)
 
-    init {
-        _data.value = Resource.Success(providedData)
+    override suspend fun loadFirstPage() {
+        _data.onNext(Resource.Success(providedData))
     }
 
-    override fun loadNextPage() = Unit
+    override suspend fun loadNextPage() = Unit
 }
