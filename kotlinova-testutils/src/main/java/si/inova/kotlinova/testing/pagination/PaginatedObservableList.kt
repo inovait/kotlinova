@@ -1,18 +1,25 @@
 package si.inova.kotlinova.testing.pagination
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.sync.Mutex
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.testing.OpenForTesting
+import si.inova.kotlinova.utils.awaitUnlockIfLocked
 
 /**
- * [ObservablePaginatedQuery] that provides complete list of pages
+ * [ObservablePaginatedQuery] that provides complete list of pages.
+ *
+ * You can send pages in asynchronously with [freeze()][freeze] and [unfreeze()][unfreeze] methods.
  *
  * @author Matej Drobnic
  */
 @OpenForTesting
 class PaginatedObservableList<T>(initialData: List<List<T>>) : ObservablePaginatedQuery<T> {
+    private val loadingLatch = Mutex()
+
     var currentList: List<List<T>> = initialData
         set(value) {
             field = value
@@ -24,15 +31,34 @@ class PaginatedObservableList<T>(initialData: List<List<T>>) : ObservablePaginat
     override val isAtEnd: Boolean
         get() = curPage >= currentList.size
 
-    private val _data = MutableLiveData<Resource<List<T>>>()
-    override val data: LiveData<Resource<List<T>>>
-        get() = _data
+    private val _data = BehaviorSubject.create<Resource<List<T>>>()
+    override val data: Flowable<Resource<List<T>>>
+        get() = _data.toFlowable(BackpressureStrategy.DROP)
 
-    init {
+    /**
+     * Freeze data transmission for this query. [loadFirstPage()][loadFirstPage] and
+     * [loadNextPage()][loadNextPage] methods
+     * will not return until [unfreeze()][unfreeze] is called
+     */
+    fun freeze() {
+        if (!loadingLatch.tryLock()) {
+            throw IllegalStateException("Already frozen")
+        }
+    }
+
+    fun unfreeze() {
+        loadingLatch.unlock()
+    }
+
+    override suspend fun loadFirstPage() {
+        loadingLatch.awaitUnlockIfLocked()
+
         updateObservable()
     }
 
-    override fun loadNextPage() {
+    override suspend fun loadNextPage() {
+        loadingLatch.awaitUnlockIfLocked()
+
         if (isAtEnd) {
             return
         }
@@ -43,6 +69,6 @@ class PaginatedObservableList<T>(initialData: List<List<T>>) : ObservablePaginat
 
     private fun updateObservable() {
         val loadedPages = currentList.subList(0, curPage)
-        _data.value = Resource.Success(loadedPages.flatten())
+        _data.onNext(Resource.Success(loadedPages.flatten()))
     }
 }

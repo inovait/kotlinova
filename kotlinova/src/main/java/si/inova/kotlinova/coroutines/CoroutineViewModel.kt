@@ -9,6 +9,8 @@ import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.experimental.sync.withLock
 import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.data.ExtendedMediatorLiveData
 import si.inova.kotlinova.data.Resource
@@ -27,12 +29,13 @@ abstract class CoroutineViewModel : ViewModel() {
     protected val parentJob: Job = Job()
 
     private val activeJobs = SimpleArrayMap<MutableLiveData<Resource<*>>, Job>()
+    private val jobSelectionMutex = Mutex()
 
     /**
      * Launch automatically-cancelled job
      */
     fun launchManaged(
-        context: CoroutineContext = UI,
+        context: CoroutineContext = CommonPool,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ): Job {
@@ -55,9 +58,8 @@ abstract class CoroutineViewModel : ViewModel() {
         unique: Boolean = true,
         block: suspend CoroutineScope.(L) -> Unit
     ) {
-        // Make sure job cancellation runs on the same thread to prevent thread clashes
-        withContext<Unit>(UI) {
-            if (unique) {
+        if (unique) {
+            jobSelectionMutex.withLock {
                 // To prevent threading issues, only one job can handle one resource at a time
                 // Cancel active job first.
                 val currentJobForThatResource = activeJobs.remove(resource)
@@ -68,24 +70,26 @@ abstract class CoroutineViewModel : ViewModel() {
 
                 // If this resource can be controlled from outside, we need to reset
                 // it first.
-                if (resource is ExtendedMediatorLiveData<*>) {
-                    resource.removeAllSources()
+                if (resource is ExtendedMediatorLiveData<*> && resource.hasAnySources()) {
+                    withContext(UI) {
+                        resource.removeAllSources()
+                    }
                 }
             }
-
-            @Suppress("UNCHECKED_CAST")
-            activeJobs.put(resource as MutableLiveData<Resource<*>>, coroutineContext[Job]!!)
         }
 
+        @Suppress("UNCHECKED_CAST")
+        activeJobs.put(resource as MutableLiveData<Resource<*>>, coroutineContext[Job]!!)
+
         try {
-            resource.value = Resource.Loading(currentValue)
+            resource.postValue(Resource.Loading(currentValue))
             block(resource)
         } catch (_: OwnershipTransferredException) {
             // Do nothing. New owner will set their own values.
         } catch (_: CancellationException) {
-            resource.value = Resource.Cancelled()
+            resource.postValue(Resource.Cancelled<T>())
         } catch (e: Exception) {
-            resource.value = Resource.Error(e)
+            resource.postValue(Resource.Error<T>(e))
         } finally {
             activeJobs.remove(resource)
         }

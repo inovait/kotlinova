@@ -33,4 +33,8 @@ class ExtendedMediatorLiveData<T> : MediatorLiveData<T>() {
 
         sources.clear()
     }
+
+    fun hasAnySources(): Boolean {
+        return sources.any { it.get() != null }
+    }
 }

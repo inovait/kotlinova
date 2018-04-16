@@ -1,6 +1,5 @@
 package si.inova.kotlinova.gms
 
-import android.arch.lifecycle.Observer
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -9,6 +8,9 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.whenever
+import io.github.plastix.rxschedulerrule.RxSchedulerRule
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -19,11 +21,13 @@ import org.junit.Test
 import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import si.inova.kotlinova.testing.firebase.MockCollection
+import si.inova.kotlinova.coroutines.CommonPool
 import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
-import si.inova.kotlinova.testing.ImmediateDispatcherRule
+import si.inova.kotlinova.testing.TimedDispatcher
+import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.testing.assertIs
+import si.inova.kotlinova.testing.firebase.MockCollection
 
 /**
  * @author Matej Drobnic
@@ -35,11 +39,15 @@ class ObservableFirebasePaginatedQueryTest {
     private lateinit var listenerRegistration: ListenerRegistration
 
     private lateinit var observableFirebasePaginatedQuery:
-            ObservablePaginatedQuery<Pair<String, Int>>
+        ObservablePaginatedQuery<Pair<String, Int>>
     private var listener: EventListener<QuerySnapshot>? = null
 
     @get:Rule
-    val rule = ImmediateDispatcherRule()
+    val dispatcher = TimedDispatcher()
+    @get:Rule
+    val rxJavaSchedulerRule = RxSchedulerRule()
+    @get:Rule
+    val uncaughtExceptionThrowRule = UncaughtExceptionThrowRule()
 
     @Before
     fun setUp() {
@@ -56,19 +64,23 @@ class ObservableFirebasePaginatedQueryTest {
 
     @Test
     fun registerUnregisterListenerOnLifecycle() {
-        val observer = Observer<Resource<List<Pair<String, Int>>>> {}
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+        listener!!.onEvent(MockCollection(emptyList<Pair<String, Int>>()).toQuerySnapshot(), null)
+
         inOrder(listenerRegistration, query) {
-            observableFirebasePaginatedQuery.data.observeForever(observer)
+            var subscription = observableFirebasePaginatedQuery.data.subscribe()
             assertNotNull(listener)
             verify(query).addSnapshotListener(any())
 
-            observableFirebasePaginatedQuery.data.removeObserver(observer)
+            subscription.dispose()
+            dispatcher.advanceTime(600)
             verify(listenerRegistration).remove()
 
-            observableFirebasePaginatedQuery.data.observeForever(observer)
+            subscription = observableFirebasePaginatedQuery.data.subscribe()
             verify(query).addSnapshotListener(any())
 
-            observableFirebasePaginatedQuery.data.removeObserver(observer)
+            subscription.dispose()
+            dispatcher.advanceTime(600)
             verify(listenerRegistration).remove()
 
             verify(query, never()).addSnapshotListener(any())
@@ -76,33 +88,44 @@ class ObservableFirebasePaginatedQueryTest {
     }
 
     @Test
-    fun singlePage() {
+    fun singlePage() = runBlocking {
         val testData = listOf(
-                "10" to 10,
-                "20" to 20,
-                "30" to 30
+            "10" to 10,
+            "20" to 20,
+            "30" to 30
         )
 
-        observableFirebasePaginatedQuery.data.observeForever { }
+        var valuePlaceholder: Resource<List<Pair<String, Int>>>? = null
+        observableFirebasePaginatedQuery.data.subscribe {
+            valuePlaceholder = it
+        }
+
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
 
         listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
-        val result = observableFirebasePaginatedQuery.data.value
+        val result = valuePlaceholder
         assertIs(result, Resource.Success::class.java)
         result as Resource.Success
         assertEquals(testData, result.data)
     }
 
     @Test
-    fun multiPage() {
+    fun multiPage() = runBlocking {
         val testData = listOf(
-                "10" to 10,
-                "20" to 20,
-                "40" to 40,
-                "50" to 50
+            "10" to 10,
+            "20" to 20,
+            "40" to 40,
+            "50" to 50
         )
 
-        observableFirebasePaginatedQuery.data.observeForever { }
+        var valuePlaceholder: Resource<List<Pair<String, Int>>>? = null
+        observableFirebasePaginatedQuery.data.subscribe {
+            valuePlaceholder = it
+        }
+
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+
         assertNotNull(listener)
 
         // We do not test actual page separation (Firebase SDK does that behind the scenes).
@@ -110,7 +133,7 @@ class ObservableFirebasePaginatedQueryTest {
 
         listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
-        observableFirebasePaginatedQuery.loadNextPage()
+        async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
 
         inOrder(query) {
             verify(query).limit(2L)
@@ -119,7 +142,7 @@ class ObservableFirebasePaginatedQueryTest {
 
         listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
-        val result = observableFirebasePaginatedQuery.data.value
+        val result = valuePlaceholder
         assertIs(result, Resource.Success::class.java)
         result as Resource.Success
         assertEquals(testData, result.data)
@@ -128,28 +151,29 @@ class ObservableFirebasePaginatedQueryTest {
     @Test
     fun isAtEnd() {
         val firstPage = listOf(
-                "10" to 10,
-                "20" to 20
+            "10" to 10,
+            "20" to 20
         )
 
         val firstAndSecondPage = listOf(
-                "10" to 10,
-                "20" to 20,
-                "40" to 40
+            "10" to 10,
+            "20" to 20,
+            "40" to 40
         )
 
         val newFirstAndSecondPage = listOf(
-                "11" to 11,
-                "20" to 20,
-                "40" to 40
+            "11" to 11,
+            "20" to 20,
+            "40" to 40
         )
 
-        observableFirebasePaginatedQuery.data.observeForever { }
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+        observableFirebasePaginatedQuery.data.subscribe()
 
         listener!!.onEvent(MockCollection(firstPage).toQuerySnapshot(), null)
         assertFalse(observableFirebasePaginatedQuery.isAtEnd)
 
-        observableFirebasePaginatedQuery.loadNextPage()
+        async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
         listener!!.onEvent(MockCollection(firstAndSecondPage).toQuerySnapshot(), null)
         assertTrue(observableFirebasePaginatedQuery.isAtEnd)
 
@@ -160,43 +184,45 @@ class ObservableFirebasePaginatedQueryTest {
 
     @Test
     fun fetchOnePageAtATime() {
-        observableFirebasePaginatedQuery.data.observeForever { }
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+        observableFirebasePaginatedQuery.data.subscribe()
+
         val testData = listOf(
-                "10" to 10,
-                "20" to 20,
-                "30" to 30,
-                "40" to 40,
-                "50" to 50,
-                "60" to 60
+            "10" to 10,
+            "20" to 20,
+            "30" to 30,
+            "40" to 40,
+            "50" to 50,
+            "60" to 60
         )
 
         inOrder(query) {
             verify(query).limit(2L)
 
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
 
             listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
             verify(query, never()).limit(any())
-            observableFirebasePaginatedQuery.loadNextPage()
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
             verify(query).limit(4L)
 
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
 
             listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
             verify(query, never()).limit(any())
-            observableFirebasePaginatedQuery.loadNextPage()
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
             verify(query).limit(6L)
         }
     }
@@ -204,21 +230,23 @@ class ObservableFirebasePaginatedQueryTest {
     @Test
     fun doNotRefetchAfterEnd() {
         val singlePage = listOf(
-                "10" to 10
+            "10" to 10
         )
-
-        observableFirebasePaginatedQuery.data.observeForever { }
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+        observableFirebasePaginatedQuery.data.subscribe()
 
         inOrder(query) {
             verify(query).limit(2L)
             listener!!.onEvent(MockCollection(singlePage).toQuerySnapshot(), null)
 
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
-            observableFirebasePaginatedQuery.loadNextPage()
+            runBlocking {
+                observableFirebasePaginatedQuery.loadNextPage()
+                observableFirebasePaginatedQuery.loadNextPage()
+                observableFirebasePaginatedQuery.loadNextPage()
+                observableFirebasePaginatedQuery.loadNextPage()
+                observableFirebasePaginatedQuery.loadNextPage()
+                observableFirebasePaginatedQuery.loadNextPage()
+            }
 
             verify(query, never()).limit(any())
         }
@@ -227,23 +255,96 @@ class ObservableFirebasePaginatedQueryTest {
     @Test
     fun restartListenersAfterFetchingNewPage() {
         val testData = listOf(
-                "10" to 10,
-                "20" to 20,
-                "40" to 40,
-                "50" to 50
+            "10" to 10,
+            "20" to 20,
+            "40" to 40,
+            "50" to 50
         )
 
-        observableFirebasePaginatedQuery.data.observeForever { }
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+        observableFirebasePaginatedQuery.data.subscribe()
 
         inOrder(query, listenerRegistration) {
             verify(query).addSnapshotListener(any())
 
             listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
-            observableFirebasePaginatedQuery.loadNextPage()
+            async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
 
             verify(listenerRegistration).remove()
             verify(query).addSnapshotListener(any())
         }
+    }
+
+    @Test
+    fun loadFirstPageDoesNotReturnUntilPageLoaded() {
+        val testData = listOf(
+            "10" to 10,
+            "20" to 20,
+            "30" to 30
+        )
+
+        observableFirebasePaginatedQuery.data.subscribe()
+
+        val loadFirstPageTask = async(CommonPool) {
+            observableFirebasePaginatedQuery.loadFirstPage()
+        }
+
+        assertFalse(loadFirstPageTask.isCompleted)
+
+        listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
+        assertTrue(loadFirstPageTask.isCompleted)
+    }
+
+    @Test
+    fun loadNextPageDoesNotReturnUntilPageLoaded() {
+        val testData = listOf(
+            "10" to 10,
+            "20" to 20,
+            "30" to 30
+        )
+
+        observableFirebasePaginatedQuery.data.subscribe()
+
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+        listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
+
+        val loadNextPageTask = async(CommonPool) {
+            observableFirebasePaginatedQuery.loadNextPage()
+        }
+
+        assertFalse(loadNextPageTask.isCompleted)
+
+        listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
+        assertTrue(loadNextPageTask.isCompleted)
+    }
+
+    @Test
+    fun synchronousDataArrival() {
+        val testData = listOf(
+            "10" to 10,
+            "20" to 20,
+            "30" to 30
+        )
+
+        var valuePlaceholder: Resource<List<Pair<String, Int>>>? = null
+        observableFirebasePaginatedQuery.data.subscribe {
+            valuePlaceholder = it
+        }
+
+        whenever(query.addSnapshotListener(any())).thenAnswer {
+            @Suppress("UNCHECKED_CAST")
+            listener = it.arguments[0] as EventListener<QuerySnapshot>
+            listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
+
+            listenerRegistration
+        }
+
+        runBlocking { observableFirebasePaginatedQuery.loadFirstPage() }
+
+        val result = valuePlaceholder
+        assertIs(result, Resource.Success::class.java)
+        result as Resource.Success
+        assertEquals(testData, result.data)
     }
 }
 
