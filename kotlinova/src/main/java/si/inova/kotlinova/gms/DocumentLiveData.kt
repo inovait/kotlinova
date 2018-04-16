@@ -39,7 +39,7 @@ class DocumentLiveData<T>(
                 return
             }
 
-            postValue(Resource.Success(newDocument.toObject(clazz)))
+            postValue(Resource.Success(newDocument.toObject(clazz)!!))
         }
     }
 }
