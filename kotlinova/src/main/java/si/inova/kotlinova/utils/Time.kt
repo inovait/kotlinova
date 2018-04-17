@@ -15,8 +15,8 @@ import java.util.Locale
  */
 fun Calendar.isSameDay(other: Calendar): Boolean {
     return get(Calendar.DAY_OF_MONTH) == other.get(Calendar.DAY_OF_MONTH) &&
-            get(Calendar.MONTH) == other.get(Calendar.MONTH) &&
-            get(Calendar.YEAR) == other.get(Calendar.YEAR)
+        get(Calendar.MONTH) == other.get(Calendar.MONTH) &&
+        get(Calendar.YEAR) == other.get(Calendar.YEAR)
 }
 
 object TimeFormat {
@@ -49,7 +49,7 @@ fun Date.toCalendar(): Calendar {
 const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ"
 // SimpleDateFormat is not thread-safe. Use ThreadLocal to bind it to separate threads.
 val ISO_8601_DATE_FORMAT_HOLDER =
-        threadLocal { SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault()) }
+    threadLocal { SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault()) }
 
 inline val ISO_8601_DATE_FORMAT: DateFormat
     get() = ISO_8601_DATE_FORMAT_HOLDER.get()

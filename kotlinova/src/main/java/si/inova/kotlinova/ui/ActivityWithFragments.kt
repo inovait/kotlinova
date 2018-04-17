@@ -20,7 +20,7 @@ abstract class ActivityWithFragments : StateSaverActivity(), HasSupportFragmentI
     var fragmentInjector: DispatchingAndroidInjector<Fragment>? = null
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
-            ?: AndroidInjector { }
+        ?: AndroidInjector { }
 
     var createFragment: (() -> Fragment) -> Fragment = { it() }
 }

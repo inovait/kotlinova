@@ -28,7 +28,7 @@ class CenterHorizontalStartRecyclerView @JvmOverloads constructor(
     private fun setupCenteredPadding() {
         if (childCount < 1) {
             throw IllegalStateException(
-                    "Padding centering should never be called before children are added"
+                "Padding centering should never be called before children are added"
             )
         }
 
@@ -37,7 +37,7 @@ class CenterHorizontalStartRecyclerView @JvmOverloads constructor(
         val child = getChildAt(0)
         if (!ViewCompat.isLaidOut(child)) {
             throw IllegalStateException(
-                    "Padding centering should never be called before children are laid out"
+                "Padding centering should never be called before children are laid out"
             )
         }
 

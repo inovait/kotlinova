@@ -26,22 +26,22 @@ class FragmentArgumentTest {
         }
 
         activity
-                .get()
-                .supportFragmentManager.beginTransaction()
-                .replace(1, fragment)
-                .commitNow()
+            .get()
+            .supportFragmentManager.beginTransaction()
+            .replace(1, fragment)
+            .commitNow()
 
         val outState = Bundle()
         activity.saveInstanceState(outState)
         activity.destroy()
 
         val secondActivity = Robolectric.buildActivity(DummyFragmentActivity::class.java)
-                .create(outState)
+            .create(outState)
 
         val recreatedFragment = secondActivity
-                .get()
-                .supportFragmentManager
-                .findFragmentById(1) as TestFragment
+            .get()
+            .supportFragmentManager
+            .findFragmentById(1) as TestFragment
 
         assertEquals(20, recreatedFragment.twenty)
         assertEquals("TeST", recreatedFragment.testString)

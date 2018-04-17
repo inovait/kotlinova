@@ -47,15 +47,15 @@ class AspectRatioImageView @JvmOverloads constructor(
 
     init {
         val args = context.theme.obtainStyledAttributes(
-                attrs,
-                R.styleable.AspectRatioImageView,
-                0, 0
+            attrs,
+            R.styleable.AspectRatioImageView,
+            0, 0
         )
 
         try {
             fixedMultiplier = args.getFloat(R.styleable.AspectRatioImageView_fixedMultiplier, 1f)
             fixedDimension = args
-                    .getInt(R.styleable.AspectRatioImageView_fixedDimension, DIMENSION_WIDTH)
+                .getInt(R.styleable.AspectRatioImageView_fixedDimension, DIMENSION_WIDTH)
         } finally {
             args.recycle()
         }
@@ -92,8 +92,8 @@ class AspectRatioImageView @JvmOverloads constructor(
         }
 
         setMeasuredDimension(
-                max(min(width, maxWidth), minimumWidth),
-                max(min(height, maxHeight), minimumHeight)
+            max(min(width, maxWidth), minimumWidth),
+            max(min(height, maxHeight), minimumHeight)
         )
     }
 

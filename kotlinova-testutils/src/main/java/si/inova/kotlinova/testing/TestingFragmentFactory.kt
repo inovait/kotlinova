@@ -42,19 +42,19 @@ class TestingFragmentFactory : (() -> Fragment) -> Fragment {
 
         val fragmentOfThatClass = fragmentMap[T::class.java]
         Assert
-                .assertNotNull(
-                        "Fragment of type ${T::class.java.name} was not created",
-                        fragmentOfThatClass
-                )
+            .assertNotNull(
+                "Fragment of type ${T::class.java.name} was not created",
+                fragmentOfThatClass
+            )
         Assert
-                .assertSame(
-                        "Supplied Fragment is not of type ${T::class.java.name}",
-                        fragmentOfThatClass, fragment
-                )
+            .assertSame(
+                "Supplied Fragment is not of type ${T::class.java.name}",
+                fragmentOfThatClass, fragment
+            )
     }
 
     class TestTitledFragment : Fragment(),
-            TitledComponent {
+        TitledComponent {
         var originalFragment: TitledComponent? = null
 
         override val title: String
@@ -68,7 +68,7 @@ class TestingFragmentFactory : (() -> Fragment) -> Fragment {
     }
 
     class TestSubTitledFragment : Fragment(),
-            SubtitledComponent {
+        SubtitledComponent {
         var originalFragment: SubtitledComponent? = null
 
         override val title: String

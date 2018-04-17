@@ -13,7 +13,7 @@ class SectionDividerItemDecoration(
     orientation: Int,
     private val sectionAdapter: SectionRecyclerAdapter
 ) :
-        LimitingDividerItemDecoration(context, orientation) {
+    LimitingDividerItemDecoration(context, orientation) {
 
     var sectionsToDisplay: List<Int> = emptyList()
 

@@ -33,7 +33,7 @@ class StateSaverActivityTest {
         activity.destroy()
 
         val recreatedActivity = Robolectric.buildActivity(TestActivity::class.java)
-                .create(outState)
+            .create(outState)
 
         assertEquals(20, recreatedActivity.get().testInt)
         assertEquals("TeST", recreatedActivity.get().testString)
