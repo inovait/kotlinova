@@ -16,7 +16,7 @@ class DocumentLiveData<T>(
     private val documentReference: DocumentReference,
     private val clazz: Class<T>
 ) :
-        LiveData<Resource<T>>(), EventListener<DocumentSnapshot> {
+    LiveData<Resource<T>>(), EventListener<DocumentSnapshot> {
     private var listenerRegistration: ListenerRegistration? = null
 
     override fun onActive() {

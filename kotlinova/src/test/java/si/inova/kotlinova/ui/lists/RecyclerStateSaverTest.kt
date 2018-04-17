@@ -60,7 +60,7 @@ class RecyclerStateSaverTest {
     fun restoringManual() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         recyclerStateSaver.notifyRecyclerViewLoaded()
 
@@ -71,7 +71,7 @@ class RecyclerStateSaverTest {
     fun restoringTwice() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         recyclerStateSaver.notifyRecyclerViewLoaded()
         recyclerStateSaver.notifyRecyclerViewLoaded()
@@ -86,7 +86,7 @@ class RecyclerStateSaverTest {
     fun restoringListAdapter() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         val listAdapter: ListAdapter<Any, DummyViewHolder> = mock()
 
@@ -103,7 +103,7 @@ class RecyclerStateSaverTest {
     fun restoringListSection() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         val listSection: ListSection<Any, DummyViewHolder> = mock()
 

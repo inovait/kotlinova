@@ -15,7 +15,7 @@ import android.widget.LinearLayout
  * @author Matej Drobnic
  */
 abstract class LimitingDividerItemDecoration(context: Context, orientation: Int) :
-        RecyclerView.ItemDecoration() {
+    RecyclerView.ItemDecoration() {
     val HORIZONTAL = LinearLayout.HORIZONTAL
     val VERTICAL = LinearLayout.VERTICAL
 
@@ -47,7 +47,7 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
     fun setOrientation(orientation: Int) {
         if (orientation != HORIZONTAL && orientation != VERTICAL) {
             throw IllegalArgumentException(
-                    "Invalid orientation. It should be either HORIZONTAL or VERTICAL"
+                "Invalid orientation. It should be either HORIZONTAL or VERTICAL"
             )
         }
         mOrientation = orientation
@@ -82,8 +82,8 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
             left = parent.paddingLeft
             right = parent.width - parent.paddingRight
             canvas.clipRect(
-                    left, parent.paddingTop, right,
-                    parent.height - parent.paddingBottom
+                left, parent.paddingTop, right,
+                parent.height - parent.paddingBottom
             )
         } else {
             left = 0
@@ -116,8 +116,8 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
             top = parent.paddingTop
             bottom = parent.height - parent.paddingBottom
             canvas.clipRect(
-                    parent.paddingLeft, top,
-                    parent.width - parent.paddingRight, bottom
+                parent.paddingLeft, top,
+                parent.width - parent.paddingRight, bottom
             )
         } else {
             top = 0
@@ -149,8 +149,8 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
         val position = parent.getChildAdapterPosition(view)
 
         if (mDivider == null ||
-                position == RecyclerView.NO_POSITION ||
-                !shouldDisplayDivider(position)) {
+            position == RecyclerView.NO_POSITION ||
+            !shouldDisplayDivider(position)) {
             outRect.set(0, 0, 0, 0)
             return
         }

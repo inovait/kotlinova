@@ -23,9 +23,9 @@ class FullScreenProgressBarTest {
     @Before
     fun setUp() {
         activity = Robolectric.buildActivity(HolderActivity::class.java)
-                .create()
-                .start()
-                .resume()
+            .create()
+            .start()
+            .resume()
 
         fullScreenProgressBar = activity.get().fullScreenProgressBar
     }

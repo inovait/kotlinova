@@ -64,8 +64,8 @@ class TimedDispatcher : InstantTaskExecutorRule() {
             continuation: CancellableContinuation<Unit>
         ) {
             val target = Pair(
-                    currentTime + unit.toMillis(time),
-                    Runnable { with(continuation) { resumeUndispatched(Unit) } })
+                currentTime + unit.toMillis(time),
+                Runnable { with(continuation) { resumeUndispatched(Unit) } })
             schedules.add(target)
         }
 

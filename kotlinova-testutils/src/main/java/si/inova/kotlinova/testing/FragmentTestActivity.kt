@@ -34,10 +34,10 @@ fun createFragmentTestActivity(): ActivityController<FragmentTestActivity> {
 fun ActivityController<FragmentTestActivity>.startDaggerFragment(fragment: Fragment) {
     create()
     get()
-            .supportFragmentManager
-            .beginTransaction()
-            .replace(1, fragment, null)
-            .commit()
+        .supportFragmentManager
+        .beginTransaction()
+        .replace(1, fragment, null)
+        .commit()
 
     start().resume()
 }

@@ -34,7 +34,7 @@ operator fun Bundle.set(key: String, value: Any) {
         is Parcelable -> putParcelable(key, value)
         is Serializable -> putSerializable(key, value)
         else -> throw IllegalStateException(
-                "Type ${value.javaClass.canonicalName} of property $key is not supported in bundle"
+            "Type ${value.javaClass.canonicalName} of property $key is not supported in bundle"
         )
     }
 }
@@ -59,7 +59,7 @@ fun <T> SharedPreferences.get(key: String, default: T, klass: Class<T>): T {
         java.lang.Boolean::class.java -> getBoolean(key, default as Boolean)
         Set::class.java -> getStringSet(key, default as Set<String>?)
         else -> throw IllegalStateException(
-                "Type ${klass.canonicalName} of property $key is not supported in SharedPreferences"
+            "Type ${klass.canonicalName} of property $key is not supported in SharedPreferences"
         )
     } as T
 }
@@ -74,8 +74,8 @@ fun SharedPreferences.Editor.put(key: String, value: Any): SharedPreferences.Edi
         is Boolean -> putBoolean(key, value)
         is Set<*> -> putStringSet(key, value as MutableSet<String>)
         else -> throw IllegalStateException(
-                "Type ${value.javaClass.canonicalName} of property $key " +
-                        "is not supported in SharedPreferences"
+            "Type ${value.javaClass.canonicalName} of property $key " +
+                "is not supported in SharedPreferences"
         )
     }
 

@@ -21,8 +21,8 @@ import android.util.StateSet
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 private fun createRipple(@ColorInt color: Int): RippleDrawable {
     val colorState = ColorStateList(
-            arrayOf(intArrayOf()),
-            intArrayOf(color)
+        arrayOf(intArrayOf()),
+        intArrayOf(color)
     )
 
     return RippleDrawable(colorState, null, ColorDrawable(Color.BLACK))

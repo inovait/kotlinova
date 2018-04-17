@@ -22,8 +22,8 @@ open class NestedAnimatedFragment : StateSaverFragment() {
         return if (!enter && parent?.isRemoving == true) {
             val dummyAnimation = AlphaAnimation(1f, 1f)
             dummyAnimation
-                    .duration =
-                    getNextAnimationDuration(parent, DEFAULT_CHILD_ANIMATION_DURATION.toLong())
+                .duration =
+                getNextAnimationDuration(parent, DEFAULT_CHILD_ANIMATION_DURATION.toLong())
             dummyAnimation
         } else {
             super.onCreateAnimation(transit, enter, nextAnim)

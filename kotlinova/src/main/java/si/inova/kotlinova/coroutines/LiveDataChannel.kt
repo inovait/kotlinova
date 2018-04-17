@@ -14,7 +14,7 @@ import kotlinx.coroutines.experimental.channels.SubscriptionReceiveChannel
  * @author Matej Drobnic
  */
 class LiveDataChannel<T>(private val liveData: LiveData<T>) : ConflatedChannel<T?>(),
-        SubscriptionReceiveChannel<T?> {
+    SubscriptionReceiveChannel<T?> {
     private val observer = Observer<T> {
         if (!isClosedForSend) {
             offer(it)

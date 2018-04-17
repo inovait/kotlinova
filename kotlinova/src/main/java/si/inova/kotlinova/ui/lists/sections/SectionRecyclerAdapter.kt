@@ -80,7 +80,7 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private fun getInnerPosition(position: Int):
-            Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
+        Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0
         for (section in sections) {
             val sectionEnd = sectionStart + section.itemCount
@@ -124,8 +124,8 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val section = sections[sectionIndex]
             val nextSection = sections.elementAtOrNull(sectionIndex + 1)
             if (section.blendsIntoPlaceholders &&
-                    nextSection is PlaceholderSection &&
-                    (position + count) == section.itemCount) {
+                nextSection is PlaceholderSection &&
+                (position + count) == section.itemCount) {
                 nextSection.removePlaceholdersFromStart(count)
                 notifyItemRangeChanged(position + sectionStart, count)
                 return
