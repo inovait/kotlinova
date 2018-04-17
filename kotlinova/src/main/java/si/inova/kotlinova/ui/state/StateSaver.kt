@@ -28,7 +28,7 @@ abstract class StateSaver<T> {
     protected val lastSavedState: T?
         get() {
             val stateSaver = stateSaverManager
-                    ?: throw IllegalStateException("StateSaver not registered")
+                ?: throw IllegalStateException("StateSaver not registered")
             return stateSaver.getLastLoadedValue(key!!)
         }
 

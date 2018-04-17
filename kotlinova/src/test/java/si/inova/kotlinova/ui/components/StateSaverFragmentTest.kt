@@ -20,10 +20,10 @@ class StateSaverFragmentTest {
         val fragment = TestFragment()
 
         activity
-                .get()
-                .supportFragmentManager.beginTransaction()
-                .replace(1, fragment)
-                .commitNow()
+            .get()
+            .supportFragmentManager.beginTransaction()
+            .replace(1, fragment)
+            .commitNow()
 
         fragment.testInt = 20
         fragment.testString = "TeST"
@@ -33,12 +33,12 @@ class StateSaverFragmentTest {
         activity.destroy()
 
         val secondActivity = Robolectric.buildActivity(DummyFragmentActivity::class.java)
-                .create(outState)
+            .create(outState)
 
         val recreatedFragment = secondActivity
-                .get()
-                .supportFragmentManager
-                .findFragmentById(1) as TestFragment
+            .get()
+            .supportFragmentManager
+            .findFragmentById(1) as TestFragment
 
         assertEquals(20, recreatedFragment.testInt)
         assertEquals("TeST", recreatedFragment.testString)

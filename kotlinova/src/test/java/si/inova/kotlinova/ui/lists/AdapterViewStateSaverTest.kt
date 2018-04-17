@@ -64,7 +64,7 @@ class AdapterViewStateSaverTest {
     fun restoring() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         adapterViewStateSaver.notifyDataLoaded()
 
@@ -75,7 +75,7 @@ class AdapterViewStateSaverTest {
     fun restoringTwice() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         adapterViewStateSaver.notifyDataLoaded()
         adapterViewStateSaver.notifyDataLoaded()
@@ -90,7 +90,7 @@ class AdapterViewStateSaverTest {
     fun restoringNoId() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         whenever(adapterView.id).thenReturn(View.NO_ID)
         adapterViewStateSaver.notifyDataLoaded()

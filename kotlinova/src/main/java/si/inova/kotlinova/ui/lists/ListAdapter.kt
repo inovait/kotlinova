@@ -12,7 +12,7 @@ import timber.log.Timber
  * @author Matej Drobnic
  */
 abstract class ListAdapter<T, VH : RecyclerView.ViewHolder>(context: Context) :
-        LoadingRecyclerAdapter<VH>(context), ListDiffProvider<T> {
+    LoadingRecyclerAdapter<VH>(context), ListDiffProvider<T> {
     var data: List<T>? = null
         private set
 

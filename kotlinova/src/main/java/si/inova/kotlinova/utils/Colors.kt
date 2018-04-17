@@ -49,6 +49,6 @@ fun lightenColor(color: Int, multiplier: Double): Int {
  */
 fun colorLuminance(color: Int): Double {
     return 0.2126 * Color.red(color) / 255 +
-            0.7152 * Color.green(color) / 255 +
-            0.0722 * Color.blue(color) / 255
+        0.7152 * Color.green(color) / 255 +
+        0.0722 * Color.blue(color) / 255
 }

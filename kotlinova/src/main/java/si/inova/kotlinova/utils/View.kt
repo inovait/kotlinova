@@ -33,16 +33,16 @@ var View.isVisibleWithFade: Boolean
         alpha = startAlpha
 
         animate()
-                .alpha(targetAlpha)
-                .apply {
-                    if (value) {
-                        withStartAction { isVisible = true }
-                    } else {
-                        withEndAction { isVisible = false }
-                    }
+            .alpha(targetAlpha)
+            .apply {
+                if (value) {
+                    withStartAction { isVisible = true }
+                } else {
+                    withEndAction { isVisible = false }
                 }
-                .setDuration(250)
-                .start()
+            }
+            .setDuration(250)
+            .start()
     }
 
 /**
@@ -89,7 +89,7 @@ fun Fragment.inflateAsync(
 fun View.hideKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.hideSoftInputFromWindow(
-            windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
+        windowToken,
+        InputMethodManager.HIDE_NOT_ALWAYS
     )
 }
