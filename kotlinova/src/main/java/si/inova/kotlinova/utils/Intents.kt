@@ -53,8 +53,8 @@ fun openMapWithMarker(context: Context, lat: Double, lon: Double) {
  */
 fun composeEmail(context: Context, recipient: String): Boolean {
     val emailIntent = Intent(
-            Intent.ACTION_SENDTO,
-            Uri.fromParts("mailto", recipient, null)
+        Intent.ACTION_SENDTO,
+        Uri.fromParts("mailto", recipient, null)
     )
 
     return try {

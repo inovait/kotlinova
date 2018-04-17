@@ -17,7 +17,7 @@ open class TouchTakeOverFrameLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) :
-        FrameLayout(context, attrs, defStyleAttr) {
+    FrameLayout(context, attrs, defStyleAttr) {
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return true
     }

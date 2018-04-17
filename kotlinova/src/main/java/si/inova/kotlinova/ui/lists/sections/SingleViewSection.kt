@@ -49,8 +49,8 @@ class SingleViewSection(
     protected fun createView(parent: ViewGroup): View {
         if (layout == 0) {
             throw IllegalArgumentException(
-                    "If layout is not provided in constructor, " +
-                            "you must override createView() function"
+                "If layout is not provided in constructor, " +
+                    "you must override createView() function"
             )
         }
 

@@ -28,7 +28,7 @@ object TimeProvider {
 
     fun currentDate(): Date = Date(currentTimeMillis())
     fun currentCalendar(): Calendar =
-            Calendar.getInstance().apply { timeInMillis = currentTimeMillis() }
+        Calendar.getInstance().apply { timeInMillis = currentTimeMillis() }
 
     @RestrictTo(RestrictTo.Scope.TESTS)
     var currentTimeMillisProvider = { System.currentTimeMillis() }

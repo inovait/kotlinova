@@ -24,10 +24,10 @@ class PreferencePropertyTest {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         sharedPreferences.edit()
-                .clear()
-                .put("a", 10)
-                .put("b", "Test")
-                .apply()
+            .clear()
+            .put("a", 10)
+            .put("b", "Test")
+            .apply()
     }
 
     @Test

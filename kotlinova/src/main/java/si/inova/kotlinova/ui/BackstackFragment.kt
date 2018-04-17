@@ -37,17 +37,17 @@ class BackstackFragment : NestedAnimatedFragment(), ResettableFragment {
         val useBackStack = childFragmentManager.findFragmentById(R.id.container) != null
 
         childFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.container, fragment)
-                .apply {
-                    if (useBackStack) {
-                        addToBackStack(null)
-                        commit()
-                    } else {
-                        commitNow()
-                    }
+            .beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .replace(R.id.container, fragment)
+            .apply {
+                if (useBackStack) {
+                    addToBackStack(null)
+                    commit()
+                } else {
+                    commitNow()
                 }
+            }
     }
 
     companion object {

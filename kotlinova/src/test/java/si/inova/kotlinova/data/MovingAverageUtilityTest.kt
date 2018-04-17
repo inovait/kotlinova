@@ -30,25 +30,25 @@ class MovingAverageUtilityTest {
         val howManyItems = 7
         val movingAverageUtility = MovingAverageUtility(howManyItems)
         val array = doubleArrayOf(
-                1.0,
-                5.5,
-                4.0,
-                7.2,
-                11.99,
-                1.0,
-                8.0,
-                4.0,
-                2.0,
-                6.0,
-                12.0,
-                17.11,
-                6.88,
-                2.18,
-                7.11,
-                21.1181,
-                -2.117,
-                6.1774,
-                2.9855
+            1.0,
+            5.5,
+            4.0,
+            7.2,
+            11.99,
+            1.0,
+            8.0,
+            4.0,
+            2.0,
+            6.0,
+            12.0,
+            17.11,
+            6.88,
+            2.18,
+            7.11,
+            21.1181,
+            -2.117,
+            6.1774,
+            2.9855
         )
         for (vall in array) {
             movingAverageUtility.add(vall)

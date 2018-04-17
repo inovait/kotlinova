@@ -42,8 +42,8 @@ data class Vector(val x: Double, val y: Double, val z: Double) {
     internal fun projectOntoPlane(planeNormal: Vector): Vector {
         val dot = this.scalarProduct(planeNormal)
         val dotN = Vector(
-                planeNormal.x * dot.toInt(), planeNormal.y * dot.toInt(),
-                planeNormal.z * dot.toInt()
+            planeNormal.x * dot.toInt(), planeNormal.y * dot.toInt(),
+            planeNormal.z * dot.toInt()
         )
         return this - dotN
     }

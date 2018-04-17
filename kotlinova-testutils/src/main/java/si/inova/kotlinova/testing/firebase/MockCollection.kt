@@ -37,27 +37,27 @@ class MockCollection<T>() {
 
     fun insertObject(name: String, data: T) {
         createDocument(name)
-                .readValue = data
+            .readValue = data
     }
 
     private val snapshotOfAllEntries: QuerySnapshot = mock {
         whenever(it.documents).then {
             documents
-                    .values
-                    .toList()
-                    .map {
-                        it.get().result
-                    }
+                .values
+                .toList()
+                .map {
+                    it.get().result
+                }
         }
 
         whenever(it.iterator()).then {
             documents
-                    .values
-                    .toList()
-                    .map {
-                        it.get().result
-                    }
-                    .iterator()
+                .values
+                .toList()
+                .map {
+                    it.get().result
+                }
+                .iterator()
         }
     }
 
@@ -71,14 +71,14 @@ class MockCollection<T>() {
                 val name = nextId
 
                 documents[name]
-                        ?: MockDocument<T>(name).toDocumentRef()
+                    ?: MockDocument<T>(name).toDocumentRef()
             }
 
             whenever(it.document(any())).then {
                 val name = it.arguments[0] as String
 
                 documents[name]
-                        ?: MockDocument<T>(name).toDocumentRef()
+                    ?: MockDocument<T>(name).toDocumentRef()
             }
 
             whenever(it.get()).thenReturn(Tasks.forResult(snapshotOfAllEntries))
