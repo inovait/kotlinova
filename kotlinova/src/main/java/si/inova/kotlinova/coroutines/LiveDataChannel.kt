@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ConflatedChannel
 import kotlinx.coroutines.experimental.channels.SubscriptionReceiveChannel
+import si.inova.kotlinova.utils.runOnUiThread
 
 /**
  * Class that transforms [LiveData] into suspendable [Channel].
@@ -22,11 +23,15 @@ class LiveDataChannel<T>(private val liveData: LiveData<T>) : ConflatedChannel<T
     }
 
     init {
-        liveData.observeForever(observer)
+        runOnUiThread {
+            liveData.observeForever(observer)
+        }
     }
 
     override fun close() {
-        liveData.removeObserver(observer)
+        runOnUiThread {
+            liveData.removeObserver(observer)
+        }
     }
 }
 
