@@ -39,7 +39,6 @@ class ThreadUtilsTest {
         val task: LocalFunction0<Unit> = mock()
 
         thread {
-
             runOnUiThread(block = task)
         }.join()
 

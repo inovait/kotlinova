@@ -20,7 +20,10 @@ import si.inova.kotlinova.coroutines.UI
  * @param parentJob If task gets launched on UI thread,
  * it will be started as a child of this job. Can be *null*.
  */
-inline fun runOnUiThread(parentJob: Job? = null, crossinline block: () -> Unit) {
+fun runOnUiThread(
+    parentJob: Job? = null,
+    block: () -> Unit
+) {
     @SuppressLint("RestrictedApi")
     if (ArchTaskExecutor.getInstance().isMainThread) {
         block()
