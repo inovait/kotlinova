@@ -1,4 +1,4 @@
-package si.inova.kotlinova.data
+package si.inova.kotlinova.data.resources
 
 import android.arch.lifecycle.LiveData
 

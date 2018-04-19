@@ -10,7 +10,7 @@ import java.lang.ref.WeakReference
  *
  * @author Matej Drobnic
  */
-class ExtendedMediatorLiveData<T> : MediatorLiveData<T>() {
+open class ExtendedMediatorLiveData<T> : MediatorLiveData<T>() {
     private val sources = ArrayList<WeakReference<LiveData<*>>>()
 
     override fun <S : Any?> addSource(source: LiveData<S>, onChanged: Observer<S>) {

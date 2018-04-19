@@ -1,7 +1,7 @@
 package si.inova.kotlinova.data.pagination
 
 import io.reactivex.Flowable
-import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.resources.Resource
 
 /**
  * Query that broadcasts its data asynchronously and automatically notifies observers when

@@ -1,15 +1,18 @@
 package si.inova.kotlinova.coroutines
 
 import android.arch.lifecycle.MutableLiveData
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.delay
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import si.inova.kotlinova.data.ExtendedMediatorLiveData
-import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.resources.Resource
+import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.assertIs
 import si.inova.kotlinova.utils.addSource
@@ -52,28 +55,21 @@ class CoroutineViewModelTest {
 
     @Test
     fun cancelConcurrentJobs() {
-        val firstTaskJob = testViewModel.firstTask()
-        val secondTaskJob = testViewModel.secondTask()
+        testViewModel.firstTask()
+        val firstTaskJob = testViewModel.getJob(testViewModel.resourceA)
 
-        assertTrue(firstTaskJob.isCancelled)
-        assertFalse(secondTaskJob.isCancelled)
+        testViewModel.secondTask()
+        val secondTaskJob = testViewModel.getJob(testViewModel.resourceA)
+
+        assertNotSame(firstTaskJob, secondTaskJob)
+        assertNotNull(firstTaskJob)
+        assertNotNull(secondTaskJob)
+
+        assertTrue(firstTaskJob!!.isCancelled)
+        assertFalse(secondTaskJob!!.isCancelled)
 
         dispatcher.advanceTime(600)
         assertEquals(Resource.Success(20), testViewModel.resourceA.value)
-    }
-
-    @Test
-    fun doNotCancelConcurrentJobsWithNoUniqueFlag() {
-        val firstTaskJob = testViewModel.firstNonUniqueTask()
-        val secondTaskJob = testViewModel.secondNonUniqueTask()
-
-        assertFalse(firstTaskJob.isCancelled)
-        assertFalse(secondTaskJob.isCancelled)
-
-        dispatcher.advanceTime(600)
-        assertEquals(Resource.Success(15), testViewModel.resourceA.value)
-        dispatcher.advanceTime(600)
-        assertEquals(Resource.Success(25), testViewModel.resourceA.value)
     }
 
     @Test
@@ -102,11 +98,9 @@ class CoroutineViewModelTest {
 
     @Test
     fun cancelResource() {
-        assertFalse(testViewModel.cancelResourcePublic(testViewModel.resourceA))
-
         testViewModel.firstTask()
 
-        assertTrue(testViewModel.cancelResourcePublic(testViewModel.resourceA))
+        testViewModel.cancelResourcePublic(testViewModel.resourceA)
 
         assertIs(testViewModel.resourceA.value, Resource.Cancelled::class.java)
         dispatcher.advanceTime(600)
@@ -114,62 +108,41 @@ class CoroutineViewModelTest {
     }
 
     @Test
-    fun doNotCancelMediatorLiveDataSubscriptionsWithNonUniqueJobs() {
-        testViewModel.resourceA.observeForever {}
-
-        val additionalResource = MutableLiveData<Resource<Int>>()
-        testViewModel.resourceA.addSource(additionalResource)
-        assertTrue(additionalResource.hasActiveObservers())
-
-        testViewModel.firstNonUniqueTask()
-
-        assertTrue(additionalResource.hasActiveObservers())
+    fun concurrentLaunches() {
+        repeat(1000) {
+            testViewModel.firstTask()
+        }
     }
 
     private class TestViewModel : CoroutineViewModel() {
-        val resourceA = ExtendedMediatorLiveData<Resource<Int>>()
+        val resourceA = ResourceLiveData<Int>()
 
-        fun firstTask() = launchManaged {
-            acquireResource(resourceA) { output ->
+        fun firstTask() = launchResourceControlTask(resourceA) {
                 delay(500)
-                output.postValue(Resource.Success(10))
+            sendValue(Resource.Success(10))
             }
-        }
 
-        fun secondTask() = launchManaged {
-            acquireResource(resourceA) { output ->
+        fun secondTask() = launchResourceControlTask(resourceA) {
                 delay(500)
-                output.postValue(Resource.Success(20))
+            sendValue(Resource.Success(20))
             }
-        }
 
-        fun firstNonUniqueTask() = launchManaged {
-            acquireResource(resourceA, unique = false) { output ->
-                delay(500)
-                output.postValue(Resource.Success(15))
-            }
-        }
-
-        fun secondNonUniqueTask() = launchManaged {
-            acquireResource(resourceA, unique = false) { output ->
-                delay(700)
-                output.postValue(Resource.Success(25))
-            }
-        }
-
-        fun exceptionTask() = launchManaged {
-            acquireResource(resourceA) { output ->
+        fun exceptionTask() = launchResourceControlTask(resourceA) {
                 delay(500)
                 throw IllegalStateException("Test exception")
-            }
         }
 
         fun <T> isResourceTakenPublic(resource: MutableLiveData<Resource<T>>): Boolean {
             return super.isResourceTaken(resource)
         }
 
-        fun <T> cancelResourcePublic(resource: MutableLiveData<Resource<T>>): Boolean {
-            return super.cancelResource(resource)
+        fun <T> cancelResourcePublic(resource: MutableLiveData<Resource<T>>) {
+            super.cancelResource(resource)
+        }
+
+        fun <T> getJob(resource: MutableLiveData<Resource<T>>): Job? {
+            @Suppress("USELESS_CAST")
+            return activeJobs[resource as MutableLiveData<*>]
         }
     }
 }

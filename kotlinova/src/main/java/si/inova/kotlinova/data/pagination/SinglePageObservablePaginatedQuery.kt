@@ -3,7 +3,7 @@ package si.inova.kotlinova.data.pagination
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
-import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.resources.Resource
 
 /**
  * [PaginatedQuery] that only provides single page (one list of items)
