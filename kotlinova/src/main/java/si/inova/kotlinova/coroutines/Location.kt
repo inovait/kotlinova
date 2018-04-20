@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import si.inova.kotlinova.utils.runOnUiThread
 
 /**
  * Start listening for speficied [LocationRequest] and return first received Location result.
@@ -30,9 +31,13 @@ suspend fun FusedLocationProviderClient.awaitSingleLocation(
         }
 
         continuation.invokeOnCompletion {
-            removeLocationUpdates(locationCallback)
+            runOnUiThread {
+                removeLocationUpdates(locationCallback)
+            }
         }
 
-        requestLocationUpdates(locationRequest, locationCallback, null)
+        runOnUiThread {
+            requestLocationUpdates(locationRequest, locationCallback, null)
+        }
     }
 }
