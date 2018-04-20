@@ -122,6 +122,12 @@ class FullScreenProgressBar @JvmOverloads constructor(
         val root = View.inflate(context, R.layout.view_full_screen_progress, this)
         isVisible = false
 
+        alpha = if (isVisible) {
+            1f
+        } else {
+            0f
+        }
+
         if (visibleAtStart) {
             show()
         }
