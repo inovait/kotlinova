@@ -9,6 +9,7 @@ import android.view.ViewPropertyAnimator
 import androidx.core.view.isVisible
 import si.inova.kotlinova.R
 import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.utils.setVisibilityWithoutLayoutAnimations
 import kotlin.math.max
 
 /**
@@ -74,7 +75,7 @@ class FullScreenProgressBar @JvmOverloads constructor(
         activeAnimation?.cancel()
         animate()
             .alpha(1f)
-            .withStartAction { isVisible = true }
+            .withStartAction { setVisibilityWithoutLayoutAnimations(View.VISIBLE) }
             .withEndAction { activeAnimation = null }
             .setDuration(FADE_ANIMATION_DURATION)
             .also { activeAnimation = it }
@@ -88,7 +89,7 @@ class FullScreenProgressBar @JvmOverloads constructor(
         animate()
             .alpha(0f)
             .withEndAction {
-                isVisible = false
+                setVisibilityWithoutLayoutAnimations(View.GONE)
                 activeAnimation = null
             }
             .setDuration(FADE_ANIMATION_DURATION)
