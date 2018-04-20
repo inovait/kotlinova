@@ -60,6 +60,10 @@ kotlin {
     }
 }
 
+kapt {
+    useBuildCache = System.getenv('ENABLE_KAPT_BUILD_CACHE') == "TRUE"
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
