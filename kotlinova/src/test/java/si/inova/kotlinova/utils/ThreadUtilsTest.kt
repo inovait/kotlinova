@@ -3,6 +3,8 @@ package si.inova.kotlinova.utils
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import kotlinx.coroutines.experimental.Job
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,7 +28,7 @@ class ThreadUtilsTest {
 
         val task: LocalFunction0<Unit> = mock()
 
-        runOnUiThread(task)
+        runOnUiThread(block = task)
 
         verify(task).invoke()
     }
@@ -37,8 +39,7 @@ class ThreadUtilsTest {
         val task: LocalFunction0<Unit> = mock()
 
         thread {
-
-            runOnUiThread(task)
+            runOnUiThread(block = task)
         }.join()
 
         inOrder(task) {
@@ -48,5 +49,23 @@ class ThreadUtilsTest {
 
             verify(task).invoke()
         }
+    }
+
+    @Test
+    fun cancelRunOnUiThreadWhenOnSeparateThread() {
+        Robolectric.getForegroundThreadScheduler().pause()
+        val task: LocalFunction0<Unit> = mock()
+
+        val job = Job()
+
+        thread {
+            runOnUiThread(parentJob = job, block = task)
+        }.join()
+
+        job.cancel()
+
+        Robolectric.getForegroundThreadScheduler().unPause()
+
+        verifyZeroInteractions(task)
     }
 }

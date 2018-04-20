@@ -5,7 +5,9 @@
 
 package si.inova.kotlinova.utils
 
-import android.os.Looper
+import android.annotation.SuppressLint
+import android.arch.core.executor.ArchTaskExecutor
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import si.inova.kotlinova.coroutines.UI
 
@@ -14,12 +16,19 @@ import si.inova.kotlinova.coroutines.UI
  *
  * If caller is already on the UI thread, block is ran immediately synchronously.
  * Otherwise block is scheduled to run on UI thread scheduler.
+ *
+ * @param parentJob If task gets launched on UI thread,
+ * it will be started as a child of this job. Can be *null*.
  */
-inline fun runOnUiThread(crossinline block: () -> Unit) {
-    if (Looper.myLooper() == Looper.getMainLooper()) {
+fun runOnUiThread(
+    parentJob: Job? = null,
+    block: () -> Unit
+) {
+    @SuppressLint("RestrictedApi")
+    if (ArchTaskExecutor.getInstance().isMainThread) {
         block()
     } else {
-        launch(UI) {
+        launch(UI, parent = parentJob) {
             block()
         }
     }

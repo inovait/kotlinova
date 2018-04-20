@@ -3,18 +3,18 @@ package si.inova.kotlinova.coroutines
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.support.annotation.CallSuper
-import android.support.v4.util.SimpleArrayMap
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.NonCancellable
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
 import kotlinx.coroutines.experimental.withContext
-import si.inova.kotlinova.data.ExtendedMediatorLiveData
-import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.resources.Resource
+import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.exceptions.OwnershipTransferredException
+import si.inova.kotlinova.utils.runOnUiThread
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.experimental.CoroutineContext
 
 /**
@@ -28,8 +28,7 @@ import kotlin.coroutines.experimental.CoroutineContext
 abstract class CoroutineViewModel : ViewModel() {
     protected val parentJob: Job = Job()
 
-    private val activeJobs = SimpleArrayMap<MutableLiveData<Resource<*>>, Job>()
-    private val jobSelectionMutex = Mutex()
+    protected val activeJobs = ConcurrentHashMap<MutableLiveData<Resource<*>>, Job>()
 
     /**
      * Launch automatically-cancelled job
@@ -45,73 +44,84 @@ abstract class CoroutineViewModel : ViewModel() {
     }
 
     /**
-     * Convenience method that helps managing resources (*MutableLiveData&lt;Resource&gt;*). It:
+     * Method that launches coroutine task that handles data fetching for provided resources.
+     *
+     * This method:
      *
      * 1. Cancels any previous coroutines using this resource to prevent clashing
      * 2. Automatically puts resource into loading state
-     * 3. Automatically handles cancellation exceptions
-     * 4. Automatically forwards exceptions to the resource as [Resource.Error]
+     * 3. Calls your provided task on the worker thread
+     * 4. Automatically handles cancellation exceptions
+     * 5. Automatically forwards exceptions to the resource as [Resource.Error]
      */
-    suspend fun <T, L : MutableLiveData<Resource<T>>> CoroutineScope.acquireResource(
-        resource: L,
+    fun <T> launchResourceControlTask(
+        resource: ResourceLiveData<T>,
         currentValue: T? = null,
-        unique: Boolean = true,
-        block: suspend CoroutineScope.(L) -> Unit
-    ) {
-        if (unique) {
-            jobSelectionMutex.withLock {
-                // To prevent threading issues, only one job can handle one resource at a time
-                // Cancel active job first.
-                val currentJobForThatResource = activeJobs.remove(resource)
-                currentJobForThatResource?.let {
-                    it.cancel(OwnershipTransferredException())
-                    it.join()
-                }
+        context: CoroutineContext = CommonPool,
+        block: suspend ResourceLiveData<T>.() -> Unit
+    ) = runOnUiThread(parentJob) {
+        // To prevent threading issues, only one job can handle one resource at a time
+        // Cancel active job first.
+        val currentJobForThatResource = activeJobs.remove(resource as MutableLiveData<*>)
 
-                // If this resource can be controlled from outside, we need to reset
-                // it first.
-                if (resource is ExtendedMediatorLiveData<*> && resource.hasAnySources()) {
-                    withContext(UI) {
-                        resource.removeAllSources()
+        currentJobForThatResource?.cancel()
+
+        if (resource.hasAnySources()) {
+            resource.removeAllSources()
+        }
+
+        val newJob = launch(context, CoroutineStart.LAZY, parentJob) {
+            val thisJob = coroutineContext[Job]!!
+
+            currentJobForThatResource?.join()
+
+            if (!isActive) {
+                return@launch
+            }
+
+            try {
+                resource.sendValue(Resource.Loading(currentValue))
+
+                block(resource)
+            } catch (_: OwnershipTransferredException) {
+                // Do nothing. New owner will set their own values.
+            } catch (_: CancellationException) {
+                @Suppress("USELESS_CAST")
+                val meActive = activeJobs[resource as MutableLiveData<*>] == thisJob
+                if (meActive) {
+                    // Only post cancelled if I'm the currently active job
+                    withContext(NonCancellable) {
+                        resource.sendValue(Resource.Cancelled())
                     }
                 }
+            } catch (e: Exception) {
+                resource.sendValue(Resource.Error(e))
+            } finally {
+                @Suppress("UNCHECKED_CAST")
+                activeJobs.remove(resource as MutableLiveData<Resource<*>>, thisJob)
             }
         }
 
         @Suppress("UNCHECKED_CAST")
-        activeJobs.put(resource as MutableLiveData<Resource<*>>, coroutineContext[Job]!!)
+        activeJobs[resource as MutableLiveData<Resource<*>>] = newJob
 
-        try {
-            resource.postValue(Resource.Loading(currentValue))
-            block(resource)
-        } catch (_: OwnershipTransferredException) {
-            // Do nothing. New owner will set their own values.
-        } catch (_: CancellationException) {
-            resource.postValue(Resource.Cancelled<T>())
-        } catch (e: Exception) {
-            resource.postValue(Resource.Error<T>(e))
-        } finally {
-            activeJobs.remove(resource)
-        }
+        newJob.start()
     }
 
     /**
      * @return whether resource is already being managed by a Job
      */
     protected fun <T> isResourceTaken(resource: MutableLiveData<Resource<T>>): Boolean {
-        return activeJobs.containsKey(resource)
+        return activeJobs.containsKey(resource as MutableLiveData<*>)
     }
 
     /**
      * Cancel job that currently manages passed resource.
-     *
-     * @return *true* if any job was cancelled or *false* if nothing was managing that resource
      */
-    protected fun <T> cancelResource(resource: MutableLiveData<Resource<T>>): Boolean {
-        val activeJob = activeJobs.remove(resource)
-
+    protected fun <T> cancelResource(resource: MutableLiveData<Resource<T>>) {
+        @Suppress("USELESS_CAST")
+        val activeJob = activeJobs[resource as MutableLiveData<*>]
         activeJob?.cancel()
-        return activeJob != null
     }
 
     @CallSuper

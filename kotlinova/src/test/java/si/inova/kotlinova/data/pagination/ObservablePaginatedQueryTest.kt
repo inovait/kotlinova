@@ -2,7 +2,7 @@ package si.inova.kotlinova.data.pagination
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.testing.getAll
 
 /**

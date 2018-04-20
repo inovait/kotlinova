@@ -4,8 +4,8 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.sync.Mutex
-import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
+import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.testing.OpenForTesting
 import si.inova.kotlinova.utils.awaitUnlockIfLocked
 

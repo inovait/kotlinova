@@ -22,8 +22,8 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import si.inova.kotlinova.coroutines.CommonPool
-import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
+import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.testing.assertIs

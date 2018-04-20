@@ -9,8 +9,8 @@ import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.sync.Mutex
 import si.inova.kotlinova.coroutines.UI
-import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
+import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.rx.OnDemandProvider
 import si.inova.kotlinova.utils.awaitUnlockIfLocked
 import si.inova.kotlinova.utils.use

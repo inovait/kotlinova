@@ -6,7 +6,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
-import si.inova.kotlinova.data.Resource
+import si.inova.kotlinova.data.resources.Resource
 
 /**
  * LiveData that wraps [DocumentReference]

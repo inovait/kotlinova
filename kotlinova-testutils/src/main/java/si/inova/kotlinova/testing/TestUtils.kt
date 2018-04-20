@@ -19,8 +19,8 @@ import org.mockito.Mockito
 import org.robolectric.shadows.ShadowSystemClock
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.toChannel
-import si.inova.kotlinova.data.Resource
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
+import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.TimeProvider
 import si.inova.kotlinova.utils.ISO_8601_DATE_FORMAT
 import java.util.Calendar
