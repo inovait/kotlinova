@@ -88,6 +88,8 @@ abstract class OnDemandProvider<T>(
                 if (curValue != null) {
                     emitter.onNext(curValue)
                 }
+
+                inDebounce.set(false)
             }
         }
     }
