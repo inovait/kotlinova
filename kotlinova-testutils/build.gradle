@@ -70,7 +70,7 @@ dependencies {
     compileOnly "com.google.firebase:firebase-firestore:${versions.playServices}"
     compileOnly "com.google.firebase:firebase-storage:${versions.playServices}"
 
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
     compileOnly "androidx.core:core-ktx:${versions.ktx}"
