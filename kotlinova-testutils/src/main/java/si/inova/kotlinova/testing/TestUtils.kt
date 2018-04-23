@@ -5,6 +5,7 @@ package si.inova.kotlinova.testing
  */
 
 import android.arch.lifecycle.LiveData
+import com.google.firebase.firestore.DocumentSnapshot
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.createInstance
 import kotlinx.coroutines.experimental.Deferred
@@ -12,6 +13,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.first
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.mockito.ArgumentMatcher
@@ -96,4 +98,17 @@ fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
 
     subscriber.dispose()
     return (receivedValue as Resource.Success).data
+}
+
+fun assertDocumentsEqual(expected: DocumentSnapshot, actual: DocumentSnapshot) {
+    assertEquals(expected.id, actual.id)
+    assertEquals(expected.toObject(Any::class.java), expected.toObject(Any::class.java))
+}
+
+fun assertDocumentsEqual(expected: List<DocumentSnapshot>, actual: List<DocumentSnapshot>) {
+    assertEquals(expected.size, actual.size)
+
+    for (elements in expected.zip(actual)) {
+        assertDocumentsEqual(elements.first, elements.second)
+    }
 }

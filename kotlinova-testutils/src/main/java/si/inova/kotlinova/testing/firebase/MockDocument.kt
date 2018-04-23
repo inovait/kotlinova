@@ -13,6 +13,10 @@ import com.nhaarman.mockitokotlin2.whenever
  * @author Matej Drobnic
  */
 class MockDocument<T>(val key: String) {
+    constructor(key: String, initialValue: T) : this(key) {
+        readValue = initialValue
+    }
+
     val subCollections = HashMap<String, MockCollection<*>>()
 
     var readValue: T? = null
@@ -57,6 +61,8 @@ class MockDocument<T>(val key: String) {
         }
 
         whenever(it.exists()).thenReturn(value != null)
+
+        whenever(it.toString()).thenReturn("{$key: $value}")
     }
 
     fun toDocumentRef(): DocumentReference = mock {
@@ -89,5 +95,9 @@ class MockDocument<T>(val key: String) {
 
             null
         }
+    }
+
+    fun toDocumentSnap(): DocumentSnapshot {
+        return toDocumentRef().get().result
     }
 }
