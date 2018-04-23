@@ -55,6 +55,19 @@ class MockDocument<T>(val key: String) {
         return collection
     }
 
+    fun <C> createMapSubCollection(
+        name: String,
+        data: List<Pair<String, Map<String, Any>>>
+    ): MockCollection<C> {
+        val collection = createSubCollection<C>(name)
+
+        for (item in data) {
+            collection.insertMap(item.first, item.second)
+        }
+
+        return collection
+    }
+
     private fun createSnapshot(): QueryDocumentSnapshot {
         val key = this.key
         val objectValue = this.readValue
