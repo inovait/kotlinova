@@ -22,7 +22,15 @@ class MockDocument<T>(val key: String) {
     var readValue: T? = null
         set(value) {
             field = value
-            val newSnapshot = getSnapshot(key, value)
+            val newSnapshot = createSnapshot()
+            listeners.forEach {
+                it.onEvent(newSnapshot, null)
+            }
+        }
+    var readMap: Map<String, Any>? = null
+        set(value) {
+            field = value
+            val newSnapshot = createSnapshot()
             listeners.forEach {
                 it.onEvent(newSnapshot, null)
             }
@@ -47,22 +55,55 @@ class MockDocument<T>(val key: String) {
         return collection
     }
 
-    private fun getSnapshot(key: String, value: T?): QueryDocumentSnapshot = mock {
-        whenever(it.exists()).thenReturn(value != null)
+    private fun createSnapshot(): QueryDocumentSnapshot {
+        val key = this.key
+        val objectValue = this.readValue
+        val mapValue = this.readMap
 
-        whenever(it.id).thenReturn(key)
+        return mock {
+            whenever(it.exists()).thenReturn(objectValue != null && mapValue != null)
 
-        whenever<T>(it.toObject(any())).thenAnswer {
-            if (value == null) {
-                throw RuntimeException("Value does not exist")
+            whenever(it.id).thenReturn(key)
+
+            whenever<T>(it.toObject(any())).thenAnswer {
+                if (objectValue == null) {
+                    throw RuntimeException("Snapshot does not contain concrete object")
+                }
+
+                objectValue
             }
 
-            value
+            whenever(it.data).thenAnswer {
+                if (mapValue == null) {
+                    throw RuntimeException("Snapshot does not contain key-value pairs")
+                }
+
+                mapValue
+            }
+
+            whenever(it[any<String>()]).thenAnswer {
+                if (mapValue == null) {
+                    throw RuntimeException("Snapshot does not contain key-value pairs")
+                }
+
+                val requestedKey = it.arguments[0] as String
+
+                mapValue[requestedKey]
+            }
+
+            whenever(it.contains(any<String>())).thenAnswer {
+                if (mapValue == null) {
+                    throw RuntimeException("Snapshot does not contain key-value pairs")
+                }
+
+                val requestedKey = it.arguments[0] as String
+
+                mapValue.containsKey(requestedKey)
+            }
+
+
+            whenever(it.toString()).thenReturn("{$key: $objectValue [or] $mapValue}")
         }
-
-        whenever(it.exists()).thenReturn(value != null)
-
-        whenever(it.toString()).thenReturn("{$key: $value}")
     }
 
     fun toDocumentRef(): DocumentReference = mock {
@@ -70,7 +111,7 @@ class MockDocument<T>(val key: String) {
         whenever(it.id).thenReturn(key)
 
         whenever(it.get()).thenAnswer {
-            Tasks.forResult(getSnapshot(key, readValue))
+            Tasks.forResult(createSnapshot())
         }
 
         whenever(it.set(any())).then {
@@ -90,7 +131,7 @@ class MockDocument<T>(val key: String) {
             val listener = it.arguments[0] as EventListener<DocumentSnapshot>
             listeners.add(listener)
             if (readValue != null) {
-                listener.onEvent(getSnapshot(key, readValue), null)
+                listener.onEvent(createSnapshot(), null)
             }
 
             null
