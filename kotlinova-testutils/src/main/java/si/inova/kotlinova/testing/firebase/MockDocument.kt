@@ -74,7 +74,7 @@ class MockDocument<T>(val key: String) {
         val mapValue = this.readMap
 
         return mock {
-            whenever(it.exists()).thenReturn(objectValue != null && mapValue != null)
+            whenever(it.exists()).thenReturn(objectValue != null || mapValue != null)
 
             whenever(it.id).thenReturn(key)
 
