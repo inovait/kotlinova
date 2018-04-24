@@ -24,8 +24,10 @@ import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.TimeProvider
-import si.inova.kotlinova.utils.ISO_8601_DATE_FORMAT
+import si.inova.kotlinova.utils.ISO_8601_FORMAT_STRING
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 infix fun <T> Comparable<T>.isGreaterThan(other: T) {
     assertTrue("$this is greater than $other", this > other)
@@ -74,7 +76,8 @@ fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
 }
 
 fun isoFromDate(day: Int, month: Int, year: Int): String {
-    return ISO_8601_DATE_FORMAT.format(calendarFromDate(day, month, year).time)
+    return SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault())
+        .format(calendarFromDate(day, month, year).time)
 }
 
 fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
