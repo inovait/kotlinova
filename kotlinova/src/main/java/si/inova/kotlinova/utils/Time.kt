@@ -4,11 +4,8 @@ package si.inova.kotlinova.utils
 
 import android.content.Context
 import si.inova.kotlinova.R
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 /**
  * @author Matej Drobnic
@@ -48,13 +45,3 @@ fun Date.toCalendar(): Calendar {
 
 const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val ISO_8601_FORMAT_STRING_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-// SimpleDateFormat is not thread-safe. Use ThreadLocal to bind it to separate threads.
-val ISO_8601_DATE_FORMAT_HOLDER =
-    threadLocal { SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault()) }
-val ISO_8601_DATE_FORMAT_WITHOUT_TZ_HOLDER =
-    threadLocal { SimpleDateFormat(ISO_8601_FORMAT_STRING_WITHOUT_TZ, Locale.getDefault()) }
-
-inline val ISO_8601_DATE_FORMAT: DateFormat
-    get() = ISO_8601_DATE_FORMAT_HOLDER.get()
-inline val ISO_8601_DATE_FORMAT_WITHOUT_TZ: DateFormat
-    get() = ISO_8601_DATE_FORMAT_WITHOUT_TZ_HOLDER.get()
