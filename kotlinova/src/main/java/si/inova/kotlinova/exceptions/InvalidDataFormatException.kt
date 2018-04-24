@@ -5,4 +5,7 @@ package si.inova.kotlinova.exceptions
  *
  * @author Matej Drobnic
  */
-class InvalidDataFormatException(message: String? = null) : Exception(message)
+class InvalidDataFormatException : Exception {
+    constructor(message: String?) : super(message)
+    constructor(cause: Throwable?) : super(cause)
+}
