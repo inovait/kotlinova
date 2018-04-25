@@ -143,7 +143,7 @@ class MockDocument<T>(val key: String) {
             @Suppress("UNCHECKED_CAST")
             val listener = it.arguments[0] as EventListener<DocumentSnapshot>
             listeners.add(listener)
-            if (readValue != null) {
+            if (readValue != null || readMap != null) {
                 listener.onEvent(createSnapshot(), null)
             }
 
