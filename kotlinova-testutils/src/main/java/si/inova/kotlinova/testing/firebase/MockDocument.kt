@@ -114,7 +114,6 @@ class MockDocument<T>(val key: String) {
                 mapValue.containsKey(requestedKey)
             }
 
-
             whenever(it.toString()).thenReturn("{$key: $objectValue [or] $mapValue}")
         }
     }
