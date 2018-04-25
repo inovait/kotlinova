@@ -82,10 +82,13 @@ fun isoFromDate(day: Int, month: Int, year: Int): String {
 
 fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
     var receivedValue: Resource<List<T>>? = null
+    var receivedException: Throwable? = null
 
-    val subscriber = data.subscribe {
+    val subscriber = data.subscribe({
         receivedValue = it
-    }
+    }, {
+        receivedException = it
+    })
 
     runBlocking {
         loadFirstPage()
@@ -93,6 +96,10 @@ fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
         while (!isAtEnd) {
             loadNextPage()
         }
+    }
+
+    if (receivedException != null) {
+        throw receivedException!!
     }
 
     assertNotNull("Received no value from the paginated query", receivedValue)
