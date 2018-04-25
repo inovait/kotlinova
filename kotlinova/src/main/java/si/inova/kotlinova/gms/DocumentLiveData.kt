@@ -10,8 +10,14 @@ import si.inova.kotlinova.data.resources.Resource
 
 /**
  * LiveData that wraps [DocumentReference]
+ **
  * @author Matej Drobnic
  */
+@Deprecated(
+    message = "Use DocumentObservable instead as it is more flexible (returns whole " +
+        "DocumentSnapshot instead of just target object) and it is not tied to UI thread.",
+    replaceWith = ReplaceWith("DocumentObservable")
+)
 class DocumentLiveData<T>(
     private val documentReference: DocumentReference,
     private val clazz: Class<T>
