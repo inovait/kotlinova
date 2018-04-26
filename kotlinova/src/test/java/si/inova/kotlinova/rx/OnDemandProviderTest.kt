@@ -299,6 +299,23 @@ class OnDemandProviderTest {
     }
 
     @Test
+    fun receiveValueTransmittedAfterDebounce() {
+        val consumer: Consumer<Int> = mock()
+
+        runBlocking {
+            val subscriber = testProvider.flowable.subscribe()
+            subscriber.dispose()
+
+            dispatcher.advanceTime(100)
+
+            testProvider.flowable.subscribe(consumer)
+
+            testProvider.sendPublic(15)
+            verify(consumer).accept(15)
+        }
+    }
+
+    @Test
     fun waitForCleanupToFinishBeforeRestart() {
         val cleanupFinish: () -> Unit = mock()
         val onActiveStart: () -> Unit = mock()

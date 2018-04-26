@@ -1,5 +1,6 @@
 package si.inova.kotlinova.gms
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -11,7 +12,6 @@ import com.nhaarman.mockitokotlin2.whenever
 import io.github.plastix.rxschedulerrule.RxSchedulerRule
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -26,8 +26,10 @@ import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
+import si.inova.kotlinova.testing.assertDocumentsEqual
 import si.inova.kotlinova.testing.assertIs
 import si.inova.kotlinova.testing.firebase.MockCollection
+import si.inova.kotlinova.testing.firebase.MockDocument
 
 /**
  * @author Matej Drobnic
@@ -39,7 +41,7 @@ class ObservableFirebasePaginatedQueryTest {
     private lateinit var listenerRegistration: ListenerRegistration
 
     private lateinit var observableFirebasePaginatedQuery:
-        ObservablePaginatedQuery<Pair<String, Int>>
+        ObservablePaginatedQuery<DocumentSnapshot>
     private var listener: EventListener<QuerySnapshot>? = null
 
     @get:Rule
@@ -59,7 +61,7 @@ class ObservableFirebasePaginatedQueryTest {
             listenerRegistration
         }
 
-        observableFirebasePaginatedQuery = query.paginateObservable<Int>(TEST_ITEMS_PER_PAGE)
+        observableFirebasePaginatedQuery = query.paginateObservable(TEST_ITEMS_PER_PAGE)
     }
 
     @Test
@@ -95,7 +97,7 @@ class ObservableFirebasePaginatedQueryTest {
             "30" to 30
         )
 
-        var valuePlaceholder: Resource<List<Pair<String, Int>>>? = null
+        var valuePlaceholder: Resource<List<DocumentSnapshot>>? = null
         observableFirebasePaginatedQuery.data.subscribe {
             valuePlaceholder = it
         }
@@ -107,7 +109,10 @@ class ObservableFirebasePaginatedQueryTest {
         val result = valuePlaceholder
         assertIs(result, Resource.Success::class.java)
         result as Resource.Success
-        assertEquals(testData, result.data)
+        assertDocumentsEqual(
+            testData.map { MockDocument(it.first, it.second).toDocumentSnap() },
+            result.data
+        )
     }
 
     @Test
@@ -119,7 +124,7 @@ class ObservableFirebasePaginatedQueryTest {
             "50" to 50
         )
 
-        var valuePlaceholder: Resource<List<Pair<String, Int>>>? = null
+        var valuePlaceholder: Resource<List<DocumentSnapshot>>? = null
         observableFirebasePaginatedQuery.data.subscribe {
             valuePlaceholder = it
         }
@@ -145,7 +150,10 @@ class ObservableFirebasePaginatedQueryTest {
         val result = valuePlaceholder
         assertIs(result, Resource.Success::class.java)
         result as Resource.Success
-        assertEquals(testData, result.data)
+        assertDocumentsEqual(
+            testData.map { MockDocument(it.first, it.second).toDocumentSnap() },
+            result.data
+        )
     }
 
     @Test
@@ -326,7 +334,7 @@ class ObservableFirebasePaginatedQueryTest {
             "30" to 30
         )
 
-        var valuePlaceholder: Resource<List<Pair<String, Int>>>? = null
+        var valuePlaceholder: Resource<List<DocumentSnapshot>>? = null
         observableFirebasePaginatedQuery.data.subscribe {
             valuePlaceholder = it
         }
@@ -344,7 +352,10 @@ class ObservableFirebasePaginatedQueryTest {
         val result = valuePlaceholder
         assertIs(result, Resource.Success::class.java)
         result as Resource.Success
-        assertEquals(testData, result.data)
+        assertDocumentsEqual(
+            testData.map { MockDocument(it.first, it.second).toDocumentSnap() },
+            result.data
+        )
     }
 }
 

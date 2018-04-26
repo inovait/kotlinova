@@ -9,6 +9,8 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import org.reactivestreams.Publisher
+import si.inova.kotlinova.archcomponents.ResourcePublisherLiveData
+import si.inova.kotlinova.data.resources.Resource
 
 /**
  * @author Matej Drobnic
@@ -92,6 +94,8 @@ fun <T> MediatorLiveData<T>.addSource(source: LiveData<T>) {
 
 /**
  * Add Rx source to the [MediatorLiveData].
+ *
+ * This should only be used when [T] is not [Resource] and thus [addResourceSource] cannot be used.
  */
 fun <T, S> MediatorLiveData<T>.addSource(source: Publisher<S>, onChanged: (S?) -> Unit) {
     addSource(source.toLiveData(), onChanged)
@@ -99,9 +103,29 @@ fun <T, S> MediatorLiveData<T>.addSource(source: Publisher<S>, onChanged: (S?) -
 
 /**
  * Add Rx source to the [MediatorLiveData] that just forwards its value to MediatorLiveData's value.
+ *
+ * This should only be used when [T] is not [Resource] and thus [addResourceSource] cannot be used.
  */
 fun <T> MediatorLiveData<T>.addSource(source: Publisher<T>) {
     addSource(source.toLiveData())
+}
+
+/**
+ * Add [Resource] Rx source to the [Resource][Resource] [MediatorLiveData].
+ */
+fun <T, S> MediatorLiveData<T>.addResourceSource(
+    source: Publisher<Resource<S>>,
+    onChanged: (Resource<S>?) -> Unit
+) {
+    addSource(source.toResourceLiveData(), onChanged)
+}
+
+/**
+ * Add [Resource] Rx source to the [Resource][Resource] [MediatorLiveData]
+ * that just forwards its value to MediatorLiveData's value.
+ */
+fun <T> MediatorLiveData<Resource<T>>.addResourceSource(source: Publisher<Resource<T>>) {
+    addSource(source.toResourceLiveData())
 }
 
 fun <S, R> LiveData<S>.map(transformation: (S?) -> R?): LiveData<R> {
@@ -124,4 +148,8 @@ fun <S, R> LiveData<S>.mapIfNotNull(transformation: (S?) -> R?): LiveData<R> {
 
 fun <T> Publisher<T>.toLiveData(): LiveData<T> {
     return LiveDataReactiveStreams.fromPublisher(this)
+}
+
+fun <T> Publisher<Resource<T>>.toResourceLiveData(): LiveData<Resource<T>> {
+    return ResourcePublisherLiveData(this)
 }

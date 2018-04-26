@@ -40,6 +40,11 @@ class MockCollection<T>() {
             .readValue = data
     }
 
+    fun insertMap(name: String, data: Map<String, Any>) {
+        createDocument(name)
+            .readMap = data
+    }
+
     private val snapshotOfAllEntries: QuerySnapshot = mock {
         whenever(it.documents).then {
             documents

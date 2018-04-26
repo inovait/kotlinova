@@ -2,6 +2,7 @@ package si.inova.kotlinova.data.pagination
 
 import io.reactivex.Flowable
 import si.inova.kotlinova.data.resources.Resource
+import si.inova.kotlinova.data.resources.mapData
 
 /**
  * Query that broadcasts its data asynchronously and automatically notifies observers when
@@ -57,14 +58,7 @@ inline fun <I, O> ObservablePaginatedQuery<I>.mutate(crossinline converter: (Lis
     ObservablePaginatedQuery<O> {
     return mutateRaw {
         map { resource ->
-            when (resource) {
-                is Resource.Success -> Resource.Success(converter(resource.data))
-                is Resource.Error -> Resource.Error<List<O>>(resource.exception)
-                else -> throw IllegalStateException(
-                    "ObservablePaginatedQuery only supports" +
-                        "Resource.Success and Resource.Error. Found: $resource"
-                )
-            }
+            resource.mapData(converter)
         }
     }
 }

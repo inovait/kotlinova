@@ -1,5 +1,6 @@
 package si.inova.kotlinova.gms
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
@@ -20,13 +21,12 @@ import si.inova.kotlinova.utils.use
  *
  * Wrapper around Firebase Firestore's query that can retrieve data in observable pages.
  */
-class ObservableFirebasePaginatedQuery<T>(
+class ObservableFirebasePaginatedQuery(
     private val baseQuery: Query,
-    private val targetClass: Class<T>,
     private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
-) : OnDemandProvider<Resource<List<Pair<String, T>>>>(UI),
+) : OnDemandProvider<Resource<List<DocumentSnapshot>>>(UI),
     EventListener<QuerySnapshot>,
-    ObservablePaginatedQuery<Pair<String, T>> {
+    ObservablePaginatedQuery<DocumentSnapshot> {
 
     private var currentQuery: Query? = null
     private var currentListenerRegistration: ListenerRegistration? = null
@@ -59,7 +59,7 @@ class ObservableFirebasePaginatedQuery<T>(
         loadingLatch.awaitUnlockIfLocked()
     }
 
-    override val data: Flowable<Resource<List<Pair<String, T>>>>
+    override val data: Flowable<Resource<List<DocumentSnapshot>>>
         get() = flowable
 
     override var isAtEnd = false
@@ -79,9 +79,7 @@ class ObservableFirebasePaginatedQuery<T>(
         }
 
         if (snapshot != null) {
-            val data = snapshot.map {
-                Pair(it.id, it.toObject(targetClass))
-            }
+            val data = snapshot.documents
 
             send(Resource.Success(data))
 
@@ -112,8 +110,8 @@ class ObservableFirebasePaginatedQuery<T>(
 /**
  * Convenience operator that converts regular [Query] into [ObservablePaginatedQuery]
  */
-inline fun <reified T> Query.paginateObservable(
+fun Query.paginateObservable(
     itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
-): ObservablePaginatedQuery<Pair<String, T>> {
-    return ObservableFirebasePaginatedQuery(this, T::class.java, itemsPerPage)
+): ObservablePaginatedQuery<DocumentSnapshot> {
+    return ObservableFirebasePaginatedQuery(this, itemsPerPage)
 }
