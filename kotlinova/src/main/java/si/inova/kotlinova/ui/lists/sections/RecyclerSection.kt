@@ -45,6 +45,10 @@ abstract class RecyclerSection<VH : RecyclerView.ViewHolder> {
         updateCallback = callback
     }
 
+    fun onDetachedFromRecycler() {
+        updateCallback = null
+    }
+
     /**
      * Whether this section only contains placeholder items (items from this adapter will not
      * be counted towards "real item count")

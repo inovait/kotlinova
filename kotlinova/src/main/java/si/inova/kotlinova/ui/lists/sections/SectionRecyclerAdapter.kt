@@ -64,6 +64,17 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         recyclerSection.onAttachedToRecycler(SectionPassListUpdateCallback(sections.size - 1))
     }
 
+    final fun detachSection(position: Int) {
+        val section = sections[position]
+        section.onDetachedFromRecycler()
+        sections.removeAt(position)
+        notifyDataSetChanged()
+    }
+
+    fun getSectionCount(): Int {
+        return sections.size
+    }
+
     fun getSectionIndexAtPosition(position: Int): Int {
         var sectionStart = 0
         for ((index, section) in sections.withIndex()) {
