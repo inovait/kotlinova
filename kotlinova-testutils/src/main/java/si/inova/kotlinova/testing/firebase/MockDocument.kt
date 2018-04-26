@@ -133,6 +133,13 @@ class MockDocument<T>(val key: String) {
             Tasks.forResult(null)
         }
 
+        whenever(it.update(any<Map<String, Any>>())).then {
+            @Suppress("UNCHECKED_CAST")
+            writtenValue = it.arguments[0] as Map<String, Any>?
+
+            Tasks.forResult(null)
+        }
+
         whenever(it.collection(any())).thenAnswer {
             val name = it.arguments[0] as String
             subCollections[name]?.toColRef() ?: MockCollection<Any>().toColRef()
