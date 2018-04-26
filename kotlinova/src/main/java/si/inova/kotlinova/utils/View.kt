@@ -2,6 +2,7 @@
 
 package si.inova.kotlinova.utils
 
+import android.animation.LayoutTransition
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
@@ -92,4 +93,29 @@ fun View.hideKeyboard() {
         windowToken,
         InputMethodManager.HIDE_NOT_ALWAYS
     )
+}
+
+/**
+ * Set view visibility without triggering any layout animations
+ * (for example animations that get triggered when animateLayoutChanges flag is enabled)
+ */
+fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
+    val transition = (parent as? ViewGroup)?.layoutTransition
+
+    val appearingEnabled =
+        transition?.isTransitionTypeEnabled(LayoutTransition.APPEARING) ?: false
+    val disappearingEnabled =
+        transition?.isTransitionTypeEnabled(LayoutTransition.DISAPPEARING) ?: false
+
+    transition?.disableTransitionType(LayoutTransition.APPEARING)
+    transition?.disableTransitionType(LayoutTransition.DISAPPEARING)
+
+    this.visibility = visibility
+
+    if (appearingEnabled) {
+        transition!!.enableTransitionType(LayoutTransition.APPEARING)
+    }
+    if (disappearingEnabled) {
+        transition!!.enableTransitionType(LayoutTransition.DISAPPEARING)
+    }
 }

@@ -5,6 +5,7 @@ package si.inova.kotlinova.testing
  */
 
 import android.arch.lifecycle.LiveData
+import com.google.firebase.firestore.DocumentSnapshot
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.createInstance
 import kotlinx.coroutines.experimental.Deferred
@@ -12,6 +13,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.first
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.mockito.ArgumentMatcher
@@ -22,8 +24,10 @@ import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.TimeProvider
-import si.inova.kotlinova.utils.ISO_8601_DATE_FORMAT
+import si.inova.kotlinova.utils.ISO_8601_FORMAT_STRING
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 infix fun <T> Comparable<T>.isGreaterThan(other: T) {
     assertTrue("$this is greater than $other", this > other)
@@ -72,15 +76,19 @@ fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
 }
 
 fun isoFromDate(day: Int, month: Int, year: Int): String {
-    return ISO_8601_DATE_FORMAT.format(calendarFromDate(day, month, year).time)
+    return SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault())
+        .format(calendarFromDate(day, month, year).time)
 }
 
 fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
     var receivedValue: Resource<List<T>>? = null
+    var receivedException: Throwable? = null
 
-    val subscriber = data.subscribe {
+    val subscriber = data.subscribe({
         receivedValue = it
-    }
+    }, {
+        receivedException = it
+    })
 
     runBlocking {
         loadFirstPage()
@@ -90,10 +98,27 @@ fun <T> ObservablePaginatedQuery<T>.getAll(): List<T> {
         }
     }
 
+    if (receivedException != null) {
+        throw receivedException!!
+    }
+
     assertNotNull("Received no value from the paginated query", receivedValue)
 
     assertIs(receivedValue, Resource.Success::class.java)
 
     subscriber.dispose()
     return (receivedValue as Resource.Success).data
+}
+
+fun assertDocumentsEqual(expected: DocumentSnapshot, actual: DocumentSnapshot) {
+    assertEquals(expected.id, actual.id)
+    assertEquals(expected.toObject(Any::class.java), expected.toObject(Any::class.java))
+}
+
+fun assertDocumentsEqual(expected: List<DocumentSnapshot>, actual: List<DocumentSnapshot>) {
+    assertEquals(expected.size, actual.size)
+
+    for (elements in expected.zip(actual)) {
+        assertDocumentsEqual(elements.first, elements.second)
+    }
 }
