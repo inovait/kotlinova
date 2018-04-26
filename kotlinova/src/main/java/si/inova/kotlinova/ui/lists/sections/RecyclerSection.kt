@@ -41,11 +41,11 @@ abstract class RecyclerSection<VH : RecyclerView.ViewHolder> {
         return 0
     }
 
-    fun onAttachedToRecycler(callback: ListUpdateCallback) {
+    fun onAttachedToAdapter(callback: ListUpdateCallback) {
         updateCallback = callback
     }
 
-    fun onDetachedFromRecycler() {
+    fun onDetachedFromAdapter() {
         updateCallback = null
     }
 
