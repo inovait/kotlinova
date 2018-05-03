@@ -67,8 +67,8 @@ dependencies {
 
     // Libraries are only meant to be compiled into unit tests. Mark them as compileOnly to not
     // include them into any dex files
-    compileOnly "com.google.firebase:firebase-firestore:${versions.playServices}"
-    compileOnly "com.google.firebase:firebase-storage:${versions.playServices}"
+    compileOnly "com.google.firebase:firebase-firestore:${versions.firebaseFirestore}"
+    compileOnly "com.google.firebase:firebase-storage:${versions.firebaseStorage}"
 
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"

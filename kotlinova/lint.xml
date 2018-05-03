@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Ignore InvalidPackage errors in Google's libraries -->
+    <issue id="InvalidPackage">
+        <ignore regexp="DnsNameResolver" />
+    </issue>
+</lint>
