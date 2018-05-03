@@ -87,10 +87,10 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${versions.timber}"
 
-    implementation "com.google.firebase:firebase-auth:${versions.playServices}"
-    implementation "com.google.firebase:firebase-firestore:${versions.playServices}"
-    implementation "com.google.firebase:firebase-storage:${versions.playServices}"
-    implementation "com.google.firebase:firebase-messaging:${versions.playServices}"
+    implementation "com.google.firebase:firebase-auth:${versions.firebaseAuth}"
+    implementation "com.google.firebase:firebase-firestore:${versions.firebaseFirestore}"
+    implementation "com.google.firebase:firebase-storage:${versions.firebaseStorage}"
+    implementation "com.google.firebase:firebase-messaging:${versions.firebaseMessaging}"
     implementation "com.google.android.gms:play-services-location:${versions.playServices}"
 
     testImplementation project(':kotlinova-testutils')
