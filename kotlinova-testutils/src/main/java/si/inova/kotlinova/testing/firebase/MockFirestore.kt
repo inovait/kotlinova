@@ -39,7 +39,6 @@ class MockFirestore {
 
                 Tasks.forResult(result)
             }
-
         }
     }
 
@@ -75,7 +74,6 @@ class MockFirestore {
                 ref.update(it.arguments[1] as Map<String, Any>)
                 it.mock
             }
-
         }
     }
 }
