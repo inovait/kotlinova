@@ -44,6 +44,10 @@ android {
             returnDefaultValues = true
         }
     }
+
+    lintOptions {
+        lintConfig file('lint.xml')
+    }
 }
 
 kotlin {
