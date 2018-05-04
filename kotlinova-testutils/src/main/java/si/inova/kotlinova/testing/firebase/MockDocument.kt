@@ -118,34 +118,47 @@ class MockDocument<T>(val key: String) {
         }
     }
 
-    fun toDocumentRef(): DocumentReference = mock {
+    fun toDocumentRef(): DocumentReference = mock { ref ->
+        whenever(ref.id).thenReturn(key)
 
-        whenever(it.id).thenReturn(key)
-
-        whenever(it.get()).thenAnswer {
+        whenever(ref.get()).thenAnswer {
             Tasks.forResult(createSnapshot())
         }
 
-        whenever(it.set(any())).then {
+        whenever(ref.set(any())).then {
             @Suppress("UNCHECKED_CAST")
             writtenValue = it.arguments[0] as Map<String, Any>?
 
             Tasks.forResult(null)
         }
 
-        whenever(it.update(any<Map<String, Any>>())).then {
+        whenever(ref.update(any<Map<String, Any>>())).then {
+            if (!ref.get().result.exists()) {
+                throw IllegalStateException(
+                    "DocumentReference.update() can only be called " +
+                        "when there is existing value"
+                )
+            }
+
             @Suppress("UNCHECKED_CAST")
             writtenValue = it.arguments[0] as Map<String, Any>?
 
             Tasks.forResult(null)
         }
 
-        whenever(it.collection(any())).thenAnswer {
+        whenever(ref.set(any<Map<String, Any>>())).then {
+            @Suppress("UNCHECKED_CAST")
+            writtenValue = it.arguments[0] as Map<String, Any>?
+
+            Tasks.forResult(null)
+        }
+
+        whenever(ref.collection(any())).thenAnswer {
             val name = it.arguments[0] as String
             subCollections[name]?.toColRef() ?: MockCollection<Any>().toColRef()
         }
 
-        whenever(it.addSnapshotListener(any())).thenAnswer {
+        whenever(ref.addSnapshotListener(any())).thenAnswer {
             @Suppress("UNCHECKED_CAST")
             val listener = it.arguments[0] as EventListener<DocumentSnapshot>
             listeners.add(listener)
