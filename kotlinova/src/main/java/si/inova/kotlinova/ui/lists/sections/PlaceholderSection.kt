@@ -42,7 +42,6 @@ class PlaceholderSection(
             }
         }
 
-
     private fun hideDelayed() {
         handler.postDelayed(HIDE_DELAY) {
             actuallyDisplayed = false

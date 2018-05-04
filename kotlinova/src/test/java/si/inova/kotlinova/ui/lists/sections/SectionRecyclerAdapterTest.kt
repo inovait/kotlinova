@@ -300,7 +300,6 @@ class SectionRecyclerAdapterTest {
         assertEquals(100, sectionedRecyclerAdapter.itemCount)
         blendingSection.updateSize(10)
 
-
         verify(adapterDataObserver).onItemRangeChanged(0, 10, null)
         verify(adapterDataObserver).onItemRangeInserted(10, 10)
         verifyNoMoreInteractions(adapterDataObserver)
@@ -351,7 +350,6 @@ class SectionRecyclerAdapterTest {
 
         assertEquals(0, sectionedRecyclerAdapter.itemCount)
         blendingSection.updateSize(10)
-
 
         verify(adapterDataObserver, only()).onItemRangeInserted(0, 10)
         assertEquals(10, sectionedRecyclerAdapter.itemCount)
