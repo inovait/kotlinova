@@ -17,11 +17,15 @@ class UncaughtExceptionThrowRule : TestWatcher() {
 
     override fun finished(description: Description?) {
         Thread.setDefaultUncaughtExceptionHandler(oldExceptionHandler)
+        Thread.currentThread().uncaughtExceptionHandler = oldExceptionHandler
         MultipleFailureException.assertEmpty(errors)
     }
 
     override fun starting(description: Description?) {
+        val newExceptionHandler =
+            Thread.UncaughtExceptionHandler { _, e -> println("GOT $e"); errors.add(e) }
         oldExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
-        Thread.setDefaultUncaughtExceptionHandler({ _, e -> errors.add(e) })
+        Thread.currentThread().uncaughtExceptionHandler = newExceptionHandler
+        Thread.setDefaultUncaughtExceptionHandler(newExceptionHandler)
     }
 }
