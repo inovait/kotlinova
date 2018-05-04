@@ -170,20 +170,24 @@ class OnDemandProviderTest {
 
     @Test
     fun cancelOnActiveAfterDispose() {
-        // Debounce is not yet tested here
-        testProvider.disableDebounce()
-
-        // This will crash with IllegalStateException if onActive() is not cancelled
+        val afterDelay: () -> Unit = mock()
 
         val provider = object : OnDemandProvider<Int>() {
+            init {
+                // Debounce is not yet tested here
+                debounceTimeout = 0
+            }
+
             override suspend fun CoroutineScope.onActive() {
                 delay(500)
-                send(20)
+                afterDelay()
             }
         }
 
         provider.flowable.subscribe().dispose()
         dispatcher.advanceTime(1000)
+
+        verifyZeroInteractions(afterDelay)
     }
 
     @Test
@@ -313,6 +317,23 @@ class OnDemandProviderTest {
             testProvider.sendPublic(15)
             verify(consumer).accept(15)
         }
+    }
+
+    @Test
+    fun cancelOnActiveAfterDisposeWithDebounce() {
+        val afterDelay: () -> Unit = mock()
+
+        val provider = object : OnDemandProvider<Int>() {
+            override suspend fun CoroutineScope.onActive() {
+                delay(1000)
+                afterDelay()
+            }
+        }
+
+        provider.flowable.subscribe().dispose()
+        dispatcher.advanceTime(2000)
+
+        verifyZeroInteractions(afterDelay)
     }
 
     @Test
