@@ -26,14 +26,14 @@ class PaginatedObservableList<T>(initialData: List<List<T>>) : ObservablePaginat
             updateObservable()
         }
 
-    private var curPage = 1
+    private var curPage = 0
 
     override val isAtEnd: Boolean
         get() = curPage >= currentList.size
 
     private val _data = BehaviorSubject.create<Resource<List<T>>>()
     override val data: Flowable<Resource<List<T>>>
-        get() = _data.toFlowable(BackpressureStrategy.DROP)
+        get() = _data.toFlowable(BackpressureStrategy.LATEST)
 
     /**
      * Freeze data transmission for this query. [loadFirstPage()][loadFirstPage] and
@@ -53,6 +53,7 @@ class PaginatedObservableList<T>(initialData: List<List<T>>) : ObservablePaginat
     override suspend fun loadFirstPage() {
         loadingLatch.awaitUnlockIfLocked()
 
+        curPage = 1
         updateObservable()
     }
 
