@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
@@ -19,7 +20,6 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
 import org.robolectric.RobolectricTestRunner
-import si.inova.kotlinova.R
 
 /**
  * @author Matej Drobnic
@@ -293,35 +293,68 @@ class SectionRecyclerAdapterTest {
     @Test
     fun placeholderBlending() {
         val blendingSection = BlendingSection()
-        val placeholderSection = PlaceholderSection(R.layout.single_container)
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(100) { it } }
         sectionedRecyclerAdapter.attachSection(blendingSection)
         sectionedRecyclerAdapter.attachSection(placeholderSection)
 
-        assertEquals(Short.MAX_VALUE.toInt(), sectionedRecyclerAdapter.itemCount)
+        assertEquals(100, sectionedRecyclerAdapter.itemCount)
         blendingSection.updateSize(10)
 
-        verify(adapterDataObserver, only()).onItemRangeChanged(0, 10, null)
-        assertEquals(Short.MAX_VALUE.toInt(), sectionedRecyclerAdapter.itemCount)
+
+        verify(adapterDataObserver).onItemRangeChanged(0, 10, null)
+        verify(adapterDataObserver).onItemRangeInserted(10, 10)
+        verifyNoMoreInteractions(adapterDataObserver)
+        assertEquals(10 + 100, sectionedRecyclerAdapter.itemCount)
+    }
+
+    @Test
+    fun placeholderBlendingMoreThanHundred() {
+        val blendingSection = BlendingSection()
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(100) { it } }
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        assertEquals(100, sectionedRecyclerAdapter.itemCount)
+        blendingSection.updateSize(300)
+
+        verify(adapterDataObserver).onItemRangeChanged(0, 100, null)
+        verify(adapterDataObserver).onItemRangeInserted(100, 300)
+        verifyNoMoreInteractions(adapterDataObserver)
+        assertEquals(300 + 100, sectionedRecyclerAdapter.itemCount)
     }
 
     @Test
     fun doNotBlendPlaceholdersWhenNotOnEnd() {
         val blendingSection = BlendingSection()
-        val placeholderSection = PlaceholderSection(R.layout.single_container)
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(100) { it } }
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        blendingSection.updateSize(10)
+        verify(adapterDataObserver).onItemRangeInserted(0, 10)
+
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        blendingSection.data.add(1, 10)
+        blendingSection.updateCallback!!.onInserted(1, 1)
+        verify(adapterDataObserver).onItemRangeInserted(1, 1)
+        verifyNoMoreInteractions(adapterDataObserver)
+
+        assertEquals(11 + 100, sectionedRecyclerAdapter.itemCount)
+    }
+
+    @Test
+    fun doNotBlendWhenPlaceholderSectionIsEmpty() {
+        val blendingSection = BlendingSection()
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(0) { it } }
+
         sectionedRecyclerAdapter.attachSection(blendingSection)
         sectionedRecyclerAdapter.attachSection(placeholderSection)
 
-        inOrder(adapterDataObserver) {
-            blendingSection.updateSize(10)
-            verify(adapterDataObserver).onItemRangeChanged(0, 10, null)
+        assertEquals(0, sectionedRecyclerAdapter.itemCount)
+        blendingSection.updateSize(10)
 
-            blendingSection.data.add(1, 10)
-            blendingSection.updateCallback!!.onInserted(1, 1)
 
-            verify(adapterDataObserver).onItemRangeInserted(1, 1)
-
-            assertEquals(Short.MAX_VALUE.toInt() + 1, sectionedRecyclerAdapter.itemCount)
-        }
+        verify(adapterDataObserver, only()).onItemRangeInserted(0, 10)
+        assertEquals(10, sectionedRecyclerAdapter.itemCount)
     }
 
     @Test
