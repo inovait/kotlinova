@@ -51,7 +51,7 @@ abstract class OnDemandProvider<T>(
             .doFinally(this::onDispose)
             .replay(1)
             .refCount()
-            .observeOn(rxScheduler)
+            .subscribeOn(rxScheduler)
 
     @Volatile
     private var emitter: FlowableEmitter<T>? = null
