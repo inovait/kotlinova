@@ -1,5 +1,6 @@
 package si.inova.kotlinova.rx
 
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
@@ -20,6 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
+import timber.log.Timber
 
 /**
  * @author Matej Drobnic
@@ -334,6 +336,28 @@ class OnDemandProviderTest {
         dispatcher.advanceTime(2000)
 
         verifyZeroInteractions(afterDelay)
+    }
+
+    @Test
+    fun printExceptionOnSendWhenInDebounce() {
+        // Coroutines have issues with propagating exceptions after cancellation
+        // Log with timber instead
+        val timberTree: Timber.Tree = mock()
+        Timber.plant(timberTree)
+
+        val provider = object : OnDemandProvider<Int>() {
+            override suspend fun CoroutineScope.onActive() {
+                withContext(NonCancellable) {
+                    delay(1000)
+                }
+
+                send(10)
+            }
+        }
+
+        provider.flowable.subscribe().dispose()
+        dispatcher.advanceTime(2000)
+        verify(timberTree).e(argThat<Throwable> { this is IllegalStateException })
     }
 
     @Test

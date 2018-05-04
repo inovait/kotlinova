@@ -14,6 +14,7 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.coroutines.CommonPool
+import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.experimental.CoroutineContext
@@ -79,7 +80,12 @@ abstract class OnDemandProvider<T>(
                     onActive()
                 } catch (e: Exception) {
                     if (e !is JobCancellationException) {
-                        sendCrash(e)
+                        if (isActive) {
+                            sendCrash(e)
+                        } else {
+                            //Coroutines eat all exceptions when cancelled. Log manually.
+                            Timber.e(e)
+                        }
                     }
                 }
             } else {
@@ -100,12 +106,15 @@ abstract class OnDemandProvider<T>(
             inDebounce.set(true)
             delay(debounceTimeout)
 
-            currentActivationJob?.cancelAndJoin()
+            val currentActivationJob = currentActivationJob
+            currentActivationJob?.cancel()
 
             inDebounce.set(false)
             lastValue.set(null)
-
             emitter = null
+
+            currentActivationJob?.join()
+
             withContext(NonCancellable) {
                 onInactive()
             }
