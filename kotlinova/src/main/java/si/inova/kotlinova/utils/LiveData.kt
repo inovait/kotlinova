@@ -153,3 +153,9 @@ fun <T> Publisher<T>.toLiveData(): LiveData<T> {
 fun <T> Publisher<Resource<T>>.toResourceLiveData(): LiveData<Resource<T>> {
     return ResourcePublisherLiveData(this)
 }
+
+fun <T> LiveData<T>.toMediator(): MediatorLiveData<T> {
+    return MediatorLiveData<T>().also {
+        it.addSource(this)
+    }
+}
