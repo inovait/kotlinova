@@ -67,7 +67,7 @@ class OnDemandProviderThreadedTest {
             delay(500)
         }
 
-        override fun CoroutineScope.onInactive() {
+        override fun onInactive() {
             //assertTrue(currentlyActive.getAndSet(false))
             assertFalse(this@TestProvider.isActive)
         }

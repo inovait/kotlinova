@@ -149,7 +149,7 @@ abstract class OnDemandProvider<T>(
     /**
      * Method that gets triggered when everyone stops observing your service
      */
-    protected open fun CoroutineScope.onInactive() = Unit
+    protected open fun onInactive() = Unit
 }
 
 private const val DEFAULT_DEBOUNCE_TIMEOUT = 500

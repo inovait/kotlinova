@@ -373,7 +373,7 @@ class OnDemandProviderTest {
                 onActiveStart()
             }
 
-            override fun CoroutineScope.onInactive() {
+            override fun onInactive() {
                 cleanupFinish()
             }
         }
@@ -408,7 +408,7 @@ class OnDemandProviderTest {
                 }
             }
 
-            override fun CoroutineScope.onInactive() {
+            override fun onInactive() {
                 onInactiveStart()
             }
         }
@@ -434,7 +434,7 @@ class OnDemandProviderTest {
                 delay(99999999)
             }
 
-            override fun CoroutineScope.onInactive() {
+            override fun onInactive() {
                 cleanupCalled()
             }
         }
@@ -458,7 +458,7 @@ class OnDemandProviderTest {
                 delay(99999999)
             }
 
-            override fun CoroutineScope.onInactive() {
+            override fun onInactive() {
                 cleanupFinished()
             }
         }
@@ -540,7 +540,7 @@ class OnDemandProviderTest {
             }
         }
 
-        public override fun CoroutineScope.onInactive() {
+        public override fun onInactive() {
             inactiveCallback?.invoke()
         }
 
