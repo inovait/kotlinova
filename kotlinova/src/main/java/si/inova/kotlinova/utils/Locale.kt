@@ -7,7 +7,7 @@ import java.util.Locale
  */
 
 /**
- * Return true if user have metrics locale
+ * Returns *true* when user's current country is using metric measurement system
  */
 fun isUserLocaleMetric(): Boolean {
     when (Locale.getDefault().country) {
