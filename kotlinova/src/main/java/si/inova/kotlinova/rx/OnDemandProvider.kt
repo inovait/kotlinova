@@ -8,12 +8,10 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
-import kotlinx.coroutines.experimental.NonCancellable
-import kotlinx.coroutines.experimental.cancelAndJoin
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.coroutines.CommonPool
+import si.inova.kotlinova.utils.awaitCancellation
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -71,53 +69,57 @@ abstract class OnDemandProvider<T>(
     private fun onSubscribe(emitter: FlowableEmitter<T>) {
         this.emitter = emitter
 
-        val cleanupJob = currentCleanupJob
-        currentActivationJob = launch(launchingContext) {
-            cleanupJob?.cancelAndJoin()
+        currentCleanupJob?.cancel()
 
-            if (!inDebounce.get()) {
-                try {
-                    onActive()
-                } catch (e: Exception) {
-                    if (e !is JobCancellationException) {
-                        if (isActive) {
-                            sendCrash(e)
-                        } else {
-                            //Coroutines eat all exceptions when cancelled. Log manually.
-                            Timber.e(e)
-                        }
+        if (inDebounce.get()) {
+            val curValue = lastValue.get()
+
+            if (curValue != null) {
+                emitter.onNext(curValue)
+            }
+
+            inDebounce.set(false)
+            return
+        }
+
+        val oldActivationJob = currentActivationJob
+        oldActivationJob?.cancel()
+
+        currentActivationJob = launch(launchingContext) {
+            oldActivationJob?.join()
+            this@OnDemandProvider.emitter = emitter
+
+            try {
+                onActive()
+                awaitCancellation()
+            } catch (e: Exception) {
+                if (e !is JobCancellationException) {
+                    if (isActive) {
+                        sendCrash(e)
+                    } else {
+                        //Coroutines eat all exceptions when cancelled. Log manually.
+                        Timber.e(e)
                     }
                 }
-            } else {
-                val curValue = lastValue.get()
-
-                if (curValue != null) {
-                    emitter.onNext(curValue)
-                }
-
+            } finally {
+                lastValue.set(null)
                 inDebounce.set(false)
+                this@OnDemandProvider.emitter = null
+
+                onInactive()
             }
         }
     }
 
-    @Synchronized
     private fun onDispose() {
+        inDebounce.set(true)
+
+        currentCleanupJob?.cancel()
         currentCleanupJob = launch(launchingContext) {
-            inDebounce.set(true)
             delay(debounceTimeout)
 
-            val currentActivationJob = currentActivationJob
             currentActivationJob?.cancel()
-
             inDebounce.set(false)
-            lastValue.set(null)
-            emitter = null
-
-            currentActivationJob?.join()
-
-            withContext(NonCancellable) {
-                onInactive()
-            }
         }
     }
 
@@ -147,7 +149,7 @@ abstract class OnDemandProvider<T>(
     /**
      * Method that gets triggered when everyone stops observing your service
      */
-    protected open suspend fun CoroutineScope.onInactive() = Unit
+    protected open fun CoroutineScope.onInactive() = Unit
 }
 
 private const val DEFAULT_DEBOUNCE_TIMEOUT = 500

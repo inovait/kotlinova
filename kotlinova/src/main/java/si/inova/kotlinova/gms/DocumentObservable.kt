@@ -23,7 +23,7 @@ class DocumentObservable(private val documentReference: DocumentReference) :
         listenerRegistration = documentReference.addSnapshotListener(this@DocumentObservable)
     }
 
-    override suspend fun CoroutineScope.onInactive() {
+    override fun CoroutineScope.onInactive() {
         listenerRegistration?.remove()
         listenerRegistration = null
     }

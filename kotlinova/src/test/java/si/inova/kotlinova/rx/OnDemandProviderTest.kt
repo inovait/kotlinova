@@ -1,6 +1,5 @@
 package si.inova.kotlinova.rx
 
-import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
@@ -345,19 +344,23 @@ class OnDemandProviderTest {
         val timberTree: Timber.Tree = mock()
         Timber.plant(timberTree)
 
+        val exception = IllegalStateException()
+
         val provider = object : OnDemandProvider<Int>() {
             override suspend fun CoroutineScope.onActive() {
                 withContext(NonCancellable) {
                     delay(1000)
                 }
 
-                send(10)
+                throw exception
             }
         }
 
         provider.flowable.subscribe().dispose()
         dispatcher.advanceTime(2000)
-        verify(timberTree).e(argThat<Throwable> { this is IllegalStateException })
+        verify(timberTree).e(exception)
+
+        Timber.uproot(timberTree)
     }
 
     @Test
@@ -370,8 +373,7 @@ class OnDemandProviderTest {
                 onActiveStart()
             }
 
-            override suspend fun CoroutineScope.onInactive() {
-                delay(500)
+            override fun CoroutineScope.onInactive() {
                 cleanupFinish()
             }
         }
@@ -406,7 +408,7 @@ class OnDemandProviderTest {
                 }
             }
 
-            override suspend fun CoroutineScope.onInactive() {
+            override fun CoroutineScope.onInactive() {
                 onInactiveStart()
             }
         }
@@ -432,7 +434,7 @@ class OnDemandProviderTest {
                 delay(99999999)
             }
 
-            override suspend fun CoroutineScope.onInactive() {
+            override fun CoroutineScope.onInactive() {
                 cleanupCalled()
             }
         }
@@ -456,8 +458,7 @@ class OnDemandProviderTest {
                 delay(99999999)
             }
 
-            override suspend fun CoroutineScope.onInactive() {
-                delay(5000)
+            override fun CoroutineScope.onInactive() {
                 cleanupFinished()
             }
         }
@@ -467,10 +468,6 @@ class OnDemandProviderTest {
         subscriber.dispose()
 
         dispatcher.advanceTime(2000)
-        verifyZeroInteractions(cleanupFinished)
-
-        provider.flowable.subscribe()
-        dispatcher.advanceTime(6000)
 
         verify(cleanupFinished).invoke()
     }
@@ -543,7 +540,7 @@ class OnDemandProviderTest {
             }
         }
 
-        public override suspend fun CoroutineScope.onInactive() {
+        public override fun CoroutineScope.onInactive() {
             inactiveCallback?.invoke()
         }
 
