@@ -94,4 +94,28 @@ class DocumentObservableTest {
         testObserver.assertValuesOnly(Resource.Error(exception))
         testObserver.assertNoErrors()
     }
+
+    @Test
+    fun noErrorsWithLateDelivery() {
+        val document = MockDocument<Int>("Test", 1)
+        document.readValue = 1
+
+        lateinit var documentListener: EventListener<DocumentSnapshot>
+        val mockDocument: DocumentReference = mock() {
+            whenever(it.addSnapshotListener(any())).then {
+                @Suppress("UNCHECKED_CAST")
+                documentListener = it.arguments[0] as EventListener<DocumentSnapshot>
+
+                mock<ListenerRegistration>()
+            }
+        }
+
+        val documentObservable = DocumentObservable(mockDocument)
+        documentObservable.flowable.map { it.value!!.toObject(Int::class.java) }
+            .subscribe().dispose()
+
+        dispatcher.advanceTime(1000)
+
+        documentListener.onEvent(document.toDocumentSnap(), null)
+    }
 }

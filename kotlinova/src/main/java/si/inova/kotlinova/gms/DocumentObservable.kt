@@ -29,6 +29,10 @@ class DocumentObservable(private val documentReference: DocumentReference) :
     }
 
     override fun onEvent(newDocument: DocumentSnapshot?, e: FirebaseFirestoreException?) {
+        if (!isActive) {
+            return
+        }
+
         if (e != null) {
             send(Resource.Error(e))
             return
