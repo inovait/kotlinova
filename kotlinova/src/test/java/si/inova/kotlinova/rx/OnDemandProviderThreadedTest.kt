@@ -52,7 +52,8 @@ class OnDemandProviderThreadedTest {
         }
     }
 
-    private open class TestProvider : OnDemandProvider<Unit>(rxScheduler = Schedulers.trampoline()) {
+    private open class TestProvider
+        : OnDemandProvider<Unit>(rxScheduler = Schedulers.trampoline()) {
         private val currentlyActive = AtomicBoolean(false)
 
         override suspend fun CoroutineScope.onActive() {
