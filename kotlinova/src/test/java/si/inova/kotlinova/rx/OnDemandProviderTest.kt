@@ -20,6 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
+import timber.log.Timber
 
 /**
  * @author Matej Drobnic
@@ -170,20 +171,24 @@ class OnDemandProviderTest {
 
     @Test
     fun cancelOnActiveAfterDispose() {
-        // Debounce is not yet tested here
-        testProvider.disableDebounce()
-
-        // This will crash with IllegalStateException if onActive() is not cancelled
+        val afterDelay: () -> Unit = mock()
 
         val provider = object : OnDemandProvider<Int>() {
+            init {
+                // Debounce is not yet tested here
+                debounceTimeout = 0
+            }
+
             override suspend fun CoroutineScope.onActive() {
                 delay(500)
-                send(20)
+                afterDelay()
             }
         }
 
         provider.flowable.subscribe().dispose()
         dispatcher.advanceTime(1000)
+
+        verifyZeroInteractions(afterDelay)
     }
 
     @Test
@@ -316,6 +321,49 @@ class OnDemandProviderTest {
     }
 
     @Test
+    fun cancelOnActiveAfterDisposeWithDebounce() {
+        val afterDelay: () -> Unit = mock()
+
+        val provider = object : OnDemandProvider<Int>() {
+            override suspend fun CoroutineScope.onActive() {
+                delay(1000)
+                afterDelay()
+            }
+        }
+
+        provider.flowable.subscribe().dispose()
+        dispatcher.advanceTime(2000)
+
+        verifyZeroInteractions(afterDelay)
+    }
+
+    @Test
+    fun printExceptionOnSendWhenInDebounce() {
+        // Coroutines have issues with propagating exceptions after cancellation
+        // Log with timber instead
+        val timberTree: Timber.Tree = mock()
+        Timber.plant(timberTree)
+
+        val exception = IllegalStateException()
+
+        val provider = object : OnDemandProvider<Int>() {
+            override suspend fun CoroutineScope.onActive() {
+                withContext(NonCancellable) {
+                    delay(1000)
+                }
+
+                throw exception
+            }
+        }
+
+        provider.flowable.subscribe().dispose()
+        dispatcher.advanceTime(2000)
+        verify(timberTree).e(exception)
+
+        Timber.uproot(timberTree)
+    }
+
+    @Test
     fun waitForCleanupToFinishBeforeRestart() {
         val cleanupFinish: () -> Unit = mock()
         val onActiveStart: () -> Unit = mock()
@@ -325,8 +373,7 @@ class OnDemandProviderTest {
                 onActiveStart()
             }
 
-            override suspend fun CoroutineScope.onInactive() {
-                delay(500)
+            override fun onInactive() {
                 cleanupFinish()
             }
         }
@@ -361,7 +408,7 @@ class OnDemandProviderTest {
                 }
             }
 
-            override suspend fun CoroutineScope.onInactive() {
+            override fun onInactive() {
                 onInactiveStart()
             }
         }
@@ -387,7 +434,7 @@ class OnDemandProviderTest {
                 delay(99999999)
             }
 
-            override suspend fun CoroutineScope.onInactive() {
+            override fun onInactive() {
                 cleanupCalled()
             }
         }
@@ -411,8 +458,7 @@ class OnDemandProviderTest {
                 delay(99999999)
             }
 
-            override suspend fun CoroutineScope.onInactive() {
-                delay(5000)
+            override fun onInactive() {
                 cleanupFinished()
             }
         }
@@ -422,10 +468,6 @@ class OnDemandProviderTest {
         subscriber.dispose()
 
         dispatcher.advanceTime(2000)
-        verifyZeroInteractions(cleanupFinished)
-
-        provider.flowable.subscribe()
-        dispatcher.advanceTime(6000)
 
         verify(cleanupFinished).invoke()
     }
@@ -498,7 +540,7 @@ class OnDemandProviderTest {
             }
         }
 
-        public override suspend fun CoroutineScope.onInactive() {
+        public override fun onInactive() {
             inactiveCallback?.invoke()
         }
 
