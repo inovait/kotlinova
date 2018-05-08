@@ -23,12 +23,16 @@ class DocumentObservable(private val documentReference: DocumentReference) :
         listenerRegistration = documentReference.addSnapshotListener(this@DocumentObservable)
     }
 
-    override suspend fun CoroutineScope.onInactive() {
+    override fun onInactive() {
         listenerRegistration?.remove()
         listenerRegistration = null
     }
 
     override fun onEvent(newDocument: DocumentSnapshot?, e: FirebaseFirestoreException?) {
+        if (!isActive) {
+            return
+        }
+
         if (e != null) {
             send(Resource.Error(e))
             return

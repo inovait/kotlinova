@@ -5,6 +5,7 @@ package si.inova.kotlinova.utils
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlin.coroutines.experimental.CoroutineContext
 
@@ -47,3 +48,5 @@ suspend fun Mutex.awaitUnlockIfLocked() {
 
 inline val CoroutineContext.isActive: Boolean
     get() = this[Job]!!.isActive
+
+suspend fun awaitCancellation() = suspendCancellableCoroutine<Unit> { }

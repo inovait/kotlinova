@@ -101,7 +101,7 @@ class ObservableFirebasePaginatedQuery(
             currentQuery?.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
     }
 
-    override suspend fun CoroutineScope.onInactive() {
+    override fun onInactive() {
         currentListenerRegistration?.remove()
         currentListenerRegistration = null
     }
