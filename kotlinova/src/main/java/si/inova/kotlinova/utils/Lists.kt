@@ -23,3 +23,21 @@ fun <T> List<T>.copy(): List<T> {
  * @return Random element of the list
  */
 fun <E> List<E>.getRandomElement() = this[RANDOM.nextInt(this.size)]
+
+/**
+ * Returns the average value of the given function or `null` if there are no elements.
+ */
+inline fun <T> Collection<T>.meanBy(selector: (T) -> Int): Int? {
+    var sum = 0
+
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = selector(e)
+        sum += v
+    }
+
+    return sum / size
+}
