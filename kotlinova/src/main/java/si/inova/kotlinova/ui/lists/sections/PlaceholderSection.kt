@@ -14,7 +14,8 @@ import androidx.core.os.postDelayed
  * @author Matej Drobnic
  */
 class PlaceholderSection(
-    @LayoutRes private val placeholderResource: Int
+    @LayoutRes private val placeholderResource: Int,
+    private val placeholderCount : Int = 10
 ) : RecyclerSection<PlaceholderSection.PlaceholderViewHolder>() {
     private val handler = Handler()
 
@@ -36,7 +37,7 @@ class PlaceholderSection(
 
             if (value) {
                 actuallyDisplayed = true
-                updateCallback?.onInserted(0, PLACEHOLDER_COUNT)
+                updateCallback?.onInserted(0, placeholderCount)
             } else {
                 hideDelayed()
             }
@@ -45,7 +46,7 @@ class PlaceholderSection(
     private fun hideDelayed() {
         handler.postDelayed(HIDE_DELAY) {
             actuallyDisplayed = false
-            updateCallback?.onRemoved(0, PLACEHOLDER_COUNT)
+            updateCallback?.onRemoved(0, placeholderCount)
         }
     }
 
@@ -59,7 +60,7 @@ class PlaceholderSection(
     override val itemCount: Int
         get() {
             return if (actuallyDisplayed) {
-                PLACEHOLDER_COUNT
+                placeholderCount
             } else {
                 0
             }
@@ -72,4 +73,3 @@ class PlaceholderSection(
 }
 
 private const val HIDE_DELAY = 500L
-private const val PLACEHOLDER_COUNT = 100
