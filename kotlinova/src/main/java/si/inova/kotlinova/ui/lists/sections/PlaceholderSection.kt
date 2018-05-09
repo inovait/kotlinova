@@ -15,7 +15,7 @@ import androidx.core.os.postDelayed
  */
 class PlaceholderSection(
     @LayoutRes private val placeholderResource: Int,
-    private val placeholderCount : Int = 10
+    private val placeholderCount: Int = 10
 ) : RecyclerSection<PlaceholderSection.PlaceholderViewHolder>() {
     private val handler = Handler()
 
