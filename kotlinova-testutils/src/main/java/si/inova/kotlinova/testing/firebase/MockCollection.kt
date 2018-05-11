@@ -45,6 +45,10 @@ class MockCollection<T>() {
             .readMap = data
     }
 
+    fun clear() {
+        documents.clear()
+    }
+
     private val snapshotOfAllEntries: QuerySnapshot = mock {
         whenever(it.documents).then {
             documents
