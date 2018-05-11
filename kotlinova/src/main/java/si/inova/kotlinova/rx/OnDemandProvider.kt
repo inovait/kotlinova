@@ -82,12 +82,17 @@ abstract class OnDemandProvider<T>(
             return
         }
 
+        runOnActive(emitter)
+    }
+
+    protected fun runOnActive(newEmitter: FlowableEmitter<T>? = null) {
+        val targetEmitter = newEmitter ?: emitter ?: throw IllegalStateException("No emitter")
         val oldActivationJob = currentActivationJob
         oldActivationJob?.cancel()
 
         currentActivationJob = launch(launchingContext) {
             oldActivationJob?.join()
-            this@OnDemandProvider.emitter = emitter
+            this@OnDemandProvider.emitter = targetEmitter
 
             try {
                 onActive()
