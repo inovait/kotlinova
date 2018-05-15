@@ -55,6 +55,7 @@ class CenterHorizontalStartRecyclerView @JvmOverloads constructor(
     }
 
     private val preDrawListener = ViewTreeObserver.OnPreDrawListener {
+
         if (childCount > 0) {
             setupCenterOnPreDraw = false
             setupCenteredPadding()
