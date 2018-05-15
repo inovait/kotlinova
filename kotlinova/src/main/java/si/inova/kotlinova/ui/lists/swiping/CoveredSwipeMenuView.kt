@@ -39,9 +39,11 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
     var onSwipeLeftListener: (() -> Unit)? = null
     var onSwipeRightListener: (() -> Unit)? = null
 
-    val leftItemClipRect = Rect()
-    val rightItemClipRect = Rect()
-    val backgroundClipRect = Rect()
+    private val leftItemClipRect = Rect()
+    private val rightItemClipRect = Rect()
+    private val backgroundClipRect = Rect()
+
+    var allowDragging = true
 
     init {
         val args = context.theme.obtainStyledAttributes(
@@ -99,10 +101,18 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!allowDragging) {
+            return false
+        }
+
         return helper?.onTouchEvent(event) ?: false
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if (!allowDragging) {
+            return false
+        }
+
         return helper?.onInterceptTouchEvent(ev) ?: false
     }
 
@@ -141,5 +151,6 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
 
     fun resetDrag() {
         foregroundSwipingItem?.translationX = 0f
+        onMoved(0f)
     }
 }

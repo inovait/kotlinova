@@ -1,5 +1,6 @@
 package si.inova.kotlinova.ui.lists.sections
 
+import android.support.annotation.CallSuper
 import android.support.v7.widget.RecyclerView
 import si.inova.kotlinova.ui.lists.AsyncListDiffComputer
 import si.inova.kotlinova.ui.lists.ListDiffProvider
@@ -34,13 +35,20 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
         }
 
         asyncListDiffComputer.computeDiffs(this, data, newData) { result ->
+            val oldList = data
             data = newData.copy()
+            forceUpdateAllItems = false
+            updateListeners.forEach { it.invoke() }
+
+            onListUpdated(oldList, newData)
             updateCallback?.let {
                 result.dispatchUpdatesTo(it)
             }
-            forceUpdateAllItems = false
-            updateListeners.forEach { it.invoke() }
         }
+    }
+
+    @CallSuper
+    protected fun onListUpdated(oldList: List<T>?, newList: List<T>) {
     }
 
     override val itemCount: Int
