@@ -33,6 +33,7 @@ class ObservableFirebasePaginatedQuery(
     private var numItemsFetched = 0
 
     private var waitingForFirstValue: Boolean = false
+    private var waitingForFirstNextPageValue: Boolean = false
     private var loadingLatch = Mutex(false)
 
     override suspend fun loadFirstPage() {
@@ -41,11 +42,12 @@ class ObservableFirebasePaginatedQuery(
     }
 
     override suspend fun loadNextPage() = data.use {
-        if (isAtEnd || waitingForFirstValue) {
+        if (isAtEnd || waitingForFirstNextPageValue) {
             return@use
         }
 
         waitingForFirstValue = true
+        waitingForFirstNextPageValue = true
         numItemsFetched += itemsPerPage
 
         currentListenerRegistration?.remove()
@@ -84,7 +86,9 @@ class ObservableFirebasePaginatedQuery(
             send(Resource.Success(data))
 
             if (waitingForFirstValue) {
-                loadingLatch.unlock()
+                if (waitingForFirstNextPageValue) {
+                    loadingLatch.unlock()
+                }
 
                 isAtEnd = data.size < numItemsFetched
                 waitingForFirstValue = false
@@ -93,12 +97,17 @@ class ObservableFirebasePaginatedQuery(
                 // Force isAtEnd to false to re-check if there was any additional data added.
                 isAtEnd = false
             }
+
+            waitingForFirstNextPageValue = false
         }
     }
 
     override suspend fun CoroutineScope.onActive() {
-        currentListenerRegistration =
-            currentQuery?.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
+        currentQuery?.let {
+            waitingForFirstValue = true
+            currentListenerRegistration =
+                it.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
+        }
     }
 
     override fun onInactive() {

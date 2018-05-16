@@ -357,6 +357,70 @@ class ObservableFirebasePaginatedQueryTest {
             result.data
         )
     }
+
+    @Test
+    fun keepIsAtEndAfterObserverChange() = runBlocking {
+        val singlePage = listOf(
+            "10" to 10
+        )
+
+        val subscriber = observableFirebasePaginatedQuery.data.subscribe()
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+
+        inOrder(query) {
+            verify(query).limit(2L)
+            listener!!.onEvent(MockCollection(singlePage).toQuerySnapshot(), null)
+            assertTrue(observableFirebasePaginatedQuery.isAtEnd)
+
+            subscriber.dispose()
+            dispatcher.advanceTime(600)
+            observableFirebasePaginatedQuery.data.subscribe()
+            listener!!.onEvent(MockCollection(singlePage).toQuerySnapshot(), null)
+            assertTrue(observableFirebasePaginatedQuery.isAtEnd)
+        }
+    }
+
+    @Test
+    fun resetObserverBeforeLoadingNextPage() = runBlocking {
+        val testData = listOf(
+            "10" to 10,
+            "20" to 20,
+            "40" to 40,
+            "50" to 50
+        )
+
+        var valuePlaceholder: Resource<List<DocumentSnapshot>>? = null
+        val subscriber = observableFirebasePaginatedQuery.data.subscribe {
+            valuePlaceholder = it
+        }
+
+        async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
+
+        listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
+
+        subscriber.dispose()
+        dispatcher.advanceTime(600)
+        observableFirebasePaginatedQuery.data.subscribe {
+            valuePlaceholder = it
+        }
+
+        async(CommonPool) { observableFirebasePaginatedQuery.loadNextPage() }
+
+        inOrder(query) {
+            verify(query).limit(2L)
+            verify(query).limit(4L)
+        }
+
+        listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
+
+        val result = valuePlaceholder
+        assertIs(result, Resource.Success::class.java)
+        result as Resource.Success
+        assertDocumentsEqual(
+            testData.map { MockDocument(it.first, it.second).toDocumentSnap() },
+            result.data
+        )
+    }
 }
 
 private const val TEST_ITEMS_PER_PAGE = 2
