@@ -1,6 +1,5 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.content.Context
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -22,13 +21,20 @@ import java.util.LinkedList
  * @author Matej Drobnic
  */
 class SingleViewSection(
-    protected val context: Context,
     @LayoutRes private val layout: Int = 0
 ) : RecyclerSection<SingleViewSection.SingleViewHolder>() {
 
     private val viewUpdateCallbacks = LinkedList<(View) -> Unit>()
 
     private var singletonHolder: SingleViewHolder? = null
+
+    /**
+     * View of this section. This is only provided for read-only operations.
+     *
+     * DO NOT MAKE ANY CHANGES TO THIS INSTANCE. USE [updateView()][updateView] INSTEAD.
+     */
+    val view: View?
+        get() = singletonHolder?.itemView
 
     final var displayed: Boolean = true
         set(value) {
@@ -54,7 +60,7 @@ class SingleViewSection(
             )
         }
 
-        return LayoutInflater.from(context).inflate(layout, parent, false)
+        return LayoutInflater.from(parent.context).inflate(layout, parent, false)
     }
 
     fun updateView(callback: (View) -> Unit) {
