@@ -44,4 +44,4 @@ fun Date.toCalendar(): Calendar {
 }
 
 const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ"
-const val ISO_8601_FORMAT_STRING_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+const val ISO_8601_FORMAT_STRING_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss"
