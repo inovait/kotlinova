@@ -24,7 +24,7 @@ import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.TimeProvider
-import si.inova.kotlinova.utils.ISO_8601_FORMAT_STRING
+import si.inova.kotlinova.utils.ISO_8601_FORMAT_STRING_WITHOUT_TZ
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -72,11 +72,12 @@ fun <T, R : Any> assertIs(test: R?, expectedClass: Class<T>) {
 }
 
 fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
-    return TimeProvider.currentCalendar().apply { set(year, month + 1, day) }
+    return TimeProvider.currentCalendar()
+        .apply { set(year, month - 1, day, 0, 0, 0) }
 }
 
 fun isoFromDate(day: Int, month: Int, year: Int): String {
-    return SimpleDateFormat(ISO_8601_FORMAT_STRING, Locale.getDefault())
+    return SimpleDateFormat(ISO_8601_FORMAT_STRING_WITHOUT_TZ, Locale.getDefault())
         .format(calendarFromDate(day, month, year).time)
 }
 
