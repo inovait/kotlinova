@@ -2,7 +2,9 @@
 
 package si.inova.kotlinova.utils
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
+import org.threeten.bp.Instant
 
 /**
  * @author Matej Drobnic
@@ -17,4 +19,11 @@ inline fun <reified T> DocumentSnapshot.getOrNull(): T? {
     }
 
     return toObject(T::class.java)
+}
+
+/**
+ * Convert Firestore timestamp to Instant
+ */
+fun Timestamp.toInstant(): Instant {
+    return Instant.ofEpochSecond(seconds, nanoseconds.toLong())
 }
