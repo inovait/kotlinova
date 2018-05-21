@@ -4,6 +4,8 @@ import android.os.SystemClock
 import android.support.annotation.RestrictTo
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import java.util.Calendar
 import java.util.Date
 
@@ -34,6 +36,10 @@ object TimeProvider {
 
     fun currentInstant(): Instant =
         Instant.now(clockProvider())
+
+    fun todayLocalDate(): LocalDate = LocalDate.now(clockProvider())
+
+    fun currentLocalDateTime(): LocalDateTime = LocalDateTime.now(clockProvider())
 
     @RestrictTo(RestrictTo.Scope.TESTS)
     var currentTimeMillisProvider = { System.currentTimeMillis() }
