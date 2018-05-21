@@ -132,6 +132,10 @@ fun <S, R> LiveData<S>.map(transformation: (S?) -> R?): LiveData<R> {
     return Transformations.map(this, transformation)
 }
 
+fun <S, R> LiveData<S>.switchMap(transformation: (S?) -> LiveData<R>?): LiveData<R> {
+    return Transformations.switchMap(this, transformation)
+}
+
 /**
  * Similar to [map] except that no value will be emitted if transformations returns *null*.
  */
