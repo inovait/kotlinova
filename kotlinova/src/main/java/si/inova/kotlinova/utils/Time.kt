@@ -74,6 +74,5 @@ val ISO_LOCAL_DATE_TIME_WITH_FORCED_SECONDS by lazy {
         .withChronology(IsoChronology.INSTANCE)
 }
 
-
 const val ISO_8601_FORMAT_STRING = "yyyy-MM-dd'T'HH:mm:ssZ"
 const val ISO_8601_FORMAT_STRING_WITHOUT_TZ = "yyyy-MM-dd'T'HH:mm:ss"
