@@ -22,21 +22,6 @@ class OnDemandProviderThreadedTest {
     @get:Rule
     val timberRule = TimberExceptionThrowRule()
 
-    @Test(timeout = 10_000)
-    fun manySubscribesWithDebounce() {
-        // Thread concurrency issues do not reproduce every time
-        // repeat it multiple times to increase chance of failure
-        repeat(100) {
-            val provider = TestProvider()
-
-            repeat(200) {
-                provider.flowable.subscribe().dispose()
-            }
-
-            ForkJoinPool.commonPool().awaitTermination(5, TimeUnit.DAYS)
-        }
-    }
-
     private open class TestProvider
         : OnDemandProvider<Unit>(rxScheduler = Schedulers.trampoline()) {
         private val currentlyActive = AtomicBoolean(false)
