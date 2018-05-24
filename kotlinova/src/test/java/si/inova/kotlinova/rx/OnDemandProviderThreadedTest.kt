@@ -57,10 +57,6 @@ class OnDemandProviderThreadedTest {
         private val currentlyActive = AtomicBoolean(false)
 
         override suspend fun CoroutineScope.onActive() {
-            // currentlyActive test currently fails due to bug in coroutines:
-            // https://github.com/Kotlin/kotlinx.coroutines/issues/357
-            // minor issue, keep commented until fix is found
-
             assertFalse(currentlyActive.getAndSet(true))
             assertTrue(this@TestProvider.isActive)
             assertTrue(isActive)
