@@ -8,6 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.JobCancellationException
+import kotlinx.coroutines.experimental.cancelChildren
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import si.inova.kotlinova.coroutines.CommonPool
@@ -57,7 +58,8 @@ abstract class OnDemandProvider<T>(
     private val inDebounce = AtomicBoolean(false)
     private val lastValue = AtomicReference<T?>()
 
-    private var currentActivationJob: Job? = null
+    private val parentActivationJob = Job()
+
     private var currentCleanupJob: Job? = null
 
     val isActive: Boolean
@@ -87,11 +89,14 @@ abstract class OnDemandProvider<T>(
 
     protected fun runOnActive(newEmitter: FlowableEmitter<T>? = null) {
         val targetEmitter = newEmitter ?: emitter ?: throw IllegalStateException("No emitter")
-        val oldActivationJob = currentActivationJob
-        oldActivationJob?.cancel()
 
-        currentActivationJob = launch(launchingContext) {
-            oldActivationJob?.join()
+        parentActivationJob.cancelChildren()
+
+        launch(launchingContext, parent = parentActivationJob) {
+            parentActivationJob.children
+                .filter { it != coroutineContext[Job] }
+                .forEach { it.join() }
+
             this@OnDemandProvider.emitter = targetEmitter
 
             try {
@@ -123,7 +128,7 @@ abstract class OnDemandProvider<T>(
         currentCleanupJob = launch(launchingContext) {
             delay(debounceTimeout)
 
-            currentActivationJob?.cancel()
+            parentActivationJob.cancelChildren()
             inDebounce.set(false)
         }
     }
