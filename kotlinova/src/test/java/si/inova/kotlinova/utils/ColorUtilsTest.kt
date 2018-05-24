@@ -18,6 +18,9 @@ class ColorUtilsTest {
         assertEquals(0xFFAACDBA.toInt(), parseHexColor("aacdba"))
         assertEquals(0xABDE5ECC.toInt(), parseHexColor("dE5ecCAb"))
         assertEquals(0xFFAADDBB.toInt(), parseHexColor("AADDBB"))
+
+        assertEquals(0xFFAADDBB.toInt(), parseHexColor("#AADDBB"))
+        assertEquals(0xAB123456.toInt(), parseHexColor("#123456AB"))
     }
 
     @Test(expected = IllegalArgumentException::class)

@@ -18,11 +18,12 @@ import kotlin.math.roundToInt
  * @return Android's [Color] int (0xAARRGGBB)
  */
 fun parseHexColor(colorString: String): Int {
-    val parsedColor = colorString.toLowerCase().toLong(16)
+    val processedColor = colorString.toLowerCase().removePrefix("#")
+    val parsedColor = processedColor.toLong(16)
 
     return when {
-        colorString.length == 6 -> parsedColor or 0xFF000000
-        colorString.length == 8 -> {
+        processedColor.length == 6 -> parsedColor or 0xFF000000
+        processedColor.length == 8 -> {
             val rgb = parsedColor and 0xFFFFFF00
             val alpha = parsedColor and 0x000000FF
 
