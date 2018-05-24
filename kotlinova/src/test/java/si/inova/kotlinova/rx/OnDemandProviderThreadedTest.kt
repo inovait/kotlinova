@@ -32,9 +32,9 @@ class OnDemandProviderThreadedTest {
             repeat(200) {
                 provider.flowable.subscribe().dispose()
             }
-
-            ForkJoinPool.commonPool().awaitTermination(5, TimeUnit.DAYS)
         }
+
+        ForkJoinPool.commonPool().awaitTermination(5, TimeUnit.DAYS)
     }
 
     @Test(timeout = 10_000)
@@ -47,9 +47,9 @@ class OnDemandProviderThreadedTest {
             repeat(200) {
                 provider.flowable.subscribe().dispose()
             }
-
-            ForkJoinPool.commonPool().awaitTermination(5, TimeUnit.DAYS)
         }
+
+        ForkJoinPool.commonPool().awaitTermination(5, TimeUnit.DAYS)
     }
 
     private open class TestProvider
@@ -61,7 +61,7 @@ class OnDemandProviderThreadedTest {
             // https://github.com/Kotlin/kotlinx.coroutines/issues/357
             // minor issue, keep commented until fix is found
 
-            //assertFalse(currentlyActive.getAndSet(true))
+            assertFalse(currentlyActive.getAndSet(true))
             assertTrue(this@TestProvider.isActive)
             assertTrue(isActive)
 
@@ -69,7 +69,7 @@ class OnDemandProviderThreadedTest {
         }
 
         override fun onInactive() {
-            //assertTrue(currentlyActive.getAndSet(false))
+            assertTrue(currentlyActive.getAndSet(false))
             assertFalse(this@TestProvider.isActive)
         }
     }
