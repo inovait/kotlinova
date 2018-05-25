@@ -24,18 +24,21 @@ import java.lang.reflect.Type
  *
  * @author original CoroutineCallAdapterFactory by Jake Wharton, adapted by Matej Drobnic
  */
-class CoroutineCallAdapterFactory constructor(private val responseParser: ResponseParser? = null) : CallAdapter.Factory() {
+class CoroutineCallAdapterFactory constructor(private val responseParser: ResponseParser? = null) :
+    CallAdapter.Factory() {
     override fun get(
-            returnType: Type,
-            annotations: Array<out Annotation>,
-            retrofit: Retrofit
+        returnType: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
     ): CallAdapter<*, *>? {
         if (Deferred::class.java != getRawType(returnType)) {
             return null
         }
         if (returnType !is ParameterizedType) {
             throw IllegalStateException(
-                    "Deferred return type must be parameterized as Deferred<Foo> or Deferred<out Foo>")
+                "Deferred return type must be parameterized " +
+                    "as Deferred<Foo> or Deferred<out Foo>"
+            )
         }
         val responseType = getParameterUpperBound(0, returnType)
 
@@ -43,7 +46,7 @@ class CoroutineCallAdapterFactory constructor(private val responseParser: Respon
     }
 
     private inner class BodyCallAdapter<T>(
-            private val responseType: Type
+        private val responseType: Type
     ) : CallAdapter<T, Deferred<T>> {
 
         override fun responseType() = responseType
@@ -84,6 +87,6 @@ class CoroutineCallAdapterFactory constructor(private val responseParser: Respon
     }
 
     interface ResponseParser {
-        fun <T> parseResponse(response : Response<T>) : T
+        fun <T> parseResponse(response: Response<T>): T
     }
 }
