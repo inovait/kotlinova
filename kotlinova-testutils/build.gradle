@@ -68,6 +68,7 @@ dependencies {
 
     // Libraries are only meant to be compiled into unit tests. Mark them as compileOnly to not
     // include them into any dex files
+    compileOnly "com.google.firebase:firebase-core:${versions.firebaseCore}"
     compileOnly "com.google.firebase:firebase-firestore:${versions.firebaseFirestore}"
     compileOnly "com.google.firebase:firebase-storage:${versions.firebaseStorage}"
 

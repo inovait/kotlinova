@@ -92,6 +92,7 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:${versions.timber}"
 
+    implementation "com.google.firebase:firebase-core:${versions.firebaseCore}"
     implementation "com.google.firebase:firebase-auth:${versions.firebaseAuth}"
     implementation "com.google.firebase:firebase-firestore:${versions.firebaseFirestore}"
     implementation "com.google.firebase:firebase-storage:${versions.firebaseStorage}"
