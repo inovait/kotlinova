@@ -40,7 +40,7 @@ class DocumentObservable(private val documentReference: DocumentReference) :
 
         if (newDocument != null) {
             if (!newDocument.exists()) {
-                send(Resource.Error(NoSuchElementException()))
+                send(Resource.Error(NoSuchElementException("${newDocument.reference.parent} is missing")))
                 return
             }
 
