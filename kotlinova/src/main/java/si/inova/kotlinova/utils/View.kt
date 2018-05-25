@@ -96,6 +96,17 @@ fun View.resetKeyboard() {
 }
 
 /**
+ * Open soft keyboard
+ */
+fun View.openKeyboard() {
+    val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputManager.showSoftInput(
+        this,
+        InputMethodManager.SHOW_IMPLICIT
+    )
+}
+
+/**
  * Set view visibility without triggering any layout animations
  * (for example animations that get triggered when animateLayoutChanges flag is enabled)
  */
