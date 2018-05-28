@@ -143,5 +143,5 @@ class FullScreenProgressBar @JvmOverloads constructor(
 }
 
 private const val MIN_SHOWN_TIME = 500L // ms
-private const val MIN_DELAY_UNTIL_SHOW = 500L // ms
+private const val MIN_DELAY_UNTIL_SHOW = 250L // ms
 private const val FADE_ANIMATION_DURATION = 250L // ms
