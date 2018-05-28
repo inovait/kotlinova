@@ -24,6 +24,16 @@ open class ExtendedMediatorLiveData<T> : MediatorLiveData<T>() {
         sources.removeAll { it.get() == source }
     }
 
+    fun <S : Any?> addSourceIfNotPresent(source: LiveData<S>, onChanged: (S?) -> Unit) {
+        if (!isSourceAdded(source)) {
+            addSource(source, onChanged)
+        }
+    }
+
+    fun <S : Any?> isSourceAdded(source: LiveData<S>): Boolean {
+        return sources.any { it.get() == source }
+    }
+
     fun removeAllSources() {
         for (source in sources) {
             source.get()?.let {
