@@ -6,6 +6,7 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MediatorLiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.Transformations
 import org.reactivestreams.Publisher
@@ -162,4 +163,8 @@ fun <T> LiveData<T>.toMediator(): MediatorLiveData<T> {
     return MediatorLiveData<T>().also {
         it.addSource(this)
     }
+}
+
+fun <T> liveDataOf(value: T?): LiveData<T> {
+    return MutableLiveData<T>().apply { this.value = value }
 }
