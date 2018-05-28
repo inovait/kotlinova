@@ -162,19 +162,46 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun onInserted(position: Int, count: Int) {
             val sectionStart = getSectionStart(sectionIndex)
-
             val section = sections[sectionIndex]
+
+            if (position + count != section.itemCount) {
+                notifyItemRangeInserted(position, count)
+                return
+            }
+
             val nextSection = sections.elementAtOrNull(sectionIndex + 1)
-            if (section.blendsIntoPlaceholders &&
-                nextSection?.sectionContainsPlaceholderItems == true &&
-                (position + count) == section.itemCount) {
-                val numToUpdate = count.coerceAtMost(nextSection.itemCount)
-                if (numToUpdate > 0) {
-                    notifyItemRangeChanged(position + sectionStart, numToUpdate)
-                }
-                notifyItemRangeInserted(position + sectionStart + numToUpdate, count)
+
+            val numPlaceholderItems = if (nextSection?.sectionContainsPlaceholderItems == true) {
+                nextSection.itemCount
             } else {
-                notifyItemRangeInserted(position + sectionStart, count)
+                0
+            }
+
+            val numMaxToBlend = count.coerceAtMost(numPlaceholderItems)
+
+            var nextInsertedIndex = 0
+            var numUpdated = 0
+            while (nextInsertedIndex < numMaxToBlend) {
+                val itemType = section.getItemViewType(position + nextInsertedIndex)
+                val followingSameType = (nextInsertedIndex until numMaxToBlend).takeWhile {
+                    section.getItemViewType(position + it) == itemType
+                }.size
+
+                if (section.canBlendIntoPlaceholder(itemType)) {
+                    notifyItemRangeChanged(nextInsertedIndex + sectionStart, followingSameType)
+                    numUpdated += followingSameType
+                } else {
+                    notifyItemRangeInserted(nextInsertedIndex + sectionStart, followingSameType)
+                }
+
+                nextInsertedIndex += followingSameType
+            }
+
+            if (nextInsertedIndex < count || numUpdated > 0) {
+                notifyItemRangeInserted(
+                    nextInsertedIndex + position + sectionStart,
+                    count - nextInsertedIndex + numUpdated
+                )
             }
         }
 

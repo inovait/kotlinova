@@ -59,9 +59,9 @@ abstract class RecyclerSection<VH : RecyclerView.ViewHolder> {
         get() = false
 
     /**
-     * Whether this section can blend into placeholders that are positioned after this section.
+     * Whether provided item type in this section can blend into placeholders
+     * that are positioned after this section.
      * If *true*, placeholder crossfade animation is played instead of insert animation.
      */
-    val blendsIntoPlaceholders: Boolean
-        get() = false
+    fun canBlendIntoPlaceholder(itemType: Int): Boolean = false
 }

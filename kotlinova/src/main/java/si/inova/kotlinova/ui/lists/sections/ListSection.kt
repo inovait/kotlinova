@@ -1,6 +1,5 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.support.annotation.CallSuper
 import android.support.v7.widget.RecyclerView
 import si.inova.kotlinova.ui.lists.AsyncListDiffComputer
 import si.inova.kotlinova.ui.lists.ListDiffProvider
@@ -47,7 +46,6 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
         }
     }
 
-    @CallSuper
     protected fun onListUpdated(oldList: List<T>?, newList: List<T>) {
     }
 
