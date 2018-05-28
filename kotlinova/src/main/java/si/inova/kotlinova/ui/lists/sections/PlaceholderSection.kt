@@ -6,7 +6,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.postDelayed
+import si.inova.kotlinova.time.TimeProvider
+import kotlin.math.max
 
 /**
  * Section that displays very long list of scrolling placeholder views
@@ -19,35 +20,57 @@ class PlaceholderSection(
 ) : RecyclerSection<PlaceholderSection.PlaceholderViewHolder>() {
     private val handler = Handler()
 
-    private var actuallyDisplayed: Boolean = true
+    private var actuallyDisplayed: Boolean = false
+    private var lastShowTime = 0L
 
-    final var displayed: Boolean = true
+    final var displayed: Boolean = false
         set(value) {
             if (value == field) {
                 return
             }
 
-            handler.removeCallbacksAndMessages(null)
+            if (value) {
+                show()
+            } else {
+                hide()
+            }
 
             field = value
-
-            if (value && actuallyDisplayed) {
-                return
-            }
-
-            if (value) {
-                actuallyDisplayed = true
-                updateCallback?.onInserted(0, placeholderCount)
-            } else {
-                hideDelayed()
-            }
         }
 
-    private fun hideDelayed() {
-        handler.postDelayed(HIDE_DELAY) {
-            actuallyDisplayed = false
-            updateCallback?.onRemoved(0, placeholderCount)
+    fun show() {
+        removeCallbacks()
+        if (actuallyDisplayed) {
+            return
         }
+
+        handler.postDelayed(showRunnable, MIN_DELAY_UNTIL_SHOW)
+    }
+
+    fun hide() {
+        removeCallbacks()
+        if (!actuallyDisplayed) {
+            return
+        }
+
+        val elapsedTime = TimeProvider.elapsedRealtime() - lastShowTime
+        val timeLeft = max(0, MIN_SHOWN_TIME - elapsedTime)
+        handler.postDelayed(hideRunnable, timeLeft)
+    }
+
+    private fun removeCallbacks() {
+        handler.removeCallbacks(hideRunnable)
+        handler.removeCallbacks(showRunnable)
+    }
+
+    private val hideRunnable = Runnable {
+        actuallyDisplayed = false
+        updateCallback?.onRemoved(0, placeholderCount)
+    }
+
+    private val showRunnable = Runnable {
+        actuallyDisplayed = true
+        updateCallback?.onInserted(0, placeholderCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceholderViewHolder {
@@ -72,4 +95,5 @@ class PlaceholderSection(
     class PlaceholderViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView)
 }
 
-private const val HIDE_DELAY = 500L
+private const val MIN_SHOWN_TIME = 500L // ms
+private const val MIN_DELAY_UNTIL_SHOW = 250L // ms
