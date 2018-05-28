@@ -125,6 +125,10 @@ class MockDocument<T>(val key: String) {
             Tasks.forResult(createSnapshot())
         }
 
+        whenever(ref.get(any())).thenAnswer {
+            Tasks.forResult(createSnapshot())
+        }
+
         whenever(ref.set(any())).then {
             @Suppress("UNCHECKED_CAST")
             writtenValue = it.arguments[0] as Map<String, Any>?
