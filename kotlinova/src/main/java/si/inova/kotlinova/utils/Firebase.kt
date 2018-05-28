@@ -3,8 +3,11 @@
 package si.inova.kotlinova.utils
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Source
 import org.threeten.bp.Instant
+import si.inova.kotlinova.coroutines.await
 
 /**
  * @author Matej Drobnic
@@ -19,6 +22,19 @@ inline fun <reified T> DocumentSnapshot.getOrNull(): T? {
     }
 
     return toObject(T::class.java)
+}
+
+/**
+ * Return [DocumentSnapshot] from cache first or from internet if cache is not available
+ */
+suspend fun DocumentReference.getFromCacheFirst(): DocumentSnapshot {
+    val document = get(Source.CACHE).await()
+
+    if (document.exists()) {
+        return document
+    }
+
+    return get(Source.SERVER).await()
 }
 
 /**
