@@ -411,6 +411,27 @@ class SectionRecyclerAdapterTest {
         assertEquals(4, sectionedRecyclerAdapter.sectionCount)
     }
 
+    @Test
+    fun partialPlaceholderBlending() {
+        val blendingSection = PartialBlendingSection()
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(15) { it } }
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        assertEquals(15, sectionedRecyclerAdapter.itemCount)
+
+        blendingSection.updateSize(20)
+
+        verify(adapterDataObserver).onItemRangeInserted(0, 1)
+        verify(adapterDataObserver).onItemRangeChanged(1, 2, null)
+        verify(adapterDataObserver).onItemRangeInserted(3, 4)
+        verify(adapterDataObserver).onItemRangeChanged(7, 8, null)
+        verify(adapterDataObserver).onItemRangeInserted(15, 5 + 10)
+        verifyNoMoreInteractions(adapterDataObserver)
+
+        assertEquals(20 + 15, sectionedRecyclerAdapter.itemCount)
+    }
+
     private class TestSection : RecyclerSection<TestSectionViewHolder>() {
         var data: MutableList<Int> = ArrayList()
 
@@ -443,9 +464,18 @@ class SectionRecyclerAdapterTest {
             get() = data.size
     }
 
+    private class PartialBlendingSection : TestSection() {
+        override fun canBlendIntoPlaceholder(itemType: Int): Boolean = itemType == 0
+
+        override fun getItemViewType(position: Int): Int {
+            val allowBlendType = position in 1..2 || position >= 7
+
+            return if (allowBlendType) 0 else 1
+        }
+    }
+
     private class BlendingSection : TestSection() {
-        override val blendsIntoPlaceholders: Boolean
-            get() = true
+        override fun canBlendIntoPlaceholder(itemType: Int): Boolean = true
     }
 
     private class PlaceholderTestSection : TestSection() {
