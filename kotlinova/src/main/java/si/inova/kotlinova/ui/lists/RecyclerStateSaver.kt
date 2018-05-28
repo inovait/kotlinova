@@ -10,7 +10,7 @@ import si.inova.kotlinova.ui.state.StateSavingComponent
  * State saver that saves [RecyclerView]'s state and then loads it at any point in time
  * (whenever data is reloaded).
  *
- * You must manually call [notifyRecyclerViewLoaded]&#40;) or if you are using [ListAdapter] or [ListSection], you can
+ * You must manually call [notifyRecyclerViewLoaded]&#40;) or if you are using [ListSection], you can
  * instead call [attach]&#40;) to automatically load data when ListAdapter receives new data.
  *
  * @author Matej Drobnic
@@ -43,10 +43,6 @@ class RecyclerStateSaver(
         val lastSavedState = lastSavedState ?: return
         recycler.layoutManager?.onRestoreInstanceState(lastSavedState)
         alreadyRestored = true
-    }
-
-    fun attach(listAdapter: ListAdapter<*, *>) {
-        listAdapter.listUpdateListener = this::notifyRecyclerViewLoaded
     }
 
     fun attach(listSection: ListSection<*, *>) {

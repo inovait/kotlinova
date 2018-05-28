@@ -11,7 +11,6 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -80,22 +79,6 @@ class RecyclerStateSaverTest {
             verify(layoutManager!!).onRestoreInstanceState(testParcelable)
             verifyNoMoreInteractions()
         }
-    }
-
-    @Test
-    fun restoringListAdapter() {
-        val testParcelable = StringParcelable("Test")
-        whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-            .thenReturn(testParcelable)
-
-        val listAdapter: ListAdapter<Any, DummyViewHolder> = mock()
-
-        recyclerStateSaver.attach(listAdapter)
-        assertNotNull(listAdapter.listUpdateListener)
-
-        listAdapter.listUpdateListener!!.invoke()
-
-        verify(layoutManager!!).onRestoreInstanceState(testParcelable)
     }
 
     @Suppress("UNCHECKED_CAST")
