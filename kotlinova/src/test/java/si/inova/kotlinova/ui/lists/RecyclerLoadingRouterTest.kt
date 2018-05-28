@@ -75,7 +75,6 @@ class RecyclerLoadingRouterTest {
         verify(loadingRecyclerAdapter).displayed = false
     }
 
-
     @Test
     fun reachBottomLoadingAfterFirstTime() {
         recyclerLoadingRouter.updateLoading(true)
