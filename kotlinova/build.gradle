@@ -80,7 +80,7 @@ dependencies {
 
     implementation "android.arch.lifecycle:extensions:${versions.architectureComponents}"
     kapt "android.arch.lifecycle:compiler:${versions.architectureComponents}"
-    implementation "com.google.code.gson:gson:${versions.gson}"
+    implementation "com.squareup.moshi:moshi:${versions.moshi}"
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
     compileOnly "com.squareup.retrofit2:retrofit:${versions.retrofit}"
 
