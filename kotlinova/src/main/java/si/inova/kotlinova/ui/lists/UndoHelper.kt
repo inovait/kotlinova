@@ -36,6 +36,7 @@ class UndoHelper<T>(
             .make(rootView, deleteText, Snackbar.LENGTH_LONG)
             .setAction(context.getString(R.string.undo)) {
                 commitDeletionsAllButLast()
+                restoreCallBack?.invoke()
                 Snackbar.make(rootView, restoreText, Snackbar.LENGTH_SHORT).show()
             }.show()
         notifyItemRemovedCallback?.invoke()
@@ -50,7 +51,6 @@ class UndoHelper<T>(
         for (i in 0 until itemsToRemove.count()) {
             deleteCallback?.invoke(itemsToRemove[i])
         }
-        restoreCallBack?.invoke()
         itemsToRemove.clear()
     }
 
@@ -59,7 +59,6 @@ class UndoHelper<T>(
             deleteCallback?.invoke(itemsToRemove[i])
         }
         removeCallbacks()
-        restoreCallBack?.invoke()
         itemsToRemove.clear()
     }
 }
