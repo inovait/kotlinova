@@ -7,6 +7,7 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.mockito.Answers
@@ -24,6 +25,7 @@ class MockCollection<T>() {
     var nextId: String = "NextID"
 
     private val documents = LinkedHashMap<String, DocumentReference>()
+    private val listeners = ArrayList<EventListener<QuerySnapshot>>()
 
     fun createDocument(name: String): MockDocument<T> {
         val document = MockDocument<T>(name)
@@ -38,40 +40,58 @@ class MockCollection<T>() {
     fun insertObject(name: String, data: T) {
         createDocument(name)
             .readValue = data
+
+        updateListeners()
     }
 
     fun insertMap(name: String, data: Map<String, Any>) {
         createDocument(name)
             .readMap = data
+
+        updateListeners()
     }
 
     fun clear() {
         documents.clear()
+
+        updateListeners()
     }
 
-    private val snapshotOfAllEntries: QuerySnapshot = mock {
-        whenever(it.documents).then {
-            documents
-                .values
-                .toList()
-                .map {
-                    it.get().result
-                }
-        }
+    fun updateListeners() {
+        val newSnapshot = toQuerySnapshot()
 
-        whenever(it.iterator()).then {
-            documents
-                .values
-                .toList()
-                .map {
-                    it.get().result
-                }
-                .iterator()
+        for (listener in listeners) {
+            listener.onEvent(newSnapshot, null)
         }
     }
 
     fun toQuerySnapshot(): QuerySnapshot {
-        return snapshotOfAllEntries
+        val documents = LinkedHashMap<String, DocumentReference>().apply {
+            putAll(this@MockCollection.documents)
+        }
+
+        return mock {
+            whenever(it.size()).thenReturn(documents.size)
+
+            whenever(it.documents).then {
+                documents
+                    .values
+                    .toList()
+                    .map {
+                        it.get().result
+                    }
+            }
+
+            whenever(it.iterator()).then {
+                documents
+                    .values
+                    .toList()
+                    .map {
+                        it.get().result
+                    }
+                    .iterator()
+            }
+        }
     }
 
     fun toColRef(): CollectionReference {
@@ -90,14 +110,17 @@ class MockCollection<T>() {
                     ?: MockDocument<T>(name).toDocumentRef()
             }
 
-            whenever(it.get()).thenReturn(Tasks.forResult(snapshotOfAllEntries))
+            whenever(it.get()).thenAnswer { (Tasks.forResult(toQuerySnapshot())) }
 
             whenever(it.addSnapshotListener(any())).thenAnswer {
                 @Suppress("UNCHECKED_CAST")
                 val listener = it.arguments[0] as EventListener<QuerySnapshot>
                 listener.onEvent(toQuerySnapshot(), null)
 
+                listeners.add(listener)
+
                 val registration: ListenerRegistration = mock()
+                doAnswer { listeners.remove(listener) }.whenever(registration).remove()
                 registration
             }
         }
