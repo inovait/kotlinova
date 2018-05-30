@@ -45,7 +45,7 @@ class FullScreenProgressBarTest {
     @Test
     fun hideAfterDelay() {
         fullScreenProgressBar.show()
-        advanceTime(600)
+        advanceTime(260)
 
         advanceTime(600)
         fullScreenProgressBar.hide()
@@ -57,7 +57,7 @@ class FullScreenProgressBarTest {
     @Test
     fun doNotHideImmediately() {
         fullScreenProgressBar.show()
-        advanceTime(501)
+        advanceTime(260)
 
         fullScreenProgressBar.hide()
 
