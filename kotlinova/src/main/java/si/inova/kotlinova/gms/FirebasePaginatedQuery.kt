@@ -22,6 +22,10 @@ class FirebasePaginatedQuery(
     override var isAtEnd = false
         private set
 
+    override suspend fun reset() {
+        lastDocument = null
+    }
+
     override suspend fun nextPage(): List<DocumentSnapshot> {
         val queryStart = with(lastDocument) {
             when (this) {
