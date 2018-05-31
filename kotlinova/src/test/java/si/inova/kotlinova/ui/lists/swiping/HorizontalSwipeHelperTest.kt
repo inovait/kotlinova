@@ -281,7 +281,7 @@ class HorizontalSwipeHelperTest {
             downTime,
             TimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
-            600f,
+            800f,
             500f,
             0
         )
@@ -333,7 +333,7 @@ class HorizontalSwipeHelperTest {
             downTime,
             TimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
-            400f,
+            200f,
             500f,
             0
         )

@@ -237,5 +237,5 @@ class HorizontalSwipeHelper(private val view: View) {
 }
 
 private const val SWIPE_ESCAPE_VELOCITY_UNSCALED = 500f // dp/sec
-private const val MAX_DISMISS_VELOCITY_UNSCALED = 4000f // dp/sec
+private const val MAX_DISMISS_VELOCITY_UNSCALED = 200f // dp/sec
 private const val RETURN_ANIMATION_VELOCITY_UNSCALED = 400f // dp/sec
