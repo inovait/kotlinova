@@ -64,7 +64,7 @@ class DocumentMemoryCache constructor(private val cacheDuration: Long) {
     inline fun <T> getOrProduce(
         key: Any,
         forceProduce: Boolean = false,
-        crossinline producer: () -> T
+        producer: () -> T
     ): T {
         val existingValue: T? = if (forceProduce) null else get(key)
 
