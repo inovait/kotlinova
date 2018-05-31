@@ -76,6 +76,7 @@ dependencies {
     implementation "androidx.core:core-ktx:${versions.ktx}"
 
     implementation "com.android.support:appcompat-v7:${versions.androidSupportLib}"
+    implementation "com.android.support:design:${versions.androidSupportLib}"
     implementation "com.android.support:recyclerview-v7:${versions.androidSupportLib}"
 
     implementation "android.arch.lifecycle:extensions:${versions.architectureComponents}"
