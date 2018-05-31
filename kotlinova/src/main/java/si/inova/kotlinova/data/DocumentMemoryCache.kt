@@ -1,6 +1,7 @@
 package si.inova.kotlinova.data
 
 import android.support.v4.util.SimpleArrayMap
+import si.inova.kotlinova.testing.OpenForTesting
 import si.inova.kotlinova.time.TimeProvider
 
 /**
@@ -19,6 +20,7 @@ import si.inova.kotlinova.time.TimeProvider
  *
  * @param cacheDuration Maximum time that entry can be in cache, in milliseconds
  */
+@OpenForTesting
 class DocumentMemoryCache constructor(private val cacheDuration: Long) {
     private val storage = SimpleArrayMap<Any, CacheEntry>()
 
@@ -61,7 +63,7 @@ class DocumentMemoryCache constructor(private val cacheDuration: Long) {
      * cache and return the result.
      */
 
-    inline fun <T> getOrProduce(
+    final inline fun <T> getOrProduce(
         key: Any,
         forceProduce: Boolean = false,
         producer: () -> T
