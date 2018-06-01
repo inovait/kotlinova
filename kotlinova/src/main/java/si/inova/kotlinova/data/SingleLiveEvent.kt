@@ -20,7 +20,6 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.support.annotation.MainThread
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * A lifecycle-aware observable that sends only new updates after subscription, used for events like
@@ -38,17 +37,13 @@ import java.util.concurrent.atomic.AtomicBoolean
  * [Google's Examples](https://github.com/googlesamples/android-architecture/blob/dev-t&#111;do-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SingleLiveEvent.java)
  */
 open class SingleLiveEvent<T> : MutableLiveData<T>() {
-    private val mPending = AtomicBoolean(false)
+    private val deliveredTo = HashSet<Observer<T>>()
 
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
-        if (hasActiveObservers()) {
-            throw UnsupportedOperationException("This class only supports one observer at a time")
-        }
-
-        // Observe the internal MutableLiveData
         super.observe(owner, Observer { t ->
-            if (mPending.compareAndSet(true, false)) {
+            if (!deliveredTo.contains(observer)) {
+                deliveredTo.add(observer)
                 observer.onChanged(t)
             }
         })
@@ -56,7 +51,7 @@ open class SingleLiveEvent<T> : MutableLiveData<T>() {
 
     @MainThread
     override fun setValue(t: T?) {
-        mPending.set(true)
+        deliveredTo.clear()
         super.setValue(t)
     }
 
