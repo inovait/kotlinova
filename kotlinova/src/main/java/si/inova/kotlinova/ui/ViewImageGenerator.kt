@@ -10,11 +10,13 @@ import androidx.core.view.toBitmap
 import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.inflateAndAwait
+import si.inova.kotlinova.testing.OpenForTesting
 import javax.inject.Inject
 
 /**
  * Helper class for generating consistent
  */
+@OpenForTesting
 class ViewImageGenerator @Inject constructor(private val context: Context) {
     /**
      * Inflate view, resize it to [width] pixels wide times *wrap content* tall
