@@ -22,6 +22,16 @@ class TimeFormatTest {
         assertEquals("00:02:38", TimeFormat.toHoursMinutesSeconds(158, context))
         assertEquals("150:00:00", TimeFormat.toHoursMinutesSeconds(540000, context))
         assertEquals("01:30:32", TimeFormat.toHoursMinutesSeconds(5432, context))
+
+        assertEquals(
+            "02:38",
+            TimeFormat.toHoursMinutesSeconds(158, context, alwaysShowHours = false)
+        )
+
+        assertEquals(
+            "01:30:32",
+            TimeFormat.toHoursMinutesSeconds(5432, context, alwaysShowHours = false)
+        )
     }
 
     @Test
