@@ -15,8 +15,8 @@ import kotlin.math.max
 /**
  * Progress bar that fades all views and disables all touch behind it.
  *
- * It also prevents blinking (it will only be displayed after 500ms of loading and then it will be
- * displayed for at least another 500ms)
+ * It also prevents blinking (it will only be displayed after some time loading and then it will be
+ * displayed for a minimum time)
  *
  * @author Bojan Kseneman, adapted by Matej Drobnic
  */
