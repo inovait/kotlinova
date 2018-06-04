@@ -14,7 +14,7 @@ class BehaviorSubjectProxy<T>(private val input: Flowable<T>) {
 
     val flowable: Flowable<T> = subject
         .doOnSubscribe(this::onSubscribe)
-        .doOnDispose(this::onDispose)
+        .doFinally(this::onDispose)
         .share().toFlowable(BackpressureStrategy.LATEST)
 
     private var disposable: Disposable? = null
