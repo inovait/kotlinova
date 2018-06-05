@@ -22,7 +22,11 @@ fun Calendar.isSameDay(other: Calendar): Boolean {
 }
 
 object TimeFormat {
-    fun toHoursMinutesSeconds(totalSeconds: Int, context: Context): String {
+    fun toHoursMinutesSeconds(
+        totalSeconds: Int,
+        context: Context,
+        alwaysShowHours: Boolean = true
+    ): String {
         var leftSeconds = totalSeconds
 
         val hours = leftSeconds / 3600
@@ -31,7 +35,11 @@ object TimeFormat {
         val minutes = leftSeconds / 60
         leftSeconds %= 60
 
-        return context.getString(R.string.time_hours_minutes_seconds, hours, minutes, leftSeconds)
+        return if (hours > 0 || alwaysShowHours) {
+            context.getString(R.string.time_hours_minutes_seconds, hours, minutes, leftSeconds)
+        } else {
+            context.getString(R.string.time_minutes_seconds, minutes, leftSeconds)
+        }
     }
 
     fun toMinutesSeconds(totalSeconds: Int, context: Context): String {

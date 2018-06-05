@@ -29,7 +29,7 @@ class ViewImageGenerator @Inject constructor(private val context: Context) {
         @LayoutRes layout: Int,
         width: Int,
         density: Int,
-        viewAction: (View.() -> Unit)? = null
+        viewAction: (suspend View.() -> Unit)? = null
     ): Bitmap {
         return generateViewImage(
             layout,
@@ -54,7 +54,7 @@ class ViewImageGenerator @Inject constructor(private val context: Context) {
         widthMeasureSpec: Int,
         heightMeasureSpec: Int,
         density: Int,
-        viewAction: (View.() -> Unit)? = null
+        viewAction: (suspend View.() -> Unit)? = null
     ): Bitmap {
         val config = Configuration(context.resources.configuration)
         config.densityDpi = density
