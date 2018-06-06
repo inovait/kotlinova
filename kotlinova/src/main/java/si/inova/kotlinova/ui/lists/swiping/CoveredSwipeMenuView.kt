@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import si.inova.kotlinova.R
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
@@ -125,7 +126,7 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
     }
 
     override fun onMoved(translationX: Float) {
-        clipView(translationX, behindBackground, backgroundClipRect, true)
+        clipView(translationX, behindBackground, backgroundClipRect, abs(translationX) >= 1)
         clipView(translationX, leftItem, leftItemClipRect, translationX > 0)
         clipView(translationX, rightItem, rightItemClipRect, translationX < 0)
     }
