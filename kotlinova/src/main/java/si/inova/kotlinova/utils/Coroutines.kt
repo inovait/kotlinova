@@ -52,14 +52,14 @@ inline val CoroutineContext.isActive: Boolean
 
 suspend fun awaitCancellation() = suspendCancellableCoroutine<Unit> { }
 
-fun <Any> CancellableContinuation<Any>.tryWithResumeException(exception: Throwable) {
+fun <T> CancellableContinuation<T>.tryWithResumeException(exception: Throwable) {
     val res = tryResumeWithException(exception)
     if (res != null) {
         completeResume(res)
     }
 }
 
-fun <Any> CancellableContinuation<Any>.tryWithResume(result: Any) {
+fun <T> CancellableContinuation<T>.resumeIfNotAlreadyResumed(result: T) {
     val res = tryResume(result, null)
     if (res != null) {
         completeResume(res)
