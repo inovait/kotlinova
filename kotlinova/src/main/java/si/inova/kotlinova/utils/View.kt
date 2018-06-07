@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
 import android.support.v4.view.AsyncLayoutInflater
+import android.support.v7.widget.SwitchCompat
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
 import androidx.core.view.isVisible
 
 /**
@@ -129,4 +131,13 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
     if (disappearingEnabled) {
         transition!!.enableTransitionType(LayoutTransition.DISAPPEARING)
     }
+}
+
+fun SwitchCompat.setSwitchWithoutTriggeringListener(
+    state: Boolean,
+    listener: CompoundButton.OnCheckedChangeListener
+) {
+    setOnCheckedChangeListener(null)
+    isChecked = state
+    setOnCheckedChangeListener(listener)
 }
