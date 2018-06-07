@@ -133,7 +133,7 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
     }
 }
 
-fun SwitchCompat.setSwitchWithoutTriggeringListener(
+fun SwitchCompat.setIsCheckedWithoutTriggeringListener(
     state: Boolean,
     listener: CompoundButton.OnCheckedChangeListener
 ) {
