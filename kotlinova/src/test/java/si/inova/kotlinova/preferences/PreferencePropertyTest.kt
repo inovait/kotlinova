@@ -59,6 +59,28 @@ class PreferencePropertyTest {
     }
 
     @Test
+    fun testSavingAndGettingNull() {
+        val dataObject = object {
+            var d by preference<Int?>(sharedPreferences, -1)
+        }
+
+        dataObject.d = 86
+
+        val secondDataObject = object {
+            var d by preference<Int?>(sharedPreferences, -1)
+        }
+
+        assertEquals(86, secondDataObject.d)
+        secondDataObject.d = null
+
+        val thirdDataObject = object {
+            var d by preference<Int?>(sharedPreferences, -1)
+        }
+
+        assertEquals(-1, thirdDataObject.d)
+    }
+
+    @Test
     fun testNullDefault() {
         val dataObject = object {
             var e by preference<String?>(sharedPreferences, null)
