@@ -7,6 +7,12 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
+ * Property delegate that wraps [SharedPreferences] and allows easy preference reading and writing
+ * with minimal boilerplate.
+ *
+ * Note that *null* values are not persisted. if [T] is nullable and you try to set *null* value,
+ * preference will be removed and [defaultValue] will be returned on the next get.
+ *
  * @author Matej Drobnic
  */
 class PreferenceProperty<T>(
@@ -28,10 +34,19 @@ class PreferenceProperty<T>(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
         cache = value
-        sharedPreferences.edit().put(property.name, value as Any).apply()
+        sharedPreferences.edit().apply {
+            if (value == null) {
+                remove(property.name)
+            } else {
+                put(property.name, value as Any)
+            }
+        }.apply()
     }
 }
 
+/**
+ * Convenience function for easy [PreferenceProperty] creation.
+ */
 inline fun <reified T> preference(
     sharedPreferences: SharedPreferences,
     defaultValue: T

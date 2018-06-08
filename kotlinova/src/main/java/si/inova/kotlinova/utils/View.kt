@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v4.app.Fragment
 import android.support.v4.view.AsyncLayoutInflater
+import android.support.v7.widget.SwitchCompat
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
 import androidx.core.view.isVisible
 
 /**
@@ -85,9 +87,9 @@ fun Fragment.inflateAsync(
 }
 
 /**
- * Hide soft keyboard
+ * Close soft keyboard
  */
-fun View.resetKeyboard() {
+fun View.closeKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.hideSoftInputFromWindow(
         windowToken,
@@ -129,4 +131,13 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
     if (disappearingEnabled) {
         transition!!.enableTransitionType(LayoutTransition.DISAPPEARING)
     }
+}
+
+fun SwitchCompat.setIsCheckedWithoutTriggeringListener(
+    state: Boolean,
+    listener: CompoundButton.OnCheckedChangeListener
+) {
+    setOnCheckedChangeListener(null)
+    isChecked = state
+    setOnCheckedChangeListener(listener)
 }
