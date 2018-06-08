@@ -87,9 +87,9 @@ fun Fragment.inflateAsync(
 }
 
 /**
- * Hide soft keyboard
+ * Close soft keyboard
  */
-fun View.resetKeyboard() {
+fun View.closeKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.hideSoftInputFromWindow(
         windowToken,
