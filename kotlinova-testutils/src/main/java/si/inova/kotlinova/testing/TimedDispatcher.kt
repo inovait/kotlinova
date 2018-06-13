@@ -8,8 +8,10 @@ import kotlinx.coroutines.experimental.DisposableHandle
 import kotlinx.coroutines.experimental.Runnable
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.dispatcherOverride
+import java.util.PriorityQueue
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.math.sign
 
 /**
  * Rule that allows time-based dispatching without Robolectric dependency
@@ -35,23 +37,21 @@ class TimedDispatcher : InstantTaskExecutorRule() {
 
     private object Dispatcher : CoroutineDispatcher(), Delay {
         private var currentTime = 0L
-
-        private var schedules = ArrayList<Pair<Long, java.lang.Runnable>>()
+        private val schedules = PriorityQueue<ScheduledTask>()
 
         fun advanceTime(ms: Int) {
-            currentTime += ms
+            val targetTime = currentTime + ms
 
-            val runnablesToRun = ArrayList<Pair<Long, java.lang.Runnable>>()
-            val iterator = schedules.iterator()
-            while (iterator.hasNext()) {
-                val next = iterator.next()
-                if (next.first <= currentTime) {
-                    runnablesToRun.add(next)
-                    iterator.remove()
-                }
+            var next = schedules.peek()
+            while (next != null && next.targetTime <= targetTime) {
+                schedules.remove()
+                currentTime = next.targetTime
+                next.task.run()
+
+                next = schedules.peek()
             }
 
-            runnablesToRun.sortedBy { it.first }.forEach { it.second.run() }
+            currentTime = targetTime
         }
 
         override fun dispatch(context: CoroutineContext, block: Runnable) {
@@ -63,7 +63,7 @@ class TimedDispatcher : InstantTaskExecutorRule() {
             unit: TimeUnit,
             continuation: CancellableContinuation<Unit>
         ) {
-            val target = Pair(
+            val target = ScheduledTask(
                 currentTime + unit.toMillis(time),
                 Runnable { with(continuation) { resumeUndispatched(Unit) } })
             schedules.add(target)
@@ -74,7 +74,7 @@ class TimedDispatcher : InstantTaskExecutorRule() {
             unit: TimeUnit,
             block: Runnable
         ): DisposableHandle {
-            val target = Pair(currentTime + unit.toMillis(time), block)
+            val target = ScheduledTask(currentTime + unit.toMillis(time), block)
 
             schedules.add(target)
 
@@ -82,6 +82,15 @@ class TimedDispatcher : InstantTaskExecutorRule() {
                 override fun dispose() {
                     schedules.remove(target)
                 }
+            }
+        }
+
+        private data class ScheduledTask(
+            val targetTime: Long,
+            val task: Runnable
+        ) : Comparable<ScheduledTask> {
+            override fun compareTo(other: ScheduledTask): Int {
+                return (targetTime - other.targetTime).sign
             }
         }
     }
