@@ -70,6 +70,7 @@ class PlaceholderSection(
 
     private val showRunnable = Runnable {
         actuallyDisplayed = true
+        lastShowTime = TimeProvider.elapsedRealtime()
         updateCallback?.onInserted(0, placeholderCount)
     }
 
