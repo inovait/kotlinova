@@ -34,6 +34,10 @@ class RecyclerStateSaverTest {
         layoutManager = mock()
 
         whenever(recyclerView.layoutManager).thenAnswer { layoutManager }
+        doAnswer {
+            val listener: View.OnLayoutChangeListener = it.getArgument(0)
+            listener.onLayoutChange(recyclerView, 0, 0, 0, 0, 0, 0, 0, 0)
+        }.whenever(recyclerView).addOnLayoutChangeListener(any())
 
         val stateSavingComponent: StateSavingComponent = mock()
         whenever(stateSavingComponent.stateSaverManager).thenReturn(stateSaverManager)
