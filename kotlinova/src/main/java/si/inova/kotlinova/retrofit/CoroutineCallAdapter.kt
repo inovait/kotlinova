@@ -8,6 +8,7 @@ import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.io.IOException
 
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -62,7 +63,12 @@ class CoroutineCallAdapterFactory constructor(private val responseParser: Respon
 
             call.enqueue(object : Callback<T> {
                 override fun onFailure(call: Call<T>, t: Throwable) {
-                    deferred.completeExceptionally(t)
+                    val cause = t.cause
+                    if (t is IOException && cause != null) {
+                        deferred.completeExceptionally(cause)
+                    } else {
+                        deferred.completeExceptionally(t)
+                    }
                 }
 
                 override fun onResponse(call: Call<T>, response: Response<T>) {
