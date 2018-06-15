@@ -190,8 +190,9 @@ class SectionRecyclerAdapterTest {
             sectionA.updateSize(7)
             verify(adapterDataObserver).onItemRangeInserted(5, 2)
 
-            sectionC.updateSize(9)
-            verify(adapterDataObserver).onItemRangeInserted(7 + 3 + 8, 1)
+            sectionC.updateSize(9, sendCallback = false)
+            sectionC.updateCallback!!.onInserted(2, 1)
+            verify(adapterDataObserver).onItemRangeInserted(7 + 3 + 2, 1)
         }
     }
 
@@ -441,14 +442,16 @@ class SectionRecyclerAdapterTest {
                 super.updateCallback = value
             }
 
-        fun updateSize(newSize: Int) {
+        fun updateSize(newSize: Int, sendCallback: Boolean = true) {
             val oldSize = data.size
             data = MutableList(newSize) { it }
 
-            if (oldSize < newSize) {
-                updateCallback!!.onInserted(oldSize, newSize - oldSize)
-            } else {
-                updateCallback!!.onRemoved(newSize, oldSize - newSize)
+            if (sendCallback) {
+                if (oldSize < newSize) {
+                    updateCallback!!.onInserted(oldSize, newSize - oldSize)
+                } else {
+                    updateCallback!!.onRemoved(newSize, oldSize - newSize)
+                }
             }
         }
 
