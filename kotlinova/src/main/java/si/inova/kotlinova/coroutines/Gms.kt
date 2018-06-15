@@ -28,10 +28,8 @@ suspend fun <T> Task<T>.await(): T {
         }
 
         if (this is CancellableTask) {
-            continuation.invokeOnCompletion {
-                if (continuation.isCancelled) {
-                    cancel()
-                }
+            continuation.invokeOnCancellation {
+                cancel()
             }
         }
     }

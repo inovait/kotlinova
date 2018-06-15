@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.ConflatedChannel
-import kotlinx.coroutines.experimental.channels.SubscriptionReceiveChannel
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import si.inova.kotlinova.utils.runOnUiThread
 
 /**
@@ -15,7 +15,7 @@ import si.inova.kotlinova.utils.runOnUiThread
  * @author Matej Drobnic
  */
 class LiveDataChannel<T>(private val liveData: LiveData<T>) : ConflatedChannel<T?>(),
-    SubscriptionReceiveChannel<T?> {
+    ReceiveChannel<T?> {
     private val observer = Observer<T> {
         if (!isClosedForSend) {
             offer(it)
@@ -28,13 +28,15 @@ class LiveDataChannel<T>(private val liveData: LiveData<T>) : ConflatedChannel<T
         }
     }
 
-    override fun close() {
+    override fun afterClose(cause: Throwable?) {
+        super.afterClose(cause)
+
         runOnUiThread {
             liveData.removeObserver(observer)
         }
     }
 }
 
-fun <T> LiveData<T>.toChannel(): SubscriptionReceiveChannel<T?> {
+fun <T> LiveData<T>.toChannel(): ReceiveChannel<T?> {
     return LiveDataChannel(this)
 }
