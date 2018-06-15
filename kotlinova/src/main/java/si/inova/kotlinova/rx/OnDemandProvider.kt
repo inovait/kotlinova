@@ -17,6 +17,7 @@ import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.coroutineContext
 
 /**
  * Data provider that activates when anyone subscribes to its observable and provides a stream
@@ -93,8 +94,9 @@ abstract class OnDemandProvider<T>(
         parentActivationJob.cancelChildren()
 
         launch(launchingContext, parent = parentActivationJob) {
+            val thisJob = coroutineContext[Job]
             parentActivationJob.children
-                .filter { it != coroutineContext[Job] }
+                .filter { it != thisJob }
                 .forEach { it.join() }
 
             this@OnDemandProvider.emitter = targetEmitter

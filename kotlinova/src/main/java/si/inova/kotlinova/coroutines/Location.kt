@@ -26,11 +26,15 @@ suspend fun FusedLocationProviderClient.awaitSingleLocation(
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let {
                     continuation.resume(it)
+
+                    runOnUiThread {
+                        removeLocationUpdates(this)
+                    }
                 }
             }
         }
 
-        continuation.invokeOnCompletion {
+        continuation.invokeOnCancellation {
             runOnUiThread {
                 removeLocationUpdates(locationCallback)
             }

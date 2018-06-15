@@ -4,10 +4,9 @@ package si.inova.kotlinova.coroutines
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.os.Looper
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 import kotlinx.coroutines.experimental.withContext
+import si.inova.kotlinova.utils.runOnUiThread
 
 /**
  * Return first value from this LiveData.
@@ -28,13 +27,17 @@ suspend fun <T> LiveData<T>.awaitFirstValue(
         var ignoreAnyValues = ignoreExistingValue
 
         suspendCancellableCoroutine<T?> { continuation ->
-            val observer = Observer<T> {
-                if (ignoreAnyValues) {
-                    return@Observer
-                }
+            val observer = object : Observer<T> {
+                override fun onChanged(value: T?) {
+                    if (ignoreAnyValues) {
+                        return
+                    }
 
-                continuation.resume(it)
-                ignoreAnyValues = true
+                    continuation.resume(value)
+                    runAfterCompletionBeforeRemoveObserver?.invoke()
+                    runOnUiThread { removeObserver(this) }
+                    ignoreAnyValues = true
+                }
             }
 
             observeForever(observer)
@@ -42,16 +45,9 @@ suspend fun <T> LiveData<T>.awaitFirstValue(
 
             runAfterObserve?.invoke()
 
-            continuation.invokeOnCompletion {
+            continuation.invokeOnCancellation {
                 runAfterCompletionBeforeRemoveObserver?.invoke()
-
-                if (Looper.myLooper() == Looper.getMainLooper()) {
-                    this@awaitFirstValue.removeObserver(observer)
-                } else {
-                    launch(UI) {
-                        this@awaitFirstValue.removeObserver(observer)
-                    }
-                }
+                runOnUiThread { removeObserver(observer) }
             }
         }
     }

@@ -48,6 +48,10 @@ android {
     lintOptions {
         lintConfig file('lint.xml')
     }
+
+    packagingOptions {
+        exclude 'META-INF/main.kotlin_module'
+    }
 }
 
 kotlin {
