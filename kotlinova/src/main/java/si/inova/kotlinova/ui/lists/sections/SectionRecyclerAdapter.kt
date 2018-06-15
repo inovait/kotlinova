@@ -165,7 +165,7 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val section = sections[sectionIndex]
 
             if (position + count != section.itemCount) {
-                notifyItemRangeInserted(position, count)
+                notifyItemRangeInserted(position + sectionStart, count)
                 return
             }
 
