@@ -31,6 +31,10 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude 'META-INF/main.kotlin_module'
+    }
+
 }
 
 kotlin {
