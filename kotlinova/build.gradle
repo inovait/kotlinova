@@ -105,7 +105,13 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:${versions.firebaseMessaging}"
     implementation "com.google.android.gms:play-services-location:${versions.playServices}"
 
-    testImplementation project(':kotlinova-testutils')
+    compileOnly "junit:junit:${versions.junit}"
+    compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    compileOnly "org.robolectric:robolectric:${versions.roboletric}"
+    compileOnly "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
+    compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
+    compileOnly "android.arch.core:core-testing:${versions.architectureComponents}"
+
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
@@ -114,7 +120,6 @@ dependencies {
     testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
     testImplementation "com.github.Plastix.RxSchedulerRule:rx2:${versions.rxSchedulerRule}"
 
-    androidTestImplementation project(':kotlinova-testutils')
     androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
