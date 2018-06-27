@@ -109,6 +109,14 @@ fun View.openKeyboard() {
 }
 
 /**
+ * It makes view non-editable
+ */
+fun View.makeNonEditable() {
+    isClickable = false
+    isEnabled = false
+}
+
+/**
  * Set view visibility without triggering any layout animations
  * (for example animations that get triggered when animateLayoutChanges flag is enabled)
  */
