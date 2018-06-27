@@ -1,0 +1,42 @@
+ext {
+    versions = [
+            kotlin                      : '1.2.50',
+
+            // Support/Architecture libraries
+            kotlinCoroutines            : '0.23.2',
+            androidSupportLib           : '27.1.1',
+            architectureComponents      : '1.1.1',
+            rxJava                      : '2.1.12',
+            rxKotlin                    : '2.2.0',
+            dagger                      : '2.11',
+            timber                      : '4.7.0',
+            moshi                       : '1.6.0',
+            ktx                         : '0.3',
+
+            // Features libraries
+            playServices                : '15.0.1',
+            retrofit                    : '2.4.0',
+            threeTenAndroid             : '1.1.0',
+
+            // Firebase
+            firebaseCore                : '16.0.0',
+            firebaseAuth                : '16.0.1',
+            firebaseFirestore           : '17.0.1',
+            firebaseMessaging           : '17.0.0',
+            firebaseStorage             : '16.0.1',
+            firebaseInvites             : '16.0.0',
+
+            //Testing
+            junit                       : '4.12',
+            // Use alpha espresso runner
+            // Workaround for:
+            // https://github.com/robolectric/robolectric/issues/3751
+            androidInstrumentationRunner: '1.0.2-alpha1',
+            espresso                    : '3.0.1',
+            mockitoKotlin               : '2.0.0-alpha02',
+            roboletric                  : '3.8',
+            roboletricSupport           : '3.3.2',
+            mockitoAndroid              : '2.13.0',
+            rxSchedulerRule             : '1.0.2'
+    ]
+}
