@@ -170,6 +170,10 @@ class HorizontalSwipeHelper(private val view: View) {
         currentAnimation!!.start()
     }
 
+    fun resetSmooth() {
+        SelfMovementAnimation(0f, SMOOTH_SCROLL_VELOCITY_UNSCALED).start()
+    }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     inner class SelfMovementAnimation(
         @get:VisibleForTesting
@@ -239,3 +243,4 @@ class HorizontalSwipeHelper(private val view: View) {
 private const val SWIPE_ESCAPE_VELOCITY_UNSCALED = 500f // dp/sec
 private const val MAX_DISMISS_VELOCITY_UNSCALED = 200f // dp/sec
 private const val RETURN_ANIMATION_VELOCITY_UNSCALED = 400f // dp/sec
+private const val SMOOTH_SCROLL_VELOCITY_UNSCALED = 800f // dp/sec

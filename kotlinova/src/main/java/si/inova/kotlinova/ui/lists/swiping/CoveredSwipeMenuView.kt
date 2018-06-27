@@ -39,6 +39,7 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
 
     var onSwipeLeftListener: (() -> Unit)? = null
     var onSwipeRightListener: (() -> Unit)? = null
+    var onMovingSwipeListener: (() -> Unit)? = null
 
     private val leftItemClipRect = Rect()
     private val rightItemClipRect = Rect()
@@ -48,15 +49,15 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
 
     init {
         val args = context.theme.obtainStyledAttributes(
-                attrs,
-                R.styleable.CoveredSwipeMenuView,
-                defStyleAttr, defStyleAttr
+            attrs,
+            R.styleable.CoveredSwipeMenuView,
+            defStyleAttr, defStyleAttr
         )
 
         leftItemId = args.getResourceId(R.styleable.CoveredSwipeMenuView_leftItem, 0)
         rightItemId = args.getResourceId(R.styleable.CoveredSwipeMenuView_rightItem, 0)
         behindBackgroundId =
-                args.getResourceId(R.styleable.CoveredSwipeMenuView_behindBackground, 0)
+            args.getResourceId(R.styleable.CoveredSwipeMenuView_behindBackground, 0)
         foregroundSwipeId = args.getResourceId(R.styleable.CoveredSwipeMenuView_swipingItem, 0)
         args.recycle()
     }
@@ -114,7 +115,17 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
             return false
         }
 
-        return helper?.onInterceptTouchEvent(ev) ?: false
+        val localHelper = helper
+        return if (localHelper != null) {
+            if (localHelper.onInterceptTouchEvent(ev)) {
+                onMovingSwipeListener?.invoke()
+                true
+            } else {
+                false
+            }
+        } else {
+            false
+        }
     }
 
     override fun onSwipedLeft() {
@@ -153,5 +164,9 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
     fun resetDrag() {
         foregroundSwipingItem?.translationX = 0f
         onMoved(0f)
+    }
+
+    fun resetSmooth() {
+        helper?.resetSmooth()
     }
 }
