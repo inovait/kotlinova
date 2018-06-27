@@ -1,0 +1,102 @@
+/*
+ * Copyright 2013 Chris Banes
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+static def getMavenSettingsCredentials() {
+    String userHome = System.getProperty( "user.home" )
+    File mavenSettings = new File(userHome, ".m2/settings.xml")
+    def xmlSlurper = new XmlSlurper()
+    def output = xmlSlurper.parse(mavenSettings)
+    return output."servers"."server"
+}
+
+def getCredentials(String server) {
+    def entries = getMavenSettingsCredentials()
+
+    for (entry in entries) {
+        if ( entry."id".text() == server ) {
+            return [username: entry.username.text(), password: entry.password.text()]
+        }
+    }
+}
+
+
+static def getReleaseRepositoryUrl() {
+    return "http://nexus/content/repositories/releases"
+}
+
+static def getSnapshotRepositoryUrl() {
+    return "http://nexus/content/repositories/snapshots"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId "si.inova.kotlinova"
+            artifactId project.POM_ARTIFACT_ID
+            // Automatically append snapshot
+            // to local maven builds for easier testing
+            version "${VERSION}-SNAPSHOT"
+
+            artifact(androidSourcesJar)
+            artifact("$buildDir/outputs/aar/*-release.aar")
+        }
+    }
+}
+
+afterEvaluate { project ->
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                pom.groupId = "si.inova.kotlinova"
+                pom.artifactId = project.POM_ARTIFACT_ID
+                pom.version = VERSION
+
+                repository(url: getReleaseRepositoryUrl()) {
+                    def credentials = getCredentials("releases")
+                    authentication(userName: credentials["username"], password: credentials["password"])
+                }
+                snapshotRepository(url: getSnapshotRepositoryUrl()) {
+                    def credentials = getCredentials("snapshots")
+                    authentication(userName: credentials["username"], password: credentials["password"])
+                }
+
+                pom.project {
+                    name project.POM_ARTIFACT_ID
+                    packaging 'aar'
+                    url 'http://hydra/matejd/kotlinova'
+
+                    scm {
+                        url 'http://hydra/matejd/kotlinova'
+                    }
+                }
+            }
+        }
+    }
+
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    artifacts {
+        archives androidSourcesJar
+    }
+
+    tasks.publishToMavenLocal.dependsOn(assembleRelease)
+}

@@ -5,6 +5,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "kotlin-allopen"
 
+ext {
+    POM_ARTIFACT_ID = "kotlinova"
+}
+apply from: '../maven-push.gradle'
+
 android {
     compileSdkVersion 27
 

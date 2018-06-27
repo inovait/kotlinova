@@ -11,6 +11,18 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-allopen:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
     }
+
+    def versions = new Properties()
+    file("version.properties").withInputStream { versions.load(it) }
+
+    ext {
+        MAJOR_VERSION = versions.getProperty("MAJOR")
+        MINOR_VERSION = versions.getProperty("MINOR")
+        PATCH_VERSION = versions.getProperty("PATCH")
+
+        VERSION = "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
+    }
+
 }
 
 allprojects {
@@ -19,8 +31,4 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
