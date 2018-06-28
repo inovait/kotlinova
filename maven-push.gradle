@@ -69,6 +69,9 @@ publishing {
             if (isAndroid()) {
                 artifact(androidSourcesJar)
                 artifact("$buildDir/outputs/aar/output.aar")
+            } else {
+                artifact(sourcesJar)
+                artifact(jar)
             }
         }
     }
@@ -126,5 +129,7 @@ afterEvaluate { project ->
         artifacts {
             archives sourcesJar
         }
+
+        tasks.publishToMavenLocal.dependsOn(jar)
     }
 }
