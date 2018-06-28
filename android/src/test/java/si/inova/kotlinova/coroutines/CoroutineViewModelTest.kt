@@ -1,5 +1,6 @@
 package si.inova.kotlinova.coroutines
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.MutableLiveData
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.delay
@@ -25,6 +26,8 @@ class CoroutineViewModelTest {
 
     @get:Rule
     val dispatcher = TimedDispatcher()
+    @get:Rule
+    val archRule = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {

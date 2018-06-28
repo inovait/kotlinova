@@ -1,6 +1,5 @@
 package si.inova.kotlinova.testing
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.experimental.Unconfined
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description

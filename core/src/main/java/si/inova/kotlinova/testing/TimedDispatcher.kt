@@ -6,6 +6,7 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.Delay
 import kotlinx.coroutines.experimental.DisposableHandle
 import kotlinx.coroutines.experimental.Runnable
+import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.dispatcherOverride
 import java.util.PriorityQueue
@@ -18,7 +19,7 @@ import kotlin.math.sign
  *
  * @author Matej Drobnic
  */
-class TimedDispatcher : InstantTaskExecutorRule() {
+class TimedDispatcher : TestWatcher() {
     override fun finished(description: Description?) {
         super.finished(description)
 
@@ -64,7 +65,9 @@ class TimedDispatcher : InstantTaskExecutorRule() {
             continuation: CancellableContinuation<Unit>
         ) {
             val target = ScheduledTask(
-                currentTime + unit.toMillis(time),
+                currentTime + unit.toMillis(
+                    time
+                ),
                 Runnable { with(continuation) { resumeUndispatched(Unit) } })
             schedules.add(target)
         }
@@ -74,7 +77,11 @@ class TimedDispatcher : InstantTaskExecutorRule() {
             unit: TimeUnit,
             block: Runnable
         ): DisposableHandle {
-            val target = ScheduledTask(currentTime + unit.toMillis(time), block)
+            val target = ScheduledTask(
+                currentTime + unit.toMillis(
+                    time
+                ), block
+            )
 
             schedules.add(target)
 
