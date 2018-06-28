@@ -9,15 +9,11 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
  */
 
 /**
- * [kotlinx.coroutines.experimental.android.UI] dispatcher that can be overriden by unit tests.
- */
-val UI: CoroutineDispatcher
-    get() = dispatcherOverride { kotlinx.coroutines.experimental.android.UI }
-
-/**
  * [kotlinx.coroutines.experimental.CommonPool] dispatcher that can be overriden by unit tests.
  */
 val CommonPool
-    get() = dispatcherOverride { kotlinx.coroutines.experimental.CommonPool }
+    get() = dispatcherOverride {
+        kotlinx.coroutines.experimental.CommonPool
+    }
 
 var dispatcherOverride: (() -> CoroutineDispatcher) -> CoroutineDispatcher = { it() }
