@@ -1,1 +1,1 @@
-include ':kotlinova'
+include ':core', ':android'

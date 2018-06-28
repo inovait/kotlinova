@@ -6,7 +6,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "kotlin-allopen"
 
 ext {
-    POM_ARTIFACT_ID = "kotlinova"
+    POM_ARTIFACT_ID = "android"
 }
 apply from: '../maven-push.gradle'
 
@@ -23,9 +23,6 @@ android {
 
     }
 
-    allOpen {
-        annotation("si.inova.kotlinova.testing.OpenForTesting")
-    }
 
     testOptions {
         unitTests {
@@ -43,25 +40,9 @@ android {
     }
 }
 
-kotlin {
-    /**
-     * This looks scary, but coroutines are only experimental in a sense that
-     * there may be future (non-breaking) API changes.
-     *
-     * Otherwise they are completely stable, backwards compatible and ready to use in production.
-     *
-     * Source: https://stackoverflow.com/a/46240340 (written by coroutines project member)
-     */
-    experimental {
-        coroutines "enable"
-    }
-}
-
-kapt {
-    useBuildCache = System.getenv('ENABLE_KAPT_BUILD_CACHE') == "TRUE"
-}
-
 dependencies {
+    implementation "si.inova.kotlinova:core:${VERSION}"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
@@ -113,18 +94,4 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
-}
-
-configurations.all {
-    resolutionStrategy {
-        eachDependency { details ->
-            // Sometimes external libraries could include outdated support library.
-            // Force all of the primary support libraries to use the same version.
-            if (details.requested.group == 'com.android.support'
-                    && details.requested.name != 'multidex'
-                    && details.requested.name != 'multidex-instrumentation') {
-                details.useVersion versions.androidSupportLib
-            }
-        }
-    }
 }

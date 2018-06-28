@@ -1,0 +1,17 @@
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
+apply plugin: "kotlin-allopen"
+
+apply plugin: 'java-library'
+
+ext {
+    POM_ARTIFACT_ID = "core"
+}
+apply from: '../maven-push.gradle'
+
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
+}

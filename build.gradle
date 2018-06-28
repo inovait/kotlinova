@@ -22,13 +22,55 @@ buildscript {
 
         VERSION = "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}"
     }
-
 }
 
-allprojects {
+subprojects {
     repositories {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            dependencySubstitution {
+                substitute module('si.inova.kotlinova:core') with project(':core')
+            }
+
+            eachDependency { details ->
+                // Sometimes external libraries could include outdated support library.
+                // Force all of the primary support libraries to use the same version.
+                if (details.requested.group == 'com.android.support'
+                        && details.requested.name != 'multidex'
+                        && details.requested.name != 'multidex-instrumentation') {
+                    details.useVersion versions.androidSupportLib
+                }
+            }
+
+        }
+    }
+
+    afterEvaluate {
+        kotlin {
+            /**
+             * This looks scary, but coroutines are only experimental in a sense that
+             * there may be future (non-breaking) API changes.
+             *
+             * Otherwise they are completely stable, backwards compatible and ready to use in production.
+             *
+             * Source: https://stackoverflow.com/a/46240340 (written by coroutines project member)
+             */
+            experimental {
+                coroutines "enable"
+            }
+        }
+
+        allOpen {
+            annotation("si.inova.kotlinova.testing.OpenForTesting")
+        }
+
+        kapt {
+            useBuildCache = System.getenv('ENABLE_KAPT_BUILD_CACHE') == "TRUE"
+        }
     }
 }
