@@ -12,7 +12,10 @@ class ListUtilsTest {
     fun meanBy() {
         assertNull(emptyList<Int>().meanBy { it })
 
-        assertEquals(4, listOf(Holder(3), Holder(5)).meanBy { it.number })
+        assertEquals(4, listOf(
+            Holder(3),
+            Holder(5)
+        ).meanBy { it.number })
         assertEquals(3, listOf(1, 2, 3, 4, 5, 6).meanBy { it })
     }
 
