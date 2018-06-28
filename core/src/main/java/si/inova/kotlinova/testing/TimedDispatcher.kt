@@ -1,6 +1,5 @@
 package si.inova.kotlinova.testing
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.experimental.CancellableContinuation
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.Delay
