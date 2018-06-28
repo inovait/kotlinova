@@ -2,6 +2,7 @@ package si.inova.kotlinova.testing
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.experimental.Unconfined
+import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.dispatcherOverride
 
@@ -10,7 +11,7 @@ import si.inova.kotlinova.coroutines.dispatcherOverride
  *
  * @author Matej Drobnic
  */
-class ImmediateDispatcherRule : InstantTaskExecutorRule() {
+class ImmediateDispatcherRule : TestWatcher() {
     override fun finished(description: Description?) {
         super.finished(description)
 

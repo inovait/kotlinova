@@ -1,5 +1,6 @@
 package si.inova.kotlinova.archcomponents
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import io.reactivex.Flowable
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -13,6 +14,8 @@ import si.inova.kotlinova.testing.ImmediateDispatcherRule
 class ResourcePublisherLiveDataTest {
     @get:Rule
     val rule = ImmediateDispatcherRule()
+    @get:Rule
+    val archRule = InstantTaskExecutorRule()
 
     @Test
     fun propagatingValue() {

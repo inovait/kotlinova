@@ -1,5 +1,6 @@
 package si.inova.kotlinova.coroutines
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.MutableLiveData
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
@@ -27,6 +28,8 @@ class LiveDataCoroutinesTest {
 
     @get:Rule
     val dispatcher = ImmediateDispatcherRule()
+    @get:Rule
+    val archRule = InstantTaskExecutorRule()
 
     @Test
     fun testAwaitFirstValue() {
