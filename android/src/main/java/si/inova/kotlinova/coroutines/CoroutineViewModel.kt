@@ -16,6 +16,7 @@ import si.inova.kotlinova.exceptions.OwnershipTransferredException
 import si.inova.kotlinova.utils.runOnUiThread
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.coroutineContext
 
 /**
  * ViewModel that automatically handles cancellation of all its coroutines when application
