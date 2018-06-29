@@ -53,6 +53,10 @@ subprojects {
     }
 
     afterEvaluate {
+        dependencies {
+            implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+        }
+
         kotlin {
             /**
              * This looks scary, but coroutines are only experimental in a sense that

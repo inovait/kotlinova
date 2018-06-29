@@ -43,7 +43,6 @@ android {
 dependencies {
     implementation "si.inova.kotlinova:core:${VERSION}"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
     implementation "android.arch.lifecycle:reactivestreams:${versions.architectureComponents}"
