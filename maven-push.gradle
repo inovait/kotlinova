@@ -44,12 +44,8 @@ static def getSnapshotRepositoryUrl() {
     return "http://nexus/content/repositories/snapshots"
 }
 
-def isAndroid() {
-    return project.hasProperty("android")
-}
-
 // Make sure output aar name is consistent
-if (isAndroid()) {
+if (project.isAndroid()) {
     project.android.libraryVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "output.aar"
@@ -66,7 +62,7 @@ publishing {
             // to local maven builds for easier testing
             version "${VERSION}-SNAPSHOT"
 
-            if (isAndroid()) {
+            if (project.isAndroid()) {
                 artifact(androidSourcesJar)
                 artifact("$buildDir/outputs/aar/output.aar")
             } else {
@@ -96,7 +92,7 @@ afterEvaluate { project ->
 
                 pom.project {
                     name project.POM_ARTIFACT_ID
-                    if (isAndroid()) {
+                    if (project.isAndroid()) {
                         packaging 'aar'
                     }
                     url 'http://hydra/matejd/kotlinova'
@@ -109,7 +105,7 @@ afterEvaluate { project ->
         }
     }
 
-    if (isAndroid()) {
+    if (project.isAndroid()) {
         task androidSourcesJar(type: Jar) {
             classifier = 'sources'
             from android.sourceSets.main.java.srcDirs

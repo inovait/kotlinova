@@ -1,0 +1,71 @@
+buildscript{
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.jacoco:org.jacoco.core:0.8.1'
+    }
+}
+
+
+subprojects {
+    configurations {
+        ktlint
+    }
+
+    dependencies {
+        ktlint "com.github.shyiko:ktlint:0.19.0"
+    }
+
+    task ktlint(type: JavaExec, group: "verification") {
+        description = "Check Kotlin code style."
+        classpath = configurations.ktlint
+        main = "com.github.shyiko.ktlint.Main"
+        args "--android", "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml", "**/src/**/*.kt"
+        // to generate report in checkstyle format prepend following args:
+        // "--reporter=plain", "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+        // see https://github.com/shyiko/ktlint#usage for more
+    }
+
+    task ktlintFormat(type: JavaExec, group: "formatting") {
+        description = "Fix Kotlin code style deviations."
+        classpath = configurations.ktlint
+        main = "com.github.shyiko.ktlint.Main"
+        args "-F", "**/src/**/*.kt"
+    }
+
+    apply plugin: "jacoco"
+
+    jacoco {
+        toolVersion = '0.8.1'
+    }
+
+    tasks.withType(Test) {
+        jacoco.includeNoLocationClasses = true
+    }
+
+
+    afterEvaluate {
+        if (project.isAndroid()) {
+            task jacocoTestReport(type: JacocoReport) {
+                group = 'Verification'
+
+                reports {
+                    xml.enabled = true
+                    html.enabled = true
+                    //xml.destination = new File("${buildDir}/reports/tests/test")
+                    //html.destination = new File("${buildDir}/reports/tests/test")
+                }
+
+                def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
+                def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+                def kotlinDebugTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+                def mainSrc = "${project.projectDir}/src/main/java"
+
+                sourceDirectories = files([mainSrc])
+                classDirectories = files([debugTree, kotlinDebugTree])
+                executionData = files("${buildDir}/jacoco/testDebugUnitTest.exec")
+            }
+        }
+    }
+}

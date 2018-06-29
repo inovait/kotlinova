@@ -26,6 +26,10 @@ buildscript {
 }
 
 subprojects {
+    ext.isAndroid =  {
+        return project.hasProperty("android")
+    }
+
     repositories {
         google()
         jcenter()
@@ -110,3 +114,5 @@ subprojects {
         }
     }
 }
+
+apply from: 'ci.gradle'
