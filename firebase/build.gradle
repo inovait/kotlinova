@@ -1,17 +1,19 @@
 apply plugin: 'com.android.library'
-
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 apply plugin: "kotlin-allopen"
 
+apply plugin: 'de.mobilej.unmock'
+
 ext {
-    POM_ARTIFACT_ID = "android"
+    POM_ARTIFACT_ID = "firebase"
 }
 apply from: '../maven-push.gradle'
 
 android {
     compileSdkVersion 27
+
+
 
     defaultConfig {
         minSdkVersion 19
@@ -23,52 +25,32 @@ android {
 
     }
 
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-            returnDefaultValues = true
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
-    lintOptions {
-        lintConfig file('lint.xml')
-    }
-
-    packagingOptions {
-        exclude 'META-INF/main.kotlin_module'
-    }
 }
 
 dependencies {
     implementation "si.inova.kotlinova:core:${VERSION}"
+    implementation "si.inova.kotlinova:android:${VERSION}"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.architectureComponents}"
-    implementation "androidx.core:core-ktx:${versions.ktx}"
-
-    implementation "com.android.support:appcompat-v7:${versions.androidSupportLib}"
-    implementation "com.android.support:design:${versions.androidSupportLib}"
-    implementation "com.android.support:recyclerview-v7:${versions.androidSupportLib}"
-
-    implementation "android.arch.lifecycle:extensions:${versions.architectureComponents}"
-    kapt "android.arch.lifecycle:compiler:${versions.architectureComponents}"
-    implementation "com.squareup.moshi:moshi:${versions.moshi}"
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
-    compileOnly "com.squareup.retrofit2:retrofit:${versions.retrofit}"
 
     implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxKotlin}"
 
-    implementation "com.google.dagger:dagger:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
 
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
-
-    implementation "com.google.android.gms:play-services-location:${versions.playServices}"
+    implementation "com.google.firebase:firebase-core:${versions.firebaseCore}"
+    implementation "com.google.firebase:firebase-auth:${versions.firebaseAuth}"
+    implementation "com.google.firebase:firebase-firestore:${versions.firebaseFirestore}"
+    implementation "com.google.firebase:firebase-storage:${versions.firebaseStorage}"
+    implementation "com.google.firebase:firebase-messaging:${versions.firebaseMessaging}"
 
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
@@ -89,4 +71,6 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
+
+    unmock "org.robolectric:android-all:${versions.unmockAndroidVersion}"
 }

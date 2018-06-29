@@ -1,29 +1,33 @@
 /**
  * @author Matej Drobnic
  */
-@file:JvmName("GmsCoroutines")
+@file:JvmName("FirebaseTaskCoroutines")
 
 package si.inova.kotlinova.coroutines
 
-import com.google.android.gms.tasks.Task
-import kotlin.coroutines.experimental.suspendCoroutine
+import com.google.firebase.storage.CancellableTask
+import kotlinx.coroutines.experimental.suspendCancellableCoroutine
 
 /**
  * Suspend current coroutine until this task is finished and return the result
  * (or throw exception if Task did not finish successfully)
  */
-suspend fun <T> Task<T>.await(): T {
+suspend fun <T> CancellableTask<T>.await(): T {
     if (this.isSuccessful) {
         return this.result
     }
 
-    return suspendCoroutine { continuation ->
+    return suspendCancellableCoroutine { continuation ->
         addOnCompleteListener {
             if (it.isSuccessful) {
                 continuation.resume(it.result)
             } else {
                 continuation.resumeWithException(it.exception!!)
             }
+        }
+
+        continuation.invokeOnCancellation {
+            cancel()
         }
     }
 }

@@ -37,6 +37,9 @@ ext {
             roboletric                  : '3.8',
             roboletricSupport           : '3.3.2',
             mockitoAndroid              : '2.13.0',
-            rxSchedulerRule             : '1.0.2'
+            rxSchedulerRule             : '1.0.2',
+
+            unmock                      : '0.6.5',
+            unmockAndroidVersion        : '8.1.0-robolectric-4611349'
     ]
 }
