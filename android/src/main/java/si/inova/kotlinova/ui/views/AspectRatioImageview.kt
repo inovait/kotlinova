@@ -5,7 +5,7 @@ import android.content.Context
 import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.widget.ImageView
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt

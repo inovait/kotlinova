@@ -1,6 +1,6 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 
 /**
  * Section that displays indeterminate progress bar. Hidden by default.

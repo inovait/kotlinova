@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentTransaction
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 import si.inova.kotlinova.ui.components.NestedAnimatedFragment
 
 /**

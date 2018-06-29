@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

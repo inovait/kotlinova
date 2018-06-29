@@ -8,7 +8,7 @@ import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.DateTimeFormatterBuilder
 import org.threeten.bp.format.ResolverStyle
 import org.threeten.bp.temporal.ChronoField
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 import java.util.Calendar
 import java.util.Date
 

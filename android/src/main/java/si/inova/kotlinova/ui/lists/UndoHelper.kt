@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.view.View
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 
 /**
  * Class that handles undo for deleted items in lists

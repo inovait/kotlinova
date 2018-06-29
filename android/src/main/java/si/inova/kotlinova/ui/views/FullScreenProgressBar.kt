@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewPropertyAnimator
 import androidx.core.view.isVisible
-import si.inova.kotlinova.R
+import si.inova.kotlinova.android.R
 import si.inova.kotlinova.time.TimeProvider
 import si.inova.kotlinova.utils.setVisibilityWithoutLayoutAnimations
 import kotlin.math.max
