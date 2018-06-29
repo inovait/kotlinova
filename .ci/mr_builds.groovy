@@ -36,8 +36,7 @@ try {
                 updateGitlabCommitStatus name: 'jenkins', state: 'running'
             }
             stage('Build app') {
-                //TODO add clean
-                bat 'gradlew assemble'
+                bat 'gradlew clean assemble'
             }
             stage('Lint') {
                 bat 'gradlew ktlint lintDebug'
