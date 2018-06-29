@@ -1,19 +1,21 @@
 package si.inova.kotlinova.data
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.MutableLiveData
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * @author Matej Drobnic
  */
-@RunWith(RobolectricTestRunner::class)
 class ExtendedMediatorLiveDataTest {
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+
     @Test
     fun testMemory() {
         val exMediatorLiveData = ExtendedMediatorLiveData<Int>()

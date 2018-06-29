@@ -3,13 +3,10 @@ package si.inova.kotlinova.utils
 import android.graphics.Color
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * @author Matej Drobnic
  */
-@RunWith(RobolectricTestRunner::class)
 class ColorUtilsTest {
     @Test
     fun parseHexColorTest() {
