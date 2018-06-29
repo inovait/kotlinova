@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- This is just background for the launcher, it can be any shape -->
+    <issue id="IconLauncherShape" severity="ignore" />
+
+    <issue id="AllowBackup" severity="ignore" />
+    <issue id="GoogleAppIndexingWarning" severity="ignore" />
+
+    <!--StringFormatMatches generates false positives in Kotlin-->
+    <!--(https://issuetracker.google.com/issues/76490033)-->
+    <issue id="StringFormatMatches" severity="ignore" />
+
+    <!-- Ignore InvalidPackage errors in Google's libraries -->
+    <issue id="InvalidPackage">
+        <ignore regexp="DnsNameResolver" />
+    </issue>
+
+    <!-- Ignore UnusedResources errors for Firebase-generated resources -->
+    <issue id="UnusedResources">
+        <ignore regexp="R.string.project_id" />
+    </issue>
+
+    <!-- Ignore UnusedResources errors for resources referenced in BundledSound enum -->
+    <!-- See https://issuetracker.google.com/issues/80453439 -->
+    <issue id="UnusedResources">
+        <ignore regexp="R.raw.sound_" />
+    </issue>
+
+</lint>
