@@ -9,12 +9,12 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import io.github.plastix.rxschedulerrule.RxSchedulerRule
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.value
+import si.inova.kotlinova.testing.RxSchedulerRule
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.firebase.MockDocument
 

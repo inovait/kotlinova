@@ -1,7 +1,5 @@
 package si.inova.kotlinova.data.resources
 
-import android.arch.lifecycle.LiveData
-
 /**
  * @author Matej Drobnic
  */
@@ -19,17 +17,17 @@ val <T> Resource<T>.value: T?
         else -> null
     }
 
-fun isAnyLoading(vararg resource: LiveData<*>): Boolean {
-    return resource.any { it.value is Resource.Loading<*> }
-}
-
 /**
  * Apply function on data of this Resource (if it contains any data)
  */
 inline fun <I, O> Resource<I>.mapData(mapper: (I) -> O): Resource<O> {
     return when (this) {
-        is Resource.Success -> Resource.Success(mapper(data))
-        is Resource.Error -> Resource.Error(exception)
+        is Resource.Success -> Resource.Success(
+            mapper(data)
+        )
+        is Resource.Error -> Resource.Error(
+            exception
+        )
         is Resource.Cancelled -> Resource.Cancelled()
         is Resource.Loading -> {
             val newData = data?.let(mapper)

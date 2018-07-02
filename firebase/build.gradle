@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation "si.inova.kotlinova:core:${VERSION}"
     implementation "si.inova.kotlinova:android:${VERSION}"
+    implementation "si.inova.kotlinova:rx:${VERSION}"
 
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
 
@@ -66,7 +67,6 @@ dependencies {
     testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
-    testImplementation "com.github.Plastix.RxSchedulerRule:rx2:${versions.rxSchedulerRule}"
 
     androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"

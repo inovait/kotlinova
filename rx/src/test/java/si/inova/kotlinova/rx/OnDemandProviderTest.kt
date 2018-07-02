@@ -6,7 +6,6 @@ import com.nhaarman.mockitokotlin2.only
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
-import io.github.plastix.rxschedulerrule.RxSchedulerRule
 import io.reactivex.functions.Consumer
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.NonCancellable
@@ -18,6 +17,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import si.inova.kotlinova.testing.RxSchedulerRule
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import timber.log.Timber

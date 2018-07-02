@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import io.github.plastix.rxschedulerrule.RxSchedulerRule
 import io.reactivex.Flowable
 import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
@@ -13,6 +12,7 @@ import kotlinx.coroutines.experimental.delay
 import org.junit.Rule
 import org.junit.Test
 import org.reactivestreams.Subscription
+import si.inova.kotlinova.testing.RxSchedulerRule
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 

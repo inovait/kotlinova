@@ -40,6 +40,7 @@ subprojects {
         resolutionStrategy {
             dependencySubstitution {
                 substitute module('si.inova.kotlinova:core') with project(':core')
+                substitute module('si.inova.kotlinova:rx') with project(':rx')
                 substitute module('si.inova.kotlinova:android') with project(':android')
             }
 
