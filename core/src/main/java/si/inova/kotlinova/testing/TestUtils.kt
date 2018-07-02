@@ -41,4 +41,3 @@ fun <T, R : Any> assertIs(test: R?, expectedClass: Class<T>) {
         test != null && expectedClass.isAssignableFrom(test.javaClass)
     )
 }
-
