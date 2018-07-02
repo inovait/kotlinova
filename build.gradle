@@ -42,6 +42,7 @@ subprojects {
                 substitute module('si.inova.kotlinova:core') with project(':core')
                 substitute module('si.inova.kotlinova:rx') with project(':rx')
                 substitute module('si.inova.kotlinova:android') with project(':android')
+                substitute module('si.inova.kotlinova:gms') with project(':gms')
                 substitute module('si.inova.kotlinova:retrofit') with project(':retrofit')
             }
 
