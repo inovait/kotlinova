@@ -1,3 +1,13 @@
+## [1.1.1](http://hydra/matejd/kotlinova/compare/v1.1.0...v1.1.1) (2018-07-03)
+
+
+### Bug Fixes
+
+* **android:** Fix proguard errors with library ([e4910eb](http://hydra/matejd/kotlinova/commit/e4910eb))
+
+
+
+
 # [1.1.0](http://hydra/matejd/kotlinova/compare/v1.0.0...v1.1.0) (2018-07-03)
 
 
