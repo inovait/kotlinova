@@ -21,3 +21,8 @@
 #-renamesourcefileattribute SourceFile
 
 -dontskipnonpubliclibraryclassmembers
+
+# Ignore all test classes - their dependencies are marked as compile only
+# to not pollute main class path. This however causes warnings in proguard.
+-dontwarn android.support.v4.app.TestFragmentAccessorsKt
+-dontwarn si.inova.kotlinova.testing.**
