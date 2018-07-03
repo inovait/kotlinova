@@ -8,7 +8,7 @@ ext {
             architectureComponents      : '1.1.1',
             rxJava                      : '2.1.12',
             rxKotlin                    : '2.2.0',
-            dagger                      : '2.11',
+            dagger                      : '2.16',
             timber                      : '4.7.0',
             moshi                       : '1.6.0',
             ktx                         : '0.3',
@@ -19,12 +19,12 @@ ext {
             threeTenAndroid             : '1.1.0',
 
             // Firebase
-            firebaseCore                : '16.0.0',
-            firebaseAuth                : '16.0.1',
-            firebaseFirestore           : '17.0.1',
-            firebaseMessaging           : '17.0.0',
+            firebaseCore                : '16.0.1',
+            firebaseAuth                : '16.0.2',
+            firebaseFirestore           : '17.0.2',
+            firebaseMessaging           : '17.1.0',
             firebaseStorage             : '16.0.1',
-            firebaseInvites             : '16.0.0',
+            firebaseInvites             : '16.0.1',
 
             //Testing
             junit                       : '4.12',

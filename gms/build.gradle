@@ -3,6 +3,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-allopen'
+apply plugin: 'de.mobilej.unmock'
 
 ext {
     POM_ARTIFACT_ID = "gms"
@@ -35,15 +36,18 @@ android {
 }
 
 dependencies {
+    implementation "si.inova.kotlinova:core:${VERSION}"
     implementation "si.inova.kotlinova:android:${VERSION}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "com.google.android.gms:play-services-location:${versions.playServices}"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
     testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
+    testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
