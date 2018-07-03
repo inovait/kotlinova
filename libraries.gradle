@@ -19,12 +19,12 @@ ext {
             threeTenAndroid             : '1.1.0',
 
             // Firebase
-            firebaseCore                : '16.0.0',
-            firebaseAuth                : '16.0.1',
-            firebaseFirestore           : '17.0.1',
-            firebaseMessaging           : '17.0.0',
+            firebaseCore                : '16.0.1',
+            firebaseAuth                : '16.0.2',
+            firebaseFirestore           : '17.0.2',
+            firebaseMessaging           : '17.1.0',
             firebaseStorage             : '16.0.1',
-            firebaseInvites             : '16.0.0',
+            firebaseInvites             : '16.0.1',
 
             //Testing
             junit                       : '4.12',
