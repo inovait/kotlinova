@@ -42,7 +42,7 @@ try {
                 bat 'gradlew ktlint lintDebug'
             }
             stage('Build tests') {
-                bat 'gradlew compileDebugUnitTestSources compileDebugAndroidTestSources ' +
+                bat 'gradlew compileDebugUnitTestSources assembleAndroidTest ' +
                         'compileTestJava compileTestKotlin'
             }
             stage('Test') {
