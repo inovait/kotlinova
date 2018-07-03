@@ -1,1 +1,1 @@
-include ':core', ':android', ':firebase', ':rx', ':retrofit'
+include ':core', ':android', ':firebase', ':rx', ':retrofit', ':gms'

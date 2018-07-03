@@ -66,8 +66,6 @@ dependencies {
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
 
-    implementation "com.google.android.gms:play-services-location:${versions.playServices}"
-
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
@@ -79,7 +77,6 @@ dependencies {
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
     testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
-    testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
 
     androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"

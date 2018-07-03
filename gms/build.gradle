@@ -1,0 +1,50 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-allopen'
+
+ext {
+    POM_ARTIFACT_ID = "gms"
+}
+apply from: '../maven-push.gradle'
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/main.kotlin_module'
+    }
+}
+
+dependencies {
+    implementation "si.inova.kotlinova:android:${VERSION}"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "com.google.android.gms:play-services-location:${versions.playServices}"
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:${versions.roboletric}"
+    testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
+    testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
