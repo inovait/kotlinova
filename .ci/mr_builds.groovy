@@ -115,8 +115,7 @@ try {
         }
     }
 } catch (Exception e) {
-    if (e instanceof InterruptedException || e instanceof hudson.AbortException ||
-            (e.message != null && e.message.contains("task was cancelled"))) {
+    if (e instanceof InterruptedException || (e.message != null && e.message.contains("task was cancelled"))) {
         updateGitlabCommitStatus name: 'jenkins', state: 'canceled'
     } else {
         updateGitlabCommitStatus name: 'jenkins', state: 'failed'
