@@ -12,6 +12,7 @@ interface PaginatedQuery<out T> {
      * Reset this paginated query. Call to [nextPage()][nextPage] will return first page again
      */
     suspend fun reset()
+
     suspend fun nextPage(): List<T>
 }
 

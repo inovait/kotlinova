@@ -61,3 +61,7 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
         return this
     }
 }
+
+fun isAnyLoading(vararg resource: LiveData<*>): Boolean {
+    return resource.any { it.value is Resource.Loading<*> }
+}

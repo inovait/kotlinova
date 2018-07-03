@@ -9,7 +9,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.whenever
-import io.github.plastix.rxschedulerrule.RxSchedulerRule
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertFalse
@@ -24,6 +23,7 @@ import org.mockito.MockitoAnnotations
 import si.inova.kotlinova.coroutines.CommonPool
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
+import si.inova.kotlinova.testing.RxSchedulerRule
 import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.testing.assertDocumentsEqual

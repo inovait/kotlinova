@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation "si.inova.kotlinova:core:${VERSION}"
+    implementation "si.inova.kotlinova:rx:${VERSION}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
@@ -67,8 +68,6 @@ dependencies {
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
 
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
-
     implementation "com.google.android.gms:play-services-location:${versions.playServices}"
 
     compileOnly "junit:junit:${versions.junit}"
@@ -84,7 +83,6 @@ dependencies {
     testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
-    testImplementation "com.github.Plastix.RxSchedulerRule:rx2:${versions.rxSchedulerRule}"
 
     androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
