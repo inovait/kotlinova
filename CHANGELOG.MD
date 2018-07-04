@@ -1,3 +1,13 @@
+## [1.1.2](http://hydra/matejd/kotlinova/compare/v1.1.1...v1.1.2) (2018-07-04)
+
+
+### Bug Fixes
+
+* **retrofit:** remove leftover android dependencies ([8830799](http://hydra/matejd/kotlinova/commit/8830799))
+
+
+
+
 ## [1.1.1](http://hydra/matejd/kotlinova/compare/v1.1.0...v1.1.1) (2018-07-03)
 
 
