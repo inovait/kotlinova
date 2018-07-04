@@ -25,6 +25,7 @@ try {
     node {
         stage('Prepare') {
             abortPreviousRunningBuilds()
+            checkout scm
             updateGitlabCommitStatus name: 'jenkins', state: 'pending'
         }
     }
