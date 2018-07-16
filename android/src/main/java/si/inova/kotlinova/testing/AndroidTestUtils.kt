@@ -12,7 +12,7 @@ import kotlinx.coroutines.experimental.channels.first
 import org.robolectric.shadows.ShadowSystemClock
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.toChannel
-import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.time.JavaTimeProvider
 import si.inova.kotlinova.utils.ISO_8601_FORMAT_STRING_WITHOUT_TZ
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -31,7 +31,7 @@ suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> 
 }
 
 fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
-    return TimeProvider.currentCalendar()
+    return JavaTimeProvider.currentCalendar()
         .apply { set(year, month - 1, day, 0, 0, 0) }
 }
 

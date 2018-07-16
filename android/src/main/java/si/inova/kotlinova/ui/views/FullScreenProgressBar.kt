@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewPropertyAnimator
 import androidx.core.view.isVisible
 import si.inova.kotlinova.android.R
-import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.time.AndroidTimeProvider
 import si.inova.kotlinova.utils.setVisibilityWithoutLayoutAnimations
 import kotlin.math.max
 
@@ -62,13 +62,13 @@ class FullScreenProgressBar @JvmOverloads constructor(
             return
         }
 
-        val elapsedTime = TimeProvider.elapsedRealtime() - lastShowTime
+        val elapsedTime = AndroidTimeProvider.elapsedRealtime() - lastShowTime
         val timeLeft = max(0, MIN_SHOWN_TIME - elapsedTime)
         postDelayed(hideRunnable, timeLeft)
     }
 
     private val showRunnable = Runnable {
-        lastShowTime = TimeProvider.elapsedRealtime()
+        lastShowTime = AndroidTimeProvider.elapsedRealtime()
 
         shown = true
 

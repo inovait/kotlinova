@@ -21,7 +21,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import si.inova.kotlinova.testing.RobolectricTimeMachineRule
 import si.inova.kotlinova.testing.advanceTime
-import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.time.AndroidTimeProvider
 
 /**
  * @author Matej Drobnic
@@ -59,7 +59,7 @@ class HorizontalSwipeHelperTest {
     fun dragWithFinger() {
         inOrder(swipeListener) {
 
-            val downTime = TimeProvider.uptimeMillis()
+            val downTime = AndroidTimeProvider.uptimeMillis()
             var event = MotionEvent.obtain(
                 downTime,
                 downTime,
@@ -75,7 +75,7 @@ class HorizontalSwipeHelperTest {
             advanceTime(300)
             event = MotionEvent.obtain(
                 downTime,
-                TimeProvider.uptimeMillis(),
+                AndroidTimeProvider.uptimeMillis(),
                 MotionEvent.ACTION_MOVE,
                 600f,
                 500f,
@@ -91,7 +91,7 @@ class HorizontalSwipeHelperTest {
             advanceTime(300)
             event = MotionEvent.obtain(
                 downTime,
-                TimeProvider.uptimeMillis(),
+                AndroidTimeProvider.uptimeMillis(),
                 MotionEvent.ACTION_MOVE,
                 400f,
                 500f,
@@ -108,7 +108,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun returnonUpEventAfterDrag() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -122,7 +122,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             600f,
             500f,
@@ -135,7 +135,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             400f,
             500f,
@@ -151,7 +151,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun returnOnCancelEventAfterDrag() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -165,7 +165,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             600f,
             500f,
@@ -178,7 +178,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_CANCEL,
             400f,
             500f,
@@ -194,7 +194,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun cancelAnimationAfterTouchAgain() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -208,7 +208,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             600f,
             500f,
@@ -221,7 +221,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             400f,
             500f,
@@ -237,7 +237,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             400f,
             500f,
@@ -265,7 +265,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun detectSwipeRight() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -279,7 +279,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(50)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             800f,
             500f,
@@ -292,7 +292,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             400f,
             500f,
@@ -317,7 +317,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun detectSwipeLeft() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -331,7 +331,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(50)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             200f,
             500f,
@@ -344,7 +344,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(100)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             400f,
             500f,
@@ -372,7 +372,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -386,7 +386,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(400)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             600f,
             500f,
@@ -399,7 +399,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             600f,
             500f,
@@ -419,7 +419,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -433,7 +433,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(400)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             540f,
             500f,
@@ -446,7 +446,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             540f,
             500f,
@@ -466,7 +466,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -480,7 +480,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(1000)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             860f,
             500f,
@@ -493,7 +493,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             860f,
             500f,
@@ -514,7 +514,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        var downTime = TimeProvider.uptimeMillis()
+        var downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -528,7 +528,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(1000)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             560f,
             500f,
@@ -541,7 +541,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             560f,
             500f,
@@ -551,7 +551,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.onInterceptTouchEvent(event)
         horizontalSwipeHelper.onTouchEvent(event)
 
-        downTime = TimeProvider.uptimeMillis()
+        downTime = AndroidTimeProvider.uptimeMillis()
         event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -565,7 +565,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(1000)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             860f,
             500f,
@@ -578,7 +578,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             860f,
             500f,
@@ -604,7 +604,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -618,7 +618,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(400)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             400f,
             500f,
@@ -631,7 +631,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             400f,
             500f,
@@ -651,7 +651,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -665,7 +665,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(400)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             460f,
             500f,
@@ -678,7 +678,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             460f,
             500f,
@@ -698,7 +698,7 @@ class HorizontalSwipeHelperTest {
         horizontalSwipeHelper.leftAnchor = 50f
         horizontalSwipeHelper.rightAnchor = 50f
 
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -712,7 +712,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(1000)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             140f,
             500f,
@@ -725,7 +725,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             140f,
             500f,
@@ -743,7 +743,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun advanceLeftDragToSwipeWithoutAnchors() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -757,7 +757,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(1000)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             140f,
             500f,
@@ -770,7 +770,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             140f,
             500f,
@@ -788,7 +788,7 @@ class HorizontalSwipeHelperTest {
 
     @Test
     fun advanceRightDragToSwipeWithoutAnchors() {
-        val downTime = TimeProvider.uptimeMillis()
+        val downTime = AndroidTimeProvider.uptimeMillis()
         var event = MotionEvent.obtain(
             downTime,
             downTime,
@@ -802,7 +802,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(1000)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_MOVE,
             860f,
             500f,
@@ -815,7 +815,7 @@ class HorizontalSwipeHelperTest {
         advanceTime(300)
         event = MotionEvent.obtain(
             downTime,
-            TimeProvider.uptimeMillis(),
+            AndroidTimeProvider.uptimeMillis(),
             MotionEvent.ACTION_UP,
             860f,
             500f,
