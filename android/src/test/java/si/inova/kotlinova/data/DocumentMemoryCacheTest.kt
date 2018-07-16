@@ -5,7 +5,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
-import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.time.AndroidTimeProvider
 
 class DocumentMemoryCacheTest {
     private lateinit var documentMemoryCache: DocumentMemoryCache
@@ -26,17 +26,17 @@ class DocumentMemoryCacheTest {
 
     @Test
     fun evictAfterTime() {
-        TimeProvider.elapsedRealtimeProvider = { 0 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 0 }
         documentMemoryCache[1] = "A"
-        TimeProvider.elapsedRealtimeProvider = { 2000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 2000 }
         documentMemoryCache[2] = "B"
 
-        TimeProvider.elapsedRealtimeProvider = { 6000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 6000 }
 
         assertNull(documentMemoryCache[1])
         assertEquals("B", documentMemoryCache[2])
 
-        TimeProvider.elapsedRealtimeProvider = { 10000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 10000 }
         assertNull(documentMemoryCache[1])
         assertNull(documentMemoryCache[2])
     }
@@ -93,10 +93,10 @@ class DocumentMemoryCacheTest {
 
     @Test
     fun getOrProduceAfterTime() {
-        TimeProvider.elapsedRealtimeProvider = { 0 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 0 }
         documentMemoryCache[1] = "A"
 
-        TimeProvider.elapsedRealtimeProvider = { 10000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 10000 }
 
         assertEquals("B",
             documentMemoryCache.getOrProduce(1) { "B" })
@@ -106,14 +106,14 @@ class DocumentMemoryCacheTest {
 
     @Test
     fun evictStale() {
-        TimeProvider.elapsedRealtimeProvider = { 0 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 0 }
         documentMemoryCache[1] = "A"
-        TimeProvider.elapsedRealtimeProvider = { 2000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 2000 }
         documentMemoryCache[2] = "B"
 
         assertEquals(2, documentMemoryCache.size)
 
-        TimeProvider.elapsedRealtimeProvider = { 6000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 6000 }
 
         assertEquals(2, documentMemoryCache.size)
         documentMemoryCache.evictStaleEntries()
@@ -125,12 +125,12 @@ class DocumentMemoryCacheTest {
 
     @Test
     fun clear() {
-        TimeProvider.elapsedRealtimeProvider = { 0 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 0 }
         documentMemoryCache[1] = "A"
-        TimeProvider.elapsedRealtimeProvider = { 2000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 2000 }
         documentMemoryCache[2] = "B"
 
-        TimeProvider.elapsedRealtimeProvider = { 6000 }
+        AndroidTimeProvider.elapsedRealtimeProvider = { 6000 }
 
         documentMemoryCache.clear()
         assertEquals(0, documentMemoryCache.size)

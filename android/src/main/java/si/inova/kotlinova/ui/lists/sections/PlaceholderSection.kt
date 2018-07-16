@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.time.AndroidTimeProvider
 import kotlin.math.max
 
 /**
@@ -53,7 +53,7 @@ class PlaceholderSection(
             return
         }
 
-        val elapsedTime = TimeProvider.elapsedRealtime() - lastShowTime
+        val elapsedTime = AndroidTimeProvider.elapsedRealtime() - lastShowTime
         val timeLeft = max(0, MIN_SHOWN_TIME - elapsedTime)
         handler.postDelayed(hideRunnable, timeLeft)
     }
@@ -70,7 +70,7 @@ class PlaceholderSection(
 
     private val showRunnable = Runnable {
         actuallyDisplayed = true
-        lastShowTime = TimeProvider.elapsedRealtime()
+        lastShowTime = AndroidTimeProvider.elapsedRealtime()
         updateCallback?.onInserted(0, placeholderCount)
     }
 

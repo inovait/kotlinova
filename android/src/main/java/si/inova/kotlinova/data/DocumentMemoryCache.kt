@@ -2,7 +2,7 @@ package si.inova.kotlinova.data
 
 import android.support.v4.util.SimpleArrayMap
 import si.inova.kotlinova.testing.OpenForTesting
-import si.inova.kotlinova.time.TimeProvider
+import si.inova.kotlinova.time.AndroidTimeProvider
 
 /**
  * Global memory cache for storing documents and other objects which size cannot be measured easily.
@@ -29,7 +29,7 @@ class DocumentMemoryCache constructor(private val cacheDuration: Long) {
      */
     @Synchronized
     operator fun set(key: Any, value: Any) {
-        val expirationTime = TimeProvider.elapsedRealtime() + cacheDuration
+        val expirationTime = AndroidTimeProvider.elapsedRealtime() + cacheDuration
         storage.put(key, CacheEntry(expirationTime, value))
     }
 
@@ -40,7 +40,7 @@ class DocumentMemoryCache constructor(private val cacheDuration: Long) {
     @Synchronized
     operator fun <T> get(key: Any): T? {
         val entry = storage[key] ?: return null
-        if (entry.expirationTime < TimeProvider.elapsedRealtime()) {
+        if (entry.expirationTime < AndroidTimeProvider.elapsedRealtime()) {
             storage.remove(key)
             return null
         }
@@ -90,7 +90,7 @@ class DocumentMemoryCache constructor(private val cacheDuration: Long) {
      */
     @Synchronized
     fun evictStaleEntries() {
-        val now = TimeProvider.elapsedRealtime()
+        val now = AndroidTimeProvider.elapsedRealtime()
         val keysToRemove = (0 until size).filter {
             storage.valueAt(it).expirationTime < now
         }
