@@ -1,3 +1,20 @@
+# [1.2.0](http://hydra/matejd/kotlinova/compare/v1.1.2...v1.2.0) (2018-07-16)
+
+
+### Bug Fixes
+
+* **retrofit:** deprecate removeMoshiClassJsonAdapter ([e84313f](http://hydra/matejd/kotlinova/commit/e84313f))
+
+
+### Features
+
+* **android:** add AndroidTimeProvider ([02f96df](http://hydra/matejd/kotlinova/commit/02f96df))
+* **android:** deprecate merged TimeProvider ([9d94237](http://hydra/matejd/kotlinova/commit/9d94237))
+* **core:** add JavaTimeProvider ([df75629](http://hydra/matejd/kotlinova/commit/df75629))
+
+
+
+
 ## [1.1.2](http://hydra/matejd/kotlinova/compare/v1.1.1...v1.1.2) (2018-07-04)
 
 
