@@ -1,3 +1,13 @@
+# [1.3.0](http://hydra/matejd/kotlinova/compare/v1.2.0...v1.3.0) (2018-07-24)
+
+
+### Features
+
+* **retrofit:** add UnitConverterFactory ([f1f33bc](http://hydra/matejd/kotlinova/commit/f1f33bc))
+
+
+
+
 # [1.2.0](http://hydra/matejd/kotlinova/compare/v1.1.2...v1.2.0) (2018-07-16)
 
 
