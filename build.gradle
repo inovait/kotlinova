@@ -114,6 +114,10 @@ subprojects {
 
                 keepAndRename "java.nio.charset.Charsets" to "xjava.nio.charset.Charsets"
             }
+
+            dependencies {
+                unmock "org.robolectric:android-all:${versions.unmockAndroidVersion}"
+            }
         }
     }
 }
