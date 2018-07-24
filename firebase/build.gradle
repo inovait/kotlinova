@@ -73,6 +73,4 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
-
-    unmock "org.robolectric:android-all:${versions.unmockAndroidVersion}"
 }
