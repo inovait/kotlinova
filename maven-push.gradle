@@ -20,6 +20,9 @@ apply plugin: 'maven-publish'
 static def getMavenSettingsCredentials() {
     String userHome = System.getProperty( "user.home" )
     File mavenSettings = new File(userHome, ".m2/settings.xml")
+    if (!mavenSettings.exists()) {
+        return null
+    }
     def xmlSlurper = new XmlSlurper()
     def output = xmlSlurper.parse(mavenSettings)
     return output."servers"."server"
@@ -28,13 +31,16 @@ static def getMavenSettingsCredentials() {
 def getCredentials(String server) {
     def entries = getMavenSettingsCredentials()
 
+    if (entries == null) {
+        return [username: ".m2/settings.xml missing", password: "No password"]
+    }
+
     for (entry in entries) {
         if ( entry."id".text() == server ) {
             return [username: entry.username.text(), password: entry.password.text()]
         }
     }
 }
-
 
 static def getReleaseRepositoryUrl() {
     return "http://nexus/content/repositories/releases"
