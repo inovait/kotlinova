@@ -13,8 +13,6 @@
 
 package si.inova.kotlinova.rx.coroutines
 
-import io.reactivex.Completable
-import io.reactivex.CompletableObserver
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
