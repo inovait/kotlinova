@@ -96,4 +96,13 @@ class PreferencePropertyTest {
 
         assertEquals("abc", secondDataObject.e)
     }
+
+    @Test
+    fun testNullDefaultNumber() {
+        val dataObject = object {
+            var e by preference<Int?>(sharedPreferences, null)
+        }
+
+        assertNull(dataObject.e)
+    }
 }
