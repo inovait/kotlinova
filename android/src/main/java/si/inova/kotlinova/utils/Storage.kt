@@ -46,6 +46,10 @@ inline fun <reified T> SharedPreferences.get(key: String, default: T): T {
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 fun <T> SharedPreferences.get(key: String, default: T, klass: Class<T>): T {
+    if (!contains(key)) {
+        return default
+    }
+
     @Suppress("UNCHECKED_CAST")
     return when (klass) {
         String::class.java -> getString(key, default as String?)
