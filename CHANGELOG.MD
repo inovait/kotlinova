@@ -1,3 +1,18 @@
+# [1.4.0](http://hydra/matejd/kotlinova/compare/v1.3.0...v1.4.0) (2018-08-22)
+
+
+### Bug Fixes
+
+* **android:** PreferenceProperty default null crash ([18462a6](http://hydra/matejd/kotlinova/commit/18462a6))
+
+
+### Features
+
+* **rx:** add coroutine adapters for Single and Completable ([7ce2848](http://hydra/matejd/kotlinova/commit/7ce2848))
+
+
+
+
 # [1.3.0](http://hydra/matejd/kotlinova/compare/v1.2.0...v1.3.0) (2018-07-24)
 
 
