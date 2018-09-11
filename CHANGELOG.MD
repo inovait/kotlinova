@@ -1,3 +1,20 @@
+# [1.5.0](http://hydra/matejd/kotlinova/compare/v1.4.0...v1.5.0) (2018-09-11)
+
+
+### Bug Fixes
+
+* **android:** createdForTheFirstTime false positive ([8a93be5](http://hydra/matejd/kotlinova/commit/8a93be5))
+* **retrofit:** return Unit from empty response ([66db477](http://hydra/matejd/kotlinova/commit/66db477))
+
+
+### Features
+
+* **android:** remove ResourceLiveData sources after error ([114e32d](http://hydra/matejd/kotlinova/commit/114e32d))
+* **android:** use old resource value as new Loading ([a7112ff](http://hydra/matejd/kotlinova/commit/a7112ff))
+
+
+
+
 # [1.4.0](http://hydra/matejd/kotlinova/compare/v1.3.0...v1.4.0) (2018-08-22)
 
 
