@@ -17,7 +17,8 @@ open class StateSaverFragment : Fragment(), StateSavingComponent {
     /**
      * Whether this fragment has just been created for the first time.
      *
-     * *true* means fragment has been created for the first time.
+     * *true* means fragment has been created for the first time OR when fragment has been
+     * recreated after process has been completely destroyed (for example due to low memory).
      *
      * *false* means fragment has been recreated from the previous state
      * (for example when being recreated from configuration change or from backstack)
@@ -33,7 +34,8 @@ open class StateSaverFragment : Fragment(), StateSavingComponent {
 
         super.onCreate(savedInstanceState)
 
-        createdForTheFirstTime = createdForTheFirstTime && savedInstanceState == null
+        createdForTheFirstTime = createdForTheFirstTime &&
+            requireActivity().lastNonConfigurationInstance == null
     }
 
     @CallSuper

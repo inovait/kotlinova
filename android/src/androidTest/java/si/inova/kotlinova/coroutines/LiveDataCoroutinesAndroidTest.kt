@@ -24,7 +24,6 @@ class LiveDataCoroutinesAndroidTest {
         val data = MutableLiveData<Int>()
 
         val thread = newSingleThreadContext("Test thread")
-
         thread.use {
             withContext(thread) {
                 val task = async(thread) {
@@ -40,7 +39,9 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                assertTrue(data.hasActiveObservers())
+                withContext(UI) {
+                    assertTrue(data.hasActiveObservers())
+                }
 
                 task.cancel()
 
@@ -53,7 +54,9 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                assertFalse(data.hasActiveObservers())
+                withContext(UI) {
+                    assertFalse(data.hasActiveObservers())
+                }
             }
         }
     }

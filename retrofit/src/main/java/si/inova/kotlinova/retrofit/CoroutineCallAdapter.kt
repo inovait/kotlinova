@@ -5,11 +5,9 @@ import kotlinx.coroutines.experimental.Deferred
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback
-import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.io.IOException
-
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -25,7 +23,9 @@ import java.lang.reflect.Type
  *
  * @author original CoroutineCallAdapterFactory by Jake Wharton, adapted by Matej Drobnic
  */
-class CoroutineCallAdapterFactory constructor(private val responseParser: ResponseParser? = null) :
+class CoroutineCallAdapterFactory constructor(
+    private val responseParser: ResponseParser = DefaultResponseParser
+) :
     CallAdapter.Factory() {
     override fun get(
         returnType: Type,
@@ -72,18 +72,10 @@ class CoroutineCallAdapterFactory constructor(private val responseParser: Respon
                 }
 
                 override fun onResponse(call: Call<T>, response: Response<T>) {
-                    if (responseParser == null) {
-                        if (response.isSuccessful) {
-                            deferred.complete(response.body()!!)
-                        } else {
-                            deferred.completeExceptionally(HttpException(response))
-                        }
-                    } else {
-                        try {
-                            deferred.complete(responseParser.parseResponse(response))
-                        } catch (e: Exception) {
-                            deferred.completeExceptionally(e)
-                        }
+                    try {
+                        deferred.complete(responseParser.parseResponse(response))
+                    } catch (e: Exception) {
+                        deferred.completeExceptionally(e)
                     }
                 }
             })
