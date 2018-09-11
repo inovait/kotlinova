@@ -12,6 +12,7 @@ import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
+import si.inova.kotlinova.data.resources.value
 import si.inova.kotlinova.exceptions.OwnershipTransferredException
 import si.inova.kotlinova.utils.runOnUiThread
 import java.util.concurrent.ConcurrentHashMap
@@ -50,14 +51,14 @@ abstract class CoroutineViewModel : ViewModel() {
      * This method:
      *
      * 1. Cancels any previous coroutines using this resource to prevent clashing
-     * 2. Automatically puts resource into loading state
+     * 2. Automatically puts resource into loading state with previous data as partial data
      * 3. Calls your provided task on the worker thread
      * 4. Automatically handles cancellation exceptions
      * 5. Automatically forwards exceptions to the resource as [Resource.Error]
      */
     fun <T> launchResourceControlTask(
         resource: ResourceLiveData<T>,
-        currentValue: T? = null,
+        currentValue: T? = resource.value?.value,
         context: CoroutineContext = CommonPool,
         block: suspend ResourceLiveData<T>.() -> Unit
     ) = runOnUiThread(parentJob) {
