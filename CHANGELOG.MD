@@ -1,3 +1,13 @@
+## [1.5.1](http://hydra/matejd/kotlinova/compare/v1.5.0...v1.5.1) (2018-09-12)
+
+
+### Bug Fixes
+
+* **android:** createdForTheFirstTime false negative ([c4ff8bb](http://hydra/matejd/kotlinova/commit/c4ff8bb))
+
+
+
+
 # [1.5.0](http://hydra/matejd/kotlinova/compare/v1.4.0...v1.5.0) (2018-09-11)
 
 
