@@ -35,7 +35,7 @@ open class StateSaverFragment : Fragment(), StateSavingComponent {
         super.onCreate(savedInstanceState)
 
         createdForTheFirstTime = createdForTheFirstTime &&
-            requireActivity().lastNonConfigurationInstance == null
+            (savedInstanceState == null || requireActivity().lastNonConfigurationInstance == null)
     }
 
     @CallSuper
