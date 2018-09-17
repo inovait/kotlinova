@@ -1,3 +1,14 @@
+## [1.5.2](http://hydra/matejd/kotlinova/compare/v1.5.1...v1.5.2) (2018-09-17)
+
+
+### Bug Fixes
+
+* LiveDataChannel race condition crash ([1e62414](http://hydra/matejd/kotlinova/commit/1e62414))
+* ViewModel crash on addSource errors ([5e93f11](http://hydra/matejd/kotlinova/commit/5e93f11))
+
+
+
+
 ## [1.5.1](http://hydra/matejd/kotlinova/compare/v1.5.0...v1.5.1) (2018-09-12)
 
 
