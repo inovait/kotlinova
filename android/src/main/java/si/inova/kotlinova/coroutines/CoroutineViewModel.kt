@@ -97,11 +97,13 @@ abstract class CoroutineViewModel : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
-                resource.sendValue(Resource.Error(e))
-
                 if (resource.hasAnySources()) {
-                    resource.removeAllSources()
+                    withContext(UI) {
+                        resource.removeAllSources()
+                    }
                 }
+
+                resource.sendValue(Resource.Error(e))
             } finally {
                 @Suppress("UNCHECKED_CAST")
                 activeJobs.remove(resource as MutableLiveData<Resource<*>>, thisJob)

@@ -1,11 +1,13 @@
 package si.inova.kotlinova.data.resources
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.support.annotation.UiThread
 import kotlinx.coroutines.experimental.sync.Mutex
 import kotlinx.coroutines.experimental.sync.withLock
 import si.inova.kotlinova.data.ExtendedMediatorLiveData
 import si.inova.kotlinova.utils.isActive
+import si.inova.kotlinova.utils.runOnUiThread
 import kotlin.coroutines.experimental.coroutineContext
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -59,6 +61,18 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
 
     override fun getValue(thisRef: Any, property: KProperty<*>): LiveData<Resource<T>> {
         return this
+    }
+
+    override fun <S> addSource(source: LiveData<S>, onChanged: Observer<S>) {
+        runOnUiThread {
+            super.addSource(source, onChanged)
+        }
+    }
+
+    override fun <S> removeSource(source: LiveData<S>) {
+        runOnUiThread {
+            super.removeSource(source)
+        }
     }
 }
 

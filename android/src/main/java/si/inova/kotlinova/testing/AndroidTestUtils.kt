@@ -8,10 +8,12 @@ package si.inova.kotlinova.testing
 import android.arch.lifecycle.LiveData
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.first
 import org.robolectric.shadows.ShadowSystemClock
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.toChannel
+import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.JavaTimeProvider
 import si.inova.kotlinova.utils.ISO_8601_FORMAT_STRING_WITHOUT_TZ
 import java.text.SimpleDateFormat
@@ -41,4 +43,18 @@ fun isoFromDate(day: Int, month: Int, year: Int): String {
         Locale.getDefault()
     )
         .format(calendarFromDate(day, month, year).time)
+}
+
+suspend fun <T> LiveData<Resource<T>>.awaitSuccessAndThrowErrors(): T {
+    val winResource = toChannel().consume {
+        first {
+            if (it is Resource.Error) {
+                throw it.exception
+            }
+
+            it is Resource.Success
+        }
+    } ?: throw NoSuchElementException()
+
+    return (winResource as Resource.Success).data
 }
