@@ -52,7 +52,9 @@ class CoroutineViewModelAndroidTest {
                 testViewModel.launchFinished.await()
                 Espresso.onIdle()
 
-                assertTrue((testViewModel.testResource.value as Resource.Error).exception is IOException)
+                assertTrue(
+                    (testViewModel.testResource.value as Resource.Error).exception is IOException
+                )
                 assertFalse(testViewModel.testResource.hasAnySources())
             }
         }
