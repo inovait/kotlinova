@@ -36,10 +36,10 @@ abstract class StateSaver<T> {
      * Method that gets automatically called when state gets saved.
      * You must return current state or *null*.
      */
-    internal abstract fun saveState(): T?
+    abstract fun saveState(): T?
 
     /**
      * Method that gets automatically called when state gets loaded. Override.
      */
-    internal open fun loadState(savedValue: T?) = Unit
+    open fun loadState(savedValue: T?) = Unit
 }
