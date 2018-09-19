@@ -1,3 +1,13 @@
+## [1.5.3](http://hydra/matejd/kotlinova/compare/v1.5.2...v1.5.3) (2018-09-19)
+
+
+### Bug Fixes
+
+* **android:** RecyclerStateSaver not restoring ([d017fb2](http://hydra/matejd/kotlinova/commit/d017fb2))
+
+
+
+
 ## [1.5.2](http://hydra/matejd/kotlinova/compare/v1.5.1...v1.5.2) (2018-09-17)
 
 
