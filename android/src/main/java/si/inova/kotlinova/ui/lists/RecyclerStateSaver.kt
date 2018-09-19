@@ -2,7 +2,6 @@ package si.inova.kotlinova.ui.lists
 
 import android.os.Parcelable
 import android.support.v7.widget.RecyclerView
-import androidx.core.view.doOnNextLayout
 import si.inova.kotlinova.ui.lists.sections.ListSection
 import si.inova.kotlinova.ui.state.StateSaver
 import si.inova.kotlinova.ui.state.StateSavingComponent
@@ -42,10 +41,9 @@ class RecyclerStateSaver(
         }
 
         val lastSavedState = lastSavedState ?: return
-        recycler.doOnNextLayout {
+        recycler.post {
             recycler.layoutManager?.onRestoreInstanceState(lastSavedState)
         }
-        recycler.requestLayout()
         alreadyRestored = true
     }
 
