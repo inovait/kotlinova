@@ -54,13 +54,13 @@ fun <T> SharedPreferences.get(key: String, default: T, klass: Class<T>): T {
     return when (klass) {
         String::class.java -> getString(key, default as String?)
         Int::class.java -> getInt(key, default as Int)
-        java.lang.Integer::class.java -> getInt(key, default as Int)
+        java.lang.Integer::class.java -> getInt(key, (default as Int?) ?: 0)
         Long::class.java -> getLong(key, default as Long)
-        java.lang.Long::class.java -> getLong(key, default as Long)
+        java.lang.Long::class.java -> getLong(key, (default as Long?) ?: 0)
         Float::class.java -> getFloat(key, default as Float)
-        java.lang.Float::class.java -> getFloat(key, default as Float)
+        java.lang.Float::class.java -> getFloat(key, (default as Float?) ?: 0f)
         Boolean::class.java -> getBoolean(key, default as Boolean)
-        java.lang.Boolean::class.java -> getBoolean(key, default as Boolean)
+        java.lang.Boolean::class.java -> getBoolean(key, (default as Boolean?) ?: false)
         Set::class.java -> getStringSet(key, default as Set<String>?)
         else -> throw IllegalStateException(
             "Type ${klass.canonicalName} of property $key is not supported in SharedPreferences"

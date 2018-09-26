@@ -98,11 +98,20 @@ class PreferencePropertyTest {
     }
 
     @Test
-    fun testNullDefaultNumber() {
+    fun testReturnNullWhenDefaultNumberIsNullAndPropertyNotPresent() {
         val dataObject = object {
             var e by preference<Int?>(sharedPreferences, null)
         }
 
         assertNull(dataObject.e)
+    }
+
+    @Test
+    fun testReturnNumberWhenDefaultNumberIsNullAndPropertyPresent() {
+        val dataObject = object {
+            var a by preference<Int?>(sharedPreferences, null)
+        }
+
+        assertEquals(10, dataObject.a)
     }
 }
