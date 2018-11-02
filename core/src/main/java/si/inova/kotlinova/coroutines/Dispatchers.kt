@@ -1,6 +1,7 @@
 package si.inova.kotlinova.coroutines
 
 import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 
 /**
  * Collection of Coroutine dispatchers that can be overriden for Unit tests.
@@ -13,7 +14,7 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
  */
 val CommonPool
     get() = dispatcherOverride {
-        kotlinx.coroutines.experimental.CommonPool
+        Dispatchers.Default
     }
 
 var dispatcherOverride: (() -> CoroutineDispatcher) -> CoroutineDispatcher = { it() }

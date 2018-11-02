@@ -14,7 +14,8 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Dispatchers.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
@@ -64,7 +65,7 @@ class LocationCoroutinesTest {
     fun removeLocationUpdatesAfterUnsubscribe() = runBlocking<Unit> {
         val locationRequest = LocationRequest.create()
 
-        val locationFetcher = async(Unconfined) {
+        val locationFetcher = async(Dispatchers.Unconfined) {
             locationClient.awaitSingleLocation(locationRequest)
         }
 

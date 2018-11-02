@@ -43,7 +43,7 @@ class CoroutineViewModelAndroidTest {
     @Test
     fun unregisterResourceOnError() = runBlocking {
         repeat(100) { _ ->
-            withTimeout(1, TimeUnit.SECONDS) {
+            withTimeout(TimeUnit.SECONDS.toMillis(1), {
                 testViewModel = TestViewModel()
 
                 testViewModel.launchWithNewSourceAndCrash()
@@ -56,7 +56,7 @@ class CoroutineViewModelAndroidTest {
                     (testViewModel.testResource.value as Resource.Error).exception is IOException
                 )
                 assertFalse(testViewModel.testResource.hasAnySources())
-            }
+            })
         }
     }
 

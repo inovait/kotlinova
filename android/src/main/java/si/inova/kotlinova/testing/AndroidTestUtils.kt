@@ -6,7 +6,9 @@
 package si.inova.kotlinova.testing
 
 import android.arch.lifecycle.LiveData
+import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.consume
 import kotlinx.coroutines.experimental.channels.first
@@ -29,7 +31,7 @@ fun advanceTime(ms: Long) {
 }
 
 suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> {
-    return async(UI) { toChannel().first(predicate) }
+    return GlobalScope.async(UI, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
 }
 
 fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {

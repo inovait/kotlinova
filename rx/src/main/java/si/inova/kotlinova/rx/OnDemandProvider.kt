@@ -5,9 +5,11 @@ import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.JobCancellationException
 import kotlinx.coroutines.experimental.cancelChildren
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
@@ -32,6 +34,8 @@ import kotlin.coroutines.experimental.coroutineContext
  *
  * @author Matej Drobnic
  */
+//TODO fix OnDemandProvider to work with new coroutines
+
 abstract class OnDemandProvider<T>(
     private val launchingContext: CoroutineContext = CommonPool,
     rxScheduler: Scheduler = Schedulers.computation()
@@ -93,7 +97,7 @@ abstract class OnDemandProvider<T>(
 
         parentActivationJob.cancelChildren()
 
-        launch(launchingContext, parent = parentActivationJob) {
+        GlobalScope.launch(launchingContext + parentActivationJob, CoroutineStart.DEFAULT, {
             val thisJob = coroutineContext[Job]
             parentActivationJob.children
                 .filter { it != thisJob }
@@ -105,7 +109,7 @@ abstract class OnDemandProvider<T>(
                 onActive()
                 awaitCancellation()
             } catch (e: Exception) {
-                if (e !is JobCancellationException) {
+                if (e !is CancellationException) {
                     if (isActive) {
                         sendCrash(e)
                     } else {
@@ -120,19 +124,19 @@ abstract class OnDemandProvider<T>(
 
                 onInactive()
             }
-        }
+        })
     }
 
     private fun onDispose() {
         inDebounce.set(true)
 
         currentCleanupJob?.cancel()
-        currentCleanupJob = launch(launchingContext) {
-            delay(debounceTimeout)
+        currentCleanupJob = GlobalScope.launch(launchingContext, CoroutineStart.DEFAULT, {
+            delay(debounceTimeout.toLong())
 
             parentActivationJob.cancelChildren()
             inDebounce.set(false)
-        }
+        })
     }
 
     protected fun send(item: T) {

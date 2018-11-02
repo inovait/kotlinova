@@ -7,6 +7,8 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
@@ -35,7 +37,7 @@ class LiveDataCoroutinesTest {
     fun testAwaitFirstValue() {
         val data = MutableLiveData<Int>()
         assertFalse(data.hasActiveObservers())
-        val task = async(UI) { data.awaitFirstValue() }
+        val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, { data.awaitFirstValue() })
 
         assertFalse(task.isCompleted)
         assertTrue(data.hasActiveObservers())
@@ -61,7 +63,10 @@ class LiveDataCoroutinesTest {
         val data = MutableLiveData<Int>()
 
         data.value = 10
-        val task = async(UI) { data.awaitFirstValue(ignoreExistingValue = false) }
+        val task = GlobalScope.async(
+                UI,
+                CoroutineStart.DEFAULT,
+                { data.awaitFirstValue(ignoreExistingValue = false) })
         data.value = 20
 
         assertEquals(10, task.getCompleted())
@@ -72,11 +77,11 @@ class LiveDataCoroutinesTest {
         val data = MutableLiveData<Int>()
 
         data.value = 10
-        val task = async(UI) {
+        val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, {
             data.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
             })
-        }
+        })
 
         assertEquals(20, task.getCompleted())
     }
@@ -89,11 +94,11 @@ class LiveDataCoroutinesTest {
         val mappedData = data.map { it!! * 5 }
 
         data.value = 10
-        val task = async(UI) {
+        val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, {
             mappedData.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
             })
-        }
+        })
 
         assertEquals(100, task.getCompleted())
     }
@@ -103,7 +108,10 @@ class LiveDataCoroutinesTest {
         val data = MutableLiveData<Int>()
 
         data.value = 10
-        val task = async(UI) { data.awaitFirstValue(ignoreExistingValue = true) }
+        val task = GlobalScope.async(
+                UI,
+                CoroutineStart.DEFAULT,
+                { data.awaitFirstValue(ignoreExistingValue = true) })
         assertFalse(task.isCompleted)
         data.value = 10
 
@@ -118,12 +126,12 @@ class LiveDataCoroutinesTest {
         val afterSubscribeCallback: LocalFunction0<Unit> = mock()
         val beforeUnsubscribeCallback: LocalFunction0<Unit> = mock()
 
-        async(UI) {
+        GlobalScope.async(UI, CoroutineStart.DEFAULT, {
             data.awaitFirstValue(
                 runAfterObserve = afterSubscribeCallback,
                 runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
             )
-        }
+        })
 
         inOrder(data, afterSubscribeCallback, beforeUnsubscribeCallback) {
             verify(data).observeForever(any())

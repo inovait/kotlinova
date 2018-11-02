@@ -1,6 +1,7 @@
 package si.inova.kotlinova.coroutines
 
 import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.experimental.Dispatchers
 
 /**
  * Collection of Android Coroutine dispatchers that can be overriden for Unit tests.
@@ -13,5 +14,5 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
  */
 val UI: CoroutineDispatcher
     get() = dispatcherOverride {
-        kotlinx.coroutines.experimental.android.UI
+        Dispatchers.Main
     }

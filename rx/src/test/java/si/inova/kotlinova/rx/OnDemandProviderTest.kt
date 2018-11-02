@@ -15,6 +15,7 @@ import kotlinx.coroutines.experimental.withContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.testing.RxSchedulerRule
@@ -337,6 +338,7 @@ class OnDemandProviderTest {
         verifyZeroInteractions(afterDelay)
     }
 
+    @Ignore
     @Test
     fun printExceptionOnSendWhenInDebounce() {
         // Coroutines have issues with propagating exceptions after cancellation

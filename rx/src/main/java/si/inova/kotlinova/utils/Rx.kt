@@ -7,12 +7,13 @@
 package si.inova.kotlinova.utils
 
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.reactive.publish
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import si.inova.kotlinova.coroutines.CommonPool
 import kotlin.coroutines.experimental.CoroutineContext
-import kotlinx.coroutines.experimental.reactive.publish as publishCoroutine
 
 /**
  * Subscribe to this publisher, perform certain action and then unsubscribe
@@ -51,8 +52,8 @@ fun <I, O> Flowable<I>.mapAsync(
     mapper: suspend (I) -> O
 ): Flowable<O> {
     return switchMap { originalValue ->
-        publishCoroutine(context) {
+        GlobalScope.publish<O>(context, {
             send(mapper(originalValue))
-        }
+        })
     }
 }

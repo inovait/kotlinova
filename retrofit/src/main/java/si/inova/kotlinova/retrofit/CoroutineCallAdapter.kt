@@ -65,9 +65,9 @@ class CoroutineCallAdapterFactory constructor(
                 override fun onFailure(call: Call<T>, t: Throwable) {
                     val cause = t.cause
                     if (t is IOException && cause != null) {
-                        deferred.completeExceptionally(cause)
+                        deferred.cancel(cause)
                     } else {
-                        deferred.completeExceptionally(t)
+                        deferred.cancel(t)
                     }
                 }
 
@@ -75,7 +75,7 @@ class CoroutineCallAdapterFactory constructor(
                     try {
                         deferred.complete(responseParser.parseResponse(response))
                     } catch (e: Exception) {
-                        deferred.completeExceptionally(e)
+                        deferred.cancel(e)
                     }
                 }
             })

@@ -2,7 +2,8 @@ package si.inova.kotlinova.rx.coroutines
 
 import io.reactivex.Completable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Dispatchers.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertFalse
@@ -21,7 +22,7 @@ class CompletableCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val completable = subject.ignoreElements()
 
-        val awaitTask = async(Unconfined) {
+        val awaitTask = async(Dispatchers.Unconfined) {
             completable.await()
         }
 
@@ -44,7 +45,7 @@ class CompletableCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val completable = subject.ignoreElements()
 
-        val awaitTask = async(Unconfined) {
+        val awaitTask = async(Dispatchers.Unconfined) {
             completable.await()
         }
 

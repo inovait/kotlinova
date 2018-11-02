@@ -14,6 +14,13 @@ import kotlin.coroutines.experimental.CoroutineContext
  */
 class NoDelayUnconfinedDispatcher : CoroutineDispatcher(), Delay {
     override fun scheduleResumeAfterDelay(
+        timeMillis: Long,
+        continuation: CancellableContinuation<Unit>
+    ) {
+        continuation.resume(Unit)
+    }
+
+    override fun scheduleResumeAfterDelay(
         time: Long,
         unit: TimeUnit,
         continuation: CancellableContinuation<Unit>

@@ -6,8 +6,10 @@ import android.support.annotation.CallSuper
 import kotlinx.coroutines.experimental.CancellationException
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.NonCancellable
+import kotlinx.coroutines.experimental.isActive
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.data.resources.Resource
@@ -40,9 +42,9 @@ abstract class CoroutineViewModel : ViewModel() {
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ): Job {
-        return launch(context, start, parentJob) {
+        return GlobalScope.launch(context + parentJob, start, {
             block()
-        }
+        })
     }
 
     /**
@@ -72,7 +74,7 @@ abstract class CoroutineViewModel : ViewModel() {
             resource.removeAllSources()
         }
 
-        val newJob = launch(context, CoroutineStart.LAZY, parentJob) {
+        val newJob = GlobalScope.launch(context + parentJob, CoroutineStart.LAZY, {
             val thisJob = coroutineContext[Job]!!
 
             currentJobForThatResource?.join()
@@ -108,7 +110,7 @@ abstract class CoroutineViewModel : ViewModel() {
                 @Suppress("UNCHECKED_CAST")
                 activeJobs.remove(resource as MutableLiveData<Resource<*>>, thisJob)
             }
-        }
+        })
 
         @Suppress("UNCHECKED_CAST")
         activeJobs[resource as MutableLiveData<Resource<*>>] = newJob

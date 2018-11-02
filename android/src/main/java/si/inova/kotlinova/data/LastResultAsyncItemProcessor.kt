@@ -1,7 +1,10 @@
 package si.inova.kotlinova.data
 
 import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.isActive
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import si.inova.kotlinova.coroutines.CommonPool
@@ -22,7 +25,7 @@ class LastResultAsyncItemProcessor<I, O> {
     fun process(input: I, callback: (O) -> Unit, process: suspend CoroutineScope.(I) -> O) {
         lastJob?.cancel()
 
-        lastJob = launch(UI) {
+        lastJob = GlobalScope.launch(UI, CoroutineStart.DEFAULT, {
             val result = withContext(CommonPool) {
                 process(input)
             }
@@ -30,7 +33,7 @@ class LastResultAsyncItemProcessor<I, O> {
             if (isActive) {
                 callback(result)
             }
-        }
+        })
     }
 }
 

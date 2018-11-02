@@ -63,10 +63,15 @@ class TimedDispatcher : TestWatcher() {
             unit: TimeUnit,
             continuation: CancellableContinuation<Unit>
         ) {
+            scheduleResumeAfterDelay(unit.toMillis(time), continuation)
+        }
+
+        override fun scheduleResumeAfterDelay(
+            timeMillis: Long,
+            continuation: CancellableContinuation<Unit>
+        ) {
             val target = ScheduledTask(
-                currentTime + unit.toMillis(
-                    time
-                ),
+                currentTime + timeMillis,
                 Runnable { with(continuation) { resumeUndispatched(Unit) } })
             schedules.add(target)
         }

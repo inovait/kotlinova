@@ -82,10 +82,6 @@ subprojects {
             annotation("si.inova.kotlinova.testing.OpenForTesting")
         }
 
-        kapt {
-            useBuildCache = System.getenv('ENABLE_KAPT_BUILD_CACHE') == "TRUE"
-        }
-
         if (it.plugins.hasPlugin("de.mobilej.unmock")) {
             unMock {
                 keep "android.widget.BaseAdapter"

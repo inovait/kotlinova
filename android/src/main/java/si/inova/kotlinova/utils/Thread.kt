@@ -7,6 +7,8 @@ package si.inova.kotlinova.utils
 
 import android.annotation.SuppressLint
 import android.arch.core.executor.ArchTaskExecutor
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
 import si.inova.kotlinova.coroutines.UI
@@ -28,8 +30,9 @@ fun runOnUiThread(
     if (ArchTaskExecutor.getInstance().isMainThread) {
         block()
     } else {
-        launch(UI, parent = parentJob) {
+        val context = if (parentJob == null) UI else UI + parentJob
+        GlobalScope.launch(context, CoroutineStart.DEFAULT, {
             block()
-        }
+        })
     }
 }

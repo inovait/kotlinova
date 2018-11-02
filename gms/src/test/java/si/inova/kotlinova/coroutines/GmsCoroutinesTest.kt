@@ -2,7 +2,8 @@ package si.inova.kotlinova.coroutines
 
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.Dispatchers.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Assert.assertEquals
@@ -24,7 +25,7 @@ class GmsCoroutinesTest {
     @Test
     fun testTaskAwaitResult2() = runBlocking {
         val task = TaskCompletionSource<String>()
-        val result = async(Unconfined) { task.task.await() }
+        val result = async(Dispatchers.Unconfined) { task.task.await() }
 
         task.setResult("SUCCESS")
 
@@ -41,7 +42,7 @@ class GmsCoroutinesTest {
     @Test(expected = NoSuchElementException::class)
     fun testTaskAwaitException2() = runBlocking<Unit> {
         val task = TaskCompletionSource<String>()
-        val result = async(Unconfined) { task.task.await() }
+        val result = async(Dispatchers.Unconfined) { task.task.await() }
 
         task.setException(NoSuchElementException())
 

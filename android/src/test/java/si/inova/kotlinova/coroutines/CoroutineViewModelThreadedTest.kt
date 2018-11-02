@@ -49,6 +49,7 @@ class CoroutineViewModelThreadedTest {
             }
 
             testViewModel.latch.unlock()
+            @Suppress("DEPRECATION")
             testViewModel.publicParentJob().joinChildren()
 
             verify(callback).invoke()
