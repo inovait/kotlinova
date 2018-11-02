@@ -24,6 +24,8 @@ class GmsCoroutinesTest {
     @Test
     fun testTaskAwaitResult2() = runBlocking {
         val task = TaskCompletionSource<String>()
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val result = async(Dispatchers.Unconfined) { task.task.await() }
 
         task.setResult("SUCCESS")
@@ -41,6 +43,8 @@ class GmsCoroutinesTest {
     @Test(expected = NoSuchElementException::class)
     fun testTaskAwaitException2() = runBlocking<Unit> {
         val task = TaskCompletionSource<String>()
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val result = async(Dispatchers.Unconfined) { task.task.await() }
 
         task.setException(NoSuchElementException())

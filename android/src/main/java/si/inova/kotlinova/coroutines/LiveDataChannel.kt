@@ -18,6 +18,7 @@ class LiveDataChannel<T>(private val liveData: LiveData<T>) {
     val channel = Channel<T?>(capacity = Channel.CONFLATED)
 
     init {
+        @Suppress("EXPERIMENTAL_API_USAGE")
         channel.invokeOnClose {
             runOnUiThread {
                 liveData.removeObserver(observer)

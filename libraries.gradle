@@ -3,7 +3,7 @@ ext {
             kotlin                      : '1.3.0',
 
             // Support/Architecture libraries
-            kotlinCoroutines            : '0.30.2-eap13',
+            kotlinCoroutines            : '1.0.0',
             androidSupportLib           : '27.1.1',
             architectureComponents      : '1.1.1',
             rxJava                      : '2.1.12',

@@ -64,18 +64,9 @@ subprojects {
             implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
         }
 
-        kotlin {
-            /**
-             * This looks scary, but coroutines are only experimental in a sense that
-             * there may be future (non-breaking) API changes.
-             *
-             * Otherwise they are completely stable, backwards compatible and ready to use in production.
-             *
-             * Source: https://stackoverflow.com/a/46240340 (written by coroutines project member)
-             */
-            experimental {
-                coroutines "enable"
-            }
+        // Some experimental APIs are used on the testing side to ease testing with coroutines
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+            kotlinOptions.freeCompilerArgs += ["-Xuse-experimental=kotlin.Experimental"]
         }
 
         allOpen {

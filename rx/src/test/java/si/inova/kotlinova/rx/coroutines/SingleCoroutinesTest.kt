@@ -36,6 +36,8 @@ class SingleCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val single = subject.firstOrError()
 
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val awaitTask = async(Dispatchers.Unconfined) {
             single.await()
         }
@@ -53,6 +55,8 @@ class SingleCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val single = subject.firstOrError()
 
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val awaitTask = async(Dispatchers.Unconfined) {
             single.await()
         }

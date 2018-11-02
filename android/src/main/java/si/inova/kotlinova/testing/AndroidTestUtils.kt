@@ -31,6 +31,11 @@ fun advanceTime(ms: Long) {
 }
 
 suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> {
+    // Channel operators are obsolete, but there is no alternative at the moment
+    // We will migrate when alternative will be added
+    // See https://github.com/Kotlin/kotlinx.coroutines/issues/632
+    @Suppress("EXPERIMENTAL_API_USAGE")
+
     return GlobalScope.async(UI, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
 }
 
@@ -48,6 +53,10 @@ fun isoFromDate(day: Int, month: Int, year: Int): String {
 }
 
 suspend fun <T> LiveData<Resource<T>>.awaitSuccessAndThrowErrors(): T {
+    // Channel operators are obsolete, but there is no alternative at the moment
+    // We will migrate when alternative will be added
+    // See https://github.com/Kotlin/kotlinx.coroutines/issues/632
+    @Suppress("EXPERIMENTAL_API_USAGE")
     val winResource = toChannel().consume {
         first {
             if (it is Resource.Error) {

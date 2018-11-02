@@ -2,7 +2,6 @@
 
 package si.inova.kotlinova.utils
 
-import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
@@ -51,17 +50,3 @@ inline val CoroutineContext.isActive: Boolean
     get() = this[Job]!!.isActive
 
 suspend fun awaitCancellation() = suspendCancellableCoroutine<Unit> { }
-
-fun <T> CancellableContinuation<T>.tryWithResumeException(exception: Throwable) {
-    val res = tryResumeWithException(exception)
-    if (res != null) {
-        completeResume(res)
-    }
-}
-
-fun <T> CancellableContinuation<T>.resumeIfNotAlreadyResumed(result: T) {
-    val res = tryResume(result, null)
-    if (res != null) {
-        completeResume(res)
-    }
-}

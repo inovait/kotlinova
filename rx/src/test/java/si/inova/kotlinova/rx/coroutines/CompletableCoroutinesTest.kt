@@ -21,6 +21,8 @@ class CompletableCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val completable = subject.ignoreElements()
 
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val awaitTask = async(Dispatchers.Unconfined) {
             completable.await()
         }
@@ -44,6 +46,8 @@ class CompletableCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val completable = subject.ignoreElements()
 
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val awaitTask = async(Dispatchers.Unconfined) {
             completable.await()
         }

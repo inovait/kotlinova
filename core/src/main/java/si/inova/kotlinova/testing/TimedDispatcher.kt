@@ -4,12 +4,13 @@ import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Delay
 import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.dispatcherOverride
 import java.util.PriorityQueue
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.sign
 
@@ -35,6 +36,8 @@ class TimedDispatcher : TestWatcher() {
         Dispatcher.advanceTime(ms)
     }
 
+    // Delay is internal, but there is no alternative and this is only used for tests
+    @UseExperimental(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private object Dispatcher : CoroutineDispatcher(), Delay {
         private var currentTime = 0L
         private val schedules = PriorityQueue<ScheduledTask>()
@@ -59,14 +62,6 @@ class TimedDispatcher : TestWatcher() {
         }
 
         override fun scheduleResumeAfterDelay(
-            time: Long,
-            unit: TimeUnit,
-            continuation: CancellableContinuation<Unit>
-        ) {
-            scheduleResumeAfterDelay(unit.toMillis(time), continuation)
-        }
-
-        override fun scheduleResumeAfterDelay(
             timeMillis: Long,
             continuation: CancellableContinuation<Unit>
         ) {
@@ -76,15 +71,9 @@ class TimedDispatcher : TestWatcher() {
             schedules.add(target)
         }
 
-        override fun invokeOnTimeout(
-            time: Long,
-            unit: TimeUnit,
-            block: Runnable
-        ): DisposableHandle {
+        override fun invokeOnTimeout(timeMillis: Long, block: Runnable): DisposableHandle {
             val target = ScheduledTask(
-                currentTime + unit.toMillis(
-                    time
-                ), block
+                currentTime + timeMillis, block
             )
 
             schedules.add(target)

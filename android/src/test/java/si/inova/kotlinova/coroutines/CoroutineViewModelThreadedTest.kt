@@ -4,7 +4,6 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.joinChildren
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.yield
@@ -49,8 +48,7 @@ class CoroutineViewModelThreadedTest {
             }
 
             testViewModel.latch.unlock()
-            @Suppress("DEPRECATION")
-            testViewModel.publicParentJob().joinChildren()
+            testViewModel.publicParentJob().children.forEach { it.join() }
 
             verify(callback).invoke()
             assertIs(testViewModel.resourceA.value, Resource.Success::class.java)

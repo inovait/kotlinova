@@ -64,6 +64,8 @@ class LocationCoroutinesTest {
     fun removeLocationUpdatesAfterUnsubscribe() = runBlocking<Unit> {
         val locationRequest = LocationRequest.create()
 
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val locationFetcher = async(Dispatchers.Unconfined) {
             locationClient.awaitSingleLocation(locationRequest)
         }

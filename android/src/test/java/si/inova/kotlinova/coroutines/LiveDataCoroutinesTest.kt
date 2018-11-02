@@ -34,7 +34,7 @@ class LiveDataCoroutinesTest {
     val archRule = InstantTaskExecutorRule()
 
     @Test
-    fun testAwaitFirstValue() {
+    fun testAwaitFirstValue() = runBlocking<Unit> {
         val data = MutableLiveData<Int>()
         assertFalse(data.hasActiveObservers())
         val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, { data.awaitFirstValue() })
@@ -44,7 +44,7 @@ class LiveDataCoroutinesTest {
 
         data.value = 10
         assertTrue(task.isCompleted)
-        assertEquals(10, task.getCompleted())
+        assertEquals(10, task.await())
         assertFalse(data.hasActiveObservers())
     }
 
@@ -59,21 +59,21 @@ class LiveDataCoroutinesTest {
     }
 
     @Test
-    fun testAwaitFirstValueAllowExisting() {
+    fun testAwaitFirstValueAllowExisting() = runBlocking<Unit> {
         val data = MutableLiveData<Int>()
 
         data.value = 10
         val task = GlobalScope.async(
-                UI,
-                CoroutineStart.DEFAULT,
-                { data.awaitFirstValue(ignoreExistingValue = false) })
+            UI,
+            CoroutineStart.DEFAULT,
+            { data.awaitFirstValue(ignoreExistingValue = false) })
         data.value = 20
 
-        assertEquals(10, task.getCompleted())
+        assertEquals(10, task.await())
     }
 
     @Test
-    fun testAwaitFirstValueIgnoreExisting() {
+    fun testAwaitFirstValueIgnoreExisting() = runBlocking<Unit> {
         val data = MutableLiveData<Int>()
 
         data.value = 10
@@ -83,11 +83,11 @@ class LiveDataCoroutinesTest {
             })
         })
 
-        assertEquals(20, task.getCompleted())
+        assertEquals(20, task.await())
     }
 
     @Test
-    fun testAwaitFirstValueIgnoreExistingThroughMediator() {
+    fun testAwaitFirstValueIgnoreExistingThroughMediator() = runBlocking<Unit> {
         val data = MutableLiveData<Int>()
 
         // Wrap around MediatorLiveData
@@ -100,23 +100,23 @@ class LiveDataCoroutinesTest {
             })
         })
 
-        assertEquals(100, task.getCompleted())
+        assertEquals(100, task.await())
     }
 
     @Test
-    fun testAwaitFirstValueIgnoreExistingSameValue() {
+    fun testAwaitFirstValueIgnoreExistingSameValue() = runBlocking<Unit> {
         val data = MutableLiveData<Int>()
 
         data.value = 10
         val task = GlobalScope.async(
-                UI,
-                CoroutineStart.DEFAULT,
-                { data.awaitFirstValue(ignoreExistingValue = true) })
+            UI,
+            CoroutineStart.DEFAULT,
+            { data.awaitFirstValue(ignoreExistingValue = true) })
         assertFalse(task.isCompleted)
         data.value = 10
 
         assertTrue(task.isCompleted)
-        assertEquals(10, task.getCompleted())
+        assertEquals(10, task.await())
     }
 
     @Test

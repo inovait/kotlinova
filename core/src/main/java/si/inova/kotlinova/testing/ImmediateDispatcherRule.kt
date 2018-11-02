@@ -17,6 +17,8 @@ class ImmediateDispatcherRule : TestWatcher() {
         dispatcherOverride = { it() }
     }
 
+    // UNCONFINED is experimental, but it is still fine to use it with tests
+    @Suppress("EXPERIMENTAL_API_USAGE")
     override fun starting(description: Description?) {
         super.starting(description)
 
