@@ -3,9 +3,9 @@ package si.inova.kotlinova.coroutines
 import android.arch.lifecycle.MutableLiveData
 import android.support.test.espresso.Espresso
 import android.support.test.runner.AndroidJUnit4
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withTimeout
-import kotlinx.coroutines.experimental.yield
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before

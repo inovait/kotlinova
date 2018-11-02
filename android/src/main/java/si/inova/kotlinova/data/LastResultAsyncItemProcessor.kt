@@ -1,12 +1,12 @@
 package si.inova.kotlinova.data
 
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.isActive
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.coroutines.CommonPool
 import si.inova.kotlinova.coroutines.UI
 

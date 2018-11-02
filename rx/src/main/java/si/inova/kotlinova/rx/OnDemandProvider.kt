@@ -5,21 +5,20 @@ import io.reactivex.Flowable
 import io.reactivex.FlowableEmitter
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.cancelChildren
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import si.inova.kotlinova.coroutines.CommonPool
 import si.inova.kotlinova.utils.awaitCancellation
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.coroutineContext
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Data provider that activates when anyone subscribes to its observable and provides a stream

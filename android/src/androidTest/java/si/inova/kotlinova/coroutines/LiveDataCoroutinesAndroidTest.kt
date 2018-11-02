@@ -1,11 +1,11 @@
 package si.inova.kotlinova.coroutines
 
 import android.arch.lifecycle.MutableLiveData
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.newSingleThreadContext
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
-import kotlinx.coroutines.experimental.yield
+import kotlinx.coroutines.async
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule

@@ -7,13 +7,13 @@
 package si.inova.kotlinova.utils
 
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.reactive.publish
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.reactive.publish
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import si.inova.kotlinova.coroutines.CommonPool
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Subscribe to this publisher, perform certain action and then unsubscribe

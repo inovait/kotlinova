@@ -7,8 +7,8 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.sync.Mutex
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource

@@ -1,8 +1,8 @@
 package si.inova.kotlinova.rx
 
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Ignore

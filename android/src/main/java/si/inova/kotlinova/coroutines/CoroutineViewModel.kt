@@ -3,23 +3,22 @@ package si.inova.kotlinova.coroutines
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.support.annotation.CallSuper
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.NonCancellable
-import kotlinx.coroutines.experimental.isActive
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.data.resources.value
 import si.inova.kotlinova.exceptions.OwnershipTransferredException
 import si.inova.kotlinova.utils.runOnUiThread
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.coroutineContext
+import kotlin.coroutines.CoroutineContext
 
 /**
  * ViewModel that automatically handles cancellation of all its coroutines when application

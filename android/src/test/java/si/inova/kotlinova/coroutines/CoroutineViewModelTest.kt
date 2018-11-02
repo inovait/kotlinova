@@ -2,8 +2,8 @@ package si.inova.kotlinova.coroutines
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.MutableLiveData
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull

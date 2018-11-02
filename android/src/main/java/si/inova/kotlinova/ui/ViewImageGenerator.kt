@@ -7,7 +7,7 @@ import android.support.annotation.LayoutRes
 import android.support.v4.view.AsyncLayoutInflater
 import android.view.View
 import androidx.core.view.toBitmap
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.inflateAndAwait
 import si.inova.kotlinova.testing.OpenForTesting

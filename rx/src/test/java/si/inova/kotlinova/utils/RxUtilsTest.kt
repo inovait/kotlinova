@@ -8,7 +8,7 @@ import io.reactivex.Flowable
 import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 import io.reactivex.subscribers.TestSubscriber
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.delay
 import org.junit.Rule
 import org.junit.Test
 import org.reactivestreams.Subscription

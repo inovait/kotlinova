@@ -1,7 +1,7 @@
 package si.inova.kotlinova.coroutines
 
-import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Collection of Android Coroutine dispatchers that can be overriden for Unit tests.

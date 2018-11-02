@@ -1,6 +1,6 @@
 package si.inova.kotlinova.testing
 
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.delay
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.dispatcherOverride

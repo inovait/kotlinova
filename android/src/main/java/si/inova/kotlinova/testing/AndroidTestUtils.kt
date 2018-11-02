@@ -6,12 +6,12 @@
 package si.inova.kotlinova.testing
 
 import android.arch.lifecycle.LiveData
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.first
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.first
 import org.robolectric.shadows.ShadowSystemClock
 import si.inova.kotlinova.coroutines.UI
 import si.inova.kotlinova.coroutines.toChannel

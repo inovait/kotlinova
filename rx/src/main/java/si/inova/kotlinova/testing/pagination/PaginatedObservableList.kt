@@ -3,7 +3,7 @@ package si.inova.kotlinova.testing.pagination
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.sync.Mutex
+import kotlinx.coroutines.sync.Mutex
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.testing.OpenForTesting

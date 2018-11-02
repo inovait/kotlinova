@@ -4,8 +4,8 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

@@ -1,6 +1,6 @@
 package si.inova.kotlinova.exceptions
 
-import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.CancellationException
 
 /**
  * Exception that gets triggered whenever another coroutine takes ownership of

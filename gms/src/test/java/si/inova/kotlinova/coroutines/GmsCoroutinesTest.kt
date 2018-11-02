@@ -2,10 +2,9 @@ package si.inova.kotlinova.coroutines
 
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Dispatchers.Unconfined
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,11 +1,12 @@
 package si.inova.kotlinova.testing
 
-import kotlinx.coroutines.experimental.CancellableContinuation
-import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Delay
-import kotlinx.coroutines.experimental.Runnable
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Runnable
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
 
 /**
  * [CoroutineDispatcher] that removes all [delay] calls

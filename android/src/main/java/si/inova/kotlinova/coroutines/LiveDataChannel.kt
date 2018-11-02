@@ -2,9 +2,9 @@ package si.inova.kotlinova.coroutines
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.channels.ReceiveChannel
 import si.inova.kotlinova.utils.runOnUiThread
 
 /**
