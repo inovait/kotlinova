@@ -6,7 +6,7 @@ ext {
             kotlinCoroutines            : '1.0.0',
             androidSupportLib           : '27.1.1',
             architectureComponents      : '1.1.1',
-            rxJava                      : '2.1.12',
+            rxJava                      : '2.2.3',
             rxKotlin                    : '2.2.0',
             dagger                      : '2.16',
             timber                      : '4.7.0',

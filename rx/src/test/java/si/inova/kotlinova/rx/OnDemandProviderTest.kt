@@ -3,6 +3,7 @@ package si.inova.kotlinova.rx
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import com.nhaarman.mockitokotlin2.whenever
@@ -15,13 +16,11 @@ import kotlinx.coroutines.withContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import si.inova.kotlinova.rx.testing.RxCoroutinesTimeMachine
 import si.inova.kotlinova.testing.RxSchedulerRule
-import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
-import timber.log.Timber
 
 /**
  * @author Matej Drobnic
@@ -32,7 +31,7 @@ class OnDemandProviderTest {
     private lateinit var onInactiveCallback: () -> Unit
 
     @get:Rule
-    val dispatcher = TimedDispatcher()
+    val dispatcher = RxCoroutinesTimeMachine()
     @get:Rule
     val rxJavaSchedulerRule = RxSchedulerRule()
     @get:Rule
@@ -40,28 +39,24 @@ class OnDemandProviderTest {
 
     @Before
     fun setUp() {
-        testProvider = TestProvider()
-
-        onActiveCallback = mock()
-        onInactiveCallback = mock()
-
-        testProvider.activeCallback = onActiveCallback
-        testProvider.inactiveCallback = onInactiveCallback
+        createTestProvider(true)
     }
 
     @Test
     fun ActiveInactive() {
         // Debounce is not yet tested here
-        testProvider.disableDebounce()
+        createTestProvider(debounce = false)
 
         inOrder(onActiveCallback, onInactiveCallback) {
             runBlocking {
                 verifyNoMoreInteractions()
 
                 val subscriber = testProvider.flowable.subscribe()
+                dispatcher.triggerActions()
                 verify(onActiveCallback).invoke()
 
                 subscriber.dispose()
+                dispatcher.triggerActions()
                 verify(onInactiveCallback).invoke()
 
                 verifyNoMoreInteractions()
@@ -72,7 +67,7 @@ class OnDemandProviderTest {
     @Test
     fun ActiveInactiveMultipleSubscribers() {
         // Debounce is not yet tested here
-        testProvider.disableDebounce()
+        createTestProvider(debounce = false)
 
         inOrder(onActiveCallback, onInactiveCallback) {
             runBlocking {
@@ -80,14 +75,18 @@ class OnDemandProviderTest {
 
                 val subscriberA = testProvider.flowable.subscribe()
                 val subscriberB = testProvider.flowable.subscribe()
-                verify(onActiveCallback).invoke()
+                dispatcher.triggerActions()
+                verify(onActiveCallback, times(1)).invoke()
 
                 subscriberA.dispose()
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
                 subscriberB.dispose()
 
+                dispatcher.triggerActions()
                 verify(onInactiveCallback).invoke()
 
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
             }
         }
@@ -96,18 +95,22 @@ class OnDemandProviderTest {
     @Test
     fun isActive() {
         // Debounce is not yet tested here
-        testProvider.disableDebounce()
+        createTestProvider(debounce = false)
 
+        dispatcher.triggerActions()
         assertFalse(testProvider.isActive)
 
         val subscriberA = testProvider.flowable.subscribe()
         val subscriberB = testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
         assertTrue(testProvider.isActive)
 
         subscriberA.dispose()
+        dispatcher.triggerActions()
         assertTrue(testProvider.isActive)
 
         subscriberB.dispose()
+        dispatcher.triggerActions()
         assertFalse(testProvider.isActive)
     }
 
@@ -116,20 +119,28 @@ class OnDemandProviderTest {
         runBlocking {
             val consumer: Consumer<Int> = mock()
             val subscriber = testProvider.flowable.subscribe(consumer)
+            dispatcher.triggerActions()
 
             inOrder(consumer) {
-                testProvider.sendPublic(1)
-                verify(consumer).accept(1)
-                testProvider.sendPublic(20)
-                verify(consumer).accept(20)
-                testProvider.sendPublic(33)
-                verify(consumer).accept(33)
-                testProvider.sendPublic(45)
-                verify(consumer).accept(45)
+                runBlocking {
+                    testProvider.sendPublic(1)
+                    dispatcher.triggerActions()
+                    verify(consumer).accept(1)
+                    testProvider.sendPublic(20)
+                    dispatcher.triggerActions()
+                    verify(consumer).accept(20)
+                    testProvider.sendPublic(33)
+                    dispatcher.triggerActions()
+                    verify(consumer).accept(33)
+                    testProvider.sendPublic(45)
+                    dispatcher.triggerActions()
+                    verify(consumer).accept(45)
 
-                subscriber.dispose()
+                    subscriber.dispose()
 
-                verifyNoMoreInteractions()
+                    dispatcher.triggerActions()
+                    verifyNoMoreInteractions()
+                }
             }
         }
     }
@@ -137,7 +148,7 @@ class OnDemandProviderTest {
     @Test
     fun receiveCrashExceptions() {
         // Debounce is not yet tested here
-        testProvider.disableDebounce()
+        createTestProvider(debounce = false)
 
         runBlocking {
             val exception = RuntimeException("Test")
@@ -147,6 +158,7 @@ class OnDemandProviderTest {
 
             val subscriber = testProvider.flowable.subscribe(consumer, errorConsumer)
 
+            dispatcher.triggerActions()
             verify(errorConsumer).accept(exception)
             verify(onInactiveCallback).invoke()
             assertTrue(subscriber.isDisposed)
@@ -154,32 +166,30 @@ class OnDemandProviderTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun crashIfEmittingBeforeDispose() {
+    fun crashIfEmittingBeforeDispose() = runBlocking {
         testProvider.sendPublic(10)
+        dispatcher.triggerActions()
     }
 
     @Test(expected = IllegalStateException::class)
-    fun crashIfEmittingAfterDispose() {
+    fun crashIfEmittingAfterDispose() = runBlocking {
         // Debounce is not yet tested here
-        testProvider.disableDebounce()
+        createTestProvider(debounce = false)
 
         val subscriber = testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
         testProvider.sendPublic(20)
         subscriber.dispose()
 
         testProvider.sendPublic(10)
+        dispatcher.triggerActions()
     }
 
     @Test
     fun cancelOnActiveAfterDispose() {
         val afterDelay: () -> Unit = mock()
 
-        val provider = object : OnDemandProvider<Int>() {
-            init {
-                // Debounce is not yet tested here
-                debounceTimeout = 0
-            }
-
+        val provider = object : OnDemandProvider<Int>(debounceTimeout = 0) {
             override suspend fun CoroutineScope.onActive() {
                 delay(500)
                 afterDelay()
@@ -199,9 +209,11 @@ class OnDemandProviderTest {
                 verifyNoMoreInteractions()
 
                 val subscriber = testProvider.flowable.subscribe()
+                dispatcher.triggerActions()
                 verify(onActiveCallback).invoke()
 
                 subscriber.dispose()
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
 
                 dispatcher.advanceTime(200)
@@ -221,9 +233,11 @@ class OnDemandProviderTest {
         assertFalse(testProvider.isActive)
 
         val subscriber = testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
         assertTrue(testProvider.isActive)
 
         subscriber.dispose()
+        dispatcher.triggerActions()
         assertTrue(testProvider.isActive)
 
         dispatcher.advanceTime(200)
@@ -238,30 +252,37 @@ class OnDemandProviderTest {
     fun resubscribeWithDebounce() {
         inOrder(onActiveCallback, onInactiveCallback) {
             runBlocking {
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
 
                 var subscriber = testProvider.flowable.subscribe()
+                dispatcher.triggerActions()
                 verify(onActiveCallback).invoke()
 
                 subscriber.dispose()
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
 
                 dispatcher.advanceTime(200)
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
 
                 subscriber = testProvider.flowable.subscribe()
 
                 dispatcher.advanceTime(2000)
 
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
 
                 subscriber.dispose()
                 dispatcher.advanceTime(200)
 
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
 
                 dispatcher.advanceTime(2000)
 
+                dispatcher.triggerActions()
                 verify(onInactiveCallback).invoke()
                 verifyNoMoreInteractions()
             }
@@ -274,6 +295,7 @@ class OnDemandProviderTest {
             runBlocking {
 
                 val subscriber = testProvider.flowable.subscribe()
+                dispatcher.triggerActions()
                 verify(onActiveCallback).invoke()
 
                 subscriber.dispose()
@@ -282,6 +304,7 @@ class OnDemandProviderTest {
 
                 testProvider.flowable.subscribe()
 
+                dispatcher.triggerActions()
                 verifyNoMoreInteractions()
             }
         }
@@ -293,6 +316,7 @@ class OnDemandProviderTest {
 
         runBlocking {
             val subscriber = testProvider.flowable.subscribe()
+            dispatcher.triggerActions()
             subscriber.dispose()
 
             dispatcher.advanceTime(100)
@@ -300,6 +324,7 @@ class OnDemandProviderTest {
             dispatcher.advanceTime(100)
 
             testProvider.flowable.subscribe(consumer)
+            dispatcher.triggerActions()
             verify(consumer).accept(15)
         }
     }
@@ -310,6 +335,7 @@ class OnDemandProviderTest {
 
         runBlocking {
             val subscriber = testProvider.flowable.subscribe()
+            dispatcher.triggerActions()
             subscriber.dispose()
 
             dispatcher.advanceTime(100)
@@ -317,6 +343,7 @@ class OnDemandProviderTest {
             testProvider.flowable.subscribe(consumer)
 
             testProvider.sendPublic(15)
+            dispatcher.triggerActions()
             verify(consumer).accept(15)
         }
     }
@@ -338,33 +365,6 @@ class OnDemandProviderTest {
         verifyZeroInteractions(afterDelay)
     }
 
-    @Ignore
-    @Test
-    fun printExceptionOnSendWhenInDebounce() {
-        // Coroutines have issues with propagating exceptions after cancellation
-        // Log with timber instead
-        val timberTree: Timber.Tree = mock()
-        Timber.plant(timberTree)
-
-        val exception = IllegalStateException()
-
-        val provider = object : OnDemandProvider<Int>() {
-            override suspend fun CoroutineScope.onActive() {
-                withContext(NonCancellable) {
-                    delay(1000)
-                }
-
-                throw exception
-            }
-        }
-
-        provider.flowable.subscribe().dispose()
-        dispatcher.advanceTime(2000)
-        verify(timberTree).e(exception)
-
-        Timber.uproot(timberTree)
-    }
-
     @Test
     fun waitForCleanupToFinishBeforeRestart() {
         val cleanupFinish: () -> Unit = mock()
@@ -382,9 +382,11 @@ class OnDemandProviderTest {
 
         inOrder(cleanupFinish, onActiveStart) {
             val subscriber = provider.flowable.subscribe()
+            dispatcher.triggerActions()
             verify(onActiveStart).invoke()
 
             subscriber.dispose()
+            dispatcher.triggerActions()
             verifyNoMoreInteractions()
 
             dispatcher.advanceTime(600)
@@ -417,6 +419,7 @@ class OnDemandProviderTest {
 
         inOrder(startupFinish, onInactiveStart) {
             val subscriber = provider.flowable.subscribe()
+            dispatcher.triggerActions()
 
             subscriber.dispose()
 
@@ -442,6 +445,7 @@ class OnDemandProviderTest {
         }
 
         val subscriber = provider.flowable.subscribe()
+        dispatcher.triggerActions()
 
         subscriber.dispose()
         verifyZeroInteractions(cleanupCalled)
@@ -452,42 +456,24 @@ class OnDemandProviderTest {
     }
 
     @Test
-    fun doNotCancelCleanup() {
-        val cleanupFinished: () -> Unit = mock()
-
-        val provider = object : OnDemandProvider<Unit>() {
-            override suspend fun CoroutineScope.onActive() {
-                delay(99999999)
-            }
-
-            override fun onInactive() {
-                cleanupFinished()
-            }
-        }
-
-        val subscriber = provider.flowable.subscribe()
-
-        subscriber.dispose()
-
-        dispatcher.advanceTime(2000)
-
-        verify(cleanupFinished).invoke()
-    }
-
-    @Test
-    fun bufferLastItemWhenActive() {
+    fun bufferLastItemWhenActive() = runBlocking {
         testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
+
         testProvider.sendPublic(33)
         testProvider.sendPublic(77)
 
         val lateConsumer: Consumer<Int> = mock()
         testProvider.flowable.subscribe(lateConsumer)
+        dispatcher.triggerActions()
         verify(lateConsumer, only()).accept(77)
     }
 
     @Test
-    fun bufferLastItemThroughDebounce() {
+    fun bufferLastItemThroughDebounce() = runBlocking {
         val subscriber = testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
+
         testProvider.sendPublic(33)
         testProvider.sendPublic(77)
 
@@ -496,12 +482,15 @@ class OnDemandProviderTest {
 
         val lateConsumer: Consumer<Int> = mock()
         testProvider.flowable.subscribe(lateConsumer)
+        dispatcher.triggerActions()
         verify(lateConsumer, only()).accept(77)
     }
 
     @Test
-    fun bufferLastItemThroughMultipleDebounces() {
+    fun bufferLastItemThroughMultipleDebounces() = runBlocking {
         val subscriber = testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
+
         testProvider.sendPublic(33)
         testProvider.sendPublic(77)
 
@@ -514,12 +503,15 @@ class OnDemandProviderTest {
 
         val lateConsumer: Consumer<Int> = mock()
         testProvider.flowable.subscribe(lateConsumer)
+        dispatcher.triggerActions()
         verify(lateConsumer, only()).accept(77)
     }
 
     @Test
-    fun noItemBufferingAfterDispose() {
+    fun noItemBufferingAfterDispose() = runBlocking {
         val subscriber = testProvider.flowable.subscribe()
+        dispatcher.triggerActions()
+
         testProvider.sendPublic(33)
         testProvider.sendPublic(77)
 
@@ -529,29 +521,36 @@ class OnDemandProviderTest {
         val consumer: Consumer<Int> = mock()
         testProvider.flowable.subscribe(consumer)
 
+        dispatcher.triggerActions()
         verifyZeroInteractions(consumer)
     }
 
-    private open class TestProvider : OnDemandProvider<Int>() {
+    private fun createTestProvider(debounce: Boolean) {
+        onActiveCallback = mock()
+        onInactiveCallback = mock()
+
+        testProvider = TestProvider(debounce)
+
+        testProvider.activeCallback = onActiveCallback
+        testProvider.inactiveCallback = onInactiveCallback
+    }
+
+    private open class TestProvider(debounce: Boolean = true) : OnDemandProvider<Int>(
+        debounceTimeout = if (debounce) 500L else 0L
+    ) {
         var activeCallback: (() -> Unit)? = null
         var inactiveCallback: (() -> Unit)? = null
 
         public override suspend fun CoroutineScope.onActive() {
-            runBlocking {
-                activeCallback?.invoke()
-            }
+            activeCallback?.invoke()
         }
 
         public override fun onInactive() {
             inactiveCallback?.invoke()
         }
 
-        fun sendPublic(item: Int) {
-            this.send(item)
-        }
-
-        fun disableDebounce() {
-            debounceTimeout = 0
+        suspend fun sendPublic(item: Int) {
+            send(item)
         }
     }
 }

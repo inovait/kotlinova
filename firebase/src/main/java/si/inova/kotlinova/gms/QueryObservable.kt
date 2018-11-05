@@ -34,12 +34,12 @@ class QueryObservable(private val query: Query) :
         }
 
         if (e != null) {
-            send(Resource.Error(e))
+            sendBlocking(Resource.Error(e))
             return
         }
 
         if (snapshot != null) {
-            send(Resource.Success(snapshot))
+            sendBlocking(Resource.Success(snapshot))
         }
     }
 }

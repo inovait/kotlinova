@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.testing.TimberExceptionThrowRule
@@ -23,13 +22,12 @@ class OnDemandProviderThreadedTest {
     @get:Rule
     val timberRule = TimberExceptionThrowRule()
 
-    @Ignore
     @Test(timeout = 10_000)
     fun manySubscribes() {
         // Thread concurrency issues do not reproduce every time
         // repeat it multiple times to increase chance of failure
         repeat(100) {
-            val provider = TestProviderNoDebounce()
+            val provider = TestProvider(debounce = false)
 
             repeat(200) {
                 provider.flowable.subscribe().dispose()
@@ -54,8 +52,10 @@ class OnDemandProviderThreadedTest {
         ForkJoinPool.commonPool().awaitTermination(5, TimeUnit.DAYS)
     }
 
-    private open class TestProvider
-        : OnDemandProvider<Unit>(rxScheduler = Schedulers.trampoline()) {
+    private open class TestProvider(debounce: Boolean = true) : OnDemandProvider<Unit>(
+        rxScheduler = Schedulers.trampoline(),
+        debounceTimeout = if (debounce) 500L else 0L
+    ) {
         private val currentlyActive = AtomicBoolean(false)
 
         override suspend fun CoroutineScope.onActive() {
@@ -69,12 +69,6 @@ class OnDemandProviderThreadedTest {
         override fun onInactive() {
             assertTrue(currentlyActive.getAndSet(false))
             assertFalse(this@TestProvider.isActive)
-        }
-    }
-
-    private class TestProviderNoDebounce : TestProvider() {
-        init {
-            debounceTimeout = 0
         }
     }
 }
