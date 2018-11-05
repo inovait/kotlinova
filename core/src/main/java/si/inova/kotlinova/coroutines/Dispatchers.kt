@@ -1,7 +1,7 @@
 package si.inova.kotlinova.coroutines
 
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Collection of Coroutine dispatchers that can be overriden for Unit tests.
@@ -17,4 +17,4 @@ val CommonPool
         Dispatchers.Default
     }
 
-var dispatcherOverride: (() -> CoroutineDispatcher) -> CoroutineDispatcher = { it() }
+var dispatcherOverride: (() -> CoroutineContext) -> CoroutineContext = { it() }
