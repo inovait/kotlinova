@@ -17,6 +17,9 @@ import kotlin.math.sign
 /**
  * Rule that allows time-based dispatching without Robolectric dependency
  *
+ * This class is only kept in for legacy purposes. For new projects you should use
+ * [CoroutinesTimeMachine] instead.
+ *
  * @author Matej Drobnic
  */
 class TimedDispatcher : TestWatcher() {
@@ -32,9 +35,12 @@ class TimedDispatcher : TestWatcher() {
         dispatcherOverride = { Dispatcher }
     }
 
-    fun advanceTime(ms: Int) {
+    fun advanceTime(ms: Long) {
         Dispatcher.advanceTime(ms)
     }
+
+    val coroutinesDispatcher: CoroutineContext
+        get() = Dispatcher
 
     // Delay is internal, but there is no alternative and this is only used for tests
     @UseExperimental(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
@@ -42,7 +48,7 @@ class TimedDispatcher : TestWatcher() {
         private var currentTime = 0L
         private val schedules = PriorityQueue<ScheduledTask>()
 
-        fun advanceTime(ms: Int) {
+        fun advanceTime(ms: Long) {
             val targetTime = currentTime + ms
 
             var next = schedules.peek()

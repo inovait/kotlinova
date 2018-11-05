@@ -11,7 +11,9 @@ import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -23,6 +25,7 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import si.inova.kotlinova.coroutines.CommonPool
+import si.inova.kotlinova.coroutines.dispatcherOverride
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.testing.RxSchedulerRule
@@ -32,6 +35,8 @@ import si.inova.kotlinova.testing.assertDocumentsEqual
 import si.inova.kotlinova.testing.assertIs
 import si.inova.kotlinova.testing.firebase.MockCollection
 import si.inova.kotlinova.testing.firebase.MockDocument
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * @author Matej Drobnic
@@ -68,29 +73,37 @@ class ObservableFirebasePaginatedQueryTest {
 
     @Test
     fun registerUnregisterListenerOnLifecycle() {
-        GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadFirstPage() })
-        listener!!.onEvent(MockCollection(emptyList<Pair<String, Int>>()).toQuerySnapshot(), null)
+        val executor = Executors.newSingleThreadExecutor()
+        executor.asCoroutineDispatcher().use { testThread ->
+            dispatcherOverride = { _ -> testThread }
 
-        inOrder(listenerRegistration, query) {
-            var subscription = observableFirebasePaginatedQuery.data.subscribe()
-            assertNotNull(listener)
-            verify(query).addSnapshotListener(any())
+            GlobalScope.async(CommonPool) { observableFirebasePaginatedQuery.loadFirstPage() }
 
-            subscription.dispose()
-            dispatcher.advanceTime(600)
-            verify(listenerRegistration).remove()
+            GlobalScope.launch(CommonPool) {
+                listener!!
+                    .onEvent(MockCollection(emptyList<Pair<String, Int>>()).toQuerySnapshot(), null)
 
-            subscription = observableFirebasePaginatedQuery.data.subscribe()
-            verify(query).addSnapshotListener(any())
+                inOrder(listenerRegistration, query) {
+                    var subscription = observableFirebasePaginatedQuery.data.subscribe()
+                    assertNotNull(listener)
+                    verify(query).addSnapshotListener(any())
 
-            subscription.dispose()
-            dispatcher.advanceTime(600)
-            verify(listenerRegistration).remove()
+                    subscription.dispose()
+                    dispatcher.advanceTime(600)
+                    verify(listenerRegistration).remove()
 
-            verify(query, never()).addSnapshotListener(any())
+                    subscription = observableFirebasePaginatedQuery.data.subscribe()
+                    verify(query).addSnapshotListener(any())
+
+                    subscription.dispose()
+                    dispatcher.advanceTime(600)
+                    verify(listenerRegistration).remove()
+
+                    verify(query, never()).addSnapshotListener(any())
+                }
+
+                executor.awaitTermination(5, TimeUnit.SECONDS)
+            }
         }
     }
 
@@ -181,18 +194,18 @@ class ObservableFirebasePaginatedQueryTest {
         )
 
         GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadFirstPage() })
+            CommonPool,
+            CoroutineStart.DEFAULT,
+            { observableFirebasePaginatedQuery.loadFirstPage() })
         observableFirebasePaginatedQuery.data.subscribe()
 
         listener!!.onEvent(MockCollection(firstPage).toQuerySnapshot(), null)
         assertFalse(observableFirebasePaginatedQuery.isAtEnd)
 
         GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadNextPage() })
+            CommonPool,
+            CoroutineStart.DEFAULT,
+            { observableFirebasePaginatedQuery.loadNextPage() })
         listener!!.onEvent(MockCollection(firstAndSecondPage).toQuerySnapshot(), null)
         assertTrue(observableFirebasePaginatedQuery.isAtEnd)
 
@@ -204,9 +217,9 @@ class ObservableFirebasePaginatedQueryTest {
     @Test
     fun fetchOnePageAtATime() {
         GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadFirstPage() })
+            CommonPool,
+            CoroutineStart.DEFAULT,
+            { observableFirebasePaginatedQuery.loadFirstPage() })
         observableFirebasePaginatedQuery.data.subscribe()
 
         val testData = listOf(
@@ -222,71 +235,71 @@ class ObservableFirebasePaginatedQueryTest {
             verify(query).limit(2L)
 
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
 
             listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
             verify(query, never()).limit(any())
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             verify(query).limit(4L)
 
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
 
             listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
             verify(query, never()).limit(any())
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
             verify(query).limit(6L)
         }
     }
@@ -297,9 +310,9 @@ class ObservableFirebasePaginatedQueryTest {
             "10" to 10
         )
         GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadFirstPage() })
+            CommonPool,
+            CoroutineStart.DEFAULT,
+            { observableFirebasePaginatedQuery.loadFirstPage() })
         observableFirebasePaginatedQuery.data.subscribe()
 
         inOrder(query) {
@@ -329,9 +342,9 @@ class ObservableFirebasePaginatedQueryTest {
         )
 
         GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadFirstPage() })
+            CommonPool,
+            CoroutineStart.DEFAULT,
+            { observableFirebasePaginatedQuery.loadFirstPage() })
         observableFirebasePaginatedQuery.data.subscribe()
 
         inOrder(query, listenerRegistration) {
@@ -339,9 +352,9 @@ class ObservableFirebasePaginatedQueryTest {
 
             listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
             GlobalScope.async(
-                    CommonPool,
-                    CoroutineStart.DEFAULT,
-                    { observableFirebasePaginatedQuery.loadNextPage() })
+                CommonPool,
+                CoroutineStart.DEFAULT,
+                { observableFirebasePaginatedQuery.loadNextPage() })
 
             verify(listenerRegistration).remove()
             verify(query).addSnapshotListener(any())
@@ -379,9 +392,9 @@ class ObservableFirebasePaginatedQueryTest {
         observableFirebasePaginatedQuery.data.subscribe()
 
         GlobalScope.async(
-                CommonPool,
-                CoroutineStart.DEFAULT,
-                { observableFirebasePaginatedQuery.loadFirstPage() })
+            CommonPool,
+            CoroutineStart.DEFAULT,
+            { observableFirebasePaginatedQuery.loadFirstPage() })
         listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
         val loadNextPageTask = GlobalScope.async(CommonPool, CoroutineStart.DEFAULT, {

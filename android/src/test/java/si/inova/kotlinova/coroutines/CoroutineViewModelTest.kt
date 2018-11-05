@@ -14,7 +14,7 @@ import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
-import si.inova.kotlinova.testing.TimedDispatcher
+import si.inova.kotlinova.testing.CoroutinesTimeMachine
 import si.inova.kotlinova.testing.assertIs
 import si.inova.kotlinova.utils.addSource
 
@@ -25,7 +25,7 @@ class CoroutineViewModelTest {
     private lateinit var testViewModel: TestViewModel
 
     @get:Rule
-    val dispatcher = TimedDispatcher()
+    val dispatcher = CoroutinesTimeMachine()
     @get:Rule
     val archRule = InstantTaskExecutorRule()
 
@@ -37,6 +37,7 @@ class CoroutineViewModelTest {
     @Test
     fun acquireResourceSuccess() {
         testViewModel.firstTask()
+        dispatcher.triggerActions()
 
         assertIs(testViewModel.resourceA.value, Resource.Loading::class.java)
         dispatcher.advanceTime(600)
@@ -46,6 +47,7 @@ class CoroutineViewModelTest {
     @Test
     fun acquireResourceError() {
         testViewModel.exceptionTask()
+        dispatcher.triggerActions()
 
         assertIs(testViewModel.resourceA.value, Resource.Loading::class.java)
         dispatcher.advanceTime(600)
@@ -59,9 +61,11 @@ class CoroutineViewModelTest {
     @Test
     fun cancelConcurrentJobs() {
         testViewModel.firstTask()
+        dispatcher.triggerActions()
         val firstTaskJob = testViewModel.getJob(testViewModel.resourceA)
 
         testViewModel.secondTask()
+        dispatcher.triggerActions()
         val secondTaskJob = testViewModel.getJob(testViewModel.resourceA)
 
         assertNotSame(firstTaskJob, secondTaskJob)
@@ -84,6 +88,7 @@ class CoroutineViewModelTest {
         assertTrue(additionalResource.hasActiveObservers())
 
         testViewModel.firstTask()
+        dispatcher.triggerActions()
 
         assertFalse(additionalResource.hasActiveObservers())
     }
@@ -93,6 +98,7 @@ class CoroutineViewModelTest {
         assertFalse(testViewModel.isResourceTakenPublic(testViewModel.resourceA))
 
         testViewModel.firstTask()
+        dispatcher.triggerActions()
 
         assertTrue(testViewModel.isResourceTakenPublic(testViewModel.resourceA))
         dispatcher.advanceTime(600)
@@ -102,8 +108,10 @@ class CoroutineViewModelTest {
     @Test
     fun cancelResource() {
         testViewModel.firstTask()
+        dispatcher.triggerActions()
 
         testViewModel.cancelResourcePublic(testViewModel.resourceA)
+        dispatcher.triggerActions()
 
         assertIs(testViewModel.resourceA.value, Resource.Cancelled::class.java)
         dispatcher.advanceTime(600)
@@ -114,6 +122,7 @@ class CoroutineViewModelTest {
     fun concurrentLaunches() {
         repeat(1000) {
             testViewModel.firstTask()
+            dispatcher.triggerActions()
         }
     }
 
@@ -121,18 +130,18 @@ class CoroutineViewModelTest {
         val resourceA = ResourceLiveData<Int>()
 
         fun firstTask() = launchResourceControlTask(resourceA) {
-                delay(500)
+            delay(500)
             sendValue(Resource.Success(10))
-            }
+        }
 
         fun secondTask() = launchResourceControlTask(resourceA) {
-                delay(500)
+            delay(500)
             sendValue(Resource.Success(20))
-            }
+        }
 
         fun exceptionTask() = launchResourceControlTask(resourceA) {
-                delay(500)
-                throw IllegalStateException("Test exception")
+            delay(500)
+            throw IllegalStateException("Test exception")
         }
 
         fun <T> isResourceTakenPublic(resource: MutableLiveData<Resource<T>>): Boolean {
