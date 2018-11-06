@@ -8,7 +8,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.reactive.publish
-import si.inova.kotlinova.coroutines.CommonPool
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.utils.awaitCancellation
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -28,7 +28,7 @@ import kotlin.coroutines.CoroutineContext
  */
 
 abstract class OnDemandProvider<T>(
-    private val launchingContext: CoroutineContext = CommonPool,
+    private val launchingContext: CoroutineContext = TestableDispatchers.Default,
     rxScheduler: Scheduler = Schedulers.computation(),
     val debounceTimeout: Long = DEFAULT_DEBOUNCE_TIMEOUT
 ) {

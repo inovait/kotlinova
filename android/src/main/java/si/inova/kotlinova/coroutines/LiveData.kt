@@ -24,7 +24,7 @@ suspend fun <T> LiveData<T>.awaitFirstValue(
     runAfterObserve: (() -> Unit)? = null,
     runAfterCompletionBeforeRemoveObserver: (() -> Unit)? = null
 ): T? {
-    return withContext(UI) {
+    return withContext(TestableDispatchers.Main) {
         var ignoreAnyValues = ignoreExistingValue
 
         suspendCancellableCoroutine<T?> { continuation ->

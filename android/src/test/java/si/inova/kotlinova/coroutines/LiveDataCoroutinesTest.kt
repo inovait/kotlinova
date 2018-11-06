@@ -37,7 +37,8 @@ class LiveDataCoroutinesTest {
     fun testAwaitFirstValue() = runBlocking<Unit> {
         val data = MutableLiveData<Int>()
         assertFalse(data.hasActiveObservers())
-        val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, { data.awaitFirstValue() })
+        val task = GlobalScope.async(TestableDispatchers.Main,
+            CoroutineStart.DEFAULT, { data.awaitFirstValue() })
 
         assertFalse(task.isCompleted)
         assertTrue(data.hasActiveObservers())
@@ -64,7 +65,7 @@ class LiveDataCoroutinesTest {
 
         data.value = 10
         val task = GlobalScope.async(
-            UI,
+            TestableDispatchers.Main,
             CoroutineStart.DEFAULT,
             { data.awaitFirstValue(ignoreExistingValue = false) })
         data.value = 20
@@ -77,7 +78,7 @@ class LiveDataCoroutinesTest {
         val data = MutableLiveData<Int>()
 
         data.value = 10
-        val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, {
+        val task = GlobalScope.async(TestableDispatchers.Main, CoroutineStart.DEFAULT, {
             data.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
             })
@@ -94,7 +95,7 @@ class LiveDataCoroutinesTest {
         val mappedData = data.map { it!! * 5 }
 
         data.value = 10
-        val task = GlobalScope.async(UI, CoroutineStart.DEFAULT, {
+        val task = GlobalScope.async(TestableDispatchers.Main, CoroutineStart.DEFAULT, {
             mappedData.awaitFirstValue(ignoreExistingValue = true, runAfterObserve = {
                 data.value = 20
             })
@@ -109,7 +110,7 @@ class LiveDataCoroutinesTest {
 
         data.value = 10
         val task = GlobalScope.async(
-            UI,
+            TestableDispatchers.Main,
             CoroutineStart.DEFAULT,
             { data.awaitFirstValue(ignoreExistingValue = true) })
         assertFalse(task.isCompleted)
@@ -126,7 +127,7 @@ class LiveDataCoroutinesTest {
         val afterSubscribeCallback: LocalFunction0<Unit> = mock()
         val beforeUnsubscribeCallback: LocalFunction0<Unit> = mock()
 
-        GlobalScope.async(UI, CoroutineStart.DEFAULT, {
+        GlobalScope.async(TestableDispatchers.Main, CoroutineStart.DEFAULT, {
             data.awaitFirstValue(
                 runAfterObserve = afterSubscribeCallback,
                 runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback

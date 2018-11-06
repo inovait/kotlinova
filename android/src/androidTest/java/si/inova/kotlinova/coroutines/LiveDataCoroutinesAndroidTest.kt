@@ -23,6 +23,7 @@ class LiveDataCoroutinesAndroidTest {
     fun testCancelAwaitFirstValueOnSeparateThread() = runBlocking {
         val data = MutableLiveData<Int>()
 
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val thread = newSingleThreadContext("Test thread")
         thread.use {
             withContext(thread) {
@@ -39,7 +40,7 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                withContext(UI) {
+                withContext(TestableDispatchers.Main) {
                     assertTrue(data.hasActiveObservers())
                 }
 
@@ -54,7 +55,7 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                withContext(UI) {
+                withContext(TestableDispatchers.Main) {
                     assertFalse(data.hasActiveObservers())
                 }
             }

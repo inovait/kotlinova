@@ -9,7 +9,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import si.inova.kotlinova.coroutines.dispatcherOverride
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import java.util.PriorityQueue
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.sign
@@ -26,13 +26,13 @@ class TimedDispatcher : TestWatcher() {
     override fun finished(description: Description?) {
         super.finished(description)
 
-        dispatcherOverride = { it() }
+        TestableDispatchers.dispatcherOverride = { it() }
     }
 
     override fun starting(description: Description?) {
         super.starting(description)
 
-        dispatcherOverride = { Dispatcher }
+        TestableDispatchers.dispatcherOverride = { Dispatcher }
     }
 
     fun advanceTime(ms: Long) {

@@ -13,7 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.first
 import org.robolectric.shadows.ShadowSystemClock
-import si.inova.kotlinova.coroutines.UI
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.JavaTimeProvider
@@ -36,7 +36,8 @@ suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> 
     // See https://github.com/Kotlin/kotlinx.coroutines/issues/632
     @Suppress("EXPERIMENTAL_API_USAGE")
 
-    return GlobalScope.async(UI, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
+    return GlobalScope
+        .async(TestableDispatchers.Main, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
 }
 
 fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {

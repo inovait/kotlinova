@@ -7,8 +7,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import si.inova.kotlinova.coroutines.CommonPool
-import si.inova.kotlinova.coroutines.UI
+import si.inova.kotlinova.coroutines.TestableDispatchers
 
 /**
  * Class that helps with processing stream of items asynchronously.
@@ -25,8 +24,8 @@ class LastResultAsyncItemProcessor<I, O> {
     fun process(input: I, callback: (O) -> Unit, process: suspend CoroutineScope.(I) -> O) {
         lastJob?.cancel()
 
-        lastJob = GlobalScope.launch(UI, CoroutineStart.DEFAULT, {
-            val result = withContext(CommonPool) {
+        lastJob = GlobalScope.launch(TestableDispatchers.Main, CoroutineStart.DEFAULT, {
+            val result = withContext(TestableDispatchers.Default) {
                 process(input)
             }
 

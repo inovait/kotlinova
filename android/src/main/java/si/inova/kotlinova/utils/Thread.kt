@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import si.inova.kotlinova.coroutines.UI
+import si.inova.kotlinova.coroutines.TestableDispatchers
 
 /**
  * Run specified block on the UI thread.
@@ -30,7 +30,12 @@ fun runOnUiThread(
     if (ArchTaskExecutor.getInstance().isMainThread) {
         block()
     } else {
-        val context = if (parentJob == null) UI else UI + parentJob
+        val context = if (parentJob == null) {
+            TestableDispatchers.Main
+        } else {
+            TestableDispatchers.Main + parentJob
+        }
+
         GlobalScope.launch(context, CoroutineStart.DEFAULT, {
             block()
         })

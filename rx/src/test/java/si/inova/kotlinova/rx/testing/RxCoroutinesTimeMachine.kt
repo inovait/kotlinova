@@ -7,7 +7,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineContext
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import si.inova.kotlinova.coroutines.dispatcherOverride
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.testing.TimeMachine
 import si.inova.kotlinova.time.JavaTimeProvider
 import java.time.Clock
@@ -27,7 +27,7 @@ class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
     override fun starting(description: Description?) {
         super.starting(description)
 
-        dispatcherOverride = { coroutineContext }
+        TestableDispatchers.dispatcherOverride = { coroutineContext }
         JavaTimeProvider.currentTimeMillisProvider = { now }
         JavaTimeProvider.clockProvider =
             { Clock.fixed(Instant.ofEpochMilli(now), ZoneId.of("UTC")) }
@@ -45,7 +45,7 @@ class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
 
         RxJavaPlugins.reset()
 
-        dispatcherOverride = { it() }
+        TestableDispatchers.dispatcherOverride = { it() }
         JavaTimeProvider.currentTimeMillisProvider = { System.currentTimeMillis() }
         JavaTimeProvider.clockProvider = { Clock.systemUTC() }
     }

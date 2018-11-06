@@ -37,7 +37,7 @@ abstract class CoroutineViewModel : ViewModel() {
      * Launch automatically-cancelled job
      */
     fun launchManaged(
-        context: CoroutineContext = CommonPool,
+        context: CoroutineContext = TestableDispatchers.Default,
         start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
     ): Job {
@@ -60,7 +60,7 @@ abstract class CoroutineViewModel : ViewModel() {
     fun <T> launchResourceControlTask(
         resource: ResourceLiveData<T>,
         currentValue: T? = resource.value?.value,
-        context: CoroutineContext = CommonPool,
+        context: CoroutineContext = TestableDispatchers.Default,
         block: suspend ResourceLiveData<T>.() -> Unit
     ) = runOnUiThread(parentJob) {
         // To prevent threading issues, only one job can handle one resource at a time
@@ -99,7 +99,7 @@ abstract class CoroutineViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 if (resource.hasAnySources()) {
-                    withContext(UI) {
+                    withContext(TestableDispatchers.Main) {
                         resource.removeAllSources()
                     }
                 }
