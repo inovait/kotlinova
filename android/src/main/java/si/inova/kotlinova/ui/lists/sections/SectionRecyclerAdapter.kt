@@ -70,33 +70,6 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val sectionCount: Int
         get() = sections.size
 
-    /**
-     * Detach section with specific index from this section adapter.
-     *
-     * Section should still return proper item count until after this method is called
-     */
-    final fun detachSection(sectionIndex: Int) {
-        val section = sections[sectionIndex]
-        section.onDetachedFromAdapter()
-
-        notifyItemRangeRemoved(getSectionStart(sectionIndex), section.itemCount)
-        sections.removeAt(sectionIndex)
-    }
-
-    /**
-     * Detach specific section
-     *
-     * Section should still return proper item count until after this method is called
-     */
-    final fun <T : RecyclerView.ViewHolder> detachSection(section: RecyclerSection<T>) {
-        val sectionIndex = sections.indexOf(section)
-        if (sectionIndex < 0) {
-            throw IllegalArgumentException("Section $section is not attached")
-        }
-
-        detachSection(sectionIndex)
-    }
-
     fun getSectionIndexAtPosition(position: Int): Int {
         var sectionStart = 0
         for ((index, section) in sections.withIndex()) {
