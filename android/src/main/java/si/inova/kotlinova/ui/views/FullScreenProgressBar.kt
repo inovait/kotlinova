@@ -2,10 +2,10 @@ package si.inova.kotlinova.ui.views
 
 import android.content.Context
 import android.os.Build
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewPropertyAnimator
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import si.inova.kotlinova.android.R
 import si.inova.kotlinova.time.AndroidTimeProvider

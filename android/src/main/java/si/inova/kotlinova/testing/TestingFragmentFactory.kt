@@ -1,8 +1,8 @@
 package si.inova.kotlinova.testing
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.setContext
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setContext
 import org.junit.Assert
 import si.inova.kotlinova.ui.SubtitledComponent
 import si.inova.kotlinova.ui.TitledComponent

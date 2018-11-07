@@ -11,7 +11,7 @@ import android.content.SharedPreferences
 import android.os.Binder
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.v4.app.BundleCompat
+import androidx.core.app.BundleCompat
 import java.io.Serializable
 
 /**

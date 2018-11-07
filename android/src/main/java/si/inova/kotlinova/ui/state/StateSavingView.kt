@@ -43,7 +43,7 @@ class StateSavingView @JvmOverloads constructor(
         }
 
         constructor(source: Parcel) : super(source) {
-            data = source.readBundle(javaClass.classLoader)
+            data = source.readBundle(javaClass.classLoader) ?: error("System returned null bundle")
         }
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {

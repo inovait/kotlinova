@@ -1,8 +1,8 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.MutableLiveData
-import android.support.test.espresso.Espresso
-import android.support.test.runner.AndroidJUnit4
+import androidx.lifecycle.MutableLiveData
+import androidx.test.espresso.Espresso
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.yield

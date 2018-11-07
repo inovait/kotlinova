@@ -1,7 +1,7 @@
 package si.inova.kotlinova.archcomponents
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import dagger.Lazy
 import si.inova.kotlinova.testing.OpenForTesting
 import javax.inject.Inject

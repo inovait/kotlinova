@@ -1,7 +1,7 @@
 package si.inova.kotlinova.ui.arguments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import si.inova.kotlinova.utils.set
 import kotlin.reflect.KProperty
 

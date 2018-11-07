@@ -5,7 +5,7 @@
 
 package si.inova.kotlinova.testing
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope

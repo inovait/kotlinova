@@ -1,8 +1,8 @@
 package si.inova.kotlinova.data.resources
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.support.annotation.UiThread
+import androidx.annotation.UiThread
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import si.inova.kotlinova.data.ExtendedMediatorLiveData
@@ -58,7 +58,7 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
         return this
     }
 
-    override fun <S> addSource(source: LiveData<S>, onChanged: Observer<S>) {
+    override fun <S> addSource(source: LiveData<S>, onChanged: Observer<in S>) {
         runOnUiThread {
             super.addSource(source, onChanged)
         }

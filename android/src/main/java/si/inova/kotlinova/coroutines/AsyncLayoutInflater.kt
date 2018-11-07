@@ -5,10 +5,10 @@
 
 package si.inova.kotlinova.coroutines
 
-import android.support.annotation.LayoutRes
-import android.support.v4.view.AsyncLayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 

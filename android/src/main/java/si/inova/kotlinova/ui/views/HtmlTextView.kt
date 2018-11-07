@@ -2,10 +2,10 @@ package si.inova.kotlinova.ui.views
 
 import android.content.Context
 import android.os.Build
-import android.support.v7.widget.AppCompatTextView
 import android.text.Html
 import android.util.AttributeSet
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 
 /**
  * [TextView] that parses HTML tags inside text and displays them.

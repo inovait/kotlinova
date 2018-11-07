@@ -1,11 +1,11 @@
 package si.inova.kotlinova.ui.components
 
 import android.content.res.Resources
-import android.support.v4.app.Fragment
-import android.support.v4.app.nextAnim
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.nextAnim
 import timber.log.Timber
 
 /**

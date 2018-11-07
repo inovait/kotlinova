@@ -1,11 +1,11 @@
 package si.inova.kotlinova.ui.lists.sections
 
 import android.os.Handler
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import si.inova.kotlinova.time.AndroidTimeProvider
 import kotlin.math.max
 
@@ -93,7 +93,7 @@ class PlaceholderSection(
     override val sectionContainsPlaceholderItems: Boolean
         get() = true
 
-    class PlaceholderViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView)
+    class PlaceholderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
 
 private const val MIN_SHOWN_TIME = 500L // ms

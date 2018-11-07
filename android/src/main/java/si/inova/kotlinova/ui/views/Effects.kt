@@ -8,8 +8,8 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.StateListDrawable
 import android.os.Build
-import android.support.annotation.ColorInt
 import android.util.StateSet
+import androidx.annotation.ColorInt
 
 /**
  * @author Matej Drobnic

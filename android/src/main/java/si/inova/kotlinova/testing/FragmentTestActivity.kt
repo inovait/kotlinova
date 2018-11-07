@@ -2,8 +2,8 @@ package si.inova.kotlinova.testing
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
 import dagger.android.AndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import org.robolectric.Robolectric

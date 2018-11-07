@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-allopen:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-noarg:${versions.kotlin}"
@@ -45,17 +45,6 @@ subprojects {
                 substitute module('si.inova.kotlinova:gms') with project(':gms')
                 substitute module('si.inova.kotlinova:retrofit') with project(':retrofit')
             }
-
-            eachDependency { details ->
-                // Sometimes external libraries could include outdated support library.
-                // Force all of the primary support libraries to use the same version.
-                if (details.requested.group == 'com.android.support'
-                        && details.requested.name != 'multidex'
-                        && details.requested.name != 'multidex-instrumentation') {
-                    details.useVersion versions.androidSupportLib
-                }
-            }
-
         }
     }
 

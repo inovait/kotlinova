@@ -1,8 +1,8 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.support.v7.util.ListUpdateCallback
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import si.inova.kotlinova.testing.OpenForTesting
 
 /**

@@ -1,8 +1,8 @@
 package si.inova.kotlinova.ui.lists
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Variant of [LinearLayoutManager] that provides callback whenever view changes

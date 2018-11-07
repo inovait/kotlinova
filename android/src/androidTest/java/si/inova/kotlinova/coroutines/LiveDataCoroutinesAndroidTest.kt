@@ -1,6 +1,6 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.async
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking

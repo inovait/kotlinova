@@ -2,8 +2,8 @@ package si.inova.kotlinova.ui.lists
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.inOrder
@@ -112,7 +112,8 @@ class RecyclerStateSaverTest {
 private const val SAVER_KEY = "Recycler"
 
 class StringParcelable(val text: String) : Parcelable {
-    constructor(parcel: Parcel) : this(parcel.readString())
+    constructor(parcel: Parcel) :
+        this(parcel.readString() ?: error("System returned null string"))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(text)
@@ -133,4 +134,4 @@ class StringParcelable(val text: String) : Parcelable {
     }
 }
 
-class DummyViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView)
+class DummyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

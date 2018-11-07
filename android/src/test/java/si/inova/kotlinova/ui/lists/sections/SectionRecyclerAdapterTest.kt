@@ -1,9 +1,9 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.support.v7.util.ListUpdateCallback
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
@@ -444,7 +444,7 @@ class SectionRecyclerAdapterTest {
         }
     }
 
-    private class TestSectionViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    private class TestSectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var lastBoundPosition: Int = 0
     }
 }

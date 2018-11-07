@@ -2,7 +2,7 @@
  * @author Matej Drobnic
  */
 
-package android.support.v4.app
+package androidx.fragment.app
 
 import android.content.Context
 import com.nhaarman.mockitokotlin2.mock

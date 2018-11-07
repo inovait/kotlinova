@@ -1,7 +1,7 @@
 package si.inova.kotlinova.time
 
 import android.os.SystemClock
-import android.support.annotation.RestrictTo
+import androidx.annotation.RestrictTo
 import org.threeten.bp.Clock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate

@@ -1,8 +1,8 @@
 package si.inova.kotlinova.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import java.lang.ref.WeakReference
 
 /**
@@ -13,7 +13,7 @@ import java.lang.ref.WeakReference
 open class ExtendedMediatorLiveData<T> : MediatorLiveData<T>() {
     private val sources = ArrayList<WeakReference<LiveData<*>>>()
 
-    override fun <S : Any?> addSource(source: LiveData<S>, onChanged: Observer<S>) {
+    override fun <S : Any?> addSource(source: LiveData<S>, onChanged: Observer<in S>) {
         sources.add(WeakReference(source))
         super.addSource(source, onChanged)
     }

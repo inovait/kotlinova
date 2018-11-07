@@ -2,8 +2,8 @@
 
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import si.inova.kotlinova.utils.runOnUiThread

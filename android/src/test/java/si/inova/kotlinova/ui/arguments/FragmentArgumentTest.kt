@@ -1,7 +1,7 @@
 package si.inova.kotlinova.ui.arguments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -20,7 +20,7 @@ fun Bundle.dump() {
             Timber.i("%s :", key)
             value.dump()
         } else {
-            Timber.i("%s: %s", key, value.toString())
+            Timber.i("%s: %s", key, value?.toString())
         }
     }
 }

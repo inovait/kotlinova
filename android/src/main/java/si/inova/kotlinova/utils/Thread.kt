@@ -6,7 +6,7 @@
 package si.inova.kotlinova.utils
 
 import android.annotation.SuppressLint
-import android.arch.core.executor.ArchTaskExecutor
+import androidx.arch.core.executor.ArchTaskExecutor
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
