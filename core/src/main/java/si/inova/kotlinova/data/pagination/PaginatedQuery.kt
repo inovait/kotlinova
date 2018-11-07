@@ -8,11 +8,6 @@ package si.inova.kotlinova.data.pagination
 interface PaginatedQuery<out T> {
     val isAtEnd: Boolean
 
-    /**
-     * Reset this paginated query. Call to [nextPage()][nextPage] will return first page again
-     */
-    suspend fun reset()
-
     suspend fun nextPage(): List<T>
 }
 
@@ -31,8 +26,6 @@ fun <T, R> PaginatedQuery<T>.mapList(mapMethod: suspend (List<T>) -> List<R>): P
     return object : PaginatedQuery<R> {
         override val isAtEnd: Boolean
             get() = originalQuery.isAtEnd
-
-        override suspend fun reset() = originalQuery.reset()
 
         override suspend fun nextPage(): List<R> {
             return mapMethod(originalQuery.nextPage())

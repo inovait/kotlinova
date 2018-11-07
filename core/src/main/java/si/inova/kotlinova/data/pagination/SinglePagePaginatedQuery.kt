@@ -9,10 +9,6 @@ class SinglePagePaginatedQuery<out T>(private val data: List<T>) : PaginatedQuer
     override var isAtEnd: Boolean = false
         private set
 
-    override suspend fun reset() {
-        isAtEnd = false
-    }
-
     override suspend fun nextPage(): List<T> {
         if (isAtEnd) {
             return emptyList()
