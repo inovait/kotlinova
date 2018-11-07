@@ -50,12 +50,7 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
         super.postValue(value)
     }
 
-    @Deprecated(
-        "Use sendValueSync() instead",
-        replaceWith = ReplaceWith("sendValueSync(value)")
-    )
     override fun setValue(value: Resource<T>?) {
-        @Suppress("DEPRECATION")
         super.setValue(value)
     }
 
