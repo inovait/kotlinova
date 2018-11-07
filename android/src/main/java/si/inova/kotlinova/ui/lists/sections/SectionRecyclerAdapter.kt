@@ -85,6 +85,13 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         throw IndexOutOfBoundsException("Position not in any section: $position")
     }
 
+    /**
+     * Get position inside section from global adapter position
+     *
+     * @param position global position of adapter
+     *
+     * @return pair of section at this position and position inside section
+     */
     protected fun getInnerPosition(position: Int):
         Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0
