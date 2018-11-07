@@ -20,7 +20,10 @@ import si.inova.kotlinova.data.resources.Resource
 /**
  * Convenience extension that allows putting method references into *LiveData.observe()*
  */
-fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, method: Function1<T?, Unit>) {
+inline fun <T> LiveData<T>.observe(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T?, Unit>
+) {
     observe(lifecycleOwner, Observer { method(it) })
 }
 
@@ -28,9 +31,13 @@ fun <T> LiveData<T>.observe(lifecycleOwner: LifecycleOwner, method: Function1<T?
  * Remove all observers from passed lifeCycleOwner that observe this [LiveData] and
  * add new observer that triggers supplied function
  *
- * This is useful with Fragments where onCreate* methods can be called multiple times in the same instance
+ * This is useful with Fragments where onCreate* methods
+ * can be called multiple times in the same instance
  */
-fun <T> LiveData<T>.exclusiveObserve(lifecycleOwner: LifecycleOwner, method: Function1<T?, Unit>) {
+inline fun <T> LiveData<T>.exclusiveObserve(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T?, Unit>
+) {
     removeObservers(lifecycleOwner)
 
     observe(lifecycleOwner, Observer {
@@ -41,14 +48,20 @@ fun <T> LiveData<T>.exclusiveObserve(lifecycleOwner: LifecycleOwner, method: Fun
 /**
  * Observe LiveData<Unit> as event with no-args method
  */
-fun LiveData<Unit>.observeEvent(lifecycleOwner: LifecycleOwner, method: Function0<Unit>) {
+inline fun LiveData<Unit>.observeEvent(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function0<Unit>
+) {
     observe(lifecycleOwner, Observer { method() })
 }
 
 /**
  * Convenience extension that automatically filters *null* values received from [LiveData]
  */
-fun <T> LiveData<T>.observeNotNull(lifecycleOwner: LifecycleOwner, method: Function1<T, Unit>) {
+inline fun <T> LiveData<T>.observeNotNull(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T, Unit>
+) {
     observe(lifecycleOwner, Observer {
         if (it != null) {
             method(it)
@@ -60,11 +73,12 @@ fun <T> LiveData<T>.observeNotNull(lifecycleOwner: LifecycleOwner, method: Funct
  * Remove all observers from passed lifeCycleOwner that observe this [LiveData] and
  * add new observer that automatically filters *null* values received from [LiveData]
  *
- * This is useful with Fragments where onCreate* methods can be called multiple times in the same instance
+ * This is useful with Fragments where onCreate* methods
+ * can be called multiple times in the same instance
  */
-fun <T> LiveData<T>.exclusiveObserveNotNull(
+inline fun <T> LiveData<T>.exclusiveObserveNotNull(
     lifecycleOwner: LifecycleOwner,
-    method: Function1<T, Unit>
+    crossinline method: Function1<T, Unit>
 ) {
     removeObservers(lifecycleOwner)
 
@@ -78,7 +92,7 @@ fun <T> LiveData<T>.exclusiveObserveNotNull(
 /**
  * Method that redispatches current LiveData value to the observer (if applicable).
  */
-inline fun <T> LiveData<T>.redispatch(observer: Function1<T, Unit>) {
+inline fun <T> LiveData<T>.redispatch(crossinline observer: Function1<T, Unit>) {
     this.value?.let {
         observer(it)
     }
@@ -140,7 +154,7 @@ fun <S, R> LiveData<S>.switchMap(transformation: (S?) -> LiveData<R>?): LiveData
 /**
  * Similar to [map] except that no value will be emitted if transformations returns *null*.
  */
-fun <S, R> LiveData<S>.mapIfNotNull(transformation: (S?) -> R?): LiveData<R> {
+inline fun <S, R> LiveData<S>.mapIfNotNull(crossinline transformation: (S?) -> R?): LiveData<R> {
     val resultLiveData = MediatorLiveData<R>()
     resultLiveData.addSource(this) {
         val result = transformation(it)
