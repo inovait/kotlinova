@@ -47,6 +47,8 @@ abstract class OnDemandProvider<T>(
     /**
      * Flowable that relays stream of items transmitted from that provider
      */
+    // publish is experimental due to undefined behavior when used in structured concurrency.
+    // We use GlobalScope here so this is not an issue
     @Suppress("EXPERIMENTAL_API_USAGE")
     val flowable: Flowable<T> = Flowable.fromPublisher(GlobalScope.publish<T>(launchingContext) {
         try {
