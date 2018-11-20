@@ -8,6 +8,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.reactive.publish
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.utils.awaitCancellation
 import java.util.concurrent.TimeUnit
@@ -32,6 +34,8 @@ abstract class OnDemandProvider<T>(
     rxScheduler: Scheduler = Schedulers.computation(),
     val debounceTimeout: Long = DEFAULT_DEBOUNCE_TIMEOUT
 ) {
+    private val mutext = Mutex()
+
     @Volatile
     var isActive: Boolean = false
         private set
@@ -51,16 +55,18 @@ abstract class OnDemandProvider<T>(
     // We use GlobalScope here so this is not an issue
     @Suppress("EXPERIMENTAL_API_USAGE")
     val flowable: Flowable<T> = Flowable.fromPublisher(GlobalScope.publish<T>(launchingContext) {
-        try {
-            producer = this
-            isActive = true
-            onActive()
-            awaitCancellation()
-        } finally {
-            isActive = false
+        mutext.withLock {
+            try {
+                producer = this
+                isActive = true
+                onActive()
+                awaitCancellation()
+            } finally {
+                isActive = false
 
-            onInactive()
-            producer = null
+                onInactive()
+                producer = null
+            }
         }
     })
         .replay(1)
