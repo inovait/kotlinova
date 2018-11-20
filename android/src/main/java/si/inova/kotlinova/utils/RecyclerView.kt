@@ -5,8 +5,8 @@
 
 package si.inova.kotlinova.utils
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * This method only works with [LinearLayoutManager].

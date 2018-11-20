@@ -1,21 +1,23 @@
 package si.inova.kotlinova.testing
 
-import kotlinx.coroutines.experimental.CancellableContinuation
-import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Delay
-import kotlinx.coroutines.experimental.Runnable
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Runnable
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
 
 /**
  * [CoroutineDispatcher] that removes all [delay] calls
  *
  * @author Matej Drobnic
  */
+// Delay is internal, but there is no alternative and this is only used for tests
+@UseExperimental(InternalCoroutinesApi::class)
 class NoDelayUnconfinedDispatcher : CoroutineDispatcher(), Delay {
     override fun scheduleResumeAfterDelay(
-        time: Long,
-        unit: TimeUnit,
+        timeMillis: Long,
         continuation: CancellableContinuation<Unit>
     ) {
         continuation.resume(Unit)

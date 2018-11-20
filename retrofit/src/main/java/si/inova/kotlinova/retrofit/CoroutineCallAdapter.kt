@@ -1,7 +1,7 @@
 package si.inova.kotlinova.retrofit
 
-import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback
@@ -65,9 +65,9 @@ class CoroutineCallAdapterFactory constructor(
                 override fun onFailure(call: Call<T>, t: Throwable) {
                     val cause = t.cause
                     if (t is IOException && cause != null) {
-                        deferred.completeExceptionally(cause)
+                        deferred.cancel()
                     } else {
-                        deferred.completeExceptionally(t)
+                        deferred.cancel()
                     }
                 }
 
@@ -75,7 +75,7 @@ class CoroutineCallAdapterFactory constructor(
                     try {
                         deferred.complete(responseParser.parseResponse(response))
                     } catch (e: Exception) {
-                        deferred.completeExceptionally(e)
+                        deferred.cancel()
                     }
                 }
             })

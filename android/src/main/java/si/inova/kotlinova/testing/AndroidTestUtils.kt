@@ -5,13 +5,15 @@
 
 package si.inova.kotlinova.testing
 
-import android.arch.lifecycle.LiveData
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.consume
-import kotlinx.coroutines.experimental.channels.first
+import androidx.lifecycle.LiveData
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.consume
+import kotlinx.coroutines.channels.first
 import org.robolectric.shadows.ShadowSystemClock
-import si.inova.kotlinova.coroutines.UI
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.JavaTimeProvider
@@ -29,7 +31,13 @@ fun advanceTime(ms: Long) {
 }
 
 suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> {
-    return async(UI) { toChannel().first(predicate) }
+    // Channel operators are obsolete, but there is no alternative at the moment
+    // We will migrate when alternative will be added
+    // See https://github.com/Kotlin/kotlinx.coroutines/issues/632
+    @Suppress("EXPERIMENTAL_API_USAGE")
+
+    return GlobalScope
+        .async(TestableDispatchers.Main, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
 }
 
 fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
@@ -46,6 +54,10 @@ fun isoFromDate(day: Int, month: Int, year: Int): String {
 }
 
 suspend fun <T> LiveData<Resource<T>>.awaitSuccessAndThrowErrors(): T {
+    // Channel operators are obsolete, but there is no alternative at the moment
+    // We will migrate when alternative will be added
+    // See https://github.com/Kotlin/kotlinx.coroutines/issues/632
+    @Suppress("EXPERIMENTAL_API_USAGE")
     val winResource = toChannel().consume {
         first {
             if (it is Resource.Error) {

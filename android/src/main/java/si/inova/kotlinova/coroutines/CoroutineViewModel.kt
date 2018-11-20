@@ -1,23 +1,25 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.support.annotation.CallSuper
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.NonCancellable
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
+import androidx.annotation.CallSuper
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.data.resources.value
 import si.inova.kotlinova.exceptions.OwnershipTransferredException
 import si.inova.kotlinova.utils.runOnUiThread
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.coroutineContext
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * ViewModel that automatically handles cancellation of all its coroutines when application
@@ -27,23 +29,12 @@ import kotlin.coroutines.experimental.coroutineContext
  *
  * @author Matej Drobnic
  */
-abstract class CoroutineViewModel : ViewModel() {
-    protected val parentJob: Job = Job()
+abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
+    protected val parentJob: Job = SupervisorJob()
+    override val coroutineContext: CoroutineContext
+        get() = parentJob + TestableDispatchers.Default
 
     protected val activeJobs = ConcurrentHashMap<MutableLiveData<Resource<*>>, Job>()
-
-    /**
-     * Launch automatically-cancelled job
-     */
-    fun launchManaged(
-        context: CoroutineContext = CommonPool,
-        start: CoroutineStart = CoroutineStart.DEFAULT,
-        block: suspend CoroutineScope.() -> Unit
-    ): Job {
-        return launch(context, start, parentJob) {
-            block()
-        }
-    }
 
     /**
      * Method that launches coroutine task that handles data fetching for provided resources.
@@ -59,7 +50,7 @@ abstract class CoroutineViewModel : ViewModel() {
     fun <T> launchResourceControlTask(
         resource: ResourceLiveData<T>,
         currentValue: T? = resource.value?.value,
-        context: CoroutineContext = CommonPool,
+        context: CoroutineContext = EmptyCoroutineContext,
         block: suspend ResourceLiveData<T>.() -> Unit
     ) = runOnUiThread(parentJob) {
         // To prevent threading issues, only one job can handle one resource at a time
@@ -72,7 +63,7 @@ abstract class CoroutineViewModel : ViewModel() {
             resource.removeAllSources()
         }
 
-        val newJob = launch(context, CoroutineStart.LAZY, parentJob) {
+        val newJob = launch(context, CoroutineStart.LAZY) {
             val thisJob = coroutineContext[Job]!!
 
             currentJobForThatResource?.join()
@@ -98,7 +89,7 @@ abstract class CoroutineViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 if (resource.hasAnySources()) {
-                    withContext(UI) {
+                    withContext(TestableDispatchers.Main) {
                         resource.removeAllSources()
                     }
                 }

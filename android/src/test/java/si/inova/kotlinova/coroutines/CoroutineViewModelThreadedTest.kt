@@ -1,13 +1,12 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.joinChildren
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.yield
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.yield
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.data.resources.Resource
@@ -49,7 +48,7 @@ class CoroutineViewModelThreadedTest {
             }
 
             testViewModel.latch.unlock()
-            testViewModel.publicParentJob().joinChildren()
+            testViewModel.publicParentJob().children.forEach { it.join() }
 
             verify(callback).invoke()
             assertIs(testViewModel.resourceA.value, Resource.Success::class.java)

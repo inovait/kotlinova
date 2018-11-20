@@ -6,7 +6,9 @@
 package si.inova.kotlinova.coroutines
 
 import com.google.firebase.storage.CancellableTask
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * Suspend current coroutine until this task is finished and return the result

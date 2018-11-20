@@ -1,6 +1,6 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import si.inova.kotlinova.ui.lists.AsyncListDiffComputer
 import si.inova.kotlinova.ui.lists.ListDiffProvider
 import si.inova.kotlinova.utils.copy

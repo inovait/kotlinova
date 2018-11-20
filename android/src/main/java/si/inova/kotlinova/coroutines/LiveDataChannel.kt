@@ -1,11 +1,10 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.ClosedSendChannelException
-import kotlinx.coroutines.experimental.channels.ConflatedChannel
-import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.channels.ReceiveChannel
 import si.inova.kotlinova.utils.runOnUiThread
 
 /**
@@ -15,11 +14,21 @@ import si.inova.kotlinova.utils.runOnUiThread
  *
  * @author Matej Drobnic
  */
-class LiveDataChannel<T>(private val liveData: LiveData<T>) : ConflatedChannel<T?>(),
-    ReceiveChannel<T?> {
+class LiveDataChannel<T>(private val liveData: LiveData<T>) {
+    val channel = Channel<T?>(capacity = Channel.CONFLATED)
+
+    init {
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        channel.invokeOnClose {
+            runOnUiThread {
+                liveData.removeObserver(observer)
+            }
+        }
+    }
+
     private val observer = Observer<T> {
         try {
-            offer(it)
+            channel.offer(it)
         } catch (e: ClosedSendChannelException) {
         }
     }
@@ -29,16 +38,8 @@ class LiveDataChannel<T>(private val liveData: LiveData<T>) : ConflatedChannel<T
             liveData.observeForever(observer)
         }
     }
-
-    override fun afterClose(cause: Throwable?) {
-        super.afterClose(cause)
-
-        runOnUiThread {
-            liveData.removeObserver(observer)
-        }
-    }
 }
 
 fun <T> LiveData<T>.toChannel(): ReceiveChannel<T?> {
-    return LiveDataChannel(this)
+    return LiveDataChannel(this).channel
 }

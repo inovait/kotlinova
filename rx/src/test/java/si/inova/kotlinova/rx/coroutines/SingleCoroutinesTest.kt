@@ -2,9 +2,9 @@ package si.inova.kotlinova.rx.coroutines
 
 import io.reactivex.Single
 import io.reactivex.subjects.PublishSubject
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,7 +36,9 @@ class SingleCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val single = subject.firstOrError()
 
-        val awaitTask = async(Unconfined) {
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        val awaitTask = async(Dispatchers.Unconfined) {
             single.await()
         }
 
@@ -53,7 +55,9 @@ class SingleCoroutinesTest {
         val subject = PublishSubject.create<Int>()
         val single = subject.firstOrError()
 
-        val awaitTask = async(Unconfined) {
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        val awaitTask = async(Dispatchers.Unconfined) {
             single.await()
         }
 

@@ -2,9 +2,9 @@ package si.inova.kotlinova.coroutines
 
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +24,9 @@ class GmsCoroutinesTest {
     @Test
     fun testTaskAwaitResult2() = runBlocking {
         val task = TaskCompletionSource<String>()
-        val result = async(Unconfined) { task.task.await() }
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        val result = async(Dispatchers.Unconfined) { task.task.await() }
 
         task.setResult("SUCCESS")
 
@@ -41,7 +43,9 @@ class GmsCoroutinesTest {
     @Test(expected = NoSuchElementException::class)
     fun testTaskAwaitException2() = runBlocking<Unit> {
         val task = TaskCompletionSource<String>()
-        val result = async(Unconfined) { task.task.await() }
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        val result = async(Dispatchers.Unconfined) { task.task.await() }
 
         task.setException(NoSuchElementException())
 

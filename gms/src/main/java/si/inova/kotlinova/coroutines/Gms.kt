@@ -6,7 +6,9 @@
 package si.inova.kotlinova.coroutines
 
 import com.google.android.gms.tasks.Task
-import kotlin.coroutines.experimental.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * Suspend current coroutine until this task is finished and return the result

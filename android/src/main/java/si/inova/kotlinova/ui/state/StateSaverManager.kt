@@ -1,7 +1,7 @@
 package si.inova.kotlinova.ui.state
 
 import android.os.Bundle
-import android.support.v4.util.ArrayMap
+import androidx.collection.ArrayMap
 import si.inova.kotlinova.testing.OpenForTesting
 import si.inova.kotlinova.utils.set
 

@@ -3,12 +3,12 @@ package si.inova.kotlinova.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.support.annotation.LayoutRes
-import android.support.v4.view.AsyncLayoutInflater
 import android.view.View
-import androidx.core.view.toBitmap
-import kotlinx.coroutines.experimental.withContext
-import si.inova.kotlinova.coroutines.UI
+import androidx.annotation.LayoutRes
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
+import androidx.core.view.drawToBitmap
+import kotlinx.coroutines.withContext
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.coroutines.inflateAndAwait
 import si.inova.kotlinova.testing.OpenForTesting
 import javax.inject.Inject
@@ -62,7 +62,7 @@ class ViewImageGenerator @Inject constructor(private val context: Context) {
 
         val densityContext = context.createConfigurationContext(config)
 
-        val inflater = withContext(UI) {
+        val inflater = withContext(TestableDispatchers.Main) {
             AsyncLayoutInflater(densityContext)
         }
         val view = inflater.inflateAndAwait(layout, null)
@@ -74,6 +74,6 @@ class ViewImageGenerator @Inject constructor(private val context: Context) {
         val height = view.measuredHeight
 
         view.layout(0, 0, width, height)
-        return view.toBitmap()
+        return view.drawToBitmap()
     }
 }

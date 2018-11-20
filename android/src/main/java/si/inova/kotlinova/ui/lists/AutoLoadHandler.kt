@@ -1,6 +1,6 @@
 package si.inova.kotlinova.ui.lists
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import si.inova.kotlinova.ui.lists.sections.ListSection
 import si.inova.kotlinova.ui.lists.sections.SectionRecyclerAdapter
 import si.inova.kotlinova.utils.isAtBottom

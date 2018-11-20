@@ -1,11 +1,11 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.MutableLiveData
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.newSingleThreadContext
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
-import kotlinx.coroutines.experimental.yield
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.async
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -23,6 +23,7 @@ class LiveDataCoroutinesAndroidTest {
     fun testCancelAwaitFirstValueOnSeparateThread() = runBlocking {
         val data = MutableLiveData<Int>()
 
+        @Suppress("EXPERIMENTAL_API_USAGE")
         val thread = newSingleThreadContext("Test thread")
         thread.use {
             withContext(thread) {
@@ -39,7 +40,7 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                withContext(UI) {
+                withContext(TestableDispatchers.Main) {
                     assertTrue(data.hasActiveObservers())
                 }
 
@@ -54,7 +55,7 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                withContext(UI) {
+                withContext(TestableDispatchers.Main) {
                     assertFalse(data.hasActiveObservers())
                 }
             }

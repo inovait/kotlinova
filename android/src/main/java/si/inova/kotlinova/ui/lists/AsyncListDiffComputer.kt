@@ -1,6 +1,6 @@
 package si.inova.kotlinova.ui.lists
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 import si.inova.kotlinova.data.LastResultAsyncItemProcessor
 import si.inova.kotlinova.data.process
 

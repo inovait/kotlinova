@@ -1,17 +1,19 @@
 ext {
     versions = [
-            kotlin                      : '1.2.50',
+            kotlin                      : '1.3.0',
 
             // Support/Architecture libraries
-            kotlinCoroutines            : '0.23.4',
-            androidSupportLib           : '27.1.1',
-            architectureComponents      : '1.1.1',
-            rxJava                      : '2.1.12',
+            kotlinCoroutines            : '1.0.0',
+            appCompat                   : '1.0.1',
+            material                    : '1.0.0',
+            recyclerView                : '1.0.0',
+            architectureComponents      : '2.0.0',
+            rxJava                      : '2.2.3',
             rxKotlin                    : '2.2.0',
             dagger                      : '2.16',
             timber                      : '4.7.0',
             moshi                       : '1.6.0',
-            ktx                         : '0.3',
+            ktx                         : '1.0.0',
 
             // Features libraries
             playServices                : '15.0.1',
@@ -28,11 +30,9 @@ ext {
 
             //Testing
             junit                       : '4.12',
-            // Use alpha espresso runner
-            // Workaround for:
-            // https://github.com/robolectric/robolectric/issues/3751
-            androidInstrumentationRunner: '1.0.2-alpha1',
-            espresso                    : '3.0.1',
+            androidXjunit               : '1.0.0',
+            androidTestRunner           : '1.1.0',
+            espresso                    : '3.1.0',
             mockitoKotlin               : '2.0.0-alpha02',
             roboletric                  : '3.8',
             roboletricSupport           : '3.3.2',

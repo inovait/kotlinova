@@ -14,8 +14,8 @@ import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.value
+import si.inova.kotlinova.testing.CoroutinesTimeMachine
 import si.inova.kotlinova.testing.RxSchedulerRule
-import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.firebase.MockDocument
 
 /**
@@ -25,7 +25,7 @@ class DocumentObservableTest {
     @get:Rule
     val rxRule = RxSchedulerRule()
     @get:Rule
-    val dispatcher = TimedDispatcher()
+    val dispatcher = CoroutinesTimeMachine()
 
     @Test
     fun dataRetrieval() {
@@ -35,6 +35,7 @@ class DocumentObservableTest {
         val documentObservable = DocumentObservable(document.toDocumentRef())
         documentObservable.flowable.map { it.value!!.toObject(Int::class.java) }
             .subscribe(testObserver)
+        dispatcher.triggerActions()
 
         document.readValue = 2
         document.readValue = 3
@@ -62,6 +63,7 @@ class DocumentObservableTest {
             verifyNoMoreInteractions()
 
             val subscriber = documentObservable.flowable.subscribe()
+            dispatcher.triggerActions()
             verify(document).addSnapshotListener(any())
 
             subscriber.dispose()
@@ -87,6 +89,7 @@ class DocumentObservableTest {
 
         val testObserver = TestSubscriber.create<Resource<DocumentSnapshot>>()
         documentObservable.flowable.subscribe(testObserver)
+        dispatcher.triggerActions()
 
         val exception = FirebaseFirestoreException("Test", FirebaseFirestoreException.Code.ABORTED)
         listener!!.onEvent(null, exception)
@@ -111,8 +114,12 @@ class DocumentObservableTest {
         }
 
         val documentObservable = DocumentObservable(mockDocument)
-        documentObservable.flowable.map { it.value!!.toObject(Int::class.java) }
-            .subscribe().dispose()
+        val subscriber = documentObservable.flowable.map { it.value!!.toObject(Int::class.java) }
+            .subscribe()
+
+        dispatcher.triggerActions()
+
+        subscriber.dispose()
 
         dispatcher.advanceTime(1000)
 

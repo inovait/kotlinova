@@ -1,8 +1,8 @@
 package si.inova.kotlinova.ui.components
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.v4.app.DialogFragment
+import androidx.annotation.CallSuper
+import androidx.fragment.app.DialogFragment
 import si.inova.kotlinova.ui.state.StateSaverManager
 import si.inova.kotlinova.ui.state.StateSavingComponent
 

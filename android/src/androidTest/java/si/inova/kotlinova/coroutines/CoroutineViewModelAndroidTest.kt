@@ -1,11 +1,11 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.MutableLiveData
-import android.support.test.espresso.Espresso
-import android.support.test.runner.AndroidJUnit4
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withTimeout
-import kotlinx.coroutines.experimental.yield
+import androidx.lifecycle.MutableLiveData
+import androidx.test.espresso.Espresso
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -43,7 +43,7 @@ class CoroutineViewModelAndroidTest {
     @Test
     fun unregisterResourceOnError() = runBlocking {
         repeat(100) { _ ->
-            withTimeout(1, TimeUnit.SECONDS) {
+            withTimeout(TimeUnit.SECONDS.toMillis(1), {
                 testViewModel = TestViewModel()
 
                 testViewModel.launchWithNewSourceAndCrash()
@@ -56,7 +56,7 @@ class CoroutineViewModelAndroidTest {
                     (testViewModel.testResource.value as Resource.Error).exception is IOException
                 )
                 assertFalse(testViewModel.testResource.hasAnySources())
-            }
+            })
         }
     }
 

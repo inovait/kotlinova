@@ -2,11 +2,12 @@
 
 package si.inova.kotlinova.coroutines
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
-import kotlinx.coroutines.experimental.withContext
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.utils.runOnUiThread
+import kotlin.coroutines.resume
 
 /**
  * Return first value from this LiveData.
@@ -23,7 +24,7 @@ suspend fun <T> LiveData<T>.awaitFirstValue(
     runAfterObserve: (() -> Unit)? = null,
     runAfterCompletionBeforeRemoveObserver: (() -> Unit)? = null
 ): T? {
-    return withContext(UI) {
+    return withContext(TestableDispatchers.Main) {
         var ignoreAnyValues = ignoreExistingValue
 
         suspendCancellableCoroutine<T?> { continuation ->

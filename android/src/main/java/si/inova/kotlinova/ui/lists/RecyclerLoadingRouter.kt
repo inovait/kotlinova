@@ -1,6 +1,6 @@
 package si.inova.kotlinova.ui.lists
 
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import si.inova.kotlinova.ui.lists.sections.SingleViewSection
 
 /**

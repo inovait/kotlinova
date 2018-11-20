@@ -2,8 +2,8 @@ package si.inova.kotlinova.ui.lists
 
 import android.content.Context
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.view.View
+import com.google.android.material.snackbar.Snackbar
 import si.inova.kotlinova.android.R
 
 /**

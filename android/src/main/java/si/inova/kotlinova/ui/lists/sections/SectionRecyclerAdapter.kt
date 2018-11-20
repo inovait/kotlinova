@@ -1,8 +1,8 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.support.v7.util.ListUpdateCallback
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import si.inova.kotlinova.testing.OpenForTesting
 
 /**
@@ -70,33 +70,6 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val sectionCount: Int
         get() = sections.size
 
-    /**
-     * Detach section with specific index from this section adapter.
-     *
-     * Section should still return proper item count until after this method is called
-     */
-    final fun detachSection(sectionIndex: Int) {
-        val section = sections[sectionIndex]
-        section.onDetachedFromAdapter()
-
-        notifyItemRangeRemoved(getSectionStart(sectionIndex), section.itemCount)
-        sections.removeAt(sectionIndex)
-    }
-
-    /**
-     * Detach specific section
-     *
-     * Section should still return proper item count until after this method is called
-     */
-    final fun <T : RecyclerView.ViewHolder> detachSection(section: RecyclerSection<T>) {
-        val sectionIndex = sections.indexOf(section)
-        if (sectionIndex < 0) {
-            throw IllegalArgumentException("Section $section is not attached")
-        }
-
-        detachSection(sectionIndex)
-    }
-
     fun getSectionIndexAtPosition(position: Int): Int {
         var sectionStart = 0
         for ((index, section) in sections.withIndex()) {
@@ -112,6 +85,13 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         throw IndexOutOfBoundsException("Position not in any section: $position")
     }
 
+    /**
+     * Get position inside section from global adapter position
+     *
+     * @param position global position of adapter
+     *
+     * @return pair of section at this position and position inside section
+     */
     protected fun getInnerPosition(position: Int):
         Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0

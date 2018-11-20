@@ -7,9 +7,9 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.sync.Mutex
-import si.inova.kotlinova.coroutines.UI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.sync.Mutex
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.rx.OnDemandProvider
@@ -24,7 +24,7 @@ import si.inova.kotlinova.utils.use
 class ObservableFirebasePaginatedQuery(
     private val baseQuery: Query,
     private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
-) : OnDemandProvider<Resource<List<DocumentSnapshot>>>(UI),
+) : OnDemandProvider<Resource<List<DocumentSnapshot>>>(TestableDispatchers.Main),
     EventListener<QuerySnapshot>,
     ObservablePaginatedQuery<DocumentSnapshot> {
 
@@ -76,14 +76,14 @@ class ObservableFirebasePaginatedQuery(
         }
 
         if (e != null) {
-            send(Resource.Error(e))
+            sendBlocking(Resource.Error(e))
             return
         }
 
         if (snapshot != null) {
             val data = snapshot.documents
 
-            send(Resource.Success(data))
+            sendBlocking(Resource.Success(data))
 
             if (waitingForFirstValue) {
                 if (waitingForFirstNextPageValue) {

@@ -1,8 +1,8 @@
 package si.inova.kotlinova.ui.components
 
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.CallSuper
+import androidx.appcompat.app.AppCompatActivity
 import si.inova.kotlinova.ui.state.StateSaverManager
 import si.inova.kotlinova.ui.state.StateSavingComponent
 

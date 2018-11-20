@@ -6,10 +6,12 @@
 package si.inova.kotlinova.utils
 
 import android.annotation.SuppressLint
-import android.arch.core.executor.ArchTaskExecutor
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
-import si.inova.kotlinova.coroutines.UI
+import androidx.arch.core.executor.ArchTaskExecutor
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import si.inova.kotlinova.coroutines.TestableDispatchers
 
 /**
  * Run specified block on the UI thread.
@@ -28,8 +30,14 @@ fun runOnUiThread(
     if (ArchTaskExecutor.getInstance().isMainThread) {
         block()
     } else {
-        launch(UI, parent = parentJob) {
-            block()
+        val context = if (parentJob == null) {
+            TestableDispatchers.Main
+        } else {
+            TestableDispatchers.Main + parentJob
         }
+
+        GlobalScope.launch(context, CoroutineStart.DEFAULT, {
+            block()
+        })
     }
 }

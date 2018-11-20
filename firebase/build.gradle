@@ -11,7 +11,7 @@ ext {
 apply from: '../maven-push.gradle'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 19
@@ -19,7 +19,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
     }
@@ -60,17 +60,17 @@ dependencies {
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
     compileOnly "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
-    compileOnly "android.arch.core:core-testing:${versions.architectureComponents}"
+    compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
     testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
-    testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
+    testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
 
-    androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
 }

@@ -1,6 +1,6 @@
 package si.inova.kotlinova.coroutines
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -14,9 +14,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -64,7 +64,9 @@ class LocationCoroutinesTest {
     fun removeLocationUpdatesAfterUnsubscribe() = runBlocking<Unit> {
         val locationRequest = LocationRequest.create()
 
-        val locationFetcher = async(Unconfined) {
+        // UNCONFINED is experimental, but it is still fine to use it with tests
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        val locationFetcher = async(Dispatchers.Unconfined) {
             locationClient.awaitSingleLocation(locationRequest)
         }
 

@@ -1,9 +1,9 @@
 package si.inova.kotlinova.ui.lists.sections
 
-import android.support.v7.util.ListUpdateCallback
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
@@ -11,8 +11,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -357,48 +355,6 @@ class SectionRecyclerAdapterTest {
     }
 
     @Test
-    fun detachSectionByIndex() {
-        sectionA.updateSize(5)
-        sectionB.updateSize(3)
-        sectionC.updateSize(8)
-
-        inOrder(adapterDataObserver) {
-            sectionedRecyclerAdapter.detachSection(1)
-            verify(adapterDataObserver).onItemRangeRemoved(5, 3)
-            assertEquals(5 + 8, sectionedRecyclerAdapter.itemCount)
-            assertNull(sectionB.updateCallback)
-
-            sectionedRecyclerAdapter.detachSection(1)
-            verify(adapterDataObserver).onItemRangeRemoved(5, 8)
-            assertEquals(5, sectionedRecyclerAdapter.itemCount)
-            assertNull(sectionC.updateCallback)
-
-            assertNotNull(sectionA.updateCallback)
-        }
-    }
-
-    @Test
-    fun detachSectionByRef() {
-        sectionA.updateSize(5)
-        sectionB.updateSize(3)
-        sectionC.updateSize(8)
-
-        inOrder(adapterDataObserver) {
-            sectionedRecyclerAdapter.detachSection(sectionB)
-            verify(adapterDataObserver).onItemRangeRemoved(5, 3)
-            assertEquals(5 + 8, sectionedRecyclerAdapter.itemCount)
-            assertNull(sectionB.updateCallback)
-
-            sectionedRecyclerAdapter.detachSection(sectionC)
-            verify(adapterDataObserver).onItemRangeRemoved(5, 8)
-            assertEquals(5, sectionedRecyclerAdapter.itemCount)
-            assertNull(sectionC.updateCallback)
-
-            assertNotNull(sectionA.updateCallback)
-        }
-    }
-
-    @Test
     fun sectionCount() {
         assertEquals(3, sectionedRecyclerAdapter.sectionCount)
 
@@ -406,10 +362,6 @@ class SectionRecyclerAdapterTest {
         sectionedRecyclerAdapter.attachSection(TestSection())
 
         assertEquals(5, sectionedRecyclerAdapter.sectionCount)
-
-        sectionedRecyclerAdapter.detachSection(0)
-
-        assertEquals(4, sectionedRecyclerAdapter.sectionCount)
     }
 
     @Test
@@ -492,7 +444,7 @@ class SectionRecyclerAdapterTest {
         }
     }
 
-    private class TestSectionViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    private class TestSectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var lastBoundPosition: Int = 0
     }
 }

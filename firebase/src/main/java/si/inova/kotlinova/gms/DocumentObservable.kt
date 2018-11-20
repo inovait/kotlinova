@@ -5,7 +5,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
-import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.CoroutineScope
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.rx.OnDemandProvider
 
@@ -34,13 +34,13 @@ class DocumentObservable(private val documentReference: DocumentReference) :
         }
 
         if (e != null) {
-            send(Resource.Error(e))
+            sendBlocking(Resource.Error(e))
             return
         }
 
         if (newDocument != null) {
             if (!newDocument.exists()) {
-                send(
+                sendBlocking(
                     Resource.Error(
                         NoSuchElementException("${newDocument.reference.path} is missing")
                     )
@@ -48,7 +48,7 @@ class DocumentObservable(private val documentReference: DocumentReference) :
                 return
             }
 
-            send(Resource.Success(newDocument))
+            sendBlocking(Resource.Success(newDocument))
         }
     }
 }

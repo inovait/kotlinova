@@ -2,12 +2,12 @@ package si.inova.kotlinova.ui.lists.swiping
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.support.annotation.VisibleForTesting
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.animation.LinearInterpolator
+import androidx.annotation.VisibleForTesting
 import si.inova.kotlinova.utils.fromDpToPixels
 import kotlin.math.abs
 import kotlin.math.roundToLong

@@ -1,10 +1,10 @@
 package si.inova.kotlinova.ui.lists
 
 import android.content.Context
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.ViewTreeObserver
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Horizontal [RecyclerView] that will start/end with first/last item centered.

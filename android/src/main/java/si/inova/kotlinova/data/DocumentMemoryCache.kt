@@ -1,6 +1,6 @@
 package si.inova.kotlinova.data
 
-import android.support.v4.util.SimpleArrayMap
+import androidx.collection.SimpleArrayMap
 import si.inova.kotlinova.testing.OpenForTesting
 import si.inova.kotlinova.time.AndroidTimeProvider
 

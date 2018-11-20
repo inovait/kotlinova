@@ -1,14 +1,14 @@
 package si.inova.kotlinova.data.resources
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.support.annotation.UiThread
-import kotlinx.coroutines.experimental.sync.Mutex
-import kotlinx.coroutines.experimental.sync.withLock
+import androidx.annotation.UiThread
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import si.inova.kotlinova.data.ExtendedMediatorLiveData
 import si.inova.kotlinova.utils.isActive
 import si.inova.kotlinova.utils.runOnUiThread
-import kotlin.coroutines.experimental.coroutineContext
+import kotlin.coroutines.coroutineContext
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -50,12 +50,7 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
         super.postValue(value)
     }
 
-    @Deprecated(
-        "Use sendValueSync() instead",
-        replaceWith = ReplaceWith("sendValueSync(value)")
-    )
     override fun setValue(value: Resource<T>?) {
-        @Suppress("DEPRECATION")
         super.setValue(value)
     }
 
@@ -63,7 +58,7 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
         return this
     }
 
-    override fun <S> addSource(source: LiveData<S>, onChanged: Observer<S>) {
+    override fun <S> addSource(source: LiveData<S>, onChanged: Observer<in S>) {
         runOnUiThread {
             super.addSource(source, onChanged)
         }

@@ -11,8 +11,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
 import si.inova.kotlinova.utils.runOnUiThread
+import kotlin.coroutines.resume
 
 /**
  * Start listening for speficied [LocationRequest] and return first received Location result.

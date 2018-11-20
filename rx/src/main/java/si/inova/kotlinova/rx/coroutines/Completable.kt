@@ -16,7 +16,9 @@ package si.inova.kotlinova.rx.coroutines
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 suspend fun Completable.await() {
     return suspendCancellableCoroutine { continuation ->

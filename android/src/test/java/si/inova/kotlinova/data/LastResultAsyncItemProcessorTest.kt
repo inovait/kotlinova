@@ -4,12 +4,12 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import si.inova.kotlinova.testing.TimedDispatcher
+import si.inova.kotlinova.testing.CoroutinesTimeMachine
 
 /**
  * @author Matej Drobnic
@@ -18,7 +18,7 @@ class LastResultAsyncItemProcessorTest {
     private lateinit var processorLastResult: LastResultAsyncItemProcessor<Int, Int>
 
     @get:Rule()
-    val dispatcher = TimedDispatcher()
+    val dispatcher = CoroutinesTimeMachine()
 
     @Before
     fun setUp() {
@@ -33,6 +33,8 @@ class LastResultAsyncItemProcessorTest {
             it * 2
         }
 
+        dispatcher.triggerActions()
+
         verify(observer, only()).invoke(20)
     }
 
@@ -43,6 +45,8 @@ class LastResultAsyncItemProcessorTest {
             delay(100)
             it * 2
         }
+
+        dispatcher.triggerActions()
 
         processorLastResult.process(1, observer, process)
         processorLastResult.process(2, observer, process)

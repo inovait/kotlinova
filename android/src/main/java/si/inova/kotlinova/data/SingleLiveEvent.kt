@@ -16,10 +16,10 @@
 
 package si.inova.kotlinova.data
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
-import android.support.annotation.MainThread
+import androidx.annotation.MainThread
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 
 /**
  * A lifecycle-aware observable that sends only new updates after subscription, used for events like
@@ -37,10 +37,10 @@ import android.support.annotation.MainThread
  * [Google's Examples](https://github.com/googlesamples/android-architecture/blob/dev-t&#111;do-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SingleLiveEvent.java)
  */
 open class SingleLiveEvent<T> : MutableLiveData<T>() {
-    private val deliveredTo = HashSet<Observer<T>>()
+    private val deliveredTo = HashSet<Observer<in T>>()
 
     @MainThread
-    override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
+    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         super.observe(owner, Observer { t ->
             if (!deliveredTo.contains(observer)) {
                 deliveredTo.add(observer)

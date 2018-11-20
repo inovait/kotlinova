@@ -16,7 +16,9 @@ package si.inova.kotlinova.rx.coroutines
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.experimental.suspendCancellableCoroutine
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 suspend fun <T> Single<T>.await(): T {
     return suspendCancellableCoroutine { continuation ->

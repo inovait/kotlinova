@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Variant of [DividerItemDecoration] that only displays decoration on some items.
@@ -62,7 +62,7 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
         mDivider = drawable
     }
 
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
+    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         if (parent.layoutManager == null || mDivider == null) {
             return
         }
@@ -131,7 +131,7 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
             if (!shouldDisplayDivider(adapterPosition)) {
                 continue
             }
-            parent.layoutManager.getDecoratedBoundsWithMargins(child, mBounds)
+            parent.layoutManager!!.getDecoratedBoundsWithMargins(child, mBounds)
             val right = mBounds.right + Math.round(child.translationX)
             val left = right - mDivider!!.intrinsicWidth
             mDivider!!.setBounds(left, top, right, bottom)
@@ -144,7 +144,7 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
         outRect: Rect,
         view: View,
         parent: RecyclerView,
-        state: RecyclerView.State?
+        state: RecyclerView.State
     ) {
         val position = parent.getChildAdapterPosition(view)
 

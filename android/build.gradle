@@ -12,7 +12,7 @@ ext {
 apply from: '../maven-push.gradle'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 19
@@ -20,7 +20,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         consumerProguardFiles 'proguard-rules.pro'
 
@@ -50,15 +50,15 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.architectureComponents}"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:${versions.architectureComponents}"
     implementation "androidx.core:core-ktx:${versions.ktx}"
 
-    implementation "com.android.support:appcompat-v7:${versions.androidSupportLib}"
-    implementation "com.android.support:design:${versions.androidSupportLib}"
-    implementation "com.android.support:recyclerview-v7:${versions.androidSupportLib}"
+    implementation "androidx.appcompat:appcompat:${versions.appCompat}"
+    implementation "com.google.android.material:material:${versions.material}"
+    implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
 
-    implementation "android.arch.lifecycle:extensions:${versions.architectureComponents}"
-    kapt "android.arch.lifecycle:compiler:${versions.architectureComponents}"
+    implementation "androidx.lifecycle:lifecycle-extensions:${versions.architectureComponents}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${versions.architectureComponents}"
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
 
     implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
@@ -73,16 +73,17 @@ dependencies {
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
     compileOnly "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
-    compileOnly "android.arch.core:core-testing:${versions.architectureComponents}"
+    compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
     testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
-    testImplementation "android.arch.core:core-testing:${versions.architectureComponents}"
+    testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
 
-    androidTestImplementation "com.android.support.test:runner:${versions.androidInstrumentationRunner}"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
+    androidTestImplementation "androidx.test.ext:junit:${versions.androidXjunit}"
 }

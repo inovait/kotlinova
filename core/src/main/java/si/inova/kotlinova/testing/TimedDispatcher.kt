@@ -1,20 +1,24 @@
 package si.inova.kotlinova.testing
 
-import kotlinx.coroutines.experimental.CancellableContinuation
-import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.Delay
-import kotlinx.coroutines.experimental.DisposableHandle
-import kotlinx.coroutines.experimental.Runnable
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Runnable
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import si.inova.kotlinova.coroutines.dispatcherOverride
+import si.inova.kotlinova.coroutines.TestableDispatchers
 import java.util.PriorityQueue
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.CoroutineContext
 import kotlin.math.sign
 
 /**
  * Rule that allows time-based dispatching without Robolectric dependency
+ *
+ * This class is only kept in for legacy purposes. For new projects you should use
+ * [CoroutinesTimeMachine] instead.
  *
  * @author Matej Drobnic
  */
@@ -22,24 +26,29 @@ class TimedDispatcher : TestWatcher() {
     override fun finished(description: Description?) {
         super.finished(description)
 
-        dispatcherOverride = { it() }
+        TestableDispatchers.dispatcherOverride = { it() }
     }
 
     override fun starting(description: Description?) {
         super.starting(description)
 
-        dispatcherOverride = { Dispatcher }
+        TestableDispatchers.dispatcherOverride = { Dispatcher }
     }
 
-    fun advanceTime(ms: Int) {
+    fun advanceTime(ms: Long) {
         Dispatcher.advanceTime(ms)
     }
 
+    val coroutinesDispatcher: CoroutineContext
+        get() = Dispatcher
+
+    // Delay is internal, but there is no alternative and this is only used for tests
+    @UseExperimental(InternalCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private object Dispatcher : CoroutineDispatcher(), Delay {
         private var currentTime = 0L
         private val schedules = PriorityQueue<ScheduledTask>()
 
-        fun advanceTime(ms: Int) {
+        fun advanceTime(ms: Long) {
             val targetTime = currentTime + ms
 
             var next = schedules.peek()
@@ -59,27 +68,18 @@ class TimedDispatcher : TestWatcher() {
         }
 
         override fun scheduleResumeAfterDelay(
-            time: Long,
-            unit: TimeUnit,
+            timeMillis: Long,
             continuation: CancellableContinuation<Unit>
         ) {
             val target = ScheduledTask(
-                currentTime + unit.toMillis(
-                    time
-                ),
+                currentTime + timeMillis,
                 Runnable { with(continuation) { resumeUndispatched(Unit) } })
             schedules.add(target)
         }
 
-        override fun invokeOnTimeout(
-            time: Long,
-            unit: TimeUnit,
-            block: Runnable
-        ): DisposableHandle {
+        override fun invokeOnTimeout(timeMillis: Long, block: Runnable): DisposableHandle {
             val target = ScheduledTask(
-                currentTime + unit.toMillis(
-                    time
-                ), block
+                currentTime + timeMillis, block
             )
 
             schedules.add(target)

@@ -7,12 +7,14 @@
 package si.inova.kotlinova.utils
 
 import io.reactivex.Flowable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.reactive.publish
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
-import si.inova.kotlinova.coroutines.CommonPool
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlinx.coroutines.experimental.reactive.publish as publishCoroutine
+import si.inova.kotlinova.coroutines.TestableDispatchers
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Subscribe to this publisher, perform certain action and then unsubscribe
@@ -46,13 +48,16 @@ inline fun <T> Publisher<T>.use(block: () -> Unit) {
  * processing old value yet, old operation will be cancelled and new one will be started for
  * new value
  */
+// publish is experimental due to undefined behavior when used in structured concurrency.
+// We use GlobalScope here so this is not an issue
+@UseExperimental(ExperimentalCoroutinesApi::class)
 fun <I, O> Flowable<I>.mapAsync(
-    context: CoroutineContext = CommonPool,
+    context: CoroutineContext = TestableDispatchers.Default,
     mapper: suspend (I) -> O
 ): Flowable<O> {
     return switchMap { originalValue ->
-        publishCoroutine(context) {
+        GlobalScope.publish<O>(context, {
             send(mapper(originalValue))
-        }
+        })
     }
 }
