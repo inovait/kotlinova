@@ -1,3 +1,43 @@
+## [2.0.0](http://hydra/matejd/kotlinova/compare/v1.5.3...v2.0.0) (2018-11-20)
+
+### BREAKING Bug fixes
+
+* TimeProvider timezone was always UTC ([a7625ec2](http://hydra/matejd/kotlinova/commit/a7625ec2))
+
+### BREAKING Features
+
+* update coroutines to 0.30.2 ([6d12a715](http://hydra/matejd/kotlinova/commit/6d12a715))
+* update coroutines to 0.30.2-eap13 and kotlin to 1.3 ([2c42e53e](http://hydra/matejd/kotlinova/commit/2c42e53e))
+* update coroutines to 1.0.0 ([9abca5d3](http://hydra/matejd/kotlinova/commit/9abca5d3))
+* migate to AndroidX ([6453b08c](http://hydra/matejd/kotlinova/commit/6453b08c))
+* **core:** change dispatcher override to return CoroutineContext ([fcacdec1](http://hydra/matejd/kotlinova/commit/fcacdec1))
+* **android:** android dispatcher returns CoroutineContext ([41d59884](http://hydra/matejd/kotlinova/commit/41d59884))
+* **rx:** rewrite OnDemandProvider with new coroutines ([ec1c05fe](http://hydra/matejd/kotlinova/commit/ec1c05fe))
+* move dispatchers proxy to common class ([e85afaa4](http://hydra/matejd/kotlinova/commit/e85afaa4))
+* **android:** add CoroutineScope to CoroutineViewModel ([dff95f36](http://hydra/matejd/kotlinova/commit/dff95f36))
+* **android:** delete unused CenterFirstDecoration ([5b10ff53](http://hydra/matejd/kotlinova/commit/5b10ff53))
+* **rx:** remove PaginatedQuery.reset ([2721cd88](http://hydra/matejd/kotlinova/commit/2721cd88))
+* **android:** remove SectionRecyclerAdapter detach ([08d81e6c](http://hydra/matejd/kotlinova/commit/08d81e6c))
+
+### Bug Fixes
+
+* **android:** PreferenceProperty null default crash ([817668bf](http://hydra/matejd/kotlinova/commit/817668bf))
+* **core:** use SupervisorJob on ViewModel ([962b3eb5](http://hydra/matejd/kotlinova/commit/962b3eb5))
+* **rx:** lock OnDemandProvider into mutex ([abd0ae70](http://hydra/matejd/kotlinova/commit/abd0ae70))
+
+### Features
+
+* add RxCoroutinesTimeMachine ([c5062ace](http://hydra/matejd/kotlinova/commit/c5062ace))
+* add CoroutinesTimeMachine ([33a28b0f](http://hydra/matejd/kotlinova/commit/33a28b0f))
+* **android:** remove ResourceLiveData.setValue deprecation ([1ef779cd](http://hydra/matejd/kotlinova/commit/1ef779cd))
+* **android:** make LiveData observing utils inline ([340762cc](http://hydra/matejd/kotlinova/commit/340762cc))
+
+### Documentation
+
+* **rx:** add experimental suppress explanation ([a1a2f8b7](http://hydra/matejd/kotlinova/commit/a1a2f8b7))
+* **android:** add SectionRecyclerAdapter.getInnerPosition docs ([017ffa99](http://hydra/matejd/kotlinova/commit/017ffa99))
+
+
 ## [1.5.3](http://hydra/matejd/kotlinova/compare/v1.5.2...v1.5.3) (2018-09-19)
 
 
