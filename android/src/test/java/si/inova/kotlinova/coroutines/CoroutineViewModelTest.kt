@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -126,6 +127,16 @@ class CoroutineViewModelTest {
         }
     }
 
+    @Test
+    fun `Do not cancel all jobs on single job failure`() {
+        testViewModel.firstTask()
+        testViewModel.failJob()
+
+        dispatcher.advanceTime(100)
+
+        assertTrue(testViewModel.isResourceTakenPublic(testViewModel.resourceA))
+    }
+
     private class TestViewModel : CoroutineViewModel() {
         val resourceA = ResourceLiveData<Int>()
 
@@ -141,6 +152,10 @@ class CoroutineViewModelTest {
 
         fun exceptionTask() = launchResourceControlTask(resourceA) {
             delay(500)
+            throw IllegalStateException("Test exception")
+        }
+
+        fun failJob() = launch {
             throw IllegalStateException("Test exception")
         }
 

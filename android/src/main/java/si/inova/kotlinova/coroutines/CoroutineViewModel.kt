@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +30,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * @author Matej Drobnic
  */
 abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
-    protected val parentJob: Job = Job()
+    protected val parentJob: Job = SupervisorJob()
     override val coroutineContext: CoroutineContext
         get() = parentJob + TestableDispatchers.Default
 
