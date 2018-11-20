@@ -17,4 +17,5 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
 
     compileOnly "junit:junit:${versions.junit}"
+    testImplementation "junit:junit:${versions.junit}"
 }
