@@ -1,3 +1,12 @@
+## [2.0.1](http://hydra/matejd/kotlinova/compare/v2.0.0...v2.0.1) (2018-12-13)
+
+
+### Bug Fixes
+
+* **rx:** expose RxCoroutinesTimeMachine ([18d0a9d6](http://hydra/matejd/kotlinova/commit/18d0a9d6))
+* **retrofit:** coroutine call adapter error handling ([76294147](http://hydra/matejd/kotlinova/commit/76294147))
+
+
 ## [2.0.0](http://hydra/matejd/kotlinova/compare/v1.5.3...v2.0.0) (2018-11-20)
 
 ### BREAKING Bug fixes
