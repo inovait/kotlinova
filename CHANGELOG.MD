@@ -1,3 +1,20 @@
+## [2.1.1](http://hydra/matejd/kotlinova/compare/v2.1.1...v2.1.0) (2019-02-06)
+
+
+### Bug Fixes
+
+* **android:** extend placeholder blending over empty sections ([39c623ce](http://hydra/matejd/kotlinova/commit/39c623ce))
+* **android:** remove forced adjustViewBounds from AspectRatioImageview ([069b01b4](http://hydra/matejd/kotlinova/commit/069b01b4))
+* **android:** fix StateSaverFragment crash without activity ([c9be48f9](http://hydra/matejd/kotlinova/commit/c9be48f9))
+
+### Features
+
+* **android:** add ListSection.clearList() ([7b9b7c22](http://hydra/matejd/kotlinova/commit/7b9b7c22))
+* **android:** add exclusiveObserveEvent ([989f3925](http://hydra/matejd/kotlinova/commit/989f3925))
+* report exceptions from CoroutinesTimeMachines ([502e7856](http://hydra/matejd/kotlinova/commit/502e7856))
+* **android:** add common errors to CoroutineViewModel ([493d34c5](http://hydra/matejd/kotlinova/commit/493d34c5))
+* **android:** add utilities for resource observing ([3cb7fccc](http://hydra/matejd/kotlinova/commit/3cb7fccc))
+
 ## [2.0.1](http://hydra/matejd/kotlinova/compare/v2.0.0...v2.0.1) (2018-12-13)
 
 
