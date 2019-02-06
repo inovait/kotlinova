@@ -56,6 +56,22 @@ inline fun LiveData<Unit>.observeEvent(
 }
 
 /**
+ * Remove all observers from passed lifeCycleOwner that observe this [LiveData] and
+ * add new observer that observes this LiveData<Unit> as event with no-args method
+ *
+ * This is useful with Fragments where onCreate* methods
+ * can be called multiple times in the same instance
+ */
+inline fun LiveData<Unit>.exclusiveObserveEvent(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function0<Unit>
+) {
+    removeObservers(lifecycleOwner)
+
+    observe(lifecycleOwner, Observer { method() })
+}
+
+/**
  * Convenience extension that automatically filters *null* values received from [LiveData]
  */
 inline fun <T> LiveData<T>.observeNotNull(
