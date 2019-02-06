@@ -22,6 +22,12 @@ import kotlin.reflect.KProperty
  */
 class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
     ReadOnlyProperty<Any, LiveData<Resource<T>>> {
+    /**
+     * Interceptor that intercepts any incoming values. When returning [true], value is consumed and
+     * is not forwarded to observers.
+     */
+    var interceptor: ((Resource<T>?) -> Boolean)? = null
+
     private val resourceMutex: Mutex = Mutex()
 
     @Synchronized
@@ -34,6 +40,10 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
     }
 
     suspend fun sendValue(value: Resource<T>) {
+        if (interceptor?.invoke(value) == true) {
+            return
+        }
+
         resourceMutex.withLock {
             if (coroutineContext.isActive) {
                 super.postValue(value)
@@ -47,10 +57,18 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
     @Suppress("NOTHING_TO_INLINE")
     @UiThread
     inline fun sendValueSync(value: Resource<T>?) {
+        if (interceptor?.invoke(value) == true) {
+            return
+        }
+
         super.postValue(value)
     }
 
     override fun setValue(value: Resource<T>?) {
+        if (interceptor?.invoke(value) == true) {
+            return
+        }
+
         super.setValue(value)
     }
 

@@ -59,8 +59,6 @@ class AspectRatioImageView @JvmOverloads constructor(
         } finally {
             args.recycle()
         }
-
-        adjustViewBounds = true
     }
 
     @SuppressLint("SwitchIntDef")

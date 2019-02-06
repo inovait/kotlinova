@@ -27,6 +27,12 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
 
     private val asyncListDiffComputer = AsyncListDiffComputer()
 
+    /**
+     * Update list of items that this section displays.
+     *
+     * Note that this method will trigger asynchronous operation that will perform actual update
+     * later in the future.
+     */
     fun updateList(newData: List<T>) {
         if (data === newData) {
             Timber.w("Setting same list object twice. No change.")
@@ -42,6 +48,26 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
             onListUpdated(oldList, newData)
             updateCallback?.let {
                 result.dispatchUpdatesTo(it)
+            }
+        }
+    }
+
+    /**
+     * Clear this section immediatelly.
+     *
+     * Unlike performing *updateList(emptyList())*, this method clears the list immediatelly without
+     * any asynchronous operations that performs actual list update some time in the future.
+     */
+    fun clearList() {
+        val oldList = data
+        data = emptyList()
+        forceUpdateAllItems = false
+        updateListeners.forEach { it.invoke() }
+
+        onListUpdated(oldList, emptyList())
+        updateCallback?.let {
+            if (oldList != null) {
+                it.onRemoved(0, oldList.size)
             }
         }
     }

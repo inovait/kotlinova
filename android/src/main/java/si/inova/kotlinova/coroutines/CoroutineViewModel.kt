@@ -1,6 +1,7 @@
 package si.inova.kotlinova.coroutines
 
 import androidx.annotation.CallSuper
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CancellationException
@@ -12,6 +13,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import si.inova.kotlinova.data.SingleLiveEvent
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.data.resources.value
@@ -36,6 +38,13 @@ abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
 
     protected val activeJobs = ConcurrentHashMap<MutableLiveData<Resource<*>>, Job>()
 
+    protected val _errors = SingleLiveEvent<Throwable>()
+    /**
+     * Common error observer. Used if *routeErrorsToCommonObserver* set to true when launching
+     * resource tasks.
+     */
+    val errors: LiveData<Throwable> = _errors
+
     /**
      * Method that launches coroutine task that handles data fetching for provided resources.
      *
@@ -46,11 +55,16 @@ abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
      * 3. Calls your provided task on the worker thread
      * 4. Automatically handles cancellation exceptions
      * 5. Automatically forwards exceptions to the resource as [Resource.Error]
+     *
+     * @param routeErrorsToCommonObservable If *true*, all errors from this resource will be
+     * redirected to the [errors] observable instead of returning [Resource.Error]. Default value
+     * of this parameter can be controlled using [routeErrorsToCommonObservableByDefault].
      */
     fun <T> launchResourceControlTask(
         resource: ResourceLiveData<T>,
         currentValue: T? = resource.value?.value,
         context: CoroutineContext = EmptyCoroutineContext,
+        routeErrorsToCommonObservable: Boolean = routeErrorsToCommonObservableByDefault,
         block: suspend ResourceLiveData<T>.() -> Unit
     ) = runOnUiThread(parentJob) {
         // To prevent threading issues, only one job can handle one resource at a time
@@ -70,6 +84,19 @@ abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
 
             if (!isActive) {
                 return@launch
+            }
+
+            resource.interceptor = if (routeErrorsToCommonObservable) {
+                {
+                    if (it is Resource.Error<*>) {
+                        routeException(resource, it.exception, routeErrorsToCommonObservable)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            } else {
+                null
             }
 
             try {
@@ -129,4 +156,30 @@ abstract class CoroutineViewModel : ViewModel(), CoroutineScope {
 
         super.onCleared()
     }
+
+    private fun <T> routeException(
+        resource: ResourceLiveData<T>,
+        exception: Throwable,
+        routeErrorsToCommonObserver: Boolean
+    ) {
+        if (routeErrorsToCommonObserver) {
+            resource.sendValueSync(Resource.Cancelled())
+
+            if (!_errors.hasObservers()) {
+                throw UndeliverableException(
+                    "Exception could not be delivered because nobody is observing errors observer",
+                    exception
+                )
+            }
+
+            _errors.postValue(exception)
+        } else {
+            resource.sendValueSync(Resource.Error(exception))
+        }
+    }
+
+    protected open val routeErrorsToCommonObservableByDefault: Boolean
+        get() = false
+
+    class UndeliverableException(message: String, cause: Throwable) : Exception(message, cause)
 }

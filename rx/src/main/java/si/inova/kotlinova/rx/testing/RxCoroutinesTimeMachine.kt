@@ -7,6 +7,7 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineContext
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import org.junit.runners.model.MultipleFailureException
 import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.testing.TimeMachine
 import si.inova.kotlinova.time.JavaTimeProvider
@@ -48,6 +49,8 @@ class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
         TestableDispatchers.dispatcherOverride = { it() }
         JavaTimeProvider.currentTimeMillisProvider = { System.currentTimeMillis() }
         JavaTimeProvider.clockProvider = { Clock.systemUTC() }
+
+        MultipleFailureException.assertEmpty(coroutineContext.exceptions)
     }
 
     /**

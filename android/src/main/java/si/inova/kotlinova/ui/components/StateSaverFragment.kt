@@ -1,5 +1,6 @@
 package si.inova.kotlinova.ui.components
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
@@ -35,7 +36,8 @@ open class StateSaverFragment : Fragment(), StateSavingComponent {
         super.onCreate(savedInstanceState)
 
         createdForTheFirstTime = createdForTheFirstTime &&
-            (savedInstanceState == null || requireActivity().lastNonConfigurationInstance == null)
+            (savedInstanceState == null ||
+                (context as? Activity)?.lastNonConfigurationInstance == null)
     }
 
     @CallSuper

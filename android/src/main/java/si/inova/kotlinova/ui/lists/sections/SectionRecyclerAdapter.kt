@@ -149,10 +149,22 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 return
             }
 
-            val nextSection = sections.elementAtOrNull(sectionIndex + 1)
+            var nextPlaceholderSection: RecyclerSection<out RecyclerView.ViewHolder>? = null
+            for (i in sectionIndex + 1 until sections.size) {
+                val potentialSection = sections[i]
 
-            val numPlaceholderItems = if (nextSection?.sectionContainsPlaceholderItems == true) {
-                nextSection.itemCount
+                if (potentialSection.sectionContainsPlaceholderItems) {
+                    nextPlaceholderSection = potentialSection
+                    break
+                }
+
+                if (potentialSection.itemCount > 0) {
+                    break
+                }
+            }
+
+            val numPlaceholderItems = if (nextPlaceholderSection != null) {
+                nextPlaceholderSection.itemCount
             } else {
                 0
             }

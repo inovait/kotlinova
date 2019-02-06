@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.only
+import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Assert.assertEquals
@@ -322,6 +323,44 @@ class SectionRecyclerAdapterTest {
     }
 
     @Test
+    fun placeholderBlendingWithEmptySectionInBetween() {
+        val blendingSection = BlendingSection()
+        val emptySection = TestSection()
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(100) { it } }
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        sectionedRecyclerAdapter.attachSection(emptySection)
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        assertEquals(100, sectionedRecyclerAdapter.itemCount)
+        blendingSection.updateSize(10)
+
+        verify(adapterDataObserver).onItemRangeChanged(0, 10, null)
+        verify(adapterDataObserver).onItemRangeInserted(10, 10)
+        verifyNoMoreInteractions(adapterDataObserver)
+        assertEquals(10 + 100, sectionedRecyclerAdapter.itemCount)
+    }
+
+    @Test
+    fun doNotBlendPlaceholdersWithNotEmptySectionInBetween() {
+        val blendingSection = BlendingSection()
+        val middleSection = TestSection().apply { updateSize(1) }
+        val placeholderSection = PlaceholderTestSection().apply { data = MutableList(100) { it } }
+
+        reset(adapterDataObserver)
+
+        sectionedRecyclerAdapter.attachSection(blendingSection)
+        sectionedRecyclerAdapter.attachSection(middleSection)
+        sectionedRecyclerAdapter.attachSection(placeholderSection)
+
+        assertEquals(0 + 1 + 100, sectionedRecyclerAdapter.itemCount)
+        blendingSection.updateSize(10)
+
+        verify(adapterDataObserver).onItemRangeInserted(0, 10)
+        verifyNoMoreInteractions(adapterDataObserver)
+        assertEquals(10 + 1 + 100, sectionedRecyclerAdapter.itemCount)
+    }
+
+    @Test
     fun doNotBlendPlaceholdersWhenNotOnEnd() {
         val blendingSection = BlendingSection()
         val placeholderSection = PlaceholderTestSection().apply { data = MutableList(100) { it } }
@@ -400,9 +439,9 @@ class SectionRecyclerAdapterTest {
 
             if (sendCallback) {
                 if (oldSize < newSize) {
-                    updateCallback!!.onInserted(oldSize, newSize - oldSize)
+                    updateCallback?.onInserted(oldSize, newSize - oldSize)
                 } else {
-                    updateCallback!!.onRemoved(newSize, oldSize - newSize)
+                    updateCallback?.onRemoved(newSize, oldSize - newSize)
                 }
             }
         }

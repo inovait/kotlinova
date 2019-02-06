@@ -12,6 +12,7 @@ import androidx.lifecycle.Transformations
 import org.reactivestreams.Publisher
 import si.inova.kotlinova.archcomponents.ResourcePublisherLiveData
 import si.inova.kotlinova.data.resources.Resource
+import si.inova.kotlinova.data.resources.value
 
 /**
  * @author Matej Drobnic
@@ -56,7 +57,23 @@ inline fun LiveData<Unit>.observeEvent(
 }
 
 /**
- * Convenience extension that automatically filters *null* values received from [LiveData]
+ * Remove all observers from passed lifeCycleOwner that observe this [LiveData] and
+ * add new observer that observes this LiveData<Unit> as event with no-args method
+ *
+ * This is useful with Fragments where onCreate* methods
+ * can be called multiple times in the same instance
+ */
+inline fun LiveData<Unit>.exclusiveObserveEvent(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function0<Unit>
+) {
+    removeObservers(lifecycleOwner)
+
+    observe(lifecycleOwner, Observer { method() })
+}
+
+/**
+ * Convenience extension that observes the value of the Resource, regardless of its state
  */
 inline fun <T> LiveData<T>.observeNotNull(
     lifecycleOwner: LifecycleOwner,
@@ -85,6 +102,27 @@ inline fun <T> LiveData<T>.exclusiveObserveNotNull(
     observe(lifecycleOwner, Observer {
         if (it != null) {
             method(it)
+        }
+    })
+}
+
+/**
+ * Remove all observers from passed lifeCycleOwner that observe this [LiveData] and
+ * add new observer that observes value of this resource, regardless of its state
+ *
+ * This is useful with Fragments where onCreate* methods
+ * can be called multiple times in the same instance
+ */
+inline fun <T> LiveData<Resource<T>>.exclusiveObserveResourceValue(
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T, Unit>
+) {
+    removeObservers(lifecycleOwner)
+
+    observe(lifecycleOwner, Observer { resource ->
+        val value = resource.value
+        if (value != null) {
+            method(value)
         }
     })
 }

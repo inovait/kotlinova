@@ -2,6 +2,11 @@ package si.inova.kotlinova.coroutines
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import io.reactivex.Flowable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,10 +18,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
+import org.junit.rules.RuleChain
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.testing.CoroutinesTimeMachine
 import si.inova.kotlinova.testing.assertIs
+import si.inova.kotlinova.utils.addResourceSource
 import si.inova.kotlinova.utils.addSource
 
 /**
@@ -25,8 +33,12 @@ import si.inova.kotlinova.utils.addSource
 class CoroutineViewModelTest {
     private lateinit var testViewModel: TestViewModel
 
-    @get:Rule
     val dispatcher = CoroutinesTimeMachine()
+    val expectException = ExpectedException.none()
+
+    @get:Rule
+    val dispatcherAndExceptionRule = RuleChain.outerRule(expectException).around(dispatcher)
+
     @get:Rule
     val archRule = InstantTaskExecutorRule()
 
@@ -129,12 +141,67 @@ class CoroutineViewModelTest {
 
     @Test
     fun `Do not cancel all jobs on single job failure`() {
+        expectException.expectMessage("Test exception")
+
         testViewModel.firstTask()
         testViewModel.failJob()
 
         dispatcher.advanceTime(100)
 
         assertTrue(testViewModel.isResourceTakenPublic(testViewModel.resourceA))
+    }
+
+    @Test
+    fun `Receive errors from common error observer when redirection is enabled by default`() {
+        val commonErrorViewModel = TestCommonErrorViewModel()
+
+        val errorObserver: Observer<Throwable> = mock()
+        commonErrorViewModel.errors.observeForever(errorObserver)
+
+        commonErrorViewModel.exceptionTask()
+        dispatcher.triggerActions()
+
+        assertIs(commonErrorViewModel.resourceA.value, Resource.Cancelled::class.java)
+        verify(errorObserver).onChanged(argThat { this is IllegalStateException })
+    }
+
+    @Test
+    fun `Also redirect received errors to common error observer`() {
+        val commonErrorViewModel = TestCommonErrorViewModel()
+        commonErrorViewModel.resourceA.observeForever {}
+
+        val errorObserver: Observer<Throwable> = mock()
+        commonErrorViewModel.errors.observeForever(errorObserver)
+
+        commonErrorViewModel.exceptionPassingTask()
+        dispatcher.triggerActions()
+
+        assertIs(commonErrorViewModel.resourceA.value, Resource.Cancelled::class.java)
+        verify(errorObserver).onChanged(argThat { this is IllegalStateException })
+    }
+
+    @Test
+    fun `Receive errors from common error observer when redirection is enabled by specific job`() {
+        val errorObserver: Observer<Throwable> = mock()
+        testViewModel.errors.observeForever(errorObserver)
+
+        testViewModel.exceptionTaskWithCommonError()
+        dispatcher.triggerActions()
+
+        assertIs(testViewModel.resourceA.value, Resource.Cancelled::class.java)
+        verify(errorObserver).onChanged(argThat { this is IllegalStateException })
+    }
+
+    @Test
+    fun `Crash when common error observer is not being observed by anyone`() {
+        expectException.expect(CoroutineViewModel.UndeliverableException::class.java)
+
+        val commonErrorViewModel = TestCommonErrorViewModel()
+
+        commonErrorViewModel.exceptionTask()
+        dispatcher.triggerActions()
+
+        assertIs(commonErrorViewModel.resourceA.value, Resource.Cancelled::class.java)
     }
 
     private class TestViewModel : CoroutineViewModel() {
@@ -155,6 +222,15 @@ class CoroutineViewModelTest {
             throw IllegalStateException("Test exception")
         }
 
+        fun exceptionTaskWithCommonError() {
+            launchResourceControlTask(
+                resourceA,
+                routeErrorsToCommonObservable = true
+            ) {
+                throw IllegalStateException("Test exception")
+            }
+        }
+
         fun failJob() = launch {
             throw IllegalStateException("Test exception")
         }
@@ -170,6 +246,18 @@ class CoroutineViewModelTest {
         fun <T> getJob(resource: MutableLiveData<Resource<T>>): Job? {
             @Suppress("USELESS_CAST")
             return activeJobs[resource as MutableLiveData<*>]
+        }
+    }
+
+    private class TestCommonErrorViewModel : CommonErrorCoroutineViewModel() {
+        val resourceA = ResourceLiveData<Int>()
+
+        fun exceptionTask() = launchResourceControlTask(resourceA) {
+            throw IllegalStateException("Test exception")
+        }
+
+        fun exceptionPassingTask() = launchResourceControlTask(resourceA) {
+            addResourceSource(Flowable.error(IllegalStateException("Test exception")))
         }
     }
 }
