@@ -39,7 +39,6 @@ class CoroutineViewModelTest {
     @get:Rule
     val dispatcherAndExceptionRule = RuleChain.outerRule(expectException).around(dispatcher)
 
-
     @get:Rule
     val archRule = InstantTaskExecutorRule()
 

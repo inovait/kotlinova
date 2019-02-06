@@ -86,7 +86,6 @@ inline fun <T> LiveData<T>.observeNotNull(
     })
 }
 
-
 /**
  * Remove all observers from passed lifeCycleOwner that observe this [LiveData] and
  * add new observer that automatically filters *null* values received from [LiveData]
@@ -127,7 +126,6 @@ inline fun <T> LiveData<Resource<T>>.exclusiveObserveResourceValue(
         }
     })
 }
-
 
 /**
  * Method that redispatches current LiveData value to the observer (if applicable).
