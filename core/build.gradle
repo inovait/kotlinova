@@ -12,6 +12,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
     api files("libs/timber.jar")
     implementation "com.jakewharton.timber:timber:${versions.timber}:sources"
+    implementation "com.google.dagger:dagger:${versions.dagger}"
 
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"

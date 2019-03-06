@@ -59,6 +59,18 @@ if (project.isAndroid()) {
     }
 }
 
+if (project.isAndroid()) {
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+} else {
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.java.srcDirs
+    }
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -112,22 +124,12 @@ afterEvaluate { project ->
     }
 
     if (project.isAndroid()) {
-        task androidSourcesJar(type: Jar) {
-            classifier = 'sources'
-            from android.sourceSets.main.java.srcDirs
-        }
-
         artifacts {
             archives androidSourcesJar
         }
 
         tasks.publishToMavenLocal.dependsOn(assembleRelease)
     } else {
-        task sourcesJar(type: Jar) {
-            classifier = 'sources'
-            from sourceSets.main.java.srcDirs
-        }
-
         artifacts {
             archives sourcesJar
         }

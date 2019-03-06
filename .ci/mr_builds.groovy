@@ -1,3 +1,6 @@
+//noinspection GroovyUnusedAssignment
+@Library(value = 'Inova Commons', changelog = false) _
+
 def abortPreviousRunningBuilds() {
     def hi = Hudson.instance
     def projectName = env.JOB_NAME.split('/')[0]
@@ -50,48 +53,16 @@ try {
                 bat 'gradlew test'
             }
             stage('Emulator Test') {
-                parallel(
-                        launchEmulator: {
-                            // Emulator will be terminated non-successfully eventually
-                            // Ignore termination error
-                            try {
-                                bat 'C:\\Android\\sdk\\emulator\\emulator.exe' +
-                                        ' -avd Nexus_5_API_23 -no-snapshot-load -no-snapshot-save' +
-                                        ' -no-window'
-                            } catch (ignored) {
-                            }
-                        },
-                        tests: {
-                            try {
-                                timeout(time: 100, unit: 'SECONDS') {
-                                    bat('C:\\Android\\sdk\\platform-tools\\adb.exe wait-for-device')
-
-                                    def bootFinished = "0"
-                                    while (bootFinished != "1") {
-                                        bootFinished = bat(script: '@C:\\Android\\sdk\\platform-tools' +
-                                                '\\adb.exe shell getprop sys.boot_completed',
-                                                returnStdout: true).trim()
-                                        sleep(time: 1, unit: 'SECONDS')
-                                    }
-                                }
-
-                                bat 'gradlew connectedDebugAndroidTest'
-
-                                timeout(time: 10, unit: 'SECONDS') {
-                                    bat "C:\\Android\\sdk\\platform-tools\\adb.exe shell reboot -p"
-                                    sleep(time: 2, unit: 'SECONDS')
-                                }
-                            } finally {
-                                try {
-                                    bat('taskkill /IM emulator.exe /F')
-                                } catch (ignored) {
-                                    // Emulator kill is there just in case. Ignore all exceptions from it
-                                }
-                            }
-                        })
+                android.withEmulator {
+                    bat('taskkill /IM emulator.exe /F')
+                }
             }
             stage('Calculate coverage') {
-                jacoco classPattern: '**/classes, **/kotlin-classes/debug', exclusionPattern: '**/R.class, **/R$*.class, **/BuildConfig.*, **/Manifest*.*, **/*Test*.*, android/**/*.*'
+                jacoco classPattern: '**/classes, **/kotlin-classes/debug',
+                        exclusionPattern: '**/R.class, **/R$*.class, **/BuildConfig.*, **/Manifest*.*, **/*Test*.*, android/**/*.*',
+                        sourceInclusionPattern: '**/*.java, **/*.kt',
+                        sourceExclusionPattern: '',
+                        execPattern: '**/*.exec **/*.ex'
             }
             updateGitlabCommitStatus name: 'jenkins', state: 'success'
         } finally {

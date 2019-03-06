@@ -20,6 +20,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+@Deprecated("Use official version from kotlinx-coroutines-rx2 artifact instead")
 suspend fun Completable.await() {
     return suspendCancellableCoroutine { continuation ->
         var disposable: Disposable? = null
