@@ -11,6 +11,8 @@ import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.mockito.ArgumentMatcher
 import org.mockito.Mockito
+import si.inova.kotlinova.data.resources.Resource
+import javax.inject.Provider
 
 infix fun <T> Comparable<T>.isGreaterThan(other: T) {
     assertTrue("$this is greater than $other", this > other)
@@ -18,6 +20,10 @@ infix fun <T> Comparable<T>.isGreaterThan(other: T) {
 
 infix fun <T> Comparable<T>.isEqualTo(other: T) {
     assertTrue("$this is equal than $other", this.compareTo(other) == 0)
+}
+
+fun <T> T.provider(): Provider<T> {
+    return Provider { this }
 }
 
 /**
@@ -40,4 +46,19 @@ fun <T, R : Any> assertIs(test: R?, expectedClass: Class<T>) {
         "Object should be ${expectedClass.name}, but is ${test?.javaClass?.name}",
         test != null && expectedClass.isAssignableFrom(test.javaClass)
     )
+}
+
+inline fun <reified T> assertIs(test: Any?) {
+    si.inova.kotlinova.testing.assertIs(test, T::class.java)
+}
+
+fun <T> assertIsSuccess(input: Resource<T>?) {
+    if (input is Resource.Error) {
+        throw AssertionError(
+            "Result should be Resource.Success, but is Error",
+            input.exception
+        )
+    }
+
+    assertIs<Resource.Success<T>>(input)
 }
