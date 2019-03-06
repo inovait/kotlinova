@@ -19,6 +19,7 @@ ext {
             playServices                : '15.0.1',
             retrofit                    : '2.4.0',
             threeTenAndroid             : '1.1.0',
+            picasso                     : '2.71828',
 
             // Firebase
             firebaseCore                : '16.0.1',
@@ -37,6 +38,7 @@ ext {
             roboletric                  : '3.8',
             roboletricSupport           : '3.3.2',
             mockitoAndroid              : '2.13.0',
+            uiAutomator                 : '2.2.0',
 
             unmock                      : '0.6.5',
             unmockAndroidVersion        : '8.1.0-robolectric-4611349'
