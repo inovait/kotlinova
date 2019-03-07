@@ -1,3 +1,15 @@
+## [2.2.0](http://hydra/matejd/kotlinova/v2.2.0..v2.1.1) (2019-03-06)
+
+### Features
+
+* **core:** add several test utilities ([6acb2b77](http://hydra/matejd/kotlinova/commit/6acb2b77e622a314653ffaf7be1b8e774512c3b2))
+* **android:** add PicassoIdlingResource ([dc83ba84](http://hydra/matejd/kotlinova/commit/dc83ba8459114dbebf2a15ff11a04f32c34d8b13))
+* **android:** add several espresso testing utilities ([68a3a2c9](http://hydra/matejd/kotlinova/commit/68a3a2c95b636ae5788b7f661fcd6138fe95f124))
+
+### Bug Fixes
+
+* **rx:** deprecate Single and Completable awaits ([6db67168](http://hydra/matejd/kotlinova/commit/6db67168501ce00e874f86fa648a6c1ebbf514c1))
+
 ## [2.1.1](http://hydra/matejd/kotlinova/compare/v2.1.1...v2.1.0) (2019-02-06)
 
 
