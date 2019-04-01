@@ -43,7 +43,9 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
             val oldList = data
             data = newData.copy()
             forceUpdateAllItems = false
-            updateListeners.forEach { it.invoke() }
+
+            val listeners = updateListeners.toList()
+            listeners.forEach { it.invoke() }
 
             onListUpdated(oldList, newData)
             updateCallback?.let {
@@ -62,7 +64,9 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
         val oldList = data
         data = emptyList()
         forceUpdateAllItems = false
-        updateListeners.forEach { it.invoke() }
+
+        val listeners = updateListeners.toList()
+        listeners.forEach { it.invoke() }
 
         onListUpdated(oldList, emptyList())
         updateCallback?.let {
