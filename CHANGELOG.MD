@@ -1,3 +1,9 @@
+## [2.2.1](http://hydra/matejd/kotlinova/v2.2.1..v2.2.0) (2019-04-01)
+
+### Bug Fixes
+
+* Call invoke on a copied version of listeners to allow modification while iteration ([da89929a](http://hydra/matejd/kotlinova/commit/da89929af775f2ea44d4c8b3bfc5cc58d5f944d2))
+
 ## [2.2.0](http://hydra/matejd/kotlinova/v2.2.0..v2.1.1) (2019-03-06)
 
 ### Features
