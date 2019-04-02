@@ -16,7 +16,9 @@ dependencies {
 
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    compileOnly "org.assertj:assertj-core:${versions.assertJ}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
+    testImplementation "org.assertj:assertj-core:${versions.assertJ}"
 }
