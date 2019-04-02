@@ -53,7 +53,7 @@ try {
             }
             stage('Emulator Test') {
                 android.withEmulator {
-                    bat('taskkill /IM emulator.exe /F')
+                    bat 'gradlew connectedDebugAndroidTest'
                 }
             }
             stage('Calculate coverage') {
