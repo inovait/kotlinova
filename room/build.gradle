@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: "kotlin-allopen"
+apply plugin: 'de.mobilej.unmock'
+
+ext {
+    POM_ARTIFACT_ID = "room"
+}
+apply from: '../maven-push.gradle'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        consumerProguardFiles 'proguard-rules.pro'
+
+        multiDexEnabled true
+    }
+
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
+
+    lintOptions {
+        lintConfig file('lint.xml')
+    }
+
+    packagingOptions {
+        exclude 'META-INF/main.kotlin_module'
+    }
+}
+
+dependencies {
+    implementation "si.inova.kotlinova:core:${VERSION}"
+    implementation "si.inova.kotlinova:android:${VERSION}"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
+    implementation "androidx.core:core-ktx:${versions.ktx}"
+
+    implementation "androidx.room:room-runtime:${versions.room}"
+    kapt "androidx.room:room-compiler:${versions.room}"
+
+
+    compileOnly "junit:junit:${versions.junit}"
+    compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    compileOnly "androidx.test.espresso:espresso-core:${versions.espresso}"
+    compileOnly "androidx.test.uiautomator:uiautomator:${versions.uiAutomator}"
+    compileOnly "androidx.test:rules:${versions.androidTestRunner}"
+
+    testImplementation "junit:junit:${versions.junit}"
+    testImplementation "org.assertj:assertj-core:${versions.assertJ}"
+    testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
+
+    androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"
+    androidTestImplementation "androidx.test:rules:${versions.androidTestRunner}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.test.ext:junit:${versions.androidXjunit}"
+    androidTestImplementation "org.assertj:assertj-core:${versions.assertJ}"
+    kaptAndroidTest "androidx.room:room-compiler:${versions.room}"
+}

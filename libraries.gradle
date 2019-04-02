@@ -20,6 +20,7 @@ ext {
             retrofit                    : '2.4.0',
             threeTenAndroid             : '1.1.0',
             picasso                     : '2.71828',
+            room                        : '2.0.0',
 
             // Firebase
             firebaseCore                : '16.0.1',
@@ -35,6 +36,7 @@ ext {
             androidTestRunner           : '1.1.0',
             espresso                    : '3.1.0',
             mockitoKotlin               : '2.0.0-alpha02',
+            assertJ                     : '3.11.1',
             roboletric                  : '3.8',
             roboletricSupport           : '3.3.2',
             mockitoAndroid              : '2.13.0',
