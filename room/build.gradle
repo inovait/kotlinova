@@ -47,13 +47,16 @@ android {
 dependencies {
     implementation "si.inova.kotlinova:core:${VERSION}"
     implementation "si.inova.kotlinova:android:${VERSION}"
+    implementation "si.inova.kotlinova:rx:${VERSION}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
+    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxKotlin}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "androidx.core:core-ktx:${versions.ktx}"
 
     implementation "androidx.room:room-runtime:${versions.room}"
     kapt "androidx.room:room-compiler:${versions.room}"
-
 
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
@@ -68,6 +71,7 @@ dependencies {
     androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"
     androidTestImplementation "androidx.test:rules:${versions.androidTestRunner}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.test.espresso.idling:idling-concurrent:${versions.espresso}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidXjunit}"
     androidTestImplementation "org.assertj:assertj-core:${versions.assertJ}"
     kaptAndroidTest "androidx.room:room-compiler:${versions.room}"
