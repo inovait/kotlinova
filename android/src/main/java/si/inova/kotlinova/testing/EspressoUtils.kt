@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.ViewInteraction
@@ -56,5 +57,19 @@ class ViewNonexistentOrInvisible() : ViewAssertion {
 
         val notDisplayedAssertion = matches(not(ViewMatchers.isDisplayed()))
         notDisplayedAssertion.check(view, noViewFoundException)
+    }
+}
+
+/**
+ * Loop until this specific idling resource becomes idle
+ */
+fun IdlingResource.waitUntilIdle(timeoutMs: Long = 5000, periodMs: Long = 10) {
+    val end = System.currentTimeMillis() + timeoutMs
+
+    while (!isIdleNow) {
+        if (System.currentTimeMillis() >= end) {
+            throw AssertionError("IdlingResource $this is not idle after timeout")
+        }
+        Thread.sleep(periodMs)
     }
 }
