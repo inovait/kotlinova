@@ -25,7 +25,8 @@ import kotlin.coroutines.CoroutineContext
  */
 class JobCheckingDispatcherWrapper(private val parent: CoroutineDispatcher) :
     CoroutineDispatcher() {
-    private val jobs = Collections.newSetFromMap(WeakHashMap<Job, Boolean>())
+    private val jobs =
+        Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Job, Boolean>()))
 
     var completionEvent: (() -> Unit)? = null
 
@@ -55,7 +56,9 @@ class JobCheckingDispatcherWrapper(private val parent: CoroutineDispatcher) :
 
     val isAnyJobRunning: Boolean
         get() {
-            jobs.removeAll { !it.isActive }
+            synchronized(jobs) {
+                jobs.removeAll { !it.isActive }
+            }
 
             return jobs.isNotEmpty()
         }
