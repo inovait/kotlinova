@@ -8,7 +8,8 @@ import org.assertj.core.api.ObjectAssert
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.value
 
-fun <S : AbstractAssert<S, out Resource<T>>, T> AbstractAssert<S, out Resource<T>>.isSuccess(): ObjectAssert<Resource.Success<T>> {
+fun <S : AbstractAssert<S, out Resource<T>>, T>
+    AbstractAssert<S, out Resource<T>>.isSuccess(): ObjectAssert<Resource.Success<T>> {
     satisfies { input ->
         if (input is Resource.Error<*>) {
             throw AssertionError(
@@ -16,20 +17,20 @@ fun <S : AbstractAssert<S, out Resource<T>>, T> AbstractAssert<S, out Resource<T
                 input.exception
             )
         }
-
     }
 
     isInstanceOf(Resource.Success::class.java)
     return assertThat(this.actualValue as Resource.Success<T>)
 }
 
-fun <S : AbstractAssert<S, out Resource<T>>, T> AbstractAssert<S, out Resource<T>>.assertThatValue(): ObjectAssert<T?> {
+fun <S : AbstractAssert<S, out Resource<T>>, T>
+    AbstractAssert<S, out Resource<T>>.assertThatValue(): ObjectAssert<T?> {
     @Suppress("UNCHECKED_CAST")
     return assertThat(this.actualValue.value)
 }
 
-fun <S : AbstractAssert<S, out Resource<T>>, T> AbstractAssert<S, out Resource<T>>.isLoading()
-    : ObjectAssert<Resource.Loading<T>> {
+fun <S : AbstractAssert<S, out Resource<T>>, T>
+    AbstractAssert<S, out Resource<T>>.isLoading(): ObjectAssert<Resource.Loading<T>> {
     satisfies { input ->
         if (input is Resource.Error<*>) {
             throw AssertionError(
@@ -37,8 +38,6 @@ fun <S : AbstractAssert<S, out Resource<T>>, T> AbstractAssert<S, out Resource<T
                 input.exception
             )
         }
-
-
     }
 
     isInstanceOf(Resource.Loading::class.java)
@@ -70,9 +69,7 @@ fun <S : AbstractAssert<S, out Resource<T>>, T>
 }
 
 fun <S : AbstractAssert<S, out Resource<T>>, T>
-    AbstractAssert<S, out Resource<T>>.isErrorSatisfying(
-    requirements: (Throwable) -> Unit
-): S {
+    AbstractAssert<S, out Resource<T>>.isErrorSatisfying(requirements: (Throwable) -> Unit): S {
     return satisfies { input ->
         isInstanceOf(Resource.Error::class.java)
         input as Resource.Error<*>
@@ -82,9 +79,7 @@ fun <S : AbstractAssert<S, out Resource<T>>, T>
 }
 
 fun <S : AbstractAssert<S, out Resource<T>>, T>
-    AbstractAssert<S, out Resource<T>>.isError(
-    errorClass: Class<out Throwable>
-): S {
+    AbstractAssert<S, out Resource<T>>.isError(errorClass: Class<out Throwable>): S {
     return isErrorSatisfying {
         assertThat(it).isInstanceOf(errorClass)
     }
