@@ -23,8 +23,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         consumerProguardFiles 'proguard-rules.pro'
-
-        multiDexEnabled true
     }
 
 
@@ -71,7 +69,6 @@ dependencies {
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
-    compileOnly "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
     compileOnly "androidx.test.espresso:espresso-core:${versions.espresso}"
