@@ -8,6 +8,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import si.inova.kotlinova.coroutines.TestableDispatchers
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Class that helps with processing stream of items asynchronously.
@@ -17,15 +18,18 @@ import si.inova.kotlinova.coroutines.TestableDispatchers
  *
  * @author Matej Drobnic
  */
-class LastResultAsyncItemProcessor<I, O> {
+class LastResultAsyncItemProcessor<I, O>(
+    private val processingContext: CoroutineContext = TestableDispatchers.Default,
+    private val callbackContext: CoroutineContext = TestableDispatchers.Main
+) {
     @Volatile
     private var lastJob: Job? = null
 
     fun process(input: I, callback: (O) -> Unit, process: suspend CoroutineScope.(I) -> O) {
         lastJob?.cancel()
 
-        lastJob = GlobalScope.launch(TestableDispatchers.Main, CoroutineStart.DEFAULT, {
-            val result = withContext(TestableDispatchers.Default) {
+        lastJob = GlobalScope.launch(callbackContext, CoroutineStart.DEFAULT, {
+            val result = withContext(processingContext) {
                 process(input)
             }
 
