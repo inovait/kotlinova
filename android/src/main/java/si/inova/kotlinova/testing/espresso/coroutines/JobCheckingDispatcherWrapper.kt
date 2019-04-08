@@ -1,14 +1,3 @@
-/*
- * Copyright © 2016, Connected Travel, LLC – All Rights Reserved.
- *
- * All information contained herein is property of Connected Travel, LLC including, but
- * not limited to, technical and intellectual concepts which may be embodied within.
- *
- * Dissemination or reproduction of this material is strictly forbidden unless prior written
- * permission, via license, is obtained from Connected Travel, LLC. If permission is obtained,
- * this notice, and any other such legal notices, must remain unaltered.
- */
-
 package si.inova.kotlinova.testing.espresso.coroutines
 
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,7 +14,8 @@ import kotlin.coroutines.CoroutineContext
  */
 class JobCheckingDispatcherWrapper(private val parent: CoroutineDispatcher) :
     CoroutineDispatcher() {
-    private val jobs = Collections.newSetFromMap(WeakHashMap<Job, Boolean>())
+    private val jobs =
+        Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Job, Boolean>()))
 
     var completionEvent: (() -> Unit)? = null
 
@@ -55,7 +45,9 @@ class JobCheckingDispatcherWrapper(private val parent: CoroutineDispatcher) :
 
     val isAnyJobRunning: Boolean
         get() {
-            jobs.removeAll { !it.isActive }
+            synchronized(jobs) {
+                jobs.removeAll { !it.isActive }
+            }
 
             return jobs.isNotEmpty()
         }

@@ -23,8 +23,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         consumerProguardFiles 'proguard-rules.pro'
-
-        multiDexEnabled true
     }
 
 
@@ -71,19 +69,19 @@ dependencies {
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
-    compileOnly "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
     compileOnly "androidx.test.espresso:espresso-core:${versions.espresso}"
     compileOnly "androidx.test.uiautomator:uiautomator:${versions.uiAutomator}"
     compileOnly "androidx.test:rules:${versions.androidTestRunner}"
     compileOnly "com.squareup.picasso:picasso:${versions.picasso}"
+    compileOnly "org.assertj:assertj-core:${versions.assertJ}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
-    testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    testImplementation "org.assertj:assertj-core:${versions.assertJ}"
 
     androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"
     androidTestImplementation "androidx.test:rules:${versions.androidTestRunner}"
@@ -91,4 +89,5 @@ dependencies {
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidXjunit}"
+    androidTestImplementation "org.assertj:assertj-core:${versions.assertJ}"
 }

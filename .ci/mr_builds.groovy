@@ -2,10 +2,9 @@
 @Library(value = 'Inova Commons', changelog = false) _
 
 def abortPreviousRunningBuilds() {
-    def hi = Hudson.instance
-    def projectName = env.JOB_NAME.split('/')[0]
+    def hi = Jenkins.getInstanceOrNull() as Hudson
 
-    hi.getItem(projectName).getItem(env.JOB_BASE_NAME).getBuilds().each { build ->
+    hi.getItemByFullName(env.JOB_NAME).getBuilds().each { build ->
         def exec = build.getExecutor()
 
         if (build.number < currentBuild.number && exec != null) {
@@ -54,7 +53,7 @@ try {
             }
             stage('Emulator Test') {
                 android.withEmulator {
-                    bat('taskkill /IM emulator.exe /F')
+                    bat 'gradlew connectedDebugAndroidTest'
                 }
             }
             stage('Calculate coverage') {

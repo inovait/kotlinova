@@ -10,11 +10,6 @@ node('android') {
                 url: 'git@hydra:matejd/kotlinova.git')
     }
 
-    if (newVersion == null) {
-        println("Release not created. Aborting")
-        return
-    }
-
     def curVersion = gitParsing.getLastVersion()
     if (curVersion == null) {
         throw IllegalArgumentException("Git does not contain version tags")
