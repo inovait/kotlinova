@@ -1,3 +1,23 @@
+## [2.3.0](http://hydra/matejd/kotlinova/compare/v2.3.0..v2.2.1) (2019-04-08)
+
+### Features
+
+* **room:** add RoomLoadableResource ([194fadad](http://hydra/matejd/kotlinova/commit/194fadad2c4a8655c41d39e3bd5437fb5d6dc65b))
+* build project with Java 8 desugaring ([e9602712](http://hydra/matejd/kotlinova/commit/e9602712384007acab52cc8ea0173f9512509180))
+* **room:** add WeakInvalidationObserver ([6553f6c4](http://hydra/matejd/kotlinova/commit/6553f6c49cc4df7177fdf5867f10d0d1ec5113e9))
+* **rx:** add LoadableResource ([7b38a307](http://hydra/matejd/kotlinova/commit/7b38a3072eb1ecbcc1f661662513e68ac5e4f871))
+* **core:** automatically cast resource utilities, add more resource utilities ([2c964996](http://hydra/matejd/kotlinova/commit/2c96499662871ac78aee0bd777d984c8e4a32b2c))
+* **core:** add more AssertJ utilities ([1e1b9921](http://hydra/matejd/kotlinova/commit/1e1b9921d4f7870b1d0784a393dc8c4ac0b33db3))
+* **android:** add IdlingResource.waitUntilIdle utility ([1d8ce2b0](http://hydra/matejd/kotlinova/commit/1d8ce2b016b5fe165e9d699284888d3e89ed458b))
+* **android:** add per-test ignore notification to IdlingResourceRule ([e820cc55](http://hydra/matejd/kotlinova/commit/e820cc55db265408d396138eafe6565cb85e1420))
+* **android:** add dispatcher selection to LastResultAsyncItemProcessor ([76d5731f](http://hydra/matejd/kotlinova/commit/76d5731ff3a6ad34af7ef4c7eefcb29d9c0a9f78))
+* add room module ([5469bef4](http://hydra/matejd/kotlinova/commit/5469bef4ee7b599866bea54f133c0cf6a3566fb3))
+* add AssertJ assertion helpers ([b4c35f48](http://hydra/matejd/kotlinova/commit/b4c35f48bb25e03cb8179a5df127c6ad791a651f))
+
+### Bug Fixes
+
+* **android:** thread races in JobCheckingDispatcherWrapper ([023d4248](http://hydra/matejd/kotlinova/commit/023d424819ccdfba3d7bb45248acba99013428fc))
+
 ## [2.2.1](http://hydra/matejd/kotlinova/v2.2.1..v2.2.0) (2019-04-01)
 
 ### Bug Fixes
