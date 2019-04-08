@@ -64,7 +64,6 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.robolectric:robolectric:${versions.roboletric}"
-    testImplementation "org.robolectric:shadows-support-v4:${versions.roboletricSupport}"
     testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
 
