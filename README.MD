@@ -14,7 +14,7 @@ Set of common utility classes for Kotlin projects, primarily based on Kotlin cor
 
 ## Modules
 
-Replace `X.Y.Z` with latest version. Check out [changelog](http://hydra/matejd/kotlinova/blob/master/CHANGELOG.MD) to see what is the latest version. For simplicity's sake, every module has the same version number.
+Replace `X.Y.Z` with latest version. Check out [changelog](http://hydra/utilities/kotlinova/blob/master/CHANGELOG.MD) to see what is the latest version. For simplicity's sake, every module has the same version number.
 
 Some Kotlinova modules are either native JVM (can be used in all JVM applications),
 while others are Android-only.
@@ -59,7 +59,7 @@ Utilities for integrating Firebase with Kotlin's coroutines, Firestore mocks for
 
 This library uses [Semantic Versioning](https://semver.org/). Version number is updated automatically whenever new release is built.
 
-When updating, it is recommended that you check out [changelog](http://hydra/matejd/kotlinova/blob/master/CHANGELOG.MD) first to see the changes, especially if there was major version change.
+When updating, it is recommended that you check out [changelog](http://hydra/utilities/kotlinova/blob/master/CHANGELOG.MD) first to see the changes, especially if there was major version change.
 
 ## Contributing
 

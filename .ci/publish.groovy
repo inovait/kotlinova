@@ -7,7 +7,7 @@ node('android') {
     stage('Git pull') {
         git(branch: 'master',
                 credentialsId: '388b013e-c31a-4a8c-aad6-bb06aff2a513',
-                url: 'git@hydra:matejd/kotlinova.git')
+                url: 'git@hydra:utilities/kotlinova.git')
     }
 
     def curVersion = gitParsing.getLastVersion()
@@ -44,7 +44,7 @@ node('android') {
             commits,
             curVersionName,
             newVersionName,
-            "http://hydra/matejd/kotlinova/")
+            "http://hydra/utilities/kotlinova/")
 
     stage('Update Version') {
         def versionProperties = "MAJOR=${newVersion[0]}\n" +
