@@ -67,7 +67,7 @@ To contribute to this set of libraries:
 
 1. Checkout `master`
 2. Create new branch for your contribution
-3. Commit your work. While commiting use [semantic commit messages](http://karma-runner.github.io/0.10/dev/git-commit-msg.html). Scope tag should be the name of the module you are updating.
+3. Commit your work. While commiting use [semantic commit messages](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit). Scope tag should be the name of the module you are updating.
 4. Try to avoid breaking changes, but if it cannot be avoided, you must put `BREAKING CHANGE` in the footer of the commit mesasage and explain the change.
 5. Create merge request
 6. When your MR is merged, new release will be generated automatically
