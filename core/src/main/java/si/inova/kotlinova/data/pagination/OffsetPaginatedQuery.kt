@@ -2,11 +2,9 @@ package si.inova.kotlinova.data.pagination
 
 /**
  * [PaginatedQuery] that provides page by offset property
- *
- * @author Kristjan Kotnik
  */
 class OffsetPaginatedQuery<T>(
-    private val queryPerformer: (Int) -> Deferred<List<T>>
+    private val queryPerformer: suspend (Int) -> List<T>
 ) : PaginatedQuery<T> {
     @Volatile
     override var isAtEnd: Boolean = false
@@ -20,7 +18,7 @@ class OffsetPaginatedQuery<T>(
             return emptyList()
         }
 
-        val performQuery = queryPerformer(offset).await()
+        val performQuery = queryPerformer(offset)
         offset += performQuery.size
         isAtEnd = performQuery.isEmpty()
         return performQuery
