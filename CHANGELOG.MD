@@ -1,3 +1,9 @@
+## [2.4.0](http://hydra/matejd/kotlinova/compare/v2.3.0...v2.4.0) (2019-04-29)
+
+### Features
+
+* offset paginated query ([ec4d19e5](http://hydra/matejd/kotlinova/commit/ec4d19e5d3bc0a7ef487b2a69970813ecd47e036))
+
 ## [2.3.0](http://hydra/utilities/kotlinova/compare/v2.3.0..v2.2.1) (2019-04-08)
 
 ### Features
