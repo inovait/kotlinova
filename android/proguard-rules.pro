@@ -26,3 +26,8 @@
 # to not pollute main class path. This however causes warnings in proguard.
 -dontwarn android.support.v4.app.TestFragmentAccessorsKt
 -dontwarn si.inova.kotlinova.testing.**
+
+-dontwarn si.inova.kotlinova.rx.testing.**
+-dontwarn com.squareup.picasso.PicassoIdlingResource
+-dontwarn androidx.fragment.app.TestFragmentAccessorsKt
+-dontwarn com.squareup.picasso.PicassoIdlingResource$2
