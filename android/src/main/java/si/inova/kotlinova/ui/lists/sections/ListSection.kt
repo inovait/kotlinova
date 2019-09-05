@@ -12,7 +12,7 @@ import timber.log.Timber
  * @author Matej Drobnic
  */
 abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH>(),
-    ListDiffProvider<T> {
+        ListDiffProvider<T> {
     final var data: List<T>? = null
         protected set
 
@@ -30,7 +30,7 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
     /**
      * Update list of items that this section displays.
      *
-     * Note that this method will trigger asynchronous operation that will perform actual update
+     * Note that this method may only trigger asynchronous operation that will perform actual update
      * later in the future.
      */
     fun updateList(newData: List<T>) {
@@ -39,13 +39,35 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
             return
         }
 
+        if (data.isNullOrEmpty()) {
+            data = newData.copy()
+            forceUpdateAllItems = false
+
+            invokeUpdateListeners(emptyList(), newData)
+            updateCallback?.onInserted(0, newData.size)
+
+            return
+        }
+
+        if (newData.isEmpty()) {
+            val oldList = data
+            data = newData.copy()
+            forceUpdateAllItems = false
+
+            invokeUpdateListeners(oldList, newData)
+            if (oldList?.isNotEmpty() == true) {
+                updateCallback?.onRemoved(0, oldList.size)
+            }
+
+            return
+        }
+
         asyncListDiffComputer.computeDiffs(this, data, newData) { result ->
             val oldList = data
             data = newData.copy()
             forceUpdateAllItems = false
 
-            val listeners = updateListeners.toList()
-            listeners.forEach { it.invoke() }
+            invokeUpdateListeners(oldList, newData)
 
             onListUpdated(oldList, newData)
             updateCallback?.let {
@@ -54,26 +76,22 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
         }
     }
 
-    /**
-     * Clear this section immediatelly.
-     *
-     * Unlike performing *updateList(emptyList())*, this method clears the list immediatelly without
-     * any asynchronous operations that performs actual list update some time in the future.
-     */
-    fun clearList() {
-        val oldList = data
-        data = emptyList()
-        forceUpdateAllItems = false
-
+    private fun invokeUpdateListeners(oldList: List<T>?, newList: List<T>) {
         val listeners = updateListeners.toList()
         listeners.forEach { it.invoke() }
 
-        onListUpdated(oldList, emptyList())
-        updateCallback?.let {
-            if (oldList != null) {
-                it.onRemoved(0, oldList.size)
-            }
-        }
+        onListUpdated(oldList, newList)
+    }
+
+    /**
+     * Clear this section immediatelly.
+     */
+    @Deprecated(
+            "updateList also has synchronous behavior now when inserting empty list",
+            replaceWith = ReplaceWith("updateList(emptyList())")
+    )
+    fun clearList() {
+        updateList(emptyList())
     }
 
     protected fun onListUpdated(oldList: List<T>?, newList: List<T>) {

@@ -13,6 +13,7 @@ import org.reactivestreams.Publisher
 import si.inova.kotlinova.archcomponents.ResourcePublisherLiveData
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.value
+import kotlin.reflect.KProperty
 
 /**
  * @author Matej Drobnic
@@ -220,3 +221,15 @@ fun <T> LiveData<T>.toMediator(): MediatorLiveData<T> {
 fun <T> liveDataOf(value: T?): LiveData<T> {
     return MutableLiveData<T>().apply { this.value = value }
 }
+
+/**
+ * Operator extension that allows implementing any LiveData as property delegate
+ *
+ * For example:
+ *
+ *     private val _data = MutableLiveData<String>()
+ *     val data by _data
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun <T> LiveData<T>.getValue(thisRef: Any?, property: KProperty<*>): LiveData<T> =
+        this

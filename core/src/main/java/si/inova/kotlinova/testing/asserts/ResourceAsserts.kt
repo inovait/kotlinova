@@ -64,7 +64,7 @@ fun <S : AbstractAssert<S, out Resource<T>>, T>
         @Suppress("UNCHECKED_CAST")
         it as Resource.Loading<T>
 
-        assertThat(it.data).describedAs("Success Resource's data").isEqualTo(value)
+        assertThat(it.data).describedAs("Loading Resource's data").isEqualTo(value)
     }
 }
 
