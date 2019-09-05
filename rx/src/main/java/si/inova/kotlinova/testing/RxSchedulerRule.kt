@@ -20,13 +20,11 @@ import java.util.concurrent.Callable
  * @author https://github.com/Plastix/RxSchedulerRule/blob/master/rx2/src/main/java/
  * io/github/plastix/rxschedulerrule/RxSchedulerRule.java, Adapted by Matej Drobnic
  */
-class RxSchedulerRule : TestRule {
-    private val SCHEDULER_INSTANCE = Schedulers.trampoline()
-
-    private val schedulerFunction = Function<Scheduler, Scheduler> { SCHEDULER_INSTANCE }
+class RxSchedulerRule(private val scheduler: Scheduler = Schedulers.trampoline()) : TestRule {
+    private val schedulerFunction = Function<Scheduler, Scheduler> { scheduler }
 
     private val schedulerFunctionLazy =
-        Function<Callable<Scheduler>, Scheduler> { SCHEDULER_INSTANCE }
+            Function<Callable<Scheduler>, Scheduler> { scheduler }
 
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
