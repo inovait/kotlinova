@@ -1,5 +1,6 @@
 package si.inova.kotlinova.archcomponents
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -14,6 +15,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 private val lifecycleJobs = WeakHashMap<Lifecycle, Job>()
 
+// Warning suppressed until LifecycleEventObserver is promoted to stable ktx release
+@SuppressLint("RestrictedApi")
 private fun Lifecycle.createJob(cancelEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY): Job =
     Job().also { job ->
         addObserver(object : GenericLifecycleObserver {
