@@ -29,11 +29,13 @@ class FragmentArgument<T : Any> : kotlin.properties.ReadWriteProperty<Fragment, 
     }
 
     override operator fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
+        if (this.value == value) return
         val arguments = thisRef.arguments ?: Bundle()
 
         val key = property.name
 
         arguments[key] = value
+        this.value = value
         thisRef.arguments = arguments
     }
 }
