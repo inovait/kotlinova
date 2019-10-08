@@ -49,8 +49,41 @@ class FragmentArgumentTest {
         assertEquals(35, recreatedFragment.secondIntNullArgument)
     }
 
+    @Test
+    fun testArgumentsSetImmediately() {
+        val activity = Robolectric.buildActivity(DummyFragmentActivity::class.java).create()
+        val fragment = TestFragment().apply {
+            twentyWhichLaterShouldBeForty = 20
+            testString = "TeST"
+
+            intNullArgument = null
+            secondIntNullArgument = 35
+        }
+
+        val outState = Bundle()
+        activity.apply {
+            get().supportFragmentManager.beginTransaction().replace(1, fragment).commitNow()
+            saveInstanceState(outState)
+            destroy()
+        }
+
+        val secondActivity =
+            Robolectric.buildActivity(DummyFragmentActivity::class.java).create(outState).get()
+
+        val recreatedFragment =
+            secondActivity.supportFragmentManager.findFragmentById(1) as TestFragment
+
+        recreatedFragment.twentyWhichLaterShouldBeForty = 40
+
+        assertEquals(40, recreatedFragment.twentyWhichLaterShouldBeForty)
+        assertEquals("TeST", recreatedFragment.testString)
+        assertEquals(null, recreatedFragment.intNullArgument)
+        assertEquals(35, recreatedFragment.secondIntNullArgument)
+    }
+
     class TestFragment : Fragment() {
         var twenty by FragmentArgument<Int>()
+        var twentyWhichLaterShouldBeForty by FragmentArgument<Int>()
         var testString by FragmentArgument<String>()
 
         var intNullArgument by NullableFragmentArgument<Int>()
