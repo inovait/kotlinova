@@ -49,8 +49,16 @@ class FragmentArgumentTest {
         assertEquals(35, recreatedFragment.secondIntNullArgument)
     }
 
+    @Test
+    fun testArgumentsSetImmediately() {
+        val fragment = TestFragment().apply { twentyWhichLaterShouldBeForty = 20 }
+        fragment.twentyWhichLaterShouldBeForty = 40
+        assertEquals(40, fragment.twentyWhichLaterShouldBeForty)
+    }
+
     class TestFragment : Fragment() {
         var twenty by FragmentArgument<Int>()
+        var twentyWhichLaterShouldBeForty by FragmentArgument<Int>()
         var testString by FragmentArgument<String>()
 
         var intNullArgument by NullableFragmentArgument<Int>()
