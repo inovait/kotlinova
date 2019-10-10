@@ -137,7 +137,7 @@ class MockDocument<T>(val key: String) {
         }
 
         whenever(ref.update(any<Map<String, Any>>())).then {
-            if (!ref.get().result.exists()) {
+            if (ref.get().result?.exists() != true) {
                 throw IllegalStateException(
                     "DocumentReference.update() can only be called " +
                         "when there is existing value"
@@ -175,6 +175,6 @@ class MockDocument<T>(val key: String) {
     }
 
     fun toDocumentSnap(): DocumentSnapshot {
-        return toDocumentRef().get().result
+        return toDocumentRef().get().result!!
     }
 }

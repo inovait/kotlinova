@@ -5,6 +5,7 @@
 
 package si.inova.kotlinova.testing
 
+import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
@@ -12,7 +13,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.first
-import org.robolectric.shadows.ShadowSystemClock
 import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.resources.Resource
@@ -27,7 +27,7 @@ fun advanceTime(ms: Int) {
 }
 
 fun advanceTime(ms: Long) {
-    ShadowSystemClock.sleep(ms)
+    SystemClock.sleep(ms)
 }
 
 suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> {
