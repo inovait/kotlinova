@@ -16,13 +16,13 @@ import kotlin.coroutines.resumeWithException
  */
 suspend fun <T> CancellableTask<T>.await(): T {
     if (this.isSuccessful) {
-        return this.result
+        return this.result!!
     }
 
     return suspendCancellableCoroutine { continuation ->
         addOnCompleteListener {
             if (it.isSuccessful) {
-                continuation.resume(it.result)
+                continuation.resume(it.result!!)
             } else {
                 continuation.resumeWithException(it.exception!!)
             }
