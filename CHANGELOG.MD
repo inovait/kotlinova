@@ -1,3 +1,21 @@
+## [2.5.0](http://hydra/matejd/kotlinova/compare/v2.4.0...v2.5.0) (2019-10-10)
+
+### Features
+
+* **android:** horizontal recycler list section ([feed1478](http://hydra/matejd/kotlinova/commit/feed14784df8454a5622a222b6f98a7726e2c009))
+* **android:** add a way to launch coroutines in Lifecycle scope ([d6791606](http://hydra/matejd/kotlinova/commit/d67916068ea139e8f52bb73d7eaa447cabc3151d))
+* **android:** add AlwaysActiveLifecycleOwner ([63bc4469](http://hydra/matejd/kotlinova/commit/63bc446962e2cb4116ba1dccaef86e38c0b15224))
+* **android:** add LiveData delegate utils ([d1091902](http://hydra/matejd/kotlinova/commit/d1091902f53d6f043026523be27f4f0cb3c03432))
+* **rx:** allow scheduler declaring on RxSchedulerRule ([b3e10ecd](http://hydra/matejd/kotlinova/commit/b3e10ecd11766a30826ad34f59152e636a4c75a5))
+* **android:** bypass ListSection's async processing on empty lists ([96a93abf](http://hydra/matejd/kotlinova/commit/96a93abfd62edf40b5b3b50848f08cacce6c9862))
+
+### Bug Fixes
+
+* fix nullability issues to allow build ([2a5c6ff0](http://hydra/matejd/kotlinova/commit/2a5c6ff01deda1f59bf10747b7930169c37cbbba))
+* set fragment argument value immediately ([51c1d869](http://hydra/matejd/kotlinova/commit/51c1d869a35a7aca3cb5828c9e53cb1592891d12))
+* **android:** add missing proguard rules ([5004b8dd](http://hydra/matejd/kotlinova/commit/5004b8ddc5c0a2da37c3f1bc7dc9e15a93971c5d))
+* **core:** isLoadingWithValue error message ([59bacd9e](http://hydra/matejd/kotlinova/commit/59bacd9e56a481c83f31a398e807f8c482c26b02))
+
 ## [2.4.0](http://hydra/matejd/kotlinova/compare/v2.3.0...v2.4.0) (2019-04-29)
 
 ### Features
