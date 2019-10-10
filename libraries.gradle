@@ -21,14 +21,15 @@ ext {
             threeTenAndroid             : '1.1.0',
             picasso                     : '2.71828',
             room                        : '2.0.0',
+            guava                       : '28.1-android',
 
             // Firebase
-            firebaseCore                : '16.0.1',
-            firebaseAuth                : '16.0.2',
-            firebaseFirestore           : '17.0.2',
-            firebaseMessaging           : '17.1.0',
-            firebaseStorage             : '16.0.1',
-            firebaseInvites             : '16.0.1',
+            firebaseCore                : '17.2.0',
+            firebaseAuth                : '19.1.0',
+            firebaseFirestore           : '21.1.1',
+            firebaseMessaging           : '20.0.0',
+            firebaseStorage             : '19.1.0',
+            firebaseInvites             : '17.0.0',
 
             //Testing
             junit                       : '4.12',

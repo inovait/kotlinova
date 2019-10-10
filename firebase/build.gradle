@@ -49,6 +49,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
 
+    // Explicitly include guava to resolve dependency conflicts between robolectric and firebase
+    implementation "com.google.guava:guava:${versions.guava}"
+
     implementation "com.google.firebase:firebase-core:${versions.firebaseCore}"
     implementation "com.google.firebase:firebase-auth:${versions.firebaseAuth}"
     implementation "com.google.firebase:firebase-firestore:${versions.firebaseFirestore}"
