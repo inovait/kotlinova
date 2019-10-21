@@ -32,31 +32,32 @@ try {
         }
     }
 
-    node('android') {
+    node('android-linux') {
         try {
             stage('Start') {
                 checkout scm
                 updateGitlabCommitStatus name: 'jenkins', state: 'running'
             }
             stage('Build app') {
-                bat 'gradlew clean assemble'
+                sh './gradlew clean assemble'
             }
             stage('Lint') {
-                bat 'gradlew ktlint lintDebug'
+                sh './gradlew ktlint lintDebug'
             }
             stage('Build tests') {
-                bat 'gradlew compileDebugUnitTestSources assembleAndroidTest ' +
+                sh './gradlew compileDebugUnitTestSources assembleAndroidTest ' +
                         'compileTestJava compileTestKotlin'
             }
             stage('Test') {
-                bat 'gradlew test'
+                sh './gradlew test'
             }
             stage('Emulator Test') {
                 android.withEmulator {
-                    bat 'gradlew connectedDebugAndroidTest'
+                    sh './gradlew connectedDebugAndroidTest'
                 }
             }
             stage('Calculate coverage') {
+
                 jacoco classPattern: '**/classes, **/kotlin-classes/debug',
                         exclusionPattern: '**/R.class, **/R$*.class, **/BuildConfig.*, **/Manifest*.*, **/*Test*.*, android/**/*.*',
                         sourceInclusionPattern: '**/*.java, **/*.kt',
