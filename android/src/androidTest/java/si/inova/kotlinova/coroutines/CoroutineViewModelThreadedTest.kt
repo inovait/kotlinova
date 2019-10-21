@@ -1,6 +1,6 @@
 package si.inova.kotlinova.coroutines
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.espresso.Espresso
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Job
@@ -21,8 +21,6 @@ import si.inova.kotlinova.utils.awaitUnlockIfLocked
 class CoroutineViewModelThreadedTest {
     @get:Rule
     val exceptionRule = UncaughtExceptionThrowRule()
-    @get:Rule
-    val liveDataFixRule = InstantTaskExecutorRule()
 
     @Test(timeout = 10_000)
     fun concurrentLaunches() = runBlocking {
@@ -47,8 +45,10 @@ class CoroutineViewModelThreadedTest {
                 testViewModel.testTaskInvokingCallback()
             }
 
+            Espresso.onIdle()
             testViewModel.latch.unlock()
             testViewModel.publicParentJob().children.forEach { it.join() }
+            Espresso.onIdle()
 
             verify(callback).invoke()
             assertIs(testViewModel.resourceA.value, Resource.Success::class.java)

@@ -3,7 +3,7 @@ import java.util.regex.Pattern
 //noinspection GroovyUnusedAssignment
 @Library(value = 'Inova Commons', changelog = false) _
 
-node('android') {
+node('android-linux') {
     stage('Git pull') {
         git(branch: 'master',
                 credentialsId: '388b013e-c31a-4a8c-aad6-bb06aff2a513',
@@ -55,21 +55,21 @@ node('android') {
 
     try {
         stage('Build app') {
-            bat 'gradlew clean assemble'
+            sh './gradlew clean assemble'
         }
         stage('Lint') {
-            bat 'gradlew ktlint lintDebug'
+            sh './gradlew ktlint lintDebug'
         }
         stage('Build tests') {
-            bat 'gradlew compileDebugUnitTestSources assembleAndroidTest ' +
+            sh './gradlew compileDebugUnitTestSources assembleAndroidTest ' +
                     'compileTestJava compileTestKotlin'
         }
         stage('Test') {
-            bat 'gradlew test'
+            sh './gradlew test'
         }
         stage('Emulator Test') {
             android.withEmulator {
-                bat 'gradlew connectedDebugAndroidTest'
+                sh './gradlew connectedDebugAndroidTest'
             }
         }
         stage('Calculate coverage') {
@@ -80,7 +80,7 @@ node('android') {
                     execPattern: '**/*.exec **/*.ex'
         }
         stage('Publish') {
-            bat 'gradlew uploadArchives'
+            sh './gradlew uploadArchives'
         }
     } finally {
         androidLint()
