@@ -38,6 +38,6 @@ val Lifecycle.job: Job
 fun LifecycleOwner.launch(
     context: CoroutineContext = EmptyCoroutineContext,
     block: suspend CoroutineScope.() -> Unit
-) {
-    GlobalScope.launch(TestableDispatchers.Main + lifecycle.job + context, block = block)
+):Job {
+    return GlobalScope.launch(TestableDispatchers.Main + lifecycle.job + context, block = block)
 }
