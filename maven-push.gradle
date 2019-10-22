@@ -18,11 +18,15 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 static def getMavenSettingsCredentials() {
-    String userHome = System.getProperty( "user.home" )
-    File mavenSettings = new File(userHome, ".m2/settings.xml")
+    String mavenSettingsFileName = System.getenv("MAVEN_PUBLISH_SETTINGS")
+    if (mavenSettingsFileName == null) {
+        return null
+    }
+    File mavenSettings = new File(mavenSettingsFileName)
     if (!mavenSettings.exists()) {
         return null
     }
+
     def xmlSlurper = new XmlSlurper()
     def output = xmlSlurper.parse(mavenSettings)
     return output."servers"."server"
