@@ -80,7 +80,12 @@ node('android-linux') {
                     execPattern: '**/*.exec **/*.ex'
         }
         stage('Publish') {
-            sh './gradlew uploadArchives'
+            withCredentials([
+                    file(credentialsId: '6d304cc6-c5cd-40c5-8c80-92f86d620d97',
+                            variable: 'MAVEN_PUBLISH_SETTINGS')
+            ]) {
+                sh './gradlew uploadArchives'
+            }
         }
     } finally {
         androidLint()
