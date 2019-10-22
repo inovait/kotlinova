@@ -1,3 +1,10 @@
+## [2.5.1](http://hydra/utilities/kotlinova/compare/v2.5.0...v2.5.1) (2019-10-22)
+
+### Bug Fixes
+
+* added gradle properties ([569b2c3b](http://hydra/utilities/kotlinova/commit/569b2c3bbe5006a98dadee9aca42106e165a2f1e))
+* return job on launch ([282faefc](http://hydra/utilities/kotlinova/commit/282faefc077352503e284d63f7a97181c8a8272c))
+
 ## [2.5.0](http://hydra/matejd/kotlinova/compare/v2.4.0...v2.5.0) (2019-10-10)
 
 ### Features
