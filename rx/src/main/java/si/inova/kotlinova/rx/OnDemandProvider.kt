@@ -95,6 +95,14 @@ abstract class OnDemandProvider<T>(
         producer.sendBlocking(value)
     }
 
+    protected fun offer(value: T) {
+        val producer =
+            producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
+
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        producer.offer(value)
+    }
+
     /**
      * Method that gets triggered when everyone stops observing your service
      */
