@@ -34,13 +34,13 @@ class DocumentObservable(private val documentReference: DocumentReference) :
         }
 
         if (e != null) {
-            sendBlocking(Resource.Error(e))
+            offer(Resource.Error(e))
             return
         }
 
         if (newDocument != null) {
             if (!newDocument.exists()) {
-                sendBlocking(
+                offer(
                     Resource.Error(
                         NoSuchElementException("${newDocument.reference.path} is missing")
                     )
@@ -48,7 +48,7 @@ class DocumentObservable(private val documentReference: DocumentReference) :
                 return
             }
 
-            sendBlocking(Resource.Success(newDocument))
+            offer(Resource.Success(newDocument))
         }
     }
 }

@@ -2,6 +2,7 @@ package si.inova.kotlinova.ui.components
 
 import android.os.Bundle
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -12,6 +13,7 @@ import si.inova.kotlinova.ui.state.StateSavedProperty
 /**
  * @author Matej Drobnic
  */
+@Ignore
 @RunWith(RobolectricTestRunner::class)
 class StateSaverFragmentTest {
     @Test

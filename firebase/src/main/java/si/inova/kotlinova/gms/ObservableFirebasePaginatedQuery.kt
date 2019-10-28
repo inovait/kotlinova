@@ -76,14 +76,14 @@ class ObservableFirebasePaginatedQuery(
         }
 
         if (e != null) {
-            sendBlocking(Resource.Error(e))
+            offer(Resource.Error(e))
             return
         }
 
         if (snapshot != null) {
             val data = snapshot.documents
 
-            sendBlocking(Resource.Success(data))
+            offer(Resource.Success(data))
 
             if (waitingForFirstValue) {
                 if (waitingForFirstNextPageValue) {
