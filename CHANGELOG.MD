@@ -1,3 +1,13 @@
+## [2.6.0](http://hydra/utilities/kotlinova/compare/v2.5.1...v2.6.0) (2019-10-28)
+
+### Features
+
+* **rx:** added offer field to OnDemandProvider ([1152ab0a](http://hydra/utilities/kotlinova/commit/1152ab0a75650df9c26ad90de4db0cb1254b0a76))
+
+### Bug Fixes
+
+* **firebase:** Firebase observables stalling UI thread ([14c31181](http://hydra/utilities/kotlinova/commit/14c31181b27f4207baa397c6143c20d947a9b552))
+
 ## [2.5.1](http://hydra/utilities/kotlinova/compare/v2.5.0...v2.5.1) (2019-10-22)
 
 ### Bug Fixes
