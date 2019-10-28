@@ -3,6 +3,7 @@ package si.inova.kotlinova.ui.arguments
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import org.junit.Assert.assertEquals
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -12,6 +13,7 @@ import si.inova.kotlinova.testing.DummyFragmentActivity
 /**
  * @author Matej Drobnic
  */
+@Ignore
 @RunWith(RobolectricTestRunner::class)
 class FragmentArgumentTest {
     @Test

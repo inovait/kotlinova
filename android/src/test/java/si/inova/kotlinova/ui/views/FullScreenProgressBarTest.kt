@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -15,6 +16,7 @@ import si.inova.kotlinova.testing.advanceTime
 /**
  * @author Matej Drobnic
  */
+@Ignore
 @RunWith(RobolectricTestRunner::class)
 class FullScreenProgressBarTest {
     private lateinit var fullScreenProgressBar: FullScreenProgressBar

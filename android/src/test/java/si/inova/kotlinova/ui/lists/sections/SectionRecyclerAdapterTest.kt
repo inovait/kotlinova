@@ -13,6 +13,7 @@ import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -23,6 +24,7 @@ import org.robolectric.RobolectricTestRunner
 /**
  * @author Matej Drobnic
  */
+@Ignore
 @RunWith(RobolectricTestRunner::class)
 class SectionRecyclerAdapterTest {
     @Mock

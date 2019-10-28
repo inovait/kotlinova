@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyZeroInteractions
 import kotlinx.coroutines.Job
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,6 +18,7 @@ import kotlin.concurrent.thread
 /**
  * @author Matej Drobnic
  */
+@Ignore
 @RunWith(RobolectricTestRunner::class)
 class ThreadUtilsTest {
     @get:Rule

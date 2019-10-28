@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit
 /**
  * @author Matej Drobnic
  */
+@Ignore
 @RunWith(RobolectricTestRunner::class)
 class DebouncerTest {
     private lateinit var debouncer: Debouncer
