@@ -36,11 +36,11 @@ ext {
             androidXjunit               : '1.0.0',
             androidTestRunner           : '1.1.0',
             espresso                    : '3.1.0',
-            mockitoKotlin               : '2.0.0-alpha02',
+            mockitoKotlin               : '2.2.0',
             assertJ                     : '3.11.1',
             roboletric                  : '4.2',
             roboletricSupport           : '3.3.2',
-            mockitoAndroid              : '2.13.0',
+            mockitoAndroid              : '2.28.0',
             uiAutomator                 : '2.2.0',
 
             unmock                      : '0.6.5',

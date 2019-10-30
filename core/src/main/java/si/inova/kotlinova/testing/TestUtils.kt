@@ -6,7 +6,7 @@
 package si.inova.kotlinova.testing
 
 import com.nhaarman.mockitokotlin2.argThat
-import com.nhaarman.mockitokotlin2.createInstance
+import com.nhaarman.mockitokotlin2.internal.createInstance
 import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.mockito.ArgumentMatcher
