@@ -1,3 +1,9 @@
+## [2.6.1](http://hydra/utilities/kotlinova/compare/v2.6.0...v2.6.1) (2019-10-30)
+
+### Bug Fixes
+
+* updated mockitoKotlin version, which fixes NoSuchMethodError exception on MockitoKt.withSettings method ([e8808448](http://hydra/utilities/kotlinova/commit/e8808448c42eddadb23070858e3dad0844b33dd8))
+
 ## [2.6.0](http://hydra/utilities/kotlinova/compare/v2.5.1...v2.6.0) (2019-10-28)
 
 ### Features
