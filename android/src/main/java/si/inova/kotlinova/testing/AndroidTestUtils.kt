@@ -13,6 +13,7 @@ import io.reactivex.Flowable
 import io.reactivex.subscribers.TestSubscriber
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.consume
@@ -22,7 +23,6 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import si.inova.kotlinova.archcomponents.AlwaysActiveLifecycleOwner
-import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.JavaTimeProvider
@@ -51,7 +51,7 @@ suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> 
     @Suppress("EXPERIMENTAL_API_USAGE")
 
     return GlobalScope
-        .async(TestableDispatchers.Main, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
+        .async(Dispatchers.Main, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
 }
 
 @VisibleForTesting

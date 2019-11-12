@@ -93,4 +93,5 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-android:${versions.mockitoAndroid}"
     androidTestImplementation "androidx.test.ext:junit:${versions.androidXjunit}"
     androidTestImplementation "org.assertj:assertj-core:${versions.assertJ}"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
 }

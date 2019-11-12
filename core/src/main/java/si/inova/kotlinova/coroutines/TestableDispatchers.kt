@@ -20,6 +20,13 @@ object TestableDispatchers {
      * [Dispatchers.Main] dispatcher that can be overriden by unit tests.
      */
     @JvmStatic
+    @Deprecated(
+        "Use Dispatchers.Main instead as it can be injected",
+        replaceWith = ReplaceWith(
+            "Dispatchers.Main",
+            "kotlinx.coroutines.Dispatchers"
+        )
+    )
     val Main
         get() = dispatcherOverride {
             Dispatchers.Main

@@ -8,10 +8,10 @@ package si.inova.kotlinova.utils
 import android.annotation.SuppressLint
 import androidx.arch.core.executor.ArchTaskExecutor
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import si.inova.kotlinova.coroutines.TestableDispatchers
 
 /**
  * Run specified block on the UI thread.
@@ -31,9 +31,9 @@ fun runOnUiThread(
         block()
     } else {
         val context = if (parentJob == null) {
-            TestableDispatchers.Main
+            Dispatchers.Main
         } else {
-            TestableDispatchers.Main + parentJob
+            Dispatchers.Main + parentJob
         }
 
         GlobalScope.launch(context, CoroutineStart.DEFAULT, {

@@ -3,11 +3,12 @@ package si.inova.kotlinova.rx.testing
 import io.reactivex.Scheduler
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineContext
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import org.junit.runners.model.MultipleFailureException
 import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.testing.TimeMachine
 import si.inova.kotlinova.time.JavaTimeProvider
@@ -17,18 +18,22 @@ import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 /**
- * JUnit Rule that installs and controls [TestCoroutineContext], [TestScheduler] and
+ * JUnit Rule that installs and controls [TestCoroutineDispatcher], [TestScheduler] and
  * [JavaTimeProvider] at once.
  */
+@Suppress("EXPERIMENTAL_API_USAGE")
 @UseExperimental(ObsoleteCoroutinesApi::class)
 class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
     val rxScheduler = TestScheduler()
-    val coroutineContext = TestCoroutineContext()
+    val coroutineContext = TestCoroutineDispatcher()
 
     override fun starting(description: Description?) {
         super.starting(description)
 
+        coroutineContext.pauseDispatcher()
+
         TestableDispatchers.dispatcherOverride = { coroutineContext }
+        Dispatchers.setMain(coroutineContext)
         JavaTimeProvider.currentTimeMillisProvider = { now }
         JavaTimeProvider.clockProvider =
             { Clock.fixed(Instant.ofEpochMilli(now), ZoneId.of("UTC")) }
@@ -49,8 +54,6 @@ class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
         TestableDispatchers.dispatcherOverride = { it() }
         JavaTimeProvider.currentTimeMillisProvider = { System.currentTimeMillis() }
         JavaTimeProvider.clockProvider = { Clock.systemUTC() }
-
-        MultipleFailureException.assertEmpty(coroutineContext.exceptions)
     }
 
     /**
@@ -58,7 +61,7 @@ class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
      */
     override fun advanceTime(ms: Long) {
         rxScheduler.advanceTimeBy(ms, TimeUnit.MILLISECONDS)
-        coroutineContext.advanceTimeBy(ms, TimeUnit.MILLISECONDS)
+        coroutineContext.advanceTimeBy(ms)
     }
 
     /**
@@ -67,7 +70,7 @@ class RxCoroutinesTimeMachine : TestWatcher(), TimeMachine {
      */
     fun triggerActions() {
         rxScheduler.triggerActions()
-        coroutineContext.triggerActions()
+        coroutineContext.runCurrent()
     }
 
     override val now: Long

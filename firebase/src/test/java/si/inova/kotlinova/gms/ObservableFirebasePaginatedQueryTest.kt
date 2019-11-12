@@ -10,11 +10,11 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -27,19 +27,18 @@ import org.mockito.MockitoAnnotations
 import si.inova.kotlinova.coroutines.TestableDispatchers
 import si.inova.kotlinova.data.pagination.ObservablePaginatedQuery
 import si.inova.kotlinova.data.resources.Resource
+import si.inova.kotlinova.testing.DispatcherReplacementRule
 import si.inova.kotlinova.testing.RxSchedulerRule
-import si.inova.kotlinova.testing.TimedDispatcher
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.testing.assertDocumentsEqual
 import si.inova.kotlinova.testing.assertIs
 import si.inova.kotlinova.testing.firebase.MockCollection
 import si.inova.kotlinova.testing.firebase.MockDocument
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 /**
  * @author Matej Drobnic
  */
+@Suppress("EXPERIMENTAL_API_USAGE")
 class ObservableFirebasePaginatedQueryTest {
     @Mock(answer = Answers.RETURNS_SELF)
     private lateinit var query: Query
@@ -50,8 +49,11 @@ class ObservableFirebasePaginatedQueryTest {
         ObservablePaginatedQuery<DocumentSnapshot>
     private var listener: EventListener<QuerySnapshot>? = null
 
+    val dispatcher = TestCoroutineDispatcher()
+
     @get:Rule
-    val dispatcher = TimedDispatcher()
+    val dispatcherReplacement = DispatcherReplacementRule(dispatcher)
+
     @get:Rule
     val rxJavaSchedulerRule = RxSchedulerRule()
     @get:Rule
@@ -71,40 +73,28 @@ class ObservableFirebasePaginatedQueryTest {
     }
 
     @Test
-    fun registerUnregisterListenerOnLifecycle() {
-        val executor = Executors.newSingleThreadExecutor()
-        executor.asCoroutineDispatcher().use { testThread ->
-            TestableDispatchers.dispatcherOverride = { _ -> testThread }
+    fun registerUnregisterListenerOnLifecycle() = runBlocking<Unit> {
+        async(Dispatchers.Unconfined) {
+            observableFirebasePaginatedQuery.loadFirstPage()
+        }
 
-            GlobalScope.async(TestableDispatchers.Default) {
-                observableFirebasePaginatedQuery.loadFirstPage()
-            }
+        listener!!.onEvent(MockCollection(emptyList<Pair<String, Int>>()).toQuerySnapshot(), null)
 
-            GlobalScope.launch(TestableDispatchers.Default) {
-                listener!!
-                    .onEvent(MockCollection(emptyList<Pair<String, Int>>()).toQuerySnapshot(), null)
+        inOrder(listenerRegistration, query) {
+            var subscription = observableFirebasePaginatedQuery.data.subscribe()
+            assertNotNull(listener)
+            verify(query).addSnapshotListener(any())
 
-                inOrder(listenerRegistration, query) {
-                    var subscription = observableFirebasePaginatedQuery.data.subscribe()
-                    assertNotNull(listener)
-                    verify(query).addSnapshotListener(any())
+            subscription.dispose()
+            dispatcher.advanceTimeBy(600)
+            verify(listenerRegistration).remove()
 
-                    subscription.dispose()
-                    dispatcher.advanceTime(600)
-                    verify(listenerRegistration).remove()
+            subscription = observableFirebasePaginatedQuery.data.subscribe()
+            verify(query).addSnapshotListener(any())
 
-                    subscription = observableFirebasePaginatedQuery.data.subscribe()
-                    verify(query).addSnapshotListener(any())
-
-                    subscription.dispose()
-                    dispatcher.advanceTime(600)
-                    verify(listenerRegistration).remove()
-
-                    verify(query, never()).addSnapshotListener(any())
-                }
-
-                executor.awaitTermination(5, TimeUnit.SECONDS)
-            }
+            subscription.dispose()
+            dispatcher.advanceTimeBy(600)
+            verify(listenerRegistration).remove()
         }
     }
 
@@ -457,7 +447,7 @@ class ObservableFirebasePaginatedQueryTest {
             assertTrue(observableFirebasePaginatedQuery.isAtEnd)
 
             subscriber.dispose()
-            dispatcher.advanceTime(600)
+            dispatcher.advanceTimeBy(600)
             observableFirebasePaginatedQuery.data.subscribe()
             listener!!.onEvent(MockCollection(singlePage).toQuerySnapshot(), null)
             assertTrue(observableFirebasePaginatedQuery.isAtEnd)
@@ -483,7 +473,7 @@ class ObservableFirebasePaginatedQueryTest {
         listener!!.onEvent(MockCollection(testData).toQuerySnapshot(), null)
 
         subscriber.dispose()
-        dispatcher.advanceTime(600)
+        dispatcher.advanceTimeBy(600)
         observableFirebasePaginatedQuery.data.subscribe {
             valuePlaceholder = it
         }

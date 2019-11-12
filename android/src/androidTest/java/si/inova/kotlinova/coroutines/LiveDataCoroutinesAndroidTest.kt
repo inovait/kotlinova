@@ -1,6 +1,7 @@
 package si.inova.kotlinova.coroutines
 
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
@@ -40,7 +41,7 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                withContext(TestableDispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     assertTrue(data.hasActiveObservers())
                 }
 
@@ -55,7 +56,7 @@ class LiveDataCoroutinesAndroidTest {
                     yield()
                 }
 
-                withContext(TestableDispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     assertFalse(data.hasActiveObservers())
                 }
             }

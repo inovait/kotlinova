@@ -67,6 +67,7 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.assertj:assertj-core:${versions.assertJ}"
     testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
 
     androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"
     androidTestImplementation "androidx.test:rules:${versions.androidTestRunner}"

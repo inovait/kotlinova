@@ -11,16 +11,22 @@
 
 package si.inova.kotlinova.testing
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.rules.ExternalResource
 import si.inova.kotlinova.coroutines.TestableDispatchers
-import kotlin.coroutines.CoroutineContext
 
-open class DispatcherReplacementRule(val dispatcher: CoroutineContext) : ExternalResource() {
+@Suppress("EXPERIMENTAL_API_USAGE")
+open class DispatcherReplacementRule(val dispatcher: CoroutineDispatcher) : ExternalResource() {
     override fun before() {
+        Dispatchers.setMain(dispatcher)
         TestableDispatchers.dispatcherOverride = { dispatcher }
     }
 
     override fun after() {
+        Dispatchers.resetMain()
         TestableDispatchers.dispatcherOverride = { it() }
     }
 }

@@ -3,10 +3,13 @@ package si.inova.kotlinova.testing
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.TestableDispatchers
@@ -22,17 +25,21 @@ import kotlin.math.sign
  *
  * @author Matej Drobnic
  */
+@Suppress("EXPERIMENTAL_API_USAGE")
+@Deprecated("Use CoroutinesTimeMachine or TestCoroutineDispatcher instead")
 class TimedDispatcher : TestWatcher() {
     override fun finished(description: Description?) {
         super.finished(description)
 
         TestableDispatchers.dispatcherOverride = { it() }
+        Dispatchers.resetMain()
     }
 
     override fun starting(description: Description?) {
         super.starting(description)
 
         TestableDispatchers.dispatcherOverride = { Dispatcher }
+        Dispatchers.setMain(Dispatcher)
     }
 
     fun advanceTime(ms: Long) {
