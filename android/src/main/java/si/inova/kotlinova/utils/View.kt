@@ -26,21 +26,18 @@ import androidx.fragment.app.Fragment
 var View.isVisibleWithFade: Boolean
     get() = isVisible
     set(value) {
-        if (value == isVisible) {
-            return
+        val targetAlpha = if (value) 1f else 0f
+
+        if (!isVisible && value && alpha == 1f) {
+            alpha = 0f
         }
 
-        val targetAlpha = if (value) 1f else 0f
-        val startAlpha = 1f - targetAlpha
-
-        alpha = startAlpha
+        isVisible = true
 
         animate()
             .alpha(targetAlpha)
             .apply {
-                if (value) {
-                    withStartAction { isVisible = true }
-                } else {
+                if (!value) {
                     withEndAction { isVisible = false }
                 }
             }
