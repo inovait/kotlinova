@@ -32,11 +32,13 @@ import java.util.Calendar
 import java.util.Locale
 
 @VisibleForTesting
+@Deprecated("Do not use Robolectric. Migrate to regular unit tests or instrumented tests.")
 fun advanceTime(ms: Int) {
     advanceTime(ms.toLong())
 }
 
 @VisibleForTesting
+@Deprecated("Do not use Robolectric. Migrate to regular unit tests or instrumented tests.")
 fun advanceTime(ms: Long) {
     SystemClock.sleep(ms)
 }

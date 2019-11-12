@@ -26,11 +26,13 @@ class FragmentTestActivity : ActivityWithFragments(), HasSupportFragmentInjector
     }
 }
 
+@Deprecated("Do not use Robolectric. Migrate to regular unit tests or instrumented tests.")
 fun createFragmentTestActivity(): ActivityController<FragmentTestActivity> {
     return Robolectric.buildActivity(FragmentTestActivity::class.java)
 }
 
 @SuppressLint("ResourceType")
+@Deprecated("Do not use Robolectric. Migrate to regular unit tests or instrumented tests.")
 fun ActivityController<FragmentTestActivity>.startDaggerFragment(fragment: Fragment) {
     create()
     get()
