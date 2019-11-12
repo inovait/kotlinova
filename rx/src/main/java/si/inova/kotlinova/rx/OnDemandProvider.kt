@@ -4,7 +4,6 @@ import io.reactivex.Flowable
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.reactive.publish
@@ -54,7 +53,7 @@ abstract class OnDemandProvider<T>(
     // publish is experimental due to undefined behavior when used in structured concurrency.
     // We use GlobalScope here so this is not an issue
     @Suppress("EXPERIMENTAL_API_USAGE")
-    val flowable: Flowable<T> = Flowable.fromPublisher(GlobalScope.publish<T>(launchingContext) {
+    val flowable: Flowable<T> = Flowable.fromPublisher(publish<T>(launchingContext) {
         mutext.withLock {
             try {
                 producer = this

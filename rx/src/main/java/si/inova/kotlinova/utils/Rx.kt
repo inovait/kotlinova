@@ -8,7 +8,6 @@ package si.inova.kotlinova.utils
 
 import io.reactivex.Flowable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.reactive.publish
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
@@ -56,7 +55,7 @@ fun <I, O> Flowable<I>.mapAsync(
     mapper: suspend (I) -> O
 ): Flowable<O> {
     return switchMap { originalValue ->
-        GlobalScope.publish<O>(context, {
+        publish<O>(context, {
             send(mapper(originalValue))
         })
     }
