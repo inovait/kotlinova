@@ -9,10 +9,13 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
+import io.reactivex.Flowable
 import org.reactivestreams.Publisher
+import si.inova.kotlinova.archcomponents.AlwaysActiveLifecycleOwner
 import si.inova.kotlinova.archcomponents.ResourcePublisherLiveData
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.value
+import si.inova.kotlinova.rx.awaitFirstUnpacked
 import kotlin.reflect.KProperty
 
 /**
@@ -233,3 +236,17 @@ fun <T> liveDataOf(value: T?): LiveData<T> {
 @Suppress("NOTHING_TO_INLINE")
 inline operator fun <T> LiveData<T>.getValue(thisRef: Any?, property: KProperty<*>): LiveData<T> =
         this
+
+/**
+ * Await first value from this resource stream (or throw exception if error happens)
+ *
+ * @exception NoSuchElementException if stream terminates before Error or Success resource
+ */
+suspend fun <T> LiveData<Resource<T>>.awaitFirstUnpacked(): T {
+    return Flowable
+        .fromPublisher(
+            LiveDataReactiveStreams
+                .toPublisher(AlwaysActiveLifecycleOwner, this)
+        )
+        .awaitFirstUnpacked()
+}
