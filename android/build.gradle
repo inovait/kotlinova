@@ -42,6 +42,10 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
     implementation "si.inova.kotlinova:core:${VERSION}"
     implementation "si.inova.kotlinova:rx:${VERSION}"
@@ -56,7 +60,6 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
 
     implementation "androidx.lifecycle:lifecycle-extensions:${versions.architectureComponents}"
-    kapt "androidx.lifecycle:lifecycle-compiler:${versions.architectureComponents}"
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
 
     implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
