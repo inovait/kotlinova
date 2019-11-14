@@ -79,6 +79,7 @@ dependencies {
     compileOnly "androidx.test:rules:${versions.androidTestRunner}"
     compileOnly "com.squareup.picasso:picasso:${versions.picasso}"
     compileOnly "org.assertj:assertj-core:${versions.assertJ}"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
