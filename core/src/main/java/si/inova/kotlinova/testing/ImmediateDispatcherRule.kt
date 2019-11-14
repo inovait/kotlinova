@@ -7,5 +7,4 @@ import kotlinx.coroutines.Dispatchers
  *
  * @author Matej Drobnic
  */
-class ImmediateDispatcherRule : DispatcherReplacementRule(Dispatchers.Unconfined) {
-}
+class ImmediateDispatcherRule : DispatcherReplacementRule(Dispatchers.Unconfined)
