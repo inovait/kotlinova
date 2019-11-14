@@ -29,13 +29,17 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**
- * Test rule that links [AndroidTimeProvider] and [JavaTimeProvider] with any [DelayController].
+ * Test rule that links [AndroidTimeProvider] and [JavaTimeProvider] (partially)
+ * with any [DelayController].
  *
  * To use this class, you can:
  *
  * 1. Have global [DelayController], set in constructor
  * 2. Manually call [register] method
  * 3. call [runBlockingTest] directly on this class instead of using native runBlockingTest.
+ *
+ * Note that this class only sets the *currentTimeMillis* of the [JavaTimeProvider],
+ * Clock is not supported due to Android device compatibility.
  */
 @UseExperimental(ExperimentalCoroutinesApi::class)
 class DelayControllerTimeProviderIntegration(
@@ -49,13 +53,6 @@ class DelayControllerTimeProviderIntegration(
         AndroidTimeProvider.clockProvider =
             { Clock.fixed(Instant.ofEpochMilli(controller.currentTime), ZoneId.of("UTC")) }
         JavaTimeProvider.currentTimeMillisProvider = { controller.currentTime }
-        JavaTimeProvider.clockProvider =
-            {
-                java.time.Clock.fixed(
-                    java.time.Instant.ofEpochMilli(controller.currentTime),
-                    java.time.ZoneId.of("UTC")
-                )
-            }
 
         initialization?.invoke(controller)
     }
@@ -71,7 +68,6 @@ class DelayControllerTimeProviderIntegration(
         AndroidTimeProvider.uptimeMillisProvider = { SystemClock.uptimeMillis() }
         AndroidTimeProvider.clockProvider = { Clock.systemUTC() }
         JavaTimeProvider.currentTimeMillisProvider = { System.currentTimeMillis() }
-        JavaTimeProvider.clockProvider = { java.time.Clock.systemUTC() }
     }
 
     /**
