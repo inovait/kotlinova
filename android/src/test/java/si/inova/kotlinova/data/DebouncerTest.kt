@@ -4,27 +4,19 @@ import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.whenever
-import org.junit.Before
-import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
+import si.inova.kotlinova.testing.CoroutinesTimeMachine
 import si.inova.kotlinova.testing.LocalFunction0
-import java.util.concurrent.TimeUnit
 
 /**
  * @author Matej Drobnic
  */
-@Ignore
-@RunWith(RobolectricTestRunner::class)
 class DebouncerTest {
-    private lateinit var debouncer: Debouncer
+    @get:Rule
+    val scheduler = CoroutinesTimeMachine()
 
-    @Before
-    fun init() {
-        debouncer = Debouncer()
-    }
+    private val debouncer = Debouncer()
 
     @Test
     fun testSingleTask() {
@@ -33,12 +25,13 @@ class DebouncerTest {
         val taskInorder = inOrder(task)
 
         debouncer.executeDebouncing(task)
+        scheduler.triggerActions()
         taskInorder.verify(task, never()).invoke()
 
-        Robolectric.getForegroundThreadScheduler().advanceBy(600, TimeUnit.MILLISECONDS)
+        scheduler.advanceTime(600)
         taskInorder.verify(task).invoke()
 
-        Robolectric.getForegroundThreadScheduler().advanceBy(600, TimeUnit.HOURS)
+        scheduler.advanceTime(9999999)
         taskInorder.verifyNoMoreInteractions()
     }
 
@@ -52,20 +45,23 @@ class DebouncerTest {
         val inOrderTest = inOrder(taskA, taskB)
 
         debouncer.executeDebouncing(taskA)
+        scheduler.triggerActions()
         inOrderTest.verify(taskA, never()).invoke()
 
-        Robolectric.getForegroundThreadScheduler().advanceBy(400, TimeUnit.MILLISECONDS)
+        scheduler.advanceTime(400)
         inOrderTest.verify(taskA, never()).invoke()
 
         debouncer.executeDebouncing(taskB)
+        scheduler.triggerActions()
         inOrderTest.verify(taskB, never()).invoke()
 
-        Robolectric.getForegroundThreadScheduler().advanceBy(400, TimeUnit.MILLISECONDS)
+        scheduler.advanceTime(400)
         inOrderTest.verify(taskB, never()).invoke()
 
-        Robolectric.getForegroundThreadScheduler().advanceBy(500, TimeUnit.MILLISECONDS)
+        scheduler.advanceTime(500)
         inOrderTest.verify(taskB).invoke()
-        Robolectric.getForegroundThreadScheduler().advanceBy(600, TimeUnit.HOURS)
+
+        scheduler.advanceTime(600)
         inOrderTest.verifyNoMoreInteractions()
     }
 }
