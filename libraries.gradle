@@ -40,7 +40,7 @@ ext {
             assertJ                     : '3.11.1',
             roboletric                  : '4.2',
             roboletricSupport           : '3.3.2',
-            mockitoAndroid              : '2.28.0',
+            mockitoAndroid              : '2.23.0',
             uiAutomator                 : '2.2.0',
 
             unmock                      : '0.6.5',
