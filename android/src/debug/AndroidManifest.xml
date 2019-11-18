@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="si.inova.kotlinova.android">
+
+    <application>
+        <activity android:name="si.inova.kotlinova.testing.DummyFragmentActivity" />
+    </application>
+</manifest>

@@ -1,24 +1,24 @@
 package si.inova.kotlinova.ui.arguments
 
-import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.test.espresso.Espresso
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.Robolectric
-import org.robolectric.RobolectricTestRunner
+import si.inova.kotlinova.android.R
 import si.inova.kotlinova.testing.DummyFragmentActivity
 
 /**
  * @author Matej Drobnic
  */
-@Ignore
-@RunWith(RobolectricTestRunner::class)
 class FragmentArgumentTest {
+    @get:Rule
+    val activityRule = ActivityTestRule(DummyFragmentActivity::class.java, true, true)
+
     @Test
-    fun testArguments() {
-        val activity = Robolectric.buildActivity(DummyFragmentActivity::class.java).create()
+    fun testRestoreArgumentsAfterConfigurationChange() {
         val fragment = TestFragment().apply {
             twenty = 20
             testString = "TeST"
@@ -27,23 +27,19 @@ class FragmentArgumentTest {
             secondIntNullArgument = 35
         }
 
-        activity
-            .get()
-            .supportFragmentManager.beginTransaction()
-            .replace(1, fragment)
-            .commitNow()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            activityRule.activity.swapFragment(fragment)
+        }
+        Espresso.onIdle()
 
-        val outState = Bundle()
-        activity.saveInstanceState(outState)
-        activity.destroy()
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            activityRule.activity.recreate()
+        }
+        Espresso.onIdle()
 
-        val secondActivity = Robolectric.buildActivity(DummyFragmentActivity::class.java)
-            .create(outState)
-
-        val recreatedFragment = secondActivity
-            .get()
+        val recreatedFragment = activityRule.activity
             .supportFragmentManager
-            .findFragmentById(1) as TestFragment
+            .findFragmentById(R.id.container) as TestFragment
 
         assertEquals(20, recreatedFragment.twenty)
         assertEquals("TeST", recreatedFragment.testString)
