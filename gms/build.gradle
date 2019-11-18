@@ -44,8 +44,6 @@ dependencies {
 
     compileOnly "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
-    testImplementation "org.robolectric:robolectric:${versions.roboletric}"
-    testImplementation "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
     testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
 

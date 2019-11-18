@@ -6,16 +6,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 
 /**
  * @author Matej Drobnic
  */
-@Ignore
-@RunWith(RobolectricTestRunner::class)
 class GmsCoroutinesTest {
     @Test
     fun testTaskAwaitResult1() = runBlocking {
