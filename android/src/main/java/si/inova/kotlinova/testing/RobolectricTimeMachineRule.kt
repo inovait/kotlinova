@@ -14,6 +14,7 @@ import si.inova.kotlinova.time.JavaTimeProvider
  * based on Robolectric's scheduler
  * @author Matej Drobnic
  */
+@Deprecated("Use instrumented tests instead of Robolectric")
 class RobolectricTimeMachineRule : TestWatcher() {
     override fun finished(description: Description?) {
         JavaTimeProvider.currentTimeMillisProvider = { System.currentTimeMillis() }
