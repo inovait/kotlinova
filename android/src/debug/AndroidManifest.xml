@@ -3,5 +3,8 @@
 
     <application>
         <activity android:name="si.inova.kotlinova.testing.DummyFragmentActivity" />
+        <activity
+            android:name="si.inova.kotlinova.testing.StateSavingTestActivity"
+            android:theme="@style/Theme.AppCompat" />
     </application>
 </manifest>
