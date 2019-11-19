@@ -26,6 +26,8 @@ class ThreadUtilsTest {
             task()
         }
 
+        Espresso.onIdle()
+
         verify(task).invoke()
     }
 
@@ -38,6 +40,8 @@ class ThreadUtilsTest {
                 assertTrue(Looper.myLooper() == Looper.getMainLooper())
                 task()
             }
+
+            Espresso.onIdle()
         }.join()
 
         verify(task).invoke()
