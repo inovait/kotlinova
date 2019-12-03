@@ -4,6 +4,7 @@ package si.inova.kotlinova.coroutines
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import si.inova.kotlinova.utils.runOnUiThread
@@ -24,7 +25,7 @@ suspend fun <T> LiveData<T>.awaitFirstValue(
     runAfterObserve: (() -> Unit)? = null,
     runAfterCompletionBeforeRemoveObserver: (() -> Unit)? = null
 ): T? {
-    return withContext(TestableDispatchers.Main) {
+    return withContext(Dispatchers.Main) {
         var ignoreAnyValues = ignoreExistingValue
 
         suspendCancellableCoroutine<T?> { continuation ->

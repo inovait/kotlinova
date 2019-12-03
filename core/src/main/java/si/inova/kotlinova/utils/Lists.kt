@@ -6,6 +6,8 @@
 package si.inova.kotlinova.utils
 
 import java.util.Random
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 private val RANDOM by lazy { Random() }
 
@@ -40,4 +42,16 @@ inline fun <T> Collection<T>.meanBy(selector: (T) -> Int): Int? {
     }
 
     return sum / size
+}
+
+/**
+ * Returns `true` if the collection is not null or empty.
+ */
+@UseExperimental(ExperimentalContracts::class)
+fun <T> List<T>?.isNotNullOrEmpty(): Boolean {
+    contract {
+        returns(true) implies (this@isNotNullOrEmpty != null)
+    }
+
+    return this != null && this.isNotEmpty()
 }

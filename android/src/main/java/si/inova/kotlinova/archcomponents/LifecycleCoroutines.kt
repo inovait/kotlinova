@@ -5,10 +5,10 @@ import androidx.lifecycle.GenericLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import si.inova.kotlinova.coroutines.TestableDispatchers
 import java.util.WeakHashMap
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -39,5 +39,5 @@ fun LifecycleOwner.launch(
     context: CoroutineContext = EmptyCoroutineContext,
     block: suspend CoroutineScope.() -> Unit
 ): Job {
-    return GlobalScope.launch(TestableDispatchers.Main + lifecycle.job + context, block = block)
+    return GlobalScope.launch(Dispatchers.Main + lifecycle.job + context, block = block)
 }

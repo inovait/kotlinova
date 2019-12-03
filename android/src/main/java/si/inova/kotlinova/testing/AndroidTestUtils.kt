@@ -6,14 +6,23 @@
 package si.inova.kotlinova.testing
 
 import android.os.SystemClock
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
+import io.reactivex.Flowable
+import io.reactivex.subscribers.TestSubscriber
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.first
-import si.inova.kotlinova.coroutines.TestableDispatchers
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
+import si.inova.kotlinova.archcomponents.AlwaysActiveLifecycleOwner
 import si.inova.kotlinova.coroutines.toChannel
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.time.JavaTimeProvider
@@ -22,14 +31,19 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@VisibleForTesting
+@Deprecated("Do not use Robolectric. Migrate to regular unit tests or instrumented tests.")
 fun advanceTime(ms: Int) {
     advanceTime(ms.toLong())
 }
 
+@VisibleForTesting
+@Deprecated("Do not use Robolectric. Migrate to regular unit tests or instrumented tests.")
 fun advanceTime(ms: Long) {
     SystemClock.sleep(ms)
 }
 
+@VisibleForTesting
 suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> {
     // Channel operators are obsolete, but there is no alternative at the moment
     // We will migrate when alternative will be added
@@ -37,14 +51,16 @@ suspend fun <T> LiveData<T>.waitUntil(predicate: (T?) -> Boolean): Deferred<T?> 
     @Suppress("EXPERIMENTAL_API_USAGE")
 
     return GlobalScope
-        .async(TestableDispatchers.Main, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
+        .async(Dispatchers.Main, CoroutineStart.DEFAULT, { toChannel().first(predicate) })
 }
 
+@VisibleForTesting
 fun calendarFromDate(day: Int, month: Int, year: Int): Calendar {
     return JavaTimeProvider.currentCalendar()
         .apply { set(year, month - 1, day, 0, 0, 0) }
 }
 
+@VisibleForTesting
 fun isoFromDate(day: Int, month: Int, year: Int): String {
     return SimpleDateFormat(
         ISO_8601_FORMAT_STRING_WITHOUT_TZ,
@@ -53,6 +69,7 @@ fun isoFromDate(day: Int, month: Int, year: Int): String {
         .format(calendarFromDate(day, month, year).time)
 }
 
+@VisibleForTesting
 suspend fun <T> LiveData<Resource<T>>.awaitSuccessAndThrowErrors(): T {
     // Channel operators are obsolete, but there is no alternative at the moment
     // We will migrate when alternative will be added
@@ -69,4 +86,39 @@ suspend fun <T> LiveData<Resource<T>>.awaitSuccessAndThrowErrors(): T {
     } ?: throw NoSuchElementException()
 
     return (winResource as Resource.Success).data
+}
+
+@VisibleForTesting
+fun <T> T.lazy(): dagger.Lazy<T> {
+    return dagger.Lazy { this }
+}
+
+@VisibleForTesting
+fun instantFromUtcTime(
+    year: Int = 2000,
+    month: Int = 1,
+    dayOfMonth: Int = 1,
+    hour: Int = 0,
+    minute: Int = 0,
+    second: Int = 0,
+    nanoOfSecond: Int = 0
+): Instant {
+    return ZonedDateTime.of(
+        year, month, dayOfMonth, hour, minute, second, nanoOfSecond, ZoneId.of("UTC")
+    ).toInstant()
+}
+
+@VisibleForTesting
+fun instantFromIsoTimestamp(
+    timestamp: String
+): Instant {
+    return Instant.from(DateTimeFormatter.ISO_INSTANT.parse(timestamp))
+}
+
+@VisibleForTesting
+fun <T> LiveData<T>.testSubscribe(): TestSubscriber<T> {
+    return Flowable.fromPublisher(
+        LiveDataReactiveStreams.toPublisher(AlwaysActiveLifecycleOwner, this)
+    )
+        .test()
 }

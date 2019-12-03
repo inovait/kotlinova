@@ -35,3 +35,16 @@ inline fun <I, O> Resource<I>.mapData(mapper: (I) -> O): Resource<O> {
         }
     }
 }
+
+/**
+ * Returns resource's value or throws an exception if resource contains an exception.
+ *
+ * This method only supports [Resource.Success] and [Resource.Error]
+ */
+fun <T> Resource<T>.unwrap(): T {
+    return when (this) {
+        is Resource.Success -> data
+        is Resource.Error -> throw exception
+        else -> error("Resource.unwrap() only supports final resource (Success or Error)")
+    }
+}

@@ -2,6 +2,7 @@ package si.inova.kotlinova.data
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
@@ -20,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class LastResultAsyncItemProcessor<I, O>(
     private val processingContext: CoroutineContext = TestableDispatchers.Default,
-    private val callbackContext: CoroutineContext = TestableDispatchers.Main
+    private val callbackContext: CoroutineContext = Dispatchers.Main
 ) {
     @Volatile
     private var lastJob: Job? = null

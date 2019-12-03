@@ -23,6 +23,7 @@ import org.junit.rules.RuleChain
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.testing.CoroutinesTimeMachine
+import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
 import si.inova.kotlinova.testing.assertIs
 import si.inova.kotlinova.utils.addResourceSource
 import si.inova.kotlinova.utils.addSource
@@ -33,11 +34,14 @@ import si.inova.kotlinova.utils.addSource
 class CoroutineViewModelTest {
     private lateinit var testViewModel: TestViewModel
 
+    @get:Rule
     val dispatcher = CoroutinesTimeMachine()
+
     val expectException = ExpectedException.none()
 
     @get:Rule
-    val dispatcherAndExceptionRule = RuleChain.outerRule(expectException).around(dispatcher)
+    val exceptionsAndUncaughtRule =
+        RuleChain.outerRule(expectException).around(UncaughtExceptionThrowRule())
 
     @get:Rule
     val archRule = InstantTaskExecutorRule()
