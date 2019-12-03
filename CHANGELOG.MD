@@ -1,3 +1,29 @@
+## [2.7.0](http://hydra/utilities/kotlinova/compare/v2.6.1...v2.7.0) (2019-11-14)
+
+### Features
+
+* **android:** add TimberSystemOutRule ([b18ff451](http://hydra/utilities/kotlinova/commit/b18ff4510935c28e6a8a8e48bfe8839e90babe90))
+* **android:** add DelayControllerTimeProviderIntegration ([be948967](http://hydra/utilities/kotlinova/commit/be9489677062ea49ea735b9c1609f641610c7b44))
+* deprecate TestableDispatchers.Main ([f7a33b28](http://hydra/utilities/kotlinova/commit/f7a33b28ea394cacc9cd756003e7a9cb738461dc))
+* deprecate Robolectric utilities ([bca7ea33](http://hydra/utilities/kotlinova/commit/bca7ea332679049b966ab200b3bd5eceab5c9d78))
+* add ResponseInterceptor testing utility ([9a0fab91](http://hydra/utilities/kotlinova/commit/9a0fab913cd962a33d5000e4eea22e913a4f3929))
+* **core:** add FakeRandom ([9efc2b40](http://hydra/utilities/kotlinova/commit/9efc2b40d2259709e07c7291c31c8f9063bf1a20))
+* **android:** add time testing utils ([11a26b6f](http://hydra/utilities/kotlinova/commit/11a26b6fd8af1a987f43cd84fb0bf91b500d26ed))
+* **core:** add TestCallable ([054d6db3](http://hydra/utilities/kotlinova/commit/054d6db3c406904855fd36f74c903dc270a2d99b))
+* **android:** add Fake activity (context) and fake resources for testing ([1413afe2](http://hydra/utilities/kotlinova/commit/1413afe2c92cba442c7121e64ea838d00dae281a))
+* **core:** add List.isNotNullOrEmpty ([e0b2097f](http://hydra/utilities/kotlinova/commit/e0b2097f4309b20e440aa8dfbcd533365ade8064))
+* **core:** add DispatcherReplacementRule ([adba0e1b](http://hydra/utilities/kotlinova/commit/adba0e1bde1a1582d2de545f732c04eb49a5b584))
+* **android:** add Dialog utility ([0e8587a9](http://hydra/utilities/kotlinova/commit/0e8587a95f722d71fb4660584d15880ff09b2df1))
+* **android:** add MemorySharedPreferences for testing ([1cb75c2c](http://hydra/utilities/kotlinova/commit/1cb75c2c58a9aa29452b21feec92b8b25eb31c3b))
+* **android:** add localized text system ([07e94987](http://hydra/utilities/kotlinova/commit/07e949874619c1dbc3aa646690c9d36a473af7fc))
+* add Resource unpacking utilities ([8f091369](http://hydra/utilities/kotlinova/commit/8f0913699cb7f638060adab84689f985028ad68b))
+* **android:** add preferences rx utilities ([ee0c9cf7](http://hydra/utilities/kotlinova/commit/ee0c9cf79838774959ce9c89c9398bdea0b94826))
+
+### Bug Fixes
+
+* remove JavaTimeProvider.clock integration from DelayControllerTimeProviderIntegration ([67e52d7b](http://hydra/utilities/kotlinova/commit/67e52d7ba2fb7c921d081984cfd889ef1f6786cf))
+* **android:** isVisibleWithFade blinking ([f5285991](http://hydra/utilities/kotlinova/commit/f528599149de690f5046a49df5e6f5a5cb37787d))
+
 ## [2.6.1](http://hydra/utilities/kotlinova/compare/v2.6.0...v2.6.1) (2019-10-30)
 
 ### Bug Fixes
