@@ -1,5 +1,6 @@
 package si.inova.kotlinova.ui.lists
 
+import android.os.Parcel
 import android.os.Parcelable
 import android.util.SparseArray
 import android.view.View
@@ -13,18 +14,10 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import si.inova.kotlinova.ui.state.StateSaverManager
 import si.inova.kotlinova.ui.state.StateSavingComponent
 
-/**
- * @author Matej Drobnic
- */
-@Ignore
-@RunWith(RobolectricTestRunner::class)
 class AdapterViewStateSaverTest {
     private lateinit var adapterView: AdapterView<Adapter>
     private lateinit var stateSaverManager: StateSaverManager
@@ -96,6 +89,29 @@ class AdapterViewStateSaverTest {
 
         whenever(adapterView.id).thenReturn(View.NO_ID)
         adapterViewStateSaver.notifyDataLoaded()
+    }
+}
+
+class StringParcelable(val text: String) : Parcelable {
+    constructor(parcel: Parcel) :
+        this(parcel.readString() ?: error("System returned null string"))
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(text)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<StringParcelable> {
+        override fun createFromParcel(parcel: Parcel): StringParcelable {
+            return StringParcelable(parcel)
+        }
+
+        override fun newArray(size: Int): Array<StringParcelable?> {
+            return arrayOfNulls(size)
+        }
     }
 }
 

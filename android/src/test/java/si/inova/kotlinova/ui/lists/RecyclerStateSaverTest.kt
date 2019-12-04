@@ -111,6 +111,8 @@ class RecyclerStateSaverTest {
 
 private const val SAVER_KEY = "Recycler"
 
+class DummyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
 class StringParcelable(val text: String) : Parcelable {
     constructor(parcel: Parcel) :
         this(parcel.readString() ?: error("System returned null string"))
@@ -133,5 +135,3 @@ class StringParcelable(val text: String) : Parcelable {
         }
     }
 }
-
-class DummyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

@@ -56,7 +56,6 @@ dependencies {
     implementation "androidx.core:core-ktx:${versions.ktx}"
 
     implementation "androidx.room:room-runtime:${versions.room}"
-    kapt "androidx.room:room-compiler:${versions.room}"
 
     compileOnly "junit:junit:${versions.junit}"
     compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"

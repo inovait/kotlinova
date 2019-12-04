@@ -1,21 +1,13 @@
 package si.inova.kotlinova.utils
 
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
 
-/**
- * @author Matej Drobnic
- */
-@Ignore
-@RunWith(RobolectricTestRunner::class)
 class TimeFormatTest {
     @Test
     fun toHoursMinutesSeconds() {
-        val context = RuntimeEnvironment.application
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
 
         assertEquals("00:00:00", TimeFormat.toHoursMinutesSeconds(0, context))
         assertEquals("01:00:00", TimeFormat.toHoursMinutesSeconds(3600, context))
@@ -38,7 +30,7 @@ class TimeFormatTest {
 
     @Test
     fun toMinutesSeconds() {
-        val context = RuntimeEnvironment.application
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
 
         assertEquals("00:00", TimeFormat.toMinutesSeconds(0, context))
         assertEquals("01:00", TimeFormat.toMinutesSeconds(60, context))

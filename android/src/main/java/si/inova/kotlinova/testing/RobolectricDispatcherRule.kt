@@ -10,6 +10,7 @@ import si.inova.kotlinova.coroutines.TestableDispatchers
  *
  * @author Matej Drobnic
  */
+@Deprecated("Use instrumented tests instead of Robolectric")
 class RobolectricDispatcherRule : TestWatcher() {
     override fun finished(description: Description?) {
         super.finished(description)
