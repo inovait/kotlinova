@@ -1,3 +1,14 @@
+## [2.8.0](http://hydra/utilities/kotlinova/compare/v2.7.0...v2.8.0) (2019-12-04)
+
+### Features
+
+* **android:** add fragment setting facilities to DummyFragmentActivity ([13a905ff](http://hydra/utilities/kotlinova/commit/13a905ff2c827b4f18bbb3e31fcd4e97e115fe6b))
+
+### Bug Fixes
+
+* deprecate RobolectricDispatcherRule ([a5bf77d7](http://hydra/utilities/kotlinova/commit/a5bf77d74e0118538c4d36b084a93f567e80598d))
+* **android:** deprecate RobolectricTimeMachineRule ([2fd79a12](http://hydra/utilities/kotlinova/commit/2fd79a12f00d575e11fecf1ae68ea2b83c2d7791))
+
 ## [2.7.0](http://hydra/utilities/kotlinova/compare/v2.6.1...v2.7.0) (2019-11-14)
 
 ### Features
