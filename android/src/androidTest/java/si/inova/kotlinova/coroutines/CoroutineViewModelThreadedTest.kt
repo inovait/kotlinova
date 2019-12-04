@@ -22,7 +22,7 @@ class CoroutineViewModelThreadedTest {
     @get:Rule
     val exceptionRule = UncaughtExceptionThrowRule()
 
-    @Test(timeout = 15_000)
+    @Test(timeout = 30_000)
     fun concurrentLaunches() = runBlocking {
         // Thread concurrency issues do not reproduce every time
         // repeat it multiple times to increase chance of failure
