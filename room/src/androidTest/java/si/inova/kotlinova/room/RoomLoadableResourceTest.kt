@@ -157,10 +157,9 @@ class RoomLoadableResourceTest {
         val subscriber = loadableResource.data.test()
         Espresso.onIdle()
 
-        subscriber.assertValues(
-            Resource.Loading<List<TextEntry>>(),
-            Resource.Success(listOf(TextEntry("A"), TextEntry("B"), TextEntry("C")))
-        )
+        assertThat(subscriber.values())
+            .last()
+            .isEqualTo(Resource.Success(listOf(TextEntry("A"), TextEntry("B"), TextEntry("C"))))
     }
 
     @Test
