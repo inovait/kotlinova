@@ -1,3 +1,9 @@
+## [2.9.0](http://hydra/utilities/kotlinova/compare/v2.8.0...v2.9.0) (2020-01-13)
+
+### Features
+
+* **retrofit:** added ErrorHandlerCallAdapter for custom error handling with suspending retrofit endpoints ([0ca6671d](http://hydra/utilities/kotlinova/commit/0ca6671dc1a73b76a334d3753c051f49ec3f19b4))
+
 ## [2.8.0](http://hydra/utilities/kotlinova/compare/v2.7.0...v2.8.0) (2019-12-04)
 
 ### Features
