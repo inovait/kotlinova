@@ -23,6 +23,7 @@ import java.lang.reflect.Type
  *
  * @author original CoroutineCallAdapterFactory by Jake Wharton, adapted by Matej Drobnic
  */
+@Deprecated("Use suspend retrofit methods + ErrorHandlerCallAdapterFactory")
 class CoroutineCallAdapterFactory constructor(
     private val responseParser: ResponseParser = DefaultResponseParser
 ) :
