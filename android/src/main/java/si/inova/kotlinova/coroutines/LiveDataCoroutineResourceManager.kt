@@ -11,7 +11,6 @@ import si.inova.kotlinova.data.SingleLiveEvent
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
 import si.inova.kotlinova.data.resources.value
-import si.inova.kotlinova.exceptions.OwnershipTransferredException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.coroutineContext
@@ -62,8 +61,6 @@ class LiveDataCoroutineResourceManager(scope: CoroutineScope) : CoroutineResourc
             resource.sendValue(Resource.Loading(currentValue))
 
             block(resource)
-        } catch (_: OwnershipTransferredException) {
-            // Do nothing. New owner will set their own values.
         } catch (_: CancellationException) {
             val meActive = getCurrentJob(resource) == thisJob
             if (meActive) {
