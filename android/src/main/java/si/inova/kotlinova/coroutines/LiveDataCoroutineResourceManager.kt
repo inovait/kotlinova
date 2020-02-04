@@ -16,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.coroutineContext
 
-class LiveDataCoroutineSesourceManager(scope: CoroutineScope) : CoroutineResourceManager(scope) {
+class LiveDataCoroutineResourceManager(scope: CoroutineScope) : CoroutineResourceManager(scope) {
     var routeErrorsToCommonObservableByDefault: Boolean = false
 
     protected val _errors = SingleLiveEvent<Throwable>()
