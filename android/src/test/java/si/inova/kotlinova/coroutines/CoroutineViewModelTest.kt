@@ -198,7 +198,7 @@ class CoroutineViewModelTest {
 
     @Test
     fun `Crash when common error observer is not being observed by anyone`() {
-        expectException.expect(CoroutineViewModel.UndeliverableException::class.java)
+        expectException.expect(LiveDataCoroutineResourceManager.UndeliverableException::class.java)
 
         val commonErrorViewModel = TestCommonErrorViewModel()
 
@@ -211,23 +211,25 @@ class CoroutineViewModelTest {
     private class TestViewModel : CoroutineViewModel() {
         val resourceA = ResourceLiveData<Int>()
 
-        fun firstTask() = launchResourceControlTask(resourceA) {
+        fun firstTask() = resources.launchResourceControlTask(resourceA) {
             delay(500)
             sendValue(Resource.Success(10))
         }
 
-        fun secondTask() = launchResourceControlTask(resourceA) {
+        fun secondTask() = resources.launchResourceControlTask(resourceA) {
             delay(500)
             sendValue(Resource.Success(20))
         }
 
-        fun exceptionTask() = launchResourceControlTask(resourceA) {
-            delay(500)
-            throw IllegalStateException("Test exception")
+        fun exceptionTask() {
+            resources.launchResourceControlTask(resourceA) {
+                delay(500)
+                throw IllegalStateException("Test exception")
+            }
         }
 
         fun exceptionTaskWithCommonError() {
-            launchResourceControlTask(
+            resources.launchResourceControlTask(
                 resourceA,
                 routeErrorsToCommonObservable = true
             ) {
@@ -240,27 +242,26 @@ class CoroutineViewModelTest {
         }
 
         fun <T> isResourceTakenPublic(resource: MutableLiveData<Resource<T>>): Boolean {
-            return super.isResourceTaken(resource)
+            return resources.isResourceTaken(resource)
         }
 
         fun <T> cancelResourcePublic(resource: MutableLiveData<Resource<T>>) {
-            super.cancelResource(resource)
+            resources.cancelResource(resource)
         }
 
         fun <T> getJob(resource: MutableLiveData<Resource<T>>): Job? {
-            @Suppress("USELESS_CAST")
-            return activeJobs[resource as MutableLiveData<*>]
+            return resources.getCurrentJob(resource as MutableLiveData<*>)
         }
     }
 
     private class TestCommonErrorViewModel : CommonErrorCoroutineViewModel() {
         val resourceA = ResourceLiveData<Int>()
 
-        fun exceptionTask() = launchResourceControlTask(resourceA) {
+        fun exceptionTask() = resources.launchResourceControlTask(resourceA) {
             throw IllegalStateException("Test exception")
         }
 
-        fun exceptionPassingTask() = launchResourceControlTask(resourceA) {
+        fun exceptionPassingTask() = resources.launchResourceControlTask(resourceA) {
             addResourceSource(Flowable.error(IllegalStateException("Test exception")))
         }
     }

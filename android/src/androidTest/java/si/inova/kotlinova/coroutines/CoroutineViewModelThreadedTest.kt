@@ -61,22 +61,22 @@ class CoroutineViewModelThreadedTest {
 
         val latch = Mutex(true)
 
-        fun testTaskInvokingCallback() = launchResourceControlTask(resourceA) {
+        fun testTaskInvokingCallback() = resources.launchResourceControlTask(resourceA) {
             latch.awaitUnlockIfLocked()
             yield()
             callback?.invoke()
             sendValue(Resource.Success(Unit))
         }
 
-        fun testTask() = launchResourceControlTask(resourceA) {
+        fun testTask() = resources.launchResourceControlTask(resourceA) {
         }
 
         fun cancelResourceA() {
-            cancelResource(resourceA)
+            resources.cancelResource(resourceA)
         }
 
         fun publicParentJob(): Job {
-            return parentJob
+            return coroutineContext[Job]!!
         }
     }
 }
