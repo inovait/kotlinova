@@ -49,7 +49,9 @@ class LiveDataCoroutineResourceManager(scope: CoroutineScope) : CoroutineResourc
         block: suspend ResourceLiveData<T>.() -> Unit
     ) = launchBoundControlTask(resource, context) {
         if (resource.hasAnySources()) {
-            resource.removeAllSources()
+            withContext(Dispatchers.Main) {
+                resource.removeAllSources()
+            }
         }
 
         val thisJob = coroutineContext[Job]!!
