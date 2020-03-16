@@ -14,7 +14,7 @@ Set of common utility classes for Kotlin projects, primarily based on Kotlin cor
 
 ## Modules
 
-Replace `X.Y.Z` with latest version. Check out [changelog](http://hydra/utilities/kotlinova/blob/master/CHANGELOG.MD) to see what is the latest version. For simplicity's sake, every module has the same version number.
+Replace `X.Y.Z` with latest version. Check out [changelog](https://github.com/inovait/kotlinova/blob/master/CHANGELOG.MD) to see what is the latest version. For simplicity's sake, every module has the same version number.
 
 Some Kotlinova modules are either native JVM (can be used in all JVM applications),
 while others are Android-only.
