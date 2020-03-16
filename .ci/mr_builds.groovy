@@ -30,16 +30,13 @@ def abortPreviousRunningBuilds() {
     }
 }
 
-properties([
-        gitLabConnection('Hydra@Git')
-])
 
 try {
     node {
         stage('Prepare') {
             abortPreviousRunningBuilds()
             checkout scm
-            updateGitlabCommitStatus name: 'jenkins', state: 'pending'
+            setBuildStatus("Waiting for build executor", "pending")
         }
     }
 
@@ -47,7 +44,7 @@ try {
         try {
             stage('Start') {
                 checkout scm
-                updateGitlabCommitStatus name: 'jenkins', state: 'running'
+                setBuildStatus("Building", "pending")
             }
             stage('Build app') {
                 sh './gradlew clean assemble'
@@ -75,7 +72,7 @@ try {
                         sourceExclusionPattern: '',
                         execPattern: '**/*.exec **/*.ex'
             }
-            updateGitlabCommitStatus name: 'jenkins', state: 'success'
+            setBuildStatus("Build finished", "success")
         } finally {
             androidLint()
             checkstyle canComputeNew: false, defaultEncoding: '',
@@ -92,18 +89,16 @@ try {
                 junit testResults: '**/build/test-results/**/*.xml, ' +
                         '**/build/outputs/**/connected/*.xml'
             } catch (ignored) {
-                // JUnit throws error every time it does not detect new tests, loosing real reason
+                // JUnit throwevery time it does not detect new tests, loosing real reason
                 // for build to fail
             }
         }
     }
 } catch (Exception e) {
-    if (e instanceof InterruptedException || (e.message != null && e.message.contains("task was cancelled"))) {
-        updateGitlabCommitStatus name: 'jenkins', state: 'canceled'
-    } else {
-        updateGitlabCommitStatus name: 'jenkins', state: 'failed'
+    if (!(e instanceof InterruptedException || (e.message != null && e.message.contains("task was cancelled")))) {
         currentBuild.result = 'FAILURE'
     }
+    setBuildStatus("Build finished", "success")
 
     def sw = new StringWriter()
     def pw = new PrintWriter(sw)
@@ -112,3 +107,15 @@ try {
 
     throw e
 }
+
+void setBuildStatus(String message, String state) {
+    step([
+            $class            : "GitHubCommitStatusSetter",
+            reposSource       : [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/inovait/kotlinova"],
+            contextSource     : [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+            errorHandlers     : [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+            statusResultSource: [$class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]]]
+    ]);
+}
+
+

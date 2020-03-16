@@ -17,18 +17,18 @@ import java.util.regex.Pattern
 node('android-linux') {
     stage('Git pull') {
         git(branch: 'master',
-                credentialsId: '388b013e-c31a-4a8c-aad6-bb06aff2a513',
-                url: 'git@hydra:utilities/kotlinova.git')
+                credentialsId: '5e93bc02-0f1b-4987-9d09-115cb8cf8084',
+                url: 'git@github.com:inovait/kotlinova.git')
     }
 
-    def curVersion = gitParsing.getLastVersion()
+    def curVersion = gitParsing.getLastVersion("")
     if (curVersion == null) {
         throw IllegalArgumentException("Git does not contain version tags")
     }
 
     def curVersionName = "${curVersion[0]}.${curVersion[1]}.${curVersion[2]}"
 
-    def commits = gitParsing.getCommits("v$curVersionName")
+    def commits = gitParsing.getCommits("$curVersionName")
     def releaseType = releases.getReleaseType(commits)
     if (releaseType == 0) {
         println("No new tickets to release. Aborting.")
@@ -55,7 +55,7 @@ node('android-linux') {
             commits,
             curVersionName,
             newVersionName,
-            "http://hydra/utilities/kotlinova/")
+            "https://github.com/inovait/kotlinova")
 
     stage('Update Version') {
         def versionProperties = "MAJOR=${newVersion[0]}\n" +
@@ -89,14 +89,6 @@ node('android-linux') {
                     sourceInclusionPattern: '**/*.java, **/*.kt',
                     sourceExclusionPattern: '',
                     execPattern: '**/*.exec **/*.ex'
-        }
-        stage('Publish') {
-            withCredentials([
-                    file(credentialsId: '6d304cc6-c5cd-40c5-8c80-92f86d620d97',
-                            variable: 'MAVEN_PUBLISH_SETTINGS')
-            ]) {
-                sh './gradlew uploadArchives'
-            }
         }
     } finally {
         androidLint()
@@ -133,9 +125,9 @@ node('android-linux') {
         sh "git add CHANGELOG.MD"
 
         sh "git commit -m \"release: publish $newVersionName\n[ci-skip]\" --author=\"Jenkins <hudson@inova.si>\""
-        sh "git tag v$newVersionName"
+        sh "git tag $newVersionName"
 
-        sshagent(['388b013e-c31a-4a8c-aad6-bb06aff2a513']) {
+        sshagent(['5e93bc02-0f1b-4987-9d09-115cb8cf8084']) {
             sh "git push origin master"
             sh "git push origin v$newVersionName"
         }
