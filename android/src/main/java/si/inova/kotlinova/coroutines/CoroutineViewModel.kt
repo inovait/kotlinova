@@ -1,3 +1,14 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.coroutines
 
 import androidx.annotation.CallSuper
@@ -26,7 +37,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * @author Matej Drobnic
  */
 abstract class CoroutineViewModel : ViewModel(),
-    CoroutineScope by CoroutineScope(SupervisorJob() + TestableDispatchers.Default) {
+        CoroutineScope by CoroutineScope(SupervisorJob() + TestableDispatchers.Default) {
     protected val scope = this
 
     protected val resources = LiveDataCoroutineResourceManager(scope)
@@ -47,27 +58,27 @@ abstract class CoroutineViewModel : ViewModel(),
      * @see LiveDataCoroutineResourceManager.launchResourceControlTask
      */
     @Deprecated(
-        "Use resources.launchResourceControlTask instead"
+            "Use resources.launchResourceControlTask instead"
     )
     fun <T> launchResourceControlTask(
-        resource: ResourceLiveData<T>,
-        currentValue: T? = resource.value?.value,
-        context: CoroutineContext = EmptyCoroutineContext,
-        routeErrorsToCommonObservable: Boolean = resources.routeErrorsToCommonObservableByDefault,
-        block: suspend ResourceLiveData<T>.() -> Unit
+            resource: ResourceLiveData<T>,
+            currentValue: T? = resource.value?.value,
+            context: CoroutineContext = EmptyCoroutineContext,
+            routeErrorsToCommonObservable: Boolean = resources.routeErrorsToCommonObservableByDefault,
+            block: suspend ResourceLiveData<T>.() -> Unit
     ) = resources.launchResourceControlTask(
-        resource,
-        currentValue,
-        context,
-        routeErrorsToCommonObservable,
-        block
+            resource,
+            currentValue,
+            context,
+            routeErrorsToCommonObservable,
+            block
     )
 
     /**
      * @see CoroutineResourceManager.isResourceTaken
      */
     @Deprecated(
-        "Use resources.isResourceTaken instead"
+            "Use resources.isResourceTaken instead"
     )
     protected fun <T> isResourceTaken(resource: MutableLiveData<Resource<T>>): Boolean {
         return resources.isResourceTaken(resource)
@@ -77,7 +88,7 @@ abstract class CoroutineViewModel : ViewModel(),
      * Cancel job that currently manages passed resource.
      */
     @Deprecated(
-        "Use resources.cancelResource instead"
+            "Use resources.cancelResource instead"
     )
     protected fun <T> cancelResource(resource: MutableLiveData<Resource<T>>) {
         resources.cancelResource(resource)

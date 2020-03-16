@@ -1,3 +1,14 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 /**
  * Methods for helping universal saving into various android storage classes
  *
@@ -34,7 +45,7 @@ operator fun Bundle.set(key: String, value: Any) {
         is Parcelable -> putParcelable(key, value)
         is Serializable -> putSerializable(key, value)
         else -> throw IllegalStateException(
-            "Type ${value.javaClass.canonicalName} of property $key is not supported in bundle"
+                "Type ${value.javaClass.canonicalName} of property $key is not supported in bundle"
         )
     }
 }
@@ -63,7 +74,7 @@ fun <T> SharedPreferences.get(key: String, default: T, klass: Class<T>): T {
         java.lang.Boolean::class.java -> getBoolean(key, (default as Boolean?) ?: false)
         Set::class.java -> getStringSet(key, default as Set<String>?)
         else -> throw IllegalStateException(
-            "Type ${klass.canonicalName} of property $key is not supported in SharedPreferences"
+                "Type ${klass.canonicalName} of property $key is not supported in SharedPreferences"
         )
     } as T
 }
@@ -78,8 +89,8 @@ fun SharedPreferences.Editor.put(key: String, value: Any): SharedPreferences.Edi
         is Boolean -> putBoolean(key, value)
         is Set<*> -> putStringSet(key, value as MutableSet<String>)
         else -> throw IllegalStateException(
-            "Type ${value.javaClass.canonicalName} of property $key " +
-                "is not supported in SharedPreferences"
+                "Type ${value.javaClass.canonicalName} of property $key " +
+                        "is not supported in SharedPreferences"
         )
     }
 

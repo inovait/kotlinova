@@ -1,3 +1,14 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 @file:JvmName("ViewUtils")
 
 package si.inova.kotlinova.utils
@@ -35,23 +46,23 @@ var View.isVisibleWithFade: Boolean
         isVisible = true
 
         animate()
-            .alpha(targetAlpha)
-            .apply {
-                if (!value) {
-                    withEndAction { isVisible = false }
+                .alpha(targetAlpha)
+                .apply {
+                    if (!value) {
+                        withEndAction { isVisible = false }
+                    }
                 }
-            }
-            .setDuration(250)
-            .start()
+                .setDuration(250)
+                .start()
     }
 
 /**
  * Helper method to inflate given layout asynchronously
  */
 fun Activity.inflateAsync(
-    savedInstanceState: Bundle?,
-    @LayoutRes layout: Int,
-    callback: AsyncLayoutInflater.OnInflateFinishedListener
+        savedInstanceState: Bundle?,
+        @LayoutRes layout: Int,
+        callback: AsyncLayoutInflater.OnInflateFinishedListener
 ) {
     val root = findViewById<ViewGroup>(android.R.id.content)
 
@@ -68,9 +79,9 @@ fun Activity.inflateAsync(
  * Helper method to inflate given layout asynchronously
  */
 fun Fragment.inflateAsync(
-    savedInstanceState: Bundle?,
-    @LayoutRes layout: Int,
-    callback: AsyncLayoutInflater.OnInflateFinishedListener
+        savedInstanceState: Bundle?,
+        @LayoutRes layout: Int,
+        callback: AsyncLayoutInflater.OnInflateFinishedListener
 ) {
     val root = view as ViewGroup
 
@@ -89,8 +100,8 @@ fun Fragment.inflateAsync(
 fun View.closeKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.hideSoftInputFromWindow(
-        windowToken,
-        InputMethodManager.HIDE_NOT_ALWAYS
+            windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS
     )
 }
 
@@ -100,8 +111,8 @@ fun View.closeKeyboard() {
 fun View.openKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.showSoftInput(
-        this,
-        InputMethodManager.SHOW_IMPLICIT
+            this,
+            InputMethodManager.SHOW_IMPLICIT
     )
 }
 
@@ -121,9 +132,9 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
     val transition = (parent as? ViewGroup)?.layoutTransition
 
     val appearingEnabled =
-        transition?.isTransitionTypeEnabled(LayoutTransition.APPEARING) ?: false
+            transition?.isTransitionTypeEnabled(LayoutTransition.APPEARING) ?: false
     val disappearingEnabled =
-        transition?.isTransitionTypeEnabled(LayoutTransition.DISAPPEARING) ?: false
+            transition?.isTransitionTypeEnabled(LayoutTransition.DISAPPEARING) ?: false
 
     transition?.disableTransitionType(LayoutTransition.APPEARING)
     transition?.disableTransitionType(LayoutTransition.DISAPPEARING)
@@ -139,8 +150,8 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
 }
 
 fun SwitchCompat.setIsCheckedWithoutTriggeringListener(
-    state: Boolean,
-    listener: CompoundButton.OnCheckedChangeListener
+        state: Boolean,
+        listener: CompoundButton.OnCheckedChangeListener
 ) {
     setOnCheckedChangeListener(null)
     isChecked = state

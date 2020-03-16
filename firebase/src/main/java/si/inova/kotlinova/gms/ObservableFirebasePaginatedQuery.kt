@@ -1,11 +1,17 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.gms
 
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.*
 import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +28,11 @@ import si.inova.kotlinova.utils.use
  * Wrapper around Firebase Firestore's query that can retrieve data in observable pages.
  */
 class ObservableFirebasePaginatedQuery(
-    private val baseQuery: Query,
-    private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
+        private val baseQuery: Query,
+        private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
 ) : OnDemandProvider<Resource<List<DocumentSnapshot>>>(Dispatchers.Main),
-    EventListener<QuerySnapshot>,
-    ObservablePaginatedQuery<DocumentSnapshot> {
+        EventListener<QuerySnapshot>,
+        ObservablePaginatedQuery<DocumentSnapshot> {
 
     private var currentQuery: Query? = null
     private var currentListenerRegistration: ListenerRegistration? = null
@@ -106,7 +112,7 @@ class ObservableFirebasePaginatedQuery(
         currentQuery?.let {
             waitingForFirstValue = true
             currentListenerRegistration =
-                it.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
+                    it.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
         }
     }
 
@@ -120,7 +126,7 @@ class ObservableFirebasePaginatedQuery(
  * Convenience operator that converts regular [Query] into [ObservablePaginatedQuery]
  */
 fun Query.paginateObservable(
-    itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
+        itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
 ): ObservablePaginatedQuery<DocumentSnapshot> {
     return ObservableFirebasePaginatedQuery(this, itemsPerPage)
 }

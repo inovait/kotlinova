@@ -1,21 +1,27 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.testing.espresso.coroutines
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.Runnable
-import java.util.Collections
-import java.util.WeakHashMap
+import kotlinx.coroutines.*
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 /**
  * Dispatcher wrapper that monitors whether any of its jobs are currently running
  */
 class JobCheckingDispatcherWrapper(private val parent: CoroutineDispatcher) :
-    CoroutineDispatcher() {
+        CoroutineDispatcher() {
     private val jobs =
-        Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Job, Boolean>()))
+            Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Job, Boolean>()))
 
     var completionEvent: (() -> Unit)? = null
 

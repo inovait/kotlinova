@@ -1,11 +1,21 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.time
 
 import android.os.SystemClock
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 
 /**
  * System and CPU time provider that can be mocked for tests
@@ -21,8 +31,8 @@ object TimeProvider {
      * @see System.currentTimeMillis
      */
     @Deprecated(
-        "Use JavaTimeProvider.currentTimeMillis()",
-        ReplaceWith("JavaTimeProvider.currentTimeMillis()")
+            "Use JavaTimeProvider.currentTimeMillis()",
+            ReplaceWith("JavaTimeProvider.currentTimeMillis()")
     )
     fun currentTimeMillis(): Long = JavaTimeProvider.currentTimeMillis()
 
@@ -30,8 +40,8 @@ object TimeProvider {
      * @see SystemClock.elapsedRealtime
      */
     @Deprecated(
-        "Use AndroidTimeProvider.elapsedRealtime()",
-        ReplaceWith("AndroidTimeProvider.elapsedRealtime()")
+            "Use AndroidTimeProvider.elapsedRealtime()",
+            ReplaceWith("AndroidTimeProvider.elapsedRealtime()")
     )
     fun elapsedRealtime(): Long = AndroidTimeProvider.elapsedRealtime()
 
@@ -39,44 +49,44 @@ object TimeProvider {
      * @see SystemClock.uptimeMillis
      */
     @Deprecated(
-        "Use AndroidTimeProvider.uptimeMillis()",
-        ReplaceWith("AndroidTimeProvider.uptimeMillis()")
+            "Use AndroidTimeProvider.uptimeMillis()",
+            ReplaceWith("AndroidTimeProvider.uptimeMillis()")
     )
     fun uptimeMillis(): Long = AndroidTimeProvider.uptimeMillis()
 
     @Deprecated(
-        "Use JavaTimeProvider.currentDate()",
-        ReplaceWith("JavaTimeProvider.currentDate()")
+            "Use JavaTimeProvider.currentDate()",
+            ReplaceWith("JavaTimeProvider.currentDate()")
     )
     fun currentDate(): Date = JavaTimeProvider.currentDate()
 
     @Deprecated(
-        "Use JavaTimeProvider.currentCalendar()",
-        ReplaceWith("JavaTimeProvider.currentCalendar()")
+            "Use JavaTimeProvider.currentCalendar()",
+            ReplaceWith("JavaTimeProvider.currentCalendar()")
     )
     fun currentCalendar(): Calendar = JavaTimeProvider.currentCalendar()
 
     @Deprecated(
-        "Use AndroidTimeProvider.currentInstant()",
-        ReplaceWith("AndroidTimeProvider.currentInstant()")
+            "Use AndroidTimeProvider.currentInstant()",
+            ReplaceWith("AndroidTimeProvider.currentInstant()")
     )
     fun currentInstant(): Instant = AndroidTimeProvider.currentInstant()
 
     @Deprecated(
-        "Use AndroidTimeProvider.todayLocalDate()",
-        ReplaceWith("AndroidTimeProvider.todayLocalDate()")
+            "Use AndroidTimeProvider.todayLocalDate()",
+            ReplaceWith("AndroidTimeProvider.todayLocalDate()")
     )
     fun todayLocalDate(): LocalDate = AndroidTimeProvider.todayLocalDate()
 
     @Deprecated(
-        "Use AndroidTimeProvider.currentLocalDateTime()",
-        ReplaceWith("AndroidTimeProvider.currentLocalDateTime()")
+            "Use AndroidTimeProvider.currentLocalDateTime()",
+            ReplaceWith("AndroidTimeProvider.currentLocalDateTime()")
     )
     fun currentLocalDateTime(): LocalDateTime = AndroidTimeProvider.currentLocalDateTime()
 
     @Deprecated(
-        "Use JavaTimeProvider.currentTimeMillisProvider",
-        ReplaceWith("JavaTimeProvider.currentTimeMillisProvider")
+            "Use JavaTimeProvider.currentTimeMillisProvider",
+            ReplaceWith("JavaTimeProvider.currentTimeMillisProvider")
     )
     var currentTimeMillisProvider
         get() = JavaTimeProvider.currentTimeMillisProvider
@@ -85,8 +95,8 @@ object TimeProvider {
         }
 
     @Deprecated(
-        "Use AndroidTimeProvider.elapsedRealtimeProvider",
-        ReplaceWith("AndroidTimeProvider.elapsedRealtimeProvider")
+            "Use AndroidTimeProvider.elapsedRealtimeProvider",
+            ReplaceWith("AndroidTimeProvider.elapsedRealtimeProvider")
     )
     var elapsedRealtimeProvider
         get() = AndroidTimeProvider.elapsedRealtimeProvider
@@ -95,8 +105,8 @@ object TimeProvider {
         }
 
     @Deprecated(
-        "Use AndroidTimeProvider.uptimeMillisProvider",
-        ReplaceWith("AndroidTimeProvider.uptimeMillisProvider")
+            "Use AndroidTimeProvider.uptimeMillisProvider",
+            ReplaceWith("AndroidTimeProvider.uptimeMillisProvider")
     )
     var uptimeMillisProvider
         get() = AndroidTimeProvider.uptimeMillisProvider
@@ -105,8 +115,8 @@ object TimeProvider {
         }
 
     @Deprecated(
-        "Use AndroidTimeProvider.clockProvider",
-        ReplaceWith("AndroidTimeProvider.clockProvider")
+            "Use AndroidTimeProvider.clockProvider",
+            ReplaceWith("AndroidTimeProvider.clockProvider")
     )
     var clockProvider
         get() = AndroidTimeProvider.clockProvider

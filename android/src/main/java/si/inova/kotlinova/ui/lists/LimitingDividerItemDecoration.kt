@@ -1,3 +1,14 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.ui.lists
 
 import android.content.Context
@@ -15,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
  * @author Matej Drobnic
  */
 abstract class LimitingDividerItemDecoration(context: Context, orientation: Int) :
-    RecyclerView.ItemDecoration() {
+        RecyclerView.ItemDecoration() {
     val HORIZONTAL = LinearLayout.HORIZONTAL
     val VERTICAL = LinearLayout.VERTICAL
 
@@ -47,7 +58,7 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
     fun setOrientation(orientation: Int) {
         if (orientation != HORIZONTAL && orientation != VERTICAL) {
             throw IllegalArgumentException(
-                "Invalid orientation. It should be either HORIZONTAL or VERTICAL"
+                    "Invalid orientation. It should be either HORIZONTAL or VERTICAL"
             )
         }
         mOrientation = orientation
@@ -82,8 +93,8 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
             left = parent.paddingLeft
             right = parent.width - parent.paddingRight
             canvas.clipRect(
-                left, parent.paddingTop, right,
-                parent.height - parent.paddingBottom
+                    left, parent.paddingTop, right,
+                    parent.height - parent.paddingBottom
             )
         } else {
             left = 0
@@ -116,8 +127,8 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
             top = parent.paddingTop
             bottom = parent.height - parent.paddingBottom
             canvas.clipRect(
-                parent.paddingLeft, top,
-                parent.width - parent.paddingRight, bottom
+                    parent.paddingLeft, top,
+                    parent.width - parent.paddingRight, bottom
             )
         } else {
             top = 0
@@ -141,16 +152,16 @@ abstract class LimitingDividerItemDecoration(context: Context, orientation: Int)
     }
 
     override fun getItemOffsets(
-        outRect: Rect,
-        view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State
+            outRect: Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
     ) {
         val position = parent.getChildAdapterPosition(view)
 
         if (mDivider == null ||
-            position == RecyclerView.NO_POSITION ||
-            !shouldDisplayDivider(position)) {
+                position == RecyclerView.NO_POSITION ||
+                !shouldDisplayDivider(position)) {
             outRect.set(0, 0, 0, 0)
             return
         }

@@ -1,12 +1,19 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.retrofit
 
 import okhttp3.Request
-import retrofit2.Call
-import retrofit2.CallAdapter
-import retrofit2.Callback
-import retrofit2.HttpException
-import retrofit2.Response
-import retrofit2.Retrofit
+import retrofit2.*
+import si.inova.kotlinova.retrofit.ErrorHandlerCallAdapterFactory.ErrorHandler
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -18,13 +25,13 @@ import java.lang.reflect.Type
  *
  */
 class ErrorHandlerCallAdapterFactory constructor(
-    private val errorHandler: ErrorHandler
+        private val errorHandler: ErrorHandler
 ) :
         CallAdapter.Factory() {
     override fun get(
-        returnType: Type,
-        annotations: Array<Annotation>,
-        retrofit: Retrofit
+            returnType: Type,
+            annotations: Array<Annotation>,
+            retrofit: Retrofit
     ): CallAdapter<*, *>? {
         return if (getRawType(returnType) == Call::class.java) {
             val resultType = getParameterUpperBound(0, returnType as ParameterizedType)
@@ -62,11 +69,12 @@ class ErrorHandlerCallAdapterFactory constructor(
                 }
             })
         }
+
         override fun cloneImpl(): Call<T> = ResultCall(proxy.clone())
     }
 
     private abstract class CallDelegate<TIn, TOut>(
-        protected val proxy: Call<TIn>
+            protected val proxy: Call<TIn>
     ) : Call<TOut> {
         override fun execute(): Response<TOut> = throw NotImplementedError()
         final override fun enqueue(callback: Callback<TOut>) = enqueueImpl(callback)

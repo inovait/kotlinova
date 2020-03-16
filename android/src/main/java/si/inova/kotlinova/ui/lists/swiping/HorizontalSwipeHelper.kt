@@ -1,3 +1,14 @@
+/*
+ * Copyright 2020 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package si.inova.kotlinova.ui.lists.swiping
 
 import android.animation.Animator
@@ -34,7 +45,7 @@ class HorizontalSwipeHelper(private val view: View) {
     // Scale constants from px to dp
     private val escapeVelocity = view.context.fromDpToPixels(SWIPE_ESCAPE_VELOCITY_UNSCALED)
     private val returnAnimationVelocity =
-        view.context.fromDpToPixels(RETURN_ANIMATION_VELOCITY_UNSCALED)
+            view.context.fromDpToPixels(RETURN_ANIMATION_VELOCITY_UNSCALED)
     private val maxDismissVelocity = view.context.fromDpToPixels(MAX_DISMISS_VELOCITY_UNSCALED)
 
     private var initialX = 0f
@@ -135,9 +146,9 @@ class HorizontalSwipeHelper(private val view: View) {
                 } else {
                     // User moved the view significantly away from left anchor. Swipe to the end.
                     SelfMovementAnimation(
-                        view.width.toFloat(),
-                        returnAnimationVelocity,
-                        true
+                            view.width.toFloat(),
+                            returnAnimationVelocity,
+                            true
                     ) {
                         swipeListener?.onSwipedRight()
                     }
@@ -157,9 +168,9 @@ class HorizontalSwipeHelper(private val view: View) {
                 } else {
                     // User moved the view significantly away from right anchor. Swipe to the end.
                     SelfMovementAnimation(
-                        -view.width.toFloat(),
-                        returnAnimationVelocity,
-                        true
+                            -view.width.toFloat(),
+                            returnAnimationVelocity,
+                            true
                     ) {
                         swipeListener?.onSwipedLeft()
                     }
@@ -176,11 +187,11 @@ class HorizontalSwipeHelper(private val view: View) {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     inner class SelfMovementAnimation(
-        @get:VisibleForTesting
-        val targetX: Float,
-        velocity: Float,
-        decelerateTowardsEnd: Boolean = true,
-        private val endAction: (() -> Unit)? = null
+            @get:VisibleForTesting
+            val targetX: Float,
+            velocity: Float,
+            decelerateTowardsEnd: Boolean = true,
+            private val endAction: (() -> Unit)? = null
     ) : ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
         private val valueAnimator: ValueAnimator
 
