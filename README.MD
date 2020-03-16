@@ -59,7 +59,7 @@ Utilities for integrating Firebase with Kotlin's coroutines, Firestore mocks for
 
 This library uses [Semantic Versioning](https://semver.org/). Version number is updated automatically whenever new release is built.
 
-When updating, it is recommended that you check out [changelog](http://hydra/utilities/kotlinova/blob/master/CHANGELOG.MD) first to see the changes, especially if there was major version change.
+When updating, it is recommended that you check out [changelog](https://github.com/inovait/kotlinova/blob/master/CHANGELOG.MD) first to see the changes, especially if there was major version change.
 
 ## Contributing
 
