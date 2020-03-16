@@ -20,7 +20,7 @@ ext {
 apply from: '../maven-push.gradle'
 
 dependencies {
-    implementation "si.inova.kotlinova:core:${VERSION}"
+    implementation "com.github.inovait.kotlinova:core:${VERSION}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"

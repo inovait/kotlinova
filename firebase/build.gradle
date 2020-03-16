@@ -48,10 +48,10 @@ android {
 }
 
 dependencies {
-    implementation "si.inova.kotlinova:core:${VERSION}"
-    implementation "si.inova.kotlinova:android:${VERSION}"
-    implementation "si.inova.kotlinova:gms:${VERSION}"
-    implementation "si.inova.kotlinova:rx:${VERSION}"
+    implementation "com.github.inovait.kotlinova:core:${VERSION}"
+    implementation "com.github.inovait.kotlinova:android:${VERSION}"
+    implementation "com.github.inovait.kotlinova:gms:${VERSION}"
+    implementation "com.github.inovait.kotlinova:rx:${VERSION}"
 
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
 

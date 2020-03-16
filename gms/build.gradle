@@ -47,8 +47,8 @@ android {
 }
 
 dependencies {
-    implementation "si.inova.kotlinova:core:${VERSION}"
-    implementation "si.inova.kotlinova:android:${VERSION}"
+    implementation "com.github.inovait.kotlinova:core:${VERSION}"
+    implementation "com.github.inovait.kotlinova:android:${VERSION}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "com.google.android.gms:play-services-location:${versions.playServices}"
