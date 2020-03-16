@@ -125,7 +125,7 @@ afterEvaluate { project ->
                     if (project.isAndroid()) {
                         packaging 'aar'
                     }
-                    url 'http://hydra/utilities/kotlinova'
+                    url 'http://hydra/utilities/kotlinova/kotlinova'
 
                     scm {
                         url 'http://hydra/utilities/kotlinova'
