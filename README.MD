@@ -4,10 +4,10 @@ Set of common utility classes for Kotlin projects, primarily based on Kotlin cor
 
 ## Installation
 
-1. Add Inova's nexus to your `build.gradle`'s maven repositories
+1. Add Jitpack to your `build.gradle`'s maven repositories
 
     ```
-    maven { url 'http://nexus/content/repositories/releases' }
+    maven { url 'https://jitpack.io' }
     ```
 
 2. Add modules to your `build.gradle`'s dependencies.
@@ -21,37 +21,37 @@ while others are Android-only.
 
 ### Core ![Java Module](docs/java_module.png)
 
-`implementation "si.inova.kotlinova:core:X.Y.Z"`
+`implementation "com.github.inovait.kotlinova:core:X.Y.Z"`
 
 Core module is the main dependency all other modules depend on. It mostly contains unit-testing helpers for Kotlin's coroutines and some utility classes.
 
 ### Rx ![Java Module](docs/java_module.png)
 
-`implementation "si.inova.kotlinova:rx:X.Y.Z"`
+`implementation "com.github.inovait.kotlinova:rx:X.Y.Z"`
 
 [RxJava](https://github.com/ReactiveX/RxJava) Utilities.
 
 ### Retrofit ![Java Module](docs/java_module.png)
 
-`implementation "si.inova.kotlinova:retrofit:X.Y.Z"`
+`implementation "com.github.inovait.kotlinova:retrofit:X.Y.Z"`
 
 Utilities for consuimg REST APIs via [Retrofit](https://github.com/square/retrofit) and [Moshi](https://github.com/square/moshi)
 
 ### Android ![Android Module](docs/android_module.png)
 
-`implementation "si.inova.kotlinova:android:X.Y.Z"`
+`implementation "com.github.inovait.kotlinova:android:X.Y.Z"`
 
 Utilities for integrating Android architecture components (ViewModel, LiveData) with Kotlin's coroutines and common UI components (such as Loading spinners, recycler adapters etc.)
 
 ### Gms ![Android Module](docs/android_module.png)
 
-`implementation "si.inova.kotlinova:gms:X.Y.Z"`
+`implementation "com.github.inovait.kotlinova:gms:X.Y.Z"`
 
 Utilities for integrating Google Play Services with Kotlin's coroutines
 
 ### Firebase ![Android Module](docs/android_module.png)
 
-`implementation "si.inova.kotlinova:gms:X.Y.Z"`
+`implementation "com.github.inovait.kotlinova:gms:X.Y.Z"`
 
 Utilities for integrating Firebase with Kotlin's coroutines, Firestore mocks for testing and helpers for routing Firestore data into standard Observables.
 
