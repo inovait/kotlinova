@@ -66,3 +66,20 @@ publishing {
     }
 }
 
+
+afterEvaluate { project ->
+    if (project.isAndroid()) {
+        artifacts {
+            archives androidSourcesJar
+        }
+
+        tasks.publishMavenPublicationToMavenLocal.dependsOn(assembleRelease)
+    } else {
+        artifacts {
+            archives sourcesJar
+        }
+
+        tasks.publishMavenPublicationToMavenLocal.dependsOn(jar)
+    }
+}
+
