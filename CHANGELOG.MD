@@ -1,3 +1,9 @@
+## [2.9.3](https://github.com/inovait/kotlinovacompare/v2.9.2...v2.9.3) (2020-03-17)
+
+### Bug Fixes
+
+* publishing not working at all ([829d5cf2](https://github.com/inovait/kotlinovacommit/829d5cf27a0a9253723fabcd45aa52c49bc585ed))
+
 ## [2.9.2](https://github.com/inovait/kotlinovacompare/v2.9.1...v2.9.2) (2020-03-17)
 
 ### Bug Fixes
