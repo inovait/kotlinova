@@ -126,7 +126,7 @@ node('android-linux') {
 
         sshagent(['5e93bc02-0f1b-4987-9d09-115cb8cf8084']) {
             sh "git push origin master"
-            sh "git push origin v$newVersionName"
+            sh "git push origin $newVersionName"
         }
     }
 }
