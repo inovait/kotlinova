@@ -1,3 +1,9 @@
+## [2.9.2](https://github.com/inovait/kotlinovacompare/v2.9.1...v2.9.2) (2020-03-17)
+
+### Bug Fixes
+
+* remove reduntant maven plugin ([22a13146](https://github.com/inovait/kotlinovacommit/22a1314698b20b4f7d62bc7583f502757f8894f6))
+
 ## [2.9.1](https://github.com/inovait/kotlinovacompare/v2.9.0...v2.9.1) (2020-03-17)
 
 ### Bug Fixes
