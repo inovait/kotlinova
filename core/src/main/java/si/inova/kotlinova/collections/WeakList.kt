@@ -12,7 +12,7 @@
 package si.inova.kotlinova.collections
 
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.LinkedList
 
 /**
  * Collection that holds weak references to objects.

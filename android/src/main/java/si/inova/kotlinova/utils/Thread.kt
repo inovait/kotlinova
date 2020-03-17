@@ -18,7 +18,11 @@ package si.inova.kotlinova.utils
 
 import android.annotation.SuppressLint
 import androidx.arch.core.executor.ArchTaskExecutor
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * Run specified block on the UI thread.
@@ -30,8 +34,8 @@ import kotlinx.coroutines.*
  * it will be started as a child of this job. Can be *null*.
  */
 fun runOnUiThread(
-        parentJob: Job? = null,
-        block: () -> Unit
+    parentJob: Job? = null,
+    block: () -> Unit
 ) {
     @SuppressLint("RestrictedApi")
     if (ArchTaskExecutor.getInstance().isMainThread) {

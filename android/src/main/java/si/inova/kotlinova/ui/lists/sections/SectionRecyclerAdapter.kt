@@ -104,7 +104,7 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
      * @return pair of section at this position and position inside section
      */
     protected fun getInnerPosition(position: Int):
-            Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
+        Pair<RecyclerSection<out RecyclerView.ViewHolder>, Int> {
         var sectionStart = 0
         for (section in sections) {
             val sectionEnd = sectionStart + section.itemCount
@@ -202,8 +202,8 @@ class SectionRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             if (nextInsertedIndex < count || numUpdated > 0) {
                 notifyItemRangeInserted(
-                        nextInsertedIndex + position + sectionStart,
-                        count - nextInsertedIndex + numUpdated
+                    nextInsertedIndex + position + sectionStart,
+                    count - nextInsertedIndex + numUpdated
                 )
             }
         }

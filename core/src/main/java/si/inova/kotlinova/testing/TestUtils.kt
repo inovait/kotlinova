@@ -54,8 +54,8 @@ inline fun <reified T : Any> paramEquals(crossinline block: (T) -> Pair<T?, T?>)
 
 fun <T, R : Any> assertIs(test: R?, expectedClass: Class<T>) {
     assertTrue(
-            "Object should be ${expectedClass.name}, but is ${test?.javaClass?.name}",
-            test != null && expectedClass.isAssignableFrom(test.javaClass)
+        "Object should be ${expectedClass.name}, but is ${test?.javaClass?.name}",
+        test != null && expectedClass.isAssignableFrom(test.javaClass)
     )
 }
 
@@ -66,8 +66,8 @@ inline fun <reified T> assertIs(test: Any?) {
 fun <T> assertIsSuccess(input: Resource<T>?) {
     if (input is Resource.Error) {
         throw AssertionError(
-                "Result should be Resource.Success, but is Error",
-                input.exception
+            "Result should be Resource.Success, but is Error",
+            input.exception
         )
     }
 

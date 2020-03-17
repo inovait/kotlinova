@@ -13,7 +13,13 @@
 
 package si.inova.kotlinova.utils
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import si.inova.kotlinova.archcomponents.AlwaysActiveLifecycleOwner
@@ -31,8 +37,8 @@ import kotlin.reflect.KProperty
  * Convenience extension that allows putting method references into *LiveData.observe()*
  */
 inline fun <T> LiveData<T>.observe(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function1<T?, Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T?, Unit>
 ) {
     observe(lifecycleOwner, Observer { method(it) })
 }
@@ -45,8 +51,8 @@ inline fun <T> LiveData<T>.observe(
  * can be called multiple times in the same instance
  */
 inline fun <T> LiveData<T>.exclusiveObserve(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function1<T?, Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T?, Unit>
 ) {
     removeObservers(lifecycleOwner)
 
@@ -59,8 +65,8 @@ inline fun <T> LiveData<T>.exclusiveObserve(
  * Observe LiveData<Unit> as event with no-args method
  */
 inline fun LiveData<Unit>.observeEvent(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function0<Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function0<Unit>
 ) {
     observe(lifecycleOwner, Observer { method() })
 }
@@ -73,8 +79,8 @@ inline fun LiveData<Unit>.observeEvent(
  * can be called multiple times in the same instance
  */
 inline fun LiveData<Unit>.exclusiveObserveEvent(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function0<Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function0<Unit>
 ) {
     removeObservers(lifecycleOwner)
 
@@ -85,8 +91,8 @@ inline fun LiveData<Unit>.exclusiveObserveEvent(
  * Convenience extension that observes the value of the Resource, regardless of its state
  */
 inline fun <T> LiveData<T>.observeNotNull(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function1<T, Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T, Unit>
 ) {
     observe(lifecycleOwner, Observer {
         if (it != null) {
@@ -103,8 +109,8 @@ inline fun <T> LiveData<T>.observeNotNull(
  * can be called multiple times in the same instance
  */
 inline fun <T> LiveData<T>.exclusiveObserveNotNull(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function1<T, Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T, Unit>
 ) {
     removeObservers(lifecycleOwner)
 
@@ -123,8 +129,8 @@ inline fun <T> LiveData<T>.exclusiveObserveNotNull(
  * can be called multiple times in the same instance
  */
 inline fun <T> LiveData<Resource<T>>.exclusiveObserveResourceValue(
-        lifecycleOwner: LifecycleOwner,
-        crossinline method: Function1<T, Unit>
+    lifecycleOwner: LifecycleOwner,
+    crossinline method: Function1<T, Unit>
 ) {
     removeObservers(lifecycleOwner)
 
@@ -176,8 +182,8 @@ fun <T> MediatorLiveData<T>.addSource(source: Publisher<T>) {
  * Add [Resource] Rx source to the [Resource][Resource] [MediatorLiveData].
  */
 fun <T, S> MediatorLiveData<T>.addResourceSource(
-        source: Publisher<Resource<S>>,
-        onChanged: (Resource<S>?) -> Unit
+    source: Publisher<Resource<S>>,
+    onChanged: (Resource<S>?) -> Unit
 ) {
     addSource(source.toResourceLiveData(), onChanged)
 }
@@ -240,7 +246,7 @@ fun <T> liveDataOf(value: T?): LiveData<T> {
  */
 @Suppress("NOTHING_TO_INLINE")
 inline operator fun <T> LiveData<T>.getValue(thisRef: Any?, property: KProperty<*>): LiveData<T> =
-        this
+    this
 
 /**
  * Await first value from this resource stream (or throw exception if error happens)
@@ -249,9 +255,9 @@ inline operator fun <T> LiveData<T>.getValue(thisRef: Any?, property: KProperty<
  */
 suspend fun <T> LiveData<Resource<T>>.awaitFirstUnpacked(): T {
     return Flowable
-            .fromPublisher(
-                    LiveDataReactiveStreams
-                            .toPublisher(AlwaysActiveLifecycleOwner, this)
-            )
-            .awaitFirstUnpacked()
+        .fromPublisher(
+            LiveDataReactiveStreams
+                .toPublisher(AlwaysActiveLifecycleOwner, this)
+        )
+        .awaitFirstUnpacked()
 }

@@ -22,9 +22,9 @@ import io.reactivex.FlowableEmitter
 fun SharedPreferences.updatesObservable(): Flowable<String> {
     return Flowable.create({ emitter: FlowableEmitter<String> ->
         val listener =
-                SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-                    emitter.onNext(key)
-                }
+            SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+                emitter.onNext(key)
+            }
 
         registerOnSharedPreferenceChangeListener(listener)
 

@@ -11,8 +11,16 @@
 
 package si.inova.kotlinova.gms
 
-import com.google.firebase.firestore.*
-import com.nhaarman.mockitokotlin2.*
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.subscribers.TestSubscriber
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -36,16 +44,16 @@ class QueryObservableTest {
     @Test
     fun dataRetrieval() {
         val query = MockCollection(
-                listOf(
-                        "A" to 1,
-                        "B" to 2
-                )
+            listOf(
+                "A" to 1,
+                "B" to 2
+            )
         )
         val testObserver = TestSubscriber.create<QuerySnapshot>()
 
         val documentObservable = QueryObservable(query.toColRef())
         documentObservable.flowable.map { it.value!! }
-                .subscribe(testObserver)
+            .subscribe(testObserver)
 
         assertEquals(1, testObserver.valueCount())
 
@@ -99,7 +107,7 @@ class QueryObservableTest {
         val query: Query = mock()
         val listener = argumentCaptor<EventListener<QuerySnapshot>>()
         whenever(query.addSnapshotListener(listener.capture()))
-                .thenReturn(mock())
+            .thenReturn(mock())
 
         val queryObservable = QueryObservable(query)
 
@@ -116,10 +124,10 @@ class QueryObservableTest {
     @Test
     fun noErrorsWithLateDelivery() {
         val query = MockCollection(
-                listOf(
-                        "A" to 1,
-                        "B" to 2
-                )
+            listOf(
+                "A" to 1,
+                "B" to 2
+            )
         )
 
         val mockQuery = mock<Query>()

@@ -24,9 +24,9 @@ class BehaviorSubjectProxy<T>(private val input: Flowable<T>) {
     private val subject = BehaviorSubject.create<T>()
 
     val flowable: Flowable<T> = subject
-            .doOnSubscribe(this::onSubscribe)
-            .doFinally(this::onDispose)
-            .share().toFlowable(BackpressureStrategy.LATEST)
+        .doOnSubscribe(this::onSubscribe)
+        .doFinally(this::onDispose)
+        .share().toFlowable(BackpressureStrategy.LATEST)
 
     private var disposable: Disposable? = null
 

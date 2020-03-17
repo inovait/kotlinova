@@ -15,7 +15,12 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -70,7 +75,7 @@ class RecyclerStateSaverTest {
     fun restoringManual() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         recyclerStateSaver.notifyRecyclerViewLoaded()
 
@@ -81,7 +86,7 @@ class RecyclerStateSaverTest {
     fun restoringTwice() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         recyclerStateSaver.notifyRecyclerViewLoaded()
         recyclerStateSaver.notifyRecyclerViewLoaded()
@@ -97,7 +102,7 @@ class RecyclerStateSaverTest {
     fun restoringListSection() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         val listSection: ListSection<Any, DummyViewHolder> = mock()
 
@@ -121,7 +126,7 @@ class DummyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 class StringParcelable(val text: String) : Parcelable {
     constructor(parcel: Parcel) :
-            this(parcel.readString() ?: error("System returned null string"))
+        this(parcel.readString() ?: error("System returned null string"))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(text)

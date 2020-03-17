@@ -50,14 +50,14 @@ class ScreenshotTestRule constructor() : TestWatcher() {
     companion object {
         fun create(wrappedRule: TestRule): TestRule {
             return RuleChain
-                    .outerRule(
-                            GrantPermissionRule.grant(
-                                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            )
+                .outerRule(
+                    GrantPermissionRule.grant(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
                     )
-                    .around(wrappedRule)
-                    .around(ScreenshotTestRule())
+                )
+                .around(wrappedRule)
+                .around(ScreenshotTestRule())
         }
     }
 }

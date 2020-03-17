@@ -27,9 +27,9 @@ import si.inova.kotlinova.ui.state.StateSavingComponent
  * @author Matej Drobnic
  */
 class RecyclerStateSaver(
-        component: StateSavingComponent,
-        private val recycler: RecyclerView,
-        key: String
+    component: StateSavingComponent,
+    private val recycler: RecyclerView,
+    key: String
 ) : StateSaver<Parcelable>() {
 
     private var alreadyRestored = false

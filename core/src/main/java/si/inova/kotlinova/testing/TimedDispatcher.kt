@@ -11,13 +11,20 @@
 
 package si.inova.kotlinova.testing
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import si.inova.kotlinova.coroutines.TestableDispatchers
-import java.util.*
+import java.util.PriorityQueue
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.sign
 
@@ -79,18 +86,18 @@ class TimedDispatcher : TestWatcher() {
         }
 
         override fun scheduleResumeAfterDelay(
-                timeMillis: Long,
-                continuation: CancellableContinuation<Unit>
+            timeMillis: Long,
+            continuation: CancellableContinuation<Unit>
         ) {
             val target = ScheduledTask(
-                    currentTime + timeMillis,
-                    Runnable { with(continuation) { resumeUndispatched(Unit) } })
+                currentTime + timeMillis,
+                Runnable { with(continuation) { resumeUndispatched(Unit) } })
             schedules.add(target)
         }
 
         override fun invokeOnTimeout(timeMillis: Long, block: Runnable): DisposableHandle {
             val target = ScheduledTask(
-                    currentTime + timeMillis, block
+                currentTime + timeMillis, block
             )
 
             schedules.add(target)
@@ -103,8 +110,8 @@ class TimedDispatcher : TestWatcher() {
         }
 
         private data class ScheduledTask(
-                val targetTime: Long,
-                val task: Runnable
+            val targetTime: Long,
+            val task: Runnable
         ) : Comparable<ScheduledTask> {
             override fun compareTo(other: ScheduledTask): Int {
                 return (targetTime - other.targetTime).sign

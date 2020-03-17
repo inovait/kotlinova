@@ -35,7 +35,7 @@ class RxSchedulerRule(private val scheduler: Scheduler = Schedulers.trampoline()
     private val schedulerFunction = Function<Scheduler, Scheduler> { scheduler }
 
     private val schedulerFunctionLazy =
-            Function<Callable<Scheduler>, Scheduler> { scheduler }
+        Function<Callable<Scheduler>, Scheduler> { scheduler }
 
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {

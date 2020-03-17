@@ -47,8 +47,8 @@ class RxUtilsTest {
         val action: () -> Unit = mock()
 
         val flowable = Flowable.never<Unit>()
-                .doOnSubscribe(onSubscribe)
-                .doFinally(onDispose)
+            .doOnSubscribe(onSubscribe)
+            .doFinally(onDispose)
 
         inOrder(onSubscribe, action, onDispose) {
             verifyNoMoreInteractions()
@@ -72,8 +72,8 @@ class RxUtilsTest {
         whenever(action.invoke()).thenThrow(RuntimeException())
 
         val flowable = Flowable.never<Unit>()
-                .doOnSubscribe(onSubscribe)
-                .doFinally(onDispose)
+            .doOnSubscribe(onSubscribe)
+            .doFinally(onDispose)
 
         inOrder(onSubscribe, action, onDispose) {
             verifyNoMoreInteractions()

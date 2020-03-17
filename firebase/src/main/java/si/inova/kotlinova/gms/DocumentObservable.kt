@@ -11,7 +11,11 @@
 
 package si.inova.kotlinova.gms
 
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.rx.OnDemandProvider
@@ -22,7 +26,7 @@ import si.inova.kotlinova.rx.OnDemandProvider
  * @author Matej Drobnic
  */
 class DocumentObservable(private val documentReference: DocumentReference) :
-        OnDemandProvider<Resource<DocumentSnapshot>>(), EventListener<DocumentSnapshot> {
+    OnDemandProvider<Resource<DocumentSnapshot>>(), EventListener<DocumentSnapshot> {
 
     private var listenerRegistration: ListenerRegistration? = null
 
@@ -48,9 +52,9 @@ class DocumentObservable(private val documentReference: DocumentReference) :
         if (newDocument != null) {
             if (!newDocument.exists()) {
                 offer(
-                        Resource.Error(
-                                NoSuchElementException("${newDocument.reference.path} is missing")
-                        )
+                    Resource.Error(
+                        NoSuchElementException("${newDocument.reference.path} is missing")
+                    )
                 )
                 return
             }

@@ -45,7 +45,7 @@ class HorizontalSwipeHelper(private val view: View) {
     // Scale constants from px to dp
     private val escapeVelocity = view.context.fromDpToPixels(SWIPE_ESCAPE_VELOCITY_UNSCALED)
     private val returnAnimationVelocity =
-            view.context.fromDpToPixels(RETURN_ANIMATION_VELOCITY_UNSCALED)
+        view.context.fromDpToPixels(RETURN_ANIMATION_VELOCITY_UNSCALED)
     private val maxDismissVelocity = view.context.fromDpToPixels(MAX_DISMISS_VELOCITY_UNSCALED)
 
     private var initialX = 0f
@@ -146,9 +146,9 @@ class HorizontalSwipeHelper(private val view: View) {
                 } else {
                     // User moved the view significantly away from left anchor. Swipe to the end.
                     SelfMovementAnimation(
-                            view.width.toFloat(),
-                            returnAnimationVelocity,
-                            true
+                        view.width.toFloat(),
+                        returnAnimationVelocity,
+                        true
                     ) {
                         swipeListener?.onSwipedRight()
                     }
@@ -168,9 +168,9 @@ class HorizontalSwipeHelper(private val view: View) {
                 } else {
                     // User moved the view significantly away from right anchor. Swipe to the end.
                     SelfMovementAnimation(
-                            -view.width.toFloat(),
-                            returnAnimationVelocity,
-                            true
+                        -view.width.toFloat(),
+                        returnAnimationVelocity,
+                        true
                     ) {
                         swipeListener?.onSwipedLeft()
                     }
@@ -187,11 +187,11 @@ class HorizontalSwipeHelper(private val view: View) {
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     inner class SelfMovementAnimation(
-            @get:VisibleForTesting
-            val targetX: Float,
-            velocity: Float,
-            decelerateTowardsEnd: Boolean = true,
-            private val endAction: (() -> Unit)? = null
+        @get:VisibleForTesting
+        val targetX: Float,
+        velocity: Float,
+        decelerateTowardsEnd: Boolean = true,
+        private val endAction: (() -> Unit)? = null
     ) : ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
         private val valueAnimator: ValueAnimator
 

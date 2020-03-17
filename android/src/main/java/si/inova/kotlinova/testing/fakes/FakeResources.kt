@@ -12,7 +12,12 @@
 package si.inova.kotlinova.testing.fakes
 
 import android.annotation.SuppressLint
-import android.content.res.*
+import android.content.res.AssetFileDescriptor
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.content.res.Resources
+import android.content.res.TypedArray
+import android.content.res.XmlResourceParser
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle

@@ -37,17 +37,17 @@ class ViewImageGenerator @Inject constructor(private val context: Context) {
      * to perform any action on the view before screenshot is taken (for example fill in the data)
      */
     suspend fun generateViewImageWrapHeight(
-            @LayoutRes layout: Int,
-            width: Int,
-            density: Int,
-            viewAction: (suspend View.() -> Unit)? = null
+        @LayoutRes layout: Int,
+        width: Int,
+        density: Int,
+        viewAction: (suspend View.() -> Unit)? = null
     ): Bitmap {
         return generateViewImage(
-                layout,
-                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                density,
-                viewAction
+            layout,
+            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            density,
+            viewAction
         )
     }
 
@@ -61,11 +61,11 @@ class ViewImageGenerator @Inject constructor(private val context: Context) {
      * to perform any action on the view before screenshot is taken (for example fill in the data)
      */
     suspend fun generateViewImage(
-            @LayoutRes layout: Int,
-            widthMeasureSpec: Int,
-            heightMeasureSpec: Int,
-            density: Int,
-            viewAction: (suspend View.() -> Unit)? = null
+        @LayoutRes layout: Int,
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+        density: Int,
+        viewAction: (suspend View.() -> Unit)? = null
     ): Bitmap {
         val config = Configuration(context.resources.configuration)
         config.densityDpi = density

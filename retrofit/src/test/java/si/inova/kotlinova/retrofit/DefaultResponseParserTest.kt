@@ -28,7 +28,7 @@ class DefaultResponseParserTest {
     @Test(expected = HttpException::class)
     fun `Parse error`() {
         val response = Response.error<String>(
-                500, ResponseBody.create(null, "")
+            500, ResponseBody.create(null, "")
         )
 
         DefaultResponseParser.parseResponse(response)

@@ -33,11 +33,11 @@ import kotlin.math.max
  */
 
 class FullScreenProgressBar @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) :
-        TouchTakeOverFrameLayout(context, attrs, defStyleAttr) {
+    TouchTakeOverFrameLayout(context, attrs, defStyleAttr) {
 
     private var lastShowTime = 0L
     private var shown = false
@@ -85,12 +85,12 @@ class FullScreenProgressBar @JvmOverloads constructor(
 
         activeAnimation?.cancel()
         animate()
-                .alpha(1f)
-                .withStartAction { setVisibilityWithoutLayoutAnimations(View.VISIBLE) }
-                .withEndAction { activeAnimation = null }
-                .setDuration(FADE_ANIMATION_DURATION)
-                .also { activeAnimation = it }
-                .start()
+            .alpha(1f)
+            .withStartAction { setVisibilityWithoutLayoutAnimations(View.VISIBLE) }
+            .withEndAction { activeAnimation = null }
+            .setDuration(FADE_ANIMATION_DURATION)
+            .also { activeAnimation = it }
+            .start()
     }
 
     private val hideRunnable = Runnable {
@@ -98,14 +98,14 @@ class FullScreenProgressBar @JvmOverloads constructor(
 
         activeAnimation?.cancel()
         animate()
-                .alpha(0f)
-                .withEndAction {
-                    setVisibilityWithoutLayoutAnimations(View.GONE)
-                    activeAnimation = null
-                }
-                .setDuration(FADE_ANIMATION_DURATION)
-                .also { activeAnimation = it }
-                .start()
+            .alpha(0f)
+            .withEndAction {
+                setVisibilityWithoutLayoutAnimations(View.GONE)
+                activeAnimation = null
+            }
+            .setDuration(FADE_ANIMATION_DURATION)
+            .also { activeAnimation = it }
+            .start()
     }
 
     public override fun onDetachedFromWindow() {
@@ -120,9 +120,9 @@ class FullScreenProgressBar @JvmOverloads constructor(
 
     init {
         val args = context.theme.obtainStyledAttributes(
-                attrs,
-                R.styleable.FullScreenProgressBar,
-                0, 0
+            attrs,
+            R.styleable.FullScreenProgressBar,
+            0, 0
         )
 
         val visibleAtStart = try {

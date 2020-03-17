@@ -26,8 +26,8 @@ import kotlin.math.max
  * @author Matej Drobnic
  */
 class PlaceholderSection(
-        @LayoutRes private val placeholderResource: Int,
-        private val placeholderCount: Int = 10
+    @LayoutRes private val placeholderResource: Int,
+    private val placeholderCount: Int = 10
 ) : RecyclerSection<PlaceholderSection.PlaceholderViewHolder>() {
     private val handler = Handler()
 

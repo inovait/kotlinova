@@ -11,7 +11,14 @@
 
 package si.inova.kotlinova.data
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.coroutines.TestableDispatchers
 import kotlin.coroutines.CoroutineContext
 
@@ -24,8 +31,8 @@ import kotlin.coroutines.CoroutineContext
  * @author Matej Drobnic
  */
 class LastResultAsyncItemProcessor<I, O>(
-        private val processingContext: CoroutineContext = TestableDispatchers.Default,
-        private val callbackContext: CoroutineContext = Dispatchers.Main
+    private val processingContext: CoroutineContext = TestableDispatchers.Default,
+    private val callbackContext: CoroutineContext = Dispatchers.Main
 ) {
     @Volatile
     private var lastJob: Job? = null
@@ -46,8 +53,8 @@ class LastResultAsyncItemProcessor<I, O>(
 }
 
 fun <T> LastResultAsyncItemProcessor<Unit, T>.process(
-        callback: (T) -> Unit,
-        process: suspend CoroutineScope.(Unit) -> T
+    callback: (T) -> Unit,
+    process: suspend CoroutineScope.(Unit) -> T
 ) {
     process(Unit, callback, process)
 }

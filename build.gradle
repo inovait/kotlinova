@@ -37,7 +37,7 @@ buildscript {
 }
 
 subprojects {
-    ext.isAndroid =  {
+    ext.isAndroid = {
         return project.hasProperty("android")
     }
 

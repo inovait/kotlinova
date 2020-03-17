@@ -27,9 +27,9 @@ import kotlin.reflect.KProperty
  * @author Matej Drobnic
  */
 class PreferenceProperty<T>(
-        private val sharedPreferences: SharedPreferences,
-        private val defaultValue: T,
-        private val klass: Class<T>
+    private val sharedPreferences: SharedPreferences,
+    private val defaultValue: T,
+    private val klass: Class<T>
 ) : ReadWriteProperty<Any, T> {
     @Volatile
     private var cache: T? = null
@@ -59,8 +59,8 @@ class PreferenceProperty<T>(
  * Convenience function for easy [PreferenceProperty] creation.
  */
 inline fun <reified T> preference(
-        sharedPreferences: SharedPreferences,
-        defaultValue: T
+    sharedPreferences: SharedPreferences,
+    defaultValue: T
 ): PreferenceProperty<T> {
     return PreferenceProperty(sharedPreferences, defaultValue, T::class.java)
 }

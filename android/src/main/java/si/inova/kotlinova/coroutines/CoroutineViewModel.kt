@@ -37,7 +37,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * @author Matej Drobnic
  */
 abstract class CoroutineViewModel : ViewModel(),
-        CoroutineScope by CoroutineScope(SupervisorJob() + TestableDispatchers.Default) {
+    CoroutineScope by CoroutineScope(SupervisorJob() + TestableDispatchers.Default) {
     protected val scope = this
 
     protected val resources = LiveDataCoroutineResourceManager(scope)
@@ -58,27 +58,27 @@ abstract class CoroutineViewModel : ViewModel(),
      * @see LiveDataCoroutineResourceManager.launchResourceControlTask
      */
     @Deprecated(
-            "Use resources.launchResourceControlTask instead"
+        "Use resources.launchResourceControlTask instead"
     )
     fun <T> launchResourceControlTask(
-            resource: ResourceLiveData<T>,
-            currentValue: T? = resource.value?.value,
-            context: CoroutineContext = EmptyCoroutineContext,
-            routeErrorsToCommonObservable: Boolean = resources.routeErrorsToCommonObservableByDefault,
-            block: suspend ResourceLiveData<T>.() -> Unit
+        resource: ResourceLiveData<T>,
+        currentValue: T? = resource.value?.value,
+        context: CoroutineContext = EmptyCoroutineContext,
+        routeErrorsToCommonObservable: Boolean = resources.routeErrorsToCommonObservableByDefault,
+        block: suspend ResourceLiveData<T>.() -> Unit
     ) = resources.launchResourceControlTask(
-            resource,
-            currentValue,
-            context,
-            routeErrorsToCommonObservable,
-            block
+        resource,
+        currentValue,
+        context,
+        routeErrorsToCommonObservable,
+        block
     )
 
     /**
      * @see CoroutineResourceManager.isResourceTaken
      */
     @Deprecated(
-            "Use resources.isResourceTaken instead"
+        "Use resources.isResourceTaken instead"
     )
     protected fun <T> isResourceTaken(resource: MutableLiveData<Resource<T>>): Boolean {
         return resources.isResourceTaken(resource)
@@ -88,7 +88,7 @@ abstract class CoroutineViewModel : ViewModel(),
      * Cancel job that currently manages passed resource.
      */
     @Deprecated(
-            "Use resources.cancelResource instead"
+        "Use resources.cancelResource instead"
     )
     protected fun <T> cancelResource(resource: MutableLiveData<Resource<T>>) {
         resources.cancelResource(resource)

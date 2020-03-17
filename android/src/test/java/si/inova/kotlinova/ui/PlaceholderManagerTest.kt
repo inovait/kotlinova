@@ -13,7 +13,11 @@ package si.inova.kotlinova.ui
 
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock

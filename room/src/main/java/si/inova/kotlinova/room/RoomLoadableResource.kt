@@ -35,13 +35,13 @@ import si.inova.kotlinova.resources.LoadableResource
  *
  */
 abstract class RoomLoadableResource<T : Any>(
-        private val database: RoomDatabase,
-        vararg tables: String
+    private val database: RoomDatabase,
+    vararg tables: String
 ) :
-        LoadableResource<List<T>> {
+    LoadableResource<List<T>> {
     private val dataSubject = BehaviorProcessor.create<Resource<List<T>>>()
     private val dbFetcher = LastResultAsyncItemProcessor<Boolean, DataFromDatabase<List<T>>?>(
-            callbackContext = TestableDispatchers.Default
+        callbackContext = TestableDispatchers.Default
     )
 
     @Volatile
@@ -64,7 +64,7 @@ abstract class RoomLoadableResource<T : Any>(
     }
 
     override val data: Flowable<Resource<List<T>>> = dataSubject
-            .doOnSubscribe { onSubscribe() }
+        .doOnSubscribe { onSubscribe() }
 
     private fun onSubscribe() {
         if (waitingForRefresh) {

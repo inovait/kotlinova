@@ -12,7 +12,12 @@
 package si.inova.kotlinova.retrofit
 
 import okhttp3.Request
-import retrofit2.*
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Callback
+import retrofit2.HttpException
+import retrofit2.Response
+import retrofit2.Retrofit
 import si.inova.kotlinova.retrofit.ErrorHandlerCallAdapterFactory.ErrorHandler
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -25,13 +30,13 @@ import java.lang.reflect.Type
  *
  */
 class ErrorHandlerCallAdapterFactory constructor(
-        private val errorHandler: ErrorHandler
+    private val errorHandler: ErrorHandler
 ) :
-        CallAdapter.Factory() {
+    CallAdapter.Factory() {
     override fun get(
-            returnType: Type,
-            annotations: Array<Annotation>,
-            retrofit: Retrofit
+        returnType: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
     ): CallAdapter<*, *>? {
         return if (getRawType(returnType) == Call::class.java) {
             val resultType = getParameterUpperBound(0, returnType as ParameterizedType)
@@ -60,7 +65,7 @@ class ErrorHandlerCallAdapterFactory constructor(
                     } else {
                         val exception = try {
                             errorHandler.generateExceptionFromErrorBody(response)
-                                    ?: HttpException(response)
+                                ?: HttpException(response)
                         } catch (e: Exception) {
                             e
                         }
@@ -74,7 +79,7 @@ class ErrorHandlerCallAdapterFactory constructor(
     }
 
     private abstract class CallDelegate<TIn, TOut>(
-            protected val proxy: Call<TIn>
+        protected val proxy: Call<TIn>
     ) : Call<TOut> {
         override fun execute(): Response<TOut> = throw NotImplementedError()
         final override fun enqueue(callback: Callback<TOut>) = enqueueImpl(callback)

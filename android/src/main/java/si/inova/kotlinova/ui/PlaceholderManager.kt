@@ -16,7 +16,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.TransitionDrawable
 import android.view.View
-import java.util.*
+import java.util.WeakHashMap
 
 /**
  * Class that handles setting and clearing view placeholders
@@ -53,10 +53,10 @@ class PlaceholderManager(private val standardPlaceholderDrawableFactory: () -> D
 
         if (animate && currentDrawable != null) {
             val transition = TransitionDrawable(
-                    arrayOf(
-                            currentDrawable,
-                            placeholder
-                    )
+                arrayOf(
+                    currentDrawable,
+                    placeholder
+                )
             ).apply { isCrossFadeEnabled = true }
 
             view.background = transition
@@ -89,10 +89,10 @@ class PlaceholderManager(private val standardPlaceholderDrawableFactory: () -> D
 
             if (animate && currentDrawable != null) {
                 val transition = TransitionDrawable(
-                        arrayOf(
-                                currentDrawable,
-                                targetDrawable ?: ColorDrawable(Color.TRANSPARENT)
-                        )
+                    arrayOf(
+                        currentDrawable,
+                        targetDrawable ?: ColorDrawable(Color.TRANSPARENT)
+                    )
                 ).apply { isCrossFadeEnabled = true }
 
                 view.background = transition

@@ -11,7 +11,11 @@
 
 package si.inova.kotlinova.coroutines
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -30,9 +34,9 @@ open class CoroutineResourceManager(protected val scope: CoroutineScope) {
      */
     @Synchronized
     fun launchBoundControlTask(
-            resource: Any,
-            context: CoroutineContext = EmptyCoroutineContext,
-            block: suspend () -> Unit
+        resource: Any,
+        context: CoroutineContext = EmptyCoroutineContext,
+        block: suspend () -> Unit
     ) {
         // To prevent threading issues, only one job can handle one resource at a time
         // Cancel active job first.

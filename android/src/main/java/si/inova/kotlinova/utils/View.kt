@@ -46,23 +46,23 @@ var View.isVisibleWithFade: Boolean
         isVisible = true
 
         animate()
-                .alpha(targetAlpha)
-                .apply {
-                    if (!value) {
-                        withEndAction { isVisible = false }
-                    }
+            .alpha(targetAlpha)
+            .apply {
+                if (!value) {
+                    withEndAction { isVisible = false }
                 }
-                .setDuration(250)
-                .start()
+            }
+            .setDuration(250)
+            .start()
     }
 
 /**
  * Helper method to inflate given layout asynchronously
  */
 fun Activity.inflateAsync(
-        savedInstanceState: Bundle?,
-        @LayoutRes layout: Int,
-        callback: AsyncLayoutInflater.OnInflateFinishedListener
+    savedInstanceState: Bundle?,
+    @LayoutRes layout: Int,
+    callback: AsyncLayoutInflater.OnInflateFinishedListener
 ) {
     val root = findViewById<ViewGroup>(android.R.id.content)
 
@@ -79,9 +79,9 @@ fun Activity.inflateAsync(
  * Helper method to inflate given layout asynchronously
  */
 fun Fragment.inflateAsync(
-        savedInstanceState: Bundle?,
-        @LayoutRes layout: Int,
-        callback: AsyncLayoutInflater.OnInflateFinishedListener
+    savedInstanceState: Bundle?,
+    @LayoutRes layout: Int,
+    callback: AsyncLayoutInflater.OnInflateFinishedListener
 ) {
     val root = view as ViewGroup
 
@@ -100,8 +100,8 @@ fun Fragment.inflateAsync(
 fun View.closeKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.hideSoftInputFromWindow(
-            windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
+        windowToken,
+        InputMethodManager.HIDE_NOT_ALWAYS
     )
 }
 
@@ -111,8 +111,8 @@ fun View.closeKeyboard() {
 fun View.openKeyboard() {
     val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.showSoftInput(
-            this,
-            InputMethodManager.SHOW_IMPLICIT
+        this,
+        InputMethodManager.SHOW_IMPLICIT
     )
 }
 
@@ -132,9 +132,9 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
     val transition = (parent as? ViewGroup)?.layoutTransition
 
     val appearingEnabled =
-            transition?.isTransitionTypeEnabled(LayoutTransition.APPEARING) ?: false
+        transition?.isTransitionTypeEnabled(LayoutTransition.APPEARING) ?: false
     val disappearingEnabled =
-            transition?.isTransitionTypeEnabled(LayoutTransition.DISAPPEARING) ?: false
+        transition?.isTransitionTypeEnabled(LayoutTransition.DISAPPEARING) ?: false
 
     transition?.disableTransitionType(LayoutTransition.APPEARING)
     transition?.disableTransitionType(LayoutTransition.DISAPPEARING)
@@ -150,8 +150,8 @@ fun View.setVisibilityWithoutLayoutAnimations(visibility: Int) {
 }
 
 fun SwitchCompat.setIsCheckedWithoutTriggeringListener(
-        state: Boolean,
-        listener: CompoundButton.OnCheckedChangeListener
+    state: Boolean,
+    listener: CompoundButton.OnCheckedChangeListener
 ) {
     setOnCheckedChangeListener(null)
     isChecked = state

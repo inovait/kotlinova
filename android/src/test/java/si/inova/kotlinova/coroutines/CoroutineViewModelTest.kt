@@ -21,7 +21,11 @@ import io.reactivex.Flowable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +52,7 @@ class CoroutineViewModelTest {
 
     @get:Rule
     val exceptionsAndUncaughtRule =
-            RuleChain.outerRule(expectException).around(UncaughtExceptionThrowRule())
+        RuleChain.outerRule(expectException).around(UncaughtExceptionThrowRule())
 
     @get:Rule
     val archRule = InstantTaskExecutorRule()
@@ -237,8 +241,8 @@ class CoroutineViewModelTest {
 
         fun exceptionTaskWithCommonError() {
             resources.launchResourceControlTask(
-                    resourceA,
-                    routeErrorsToCommonObservable = true
+                resourceA,
+                routeErrorsToCommonObservable = true
             ) {
                 throw IllegalStateException("Test exception")
             }

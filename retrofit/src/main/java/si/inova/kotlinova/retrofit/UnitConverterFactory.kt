@@ -21,9 +21,9 @@ import java.lang.reflect.Type
  */
 object UnitConverterFactory : Converter.Factory() {
     override fun responseBodyConverter(
-            type: Type,
-            annotations: Array<out Annotation>,
-            retrofit: Retrofit
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
         return if (type == Unit::class.java) UnitConverter else null
     }

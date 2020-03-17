@@ -32,9 +32,9 @@ import kotlin.coroutines.resume
  * Use it to register another observer to prevent LiveData from deinitializing itself.
  */
 suspend fun <T> LiveData<T>.awaitFirstValue(
-        ignoreExistingValue: Boolean = false,
-        runAfterObserve: (() -> Unit)? = null,
-        runAfterCompletionBeforeRemoveObserver: (() -> Unit)? = null
+    ignoreExistingValue: Boolean = false,
+    runAfterObserve: (() -> Unit)? = null,
+    runAfterCompletionBeforeRemoveObserver: (() -> Unit)? = null
 ): T? {
     return withContext(Dispatchers.Main) {
         var ignoreAnyValues = ignoreExistingValue

@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference
  * @author original PublisherLiveData by Google, adapted by Matej Drobnic
  */
 class ResourcePublisherLiveData<T>(private val publisher: Publisher<Resource<T>>) :
-        LiveData<Resource<T>>() {
+    LiveData<Resource<T>>() {
     internal val mSubscriber: AtomicReference<LiveDataSubscriber> = AtomicReference()
 
     override fun onActive() {
@@ -46,7 +46,7 @@ class ResourcePublisherLiveData<T>(private val publisher: Publisher<Resource<T>>
     }
 
     internal inner class LiveDataSubscriber : AtomicReference<Subscription>(),
-            Subscriber<Resource<T>> {
+        Subscriber<Resource<T>> {
 
         override fun onSubscribe(s: Subscription) {
             if (compareAndSet(null, s)) {

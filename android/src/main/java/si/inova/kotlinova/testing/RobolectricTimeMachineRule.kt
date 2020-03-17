@@ -39,6 +39,6 @@ class RobolectricTimeMachineRule : TestWatcher() {
         JavaTimeProvider.currentTimeMillisProvider = { SystemClock.elapsedRealtime() }
         AndroidTimeProvider.uptimeMillisProvider = { SystemClock.elapsedRealtime() }
         AndroidTimeProvider.clockProvider =
-                { Clock.fixed(Instant.ofEpochMilli(SystemClock.elapsedRealtime()), ZoneId.of("UTC")) }
+            { Clock.fixed(Instant.ofEpochMilli(SystemClock.elapsedRealtime()), ZoneId.of("UTC")) }
     }
 }

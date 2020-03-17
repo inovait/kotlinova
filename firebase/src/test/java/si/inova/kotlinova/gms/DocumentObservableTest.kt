@@ -11,7 +11,11 @@
 
 package si.inova.kotlinova.gms
 
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.inOrder
 import com.nhaarman.mockitokotlin2.mock
@@ -42,7 +46,7 @@ class DocumentObservableTest {
 
         val documentObservable = DocumentObservable(document.toDocumentRef())
         documentObservable.flowable.map { it.value!!.toObject(Int::class.java) }
-                .subscribe(testObserver)
+            .subscribe(testObserver)
         dispatcher.triggerActions()
 
         document.readValue = 2
@@ -123,7 +127,7 @@ class DocumentObservableTest {
 
         val documentObservable = DocumentObservable(mockDocument)
         val subscriber = documentObservable.flowable.map { it.value!!.toObject(Int::class.java) }
-                .subscribe()
+            .subscribe()
 
         dispatcher.triggerActions()
 

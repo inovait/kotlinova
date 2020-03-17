@@ -24,18 +24,18 @@ import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
  * Create shared [RecycledViewPool()][RecycledViewPool] and use it in both [RecyclerView]'s.
  */
 class HorizontalRecyclerListSection(
-        private val adapter: Adapter<*>,
-        private val recyclerViewPool: RecycledViewPool,
-        private val onRecyclerCreated: ((RecyclerView) -> Unit)? = null
+    private val adapter: Adapter<*>,
+    private val recyclerViewPool: RecycledViewPool,
+    private val onRecyclerCreated: ((RecyclerView) -> Unit)? = null
 ) : SingleViewSection() {
     constructor(
-            section: RecyclerSection<*>,
-            recyclerViewPool: RecycledViewPool,
-            onRecyclerCreated: ((RecyclerView) -> Unit)? = null
+        section: RecyclerSection<*>,
+        recyclerViewPool: RecycledViewPool,
+        onRecyclerCreated: ((RecyclerView) -> Unit)? = null
     ) : this(
-            SectionRecyclerAdapter().apply { attachSection(section) },
-            recyclerViewPool,
-            onRecyclerCreated
+        SectionRecyclerAdapter().apply { attachSection(section) },
+        recyclerViewPool,
+        onRecyclerCreated
     )
 
     override fun createView(parent: ViewGroup): View {

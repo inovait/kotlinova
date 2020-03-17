@@ -15,8 +15,7 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import org.junit.runners.model.MultipleFailureException
 import timber.log.Timber
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Collections
 
 /**
  * Test rule that fails any test that have thrown any exceptions through Timber logging

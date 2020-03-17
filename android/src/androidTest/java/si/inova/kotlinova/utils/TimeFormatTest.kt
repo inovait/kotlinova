@@ -29,13 +29,13 @@ class TimeFormatTest {
         assertEquals("01:30:32", TimeFormat.toHoursMinutesSeconds(5432, context))
 
         assertEquals(
-                "02:38",
-                TimeFormat.toHoursMinutesSeconds(158, context, alwaysShowHours = false)
+            "02:38",
+            TimeFormat.toHoursMinutesSeconds(158, context, alwaysShowHours = false)
         )
 
         assertEquals(
-                "01:30:32",
-                TimeFormat.toHoursMinutesSeconds(5432, context, alwaysShowHours = false)
+            "01:30:32",
+            TimeFormat.toHoursMinutesSeconds(5432, context, alwaysShowHours = false)
         )
     }
 

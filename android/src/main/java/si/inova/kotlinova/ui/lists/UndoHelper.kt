@@ -28,10 +28,10 @@ import si.inova.kotlinova.android.R
  * @author Kristjan Kotnik
  */
 class UndoHelper<T>(
-        private val context: Context,
-        private val rootView: View,
-        private val deleteText: String,
-        private val restoreText: String
+    private val context: Context,
+    private val rootView: View,
+    private val deleteText: String,
+    private val restoreText: String
 ) {
     var deleteCallback: ((T) -> Unit)? = null
     var restoreCallBack: (() -> Unit)? = null
@@ -44,12 +44,12 @@ class UndoHelper<T>(
         removeCallbacks()
         itemsToRemove.add(itemId)
         Snackbar
-                .make(rootView, deleteText, Snackbar.LENGTH_LONG)
-                .setAction(context.getString(R.string.undo)) {
-                    commitDeletionsAllButLast()
-                    restoreCallBack?.invoke()
-                    Snackbar.make(rootView, restoreText, Snackbar.LENGTH_SHORT).show()
-                }.show()
+            .make(rootView, deleteText, Snackbar.LENGTH_LONG)
+            .setAction(context.getString(R.string.undo)) {
+                commitDeletionsAllButLast()
+                restoreCallBack?.invoke()
+                Snackbar.make(rootView, restoreText, Snackbar.LENGTH_SHORT).show()
+            }.show()
         notifyItemRemovedCallback?.invoke()
         handler.postDelayed(runnable, SNACKBAR_DISPLAY_DELAY)
     }

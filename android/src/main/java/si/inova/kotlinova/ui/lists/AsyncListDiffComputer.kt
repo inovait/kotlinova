@@ -25,16 +25,16 @@ class AsyncListDiffComputer {
     private val asyncProcessor = LastResultAsyncItemProcessor<Unit, DiffUtil.DiffResult>()
 
     fun <T> computeDiffs(
-            diffProvider: ListDiffProvider<T>,
-            oldList: List<T>?,
-            newList: List<T>,
-            callback: (DiffUtil.DiffResult) -> Unit
+        diffProvider: ListDiffProvider<T>,
+        oldList: List<T>?,
+        newList: List<T>,
+        callback: (DiffUtil.DiffResult) -> Unit
     ) {
 
         val diffUtilCallback = object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return diffProvider
-                        .areItemsTheSame(oldList!![oldItemPosition], newList[newItemPosition])
+                    .areItemsTheSame(oldList!![oldItemPosition], newList[newItemPosition])
             }
 
             override fun getOldListSize(): Int {
@@ -47,17 +47,17 @@ class AsyncListDiffComputer {
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return diffProvider
-                        .areContentsSame(oldList!![oldItemPosition], newList[newItemPosition])
+                    .areContentsSame(oldList!![oldItemPosition], newList[newItemPosition])
             }
         }
 
         asyncProcessor.process(
-                {
-                    callback(it)
-                },
-                {
-                    DiffUtil.calculateDiff(diffUtilCallback)
-                })
+            {
+                callback(it)
+            },
+            {
+                DiffUtil.calculateDiff(diffUtilCallback)
+            })
     }
 }
 

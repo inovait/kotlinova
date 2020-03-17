@@ -13,9 +13,19 @@ package si.inova.kotlinova.coroutines
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import com.nhaarman.mockitokotlin2.*
-import kotlinx.coroutines.*
-import org.junit.Assert.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.spy
+import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.testing.ImmediateDispatcherRule
@@ -41,8 +51,8 @@ class LiveDataCoroutinesTest {
         val data = MutableLiveData<Int>()
         assertFalse(data.hasActiveObservers())
         val task = GlobalScope.async(
-                Dispatchers.Main,
-                CoroutineStart.DEFAULT, { data.awaitFirstValue() })
+            Dispatchers.Main,
+            CoroutineStart.DEFAULT, { data.awaitFirstValue() })
 
         assertFalse(task.isCompleted)
         assertTrue(data.hasActiveObservers())
@@ -69,9 +79,9 @@ class LiveDataCoroutinesTest {
 
         data.value = 10
         val task = GlobalScope.async(
-                Dispatchers.Main,
-                CoroutineStart.DEFAULT,
-                { data.awaitFirstValue(ignoreExistingValue = false) })
+            Dispatchers.Main,
+            CoroutineStart.DEFAULT,
+            { data.awaitFirstValue(ignoreExistingValue = false) })
         data.value = 20
 
         assertEquals(10, task.await())
@@ -114,9 +124,9 @@ class LiveDataCoroutinesTest {
 
         data.value = 10
         val task = GlobalScope.async(
-                Dispatchers.Main,
-                CoroutineStart.DEFAULT,
-                { data.awaitFirstValue(ignoreExistingValue = true) })
+            Dispatchers.Main,
+            CoroutineStart.DEFAULT,
+            { data.awaitFirstValue(ignoreExistingValue = true) })
         assertFalse(task.isCompleted)
         data.value = 10
 
@@ -133,8 +143,8 @@ class LiveDataCoroutinesTest {
 
         GlobalScope.async(Dispatchers.Main, CoroutineStart.DEFAULT, {
             data.awaitFirstValue(
-                    runAfterObserve = afterSubscribeCallback,
-                    runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
+                runAfterObserve = afterSubscribeCallback,
+                runAfterCompletionBeforeRemoveObserver = beforeUnsubscribeCallback
             )
         })
 

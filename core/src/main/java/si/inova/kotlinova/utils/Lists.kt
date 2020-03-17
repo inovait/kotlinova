@@ -16,8 +16,7 @@
 
 package si.inova.kotlinova.utils
 
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Random
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 

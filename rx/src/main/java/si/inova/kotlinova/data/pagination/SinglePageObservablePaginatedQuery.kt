@@ -23,7 +23,7 @@ import si.inova.kotlinova.data.resources.Resource
  */
 
 class SinglePageObservablePaginatedQuery<T>(private val providedData: List<T>) :
-        ObservablePaginatedQuery<T> {
+    ObservablePaginatedQuery<T> {
 
     override val isAtEnd: Boolean = true
 

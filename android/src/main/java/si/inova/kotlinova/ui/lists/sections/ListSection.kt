@@ -23,7 +23,7 @@ import timber.log.Timber
  * @author Matej Drobnic
  */
 abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH>(),
-        ListDiffProvider<T> {
+    ListDiffProvider<T> {
     final var data: List<T>? = null
         protected set
 
@@ -98,8 +98,8 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
      * Clear this section immediatelly.
      */
     @Deprecated(
-            "updateList also has synchronous behavior now when inserting empty list",
-            replaceWith = ReplaceWith("updateList(emptyList())")
+        "updateList also has synchronous behavior now when inserting empty list",
+        replaceWith = ReplaceWith("updateList(emptyList())")
     )
     fun clearList() {
         updateList(emptyList())

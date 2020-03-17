@@ -11,17 +11,22 @@
 
 package si.inova.kotlinova.testing.espresso.coroutines
 
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.Runnable
+import java.util.Collections
+import java.util.WeakHashMap
 import kotlin.coroutines.CoroutineContext
 
 /**
  * Dispatcher wrapper that monitors whether any of its jobs are currently running
  */
 class JobCheckingDispatcherWrapper(private val parent: CoroutineDispatcher) :
-        CoroutineDispatcher() {
+    CoroutineDispatcher() {
     private val jobs =
-            Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Job, Boolean>()))
+        Collections.synchronizedSet(Collections.newSetFromMap(WeakHashMap<Job, Boolean>()))
 
     var completionEvent: (() -> Unit)? = null
 

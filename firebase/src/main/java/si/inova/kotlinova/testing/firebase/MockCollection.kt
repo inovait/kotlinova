@@ -12,7 +12,11 @@
 package si.inova.kotlinova.testing.firebase
 
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.QuerySnapshot
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
@@ -46,14 +50,14 @@ class MockCollection<T>() {
 
     fun insertObject(name: String, data: T) {
         createDocument(name)
-                .readValue = data
+            .readValue = data
 
         updateListeners()
     }
 
     fun insertMap(name: String, data: Map<String, Any>) {
         createDocument(name)
-                .readMap = data
+            .readMap = data
 
         updateListeners()
     }
@@ -82,21 +86,21 @@ class MockCollection<T>() {
 
             whenever(it.documents).then {
                 documents
-                        .values
-                        .toList()
-                        .map {
-                            it.get().result
-                        }
+                    .values
+                    .toList()
+                    .map {
+                        it.get().result
+                    }
             }
 
             whenever(it.iterator()).then {
                 documents
-                        .values
-                        .toList()
-                        .map {
-                            it.get().result
-                        }
-                        .iterator()
+                    .values
+                    .toList()
+                    .map {
+                        it.get().result
+                    }
+                    .iterator()
             }
         }
     }
@@ -107,14 +111,14 @@ class MockCollection<T>() {
                 val name = nextId
 
                 documents[name]
-                        ?: MockDocument<T>(name).toDocumentRef()
+                    ?: MockDocument<T>(name).toDocumentRef()
             }
 
             whenever(it.document(any())).then {
                 val name = it.arguments[0] as String
 
                 documents[name]
-                        ?: MockDocument<T>(name).toDocumentRef()
+                    ?: MockDocument<T>(name).toDocumentRef()
             }
 
             whenever(it.get()).thenAnswer { (Tasks.forResult(toQuerySnapshot())) }

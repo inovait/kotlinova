@@ -11,7 +11,11 @@
 
 package si.inova.kotlinova.testing
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Runnable
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 
@@ -24,8 +28,8 @@ import kotlin.coroutines.resume
 @UseExperimental(InternalCoroutinesApi::class)
 class NoDelayUnconfinedDispatcher : CoroutineDispatcher(), Delay {
     override fun scheduleResumeAfterDelay(
-            timeMillis: Long,
-            continuation: CancellableContinuation<Unit>
+        timeMillis: Long,
+        continuation: CancellableContinuation<Unit>
     ) {
         continuation.resume(Unit)
     }
