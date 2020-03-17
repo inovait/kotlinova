@@ -1,3 +1,9 @@
+## [2.9.1](https://github.com/inovait/kotlinovacompare/v2.9.0...v2.9.1) (2020-03-17)
+
+### Bug Fixes
+
+* update dependencies on other projects ([0951fdab](https://github.com/inovait/kotlinovacommit/0951fdab0ce0f48e7defe03aa099eea48424eaef))
+
 ## [2.9.0](https://github.com/inovait/kotlinova/compare/v2.8.0...v2.9.0) (2020-01-13)
 
 ### Features
