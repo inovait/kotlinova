@@ -32,9 +32,9 @@ import kotlin.math.roundToInt
  * @author Matej Drobnic
  */
 class CoveredSwipeMenuView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr), HorizontalSwipeHelper.Listener {
     private var helper: HorizontalSwipeHelper? = null
 
@@ -60,15 +60,15 @@ class CoveredSwipeMenuView @JvmOverloads constructor(
 
     init {
         val args = context.theme.obtainStyledAttributes(
-                attrs,
-                R.styleable.CoveredSwipeMenuView,
-                defStyleAttr, defStyleAttr
+            attrs,
+            R.styleable.CoveredSwipeMenuView,
+            defStyleAttr, defStyleAttr
         )
 
         leftItemId = args.getResourceId(R.styleable.CoveredSwipeMenuView_leftItem, 0)
         rightItemId = args.getResourceId(R.styleable.CoveredSwipeMenuView_rightItem, 0)
         behindBackgroundId =
-                args.getResourceId(R.styleable.CoveredSwipeMenuView_behindBackground, 0)
+            args.getResourceId(R.styleable.CoveredSwipeMenuView_behindBackground, 0)
         foregroundSwipeId = args.getResourceId(R.styleable.CoveredSwipeMenuView_swipingItem, 0)
         args.recycle()
     }

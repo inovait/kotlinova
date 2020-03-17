@@ -11,7 +11,7 @@
 
 package si.inova.kotlinova.data
 
-import java.util.*
+import java.util.ArrayDeque
 
 /**
  * Calculates a moving average over a set of values

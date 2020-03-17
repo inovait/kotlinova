@@ -34,14 +34,14 @@ open class DummyFragmentActivity : FragmentActivity() {
         val targetFragment = targetFragment
 
         if (targetFragment == null ||
-                supportFragmentManager.findFragmentById(R.id.container) != null
+            supportFragmentManager.findFragmentById(R.id.container) != null
         ) {
             return
         }
 
         supportFragmentManager.beginTransaction()
-                .replace(R.id.container, targetFragment)
-                .commitNowAllowingStateLoss()
+            .replace(R.id.container, targetFragment)
+            .commitNowAllowingStateLoss()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

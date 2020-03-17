@@ -27,6 +27,6 @@ suspend fun <T> Flowable<Resource<T>>.awaitFirstUnpacked(): T {
     return filter {
         it is Resource.Success || it is Resource.Error
     }
-            .awaitFirst()
-            .unwrap()
+        .awaitFirst()
+        .unwrap()
 }

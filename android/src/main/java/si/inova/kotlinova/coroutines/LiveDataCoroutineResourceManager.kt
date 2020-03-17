@@ -12,7 +12,12 @@
 package si.inova.kotlinova.coroutines
 
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import si.inova.kotlinova.data.SingleLiveEvent
 import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.data.resources.ResourceLiveData
@@ -48,11 +53,11 @@ class LiveDataCoroutineResourceManager(scope: CoroutineScope) : CoroutineResourc
      * of this parameter can be controlled using [routeErrorsToCommonObservableByDefault].
      */
     fun <T> launchResourceControlTask(
-            resource: ResourceLiveData<T>,
-            currentValue: T? = resource.value?.value,
-            context: CoroutineContext = EmptyCoroutineContext,
-            routeErrorsToCommonObservable: Boolean = routeErrorsToCommonObservableByDefault,
-            block: suspend ResourceLiveData<T>.() -> Unit
+        resource: ResourceLiveData<T>,
+        currentValue: T? = resource.value?.value,
+        context: CoroutineContext = EmptyCoroutineContext,
+        routeErrorsToCommonObservable: Boolean = routeErrorsToCommonObservableByDefault,
+        block: suspend ResourceLiveData<T>.() -> Unit
     ) = launchBoundControlTask(resource, context) {
         if (resource.hasAnySources()) {
             withContext(Dispatchers.Main) {
@@ -88,8 +93,8 @@ class LiveDataCoroutineResourceManager(scope: CoroutineScope) : CoroutineResourc
     }
 
     private fun <T> setupInterceptor(
-            resource: ResourceLiveData<T>,
-            routeErrorsToCommonObservable: Boolean
+        resource: ResourceLiveData<T>,
+        routeErrorsToCommonObservable: Boolean
     ) {
         resource.interceptor = if (routeErrorsToCommonObservable) {
             {
@@ -106,17 +111,17 @@ class LiveDataCoroutineResourceManager(scope: CoroutineScope) : CoroutineResourc
     }
 
     private fun <T> routeException(
-            resource: ResourceLiveData<T>,
-            exception: Throwable,
-            routeErrorsToCommonObserver: Boolean
+        resource: ResourceLiveData<T>,
+        exception: Throwable,
+        routeErrorsToCommonObserver: Boolean
     ) {
         if (routeErrorsToCommonObserver) {
             resource.sendValueSync(Resource.Cancelled())
 
             if (!_errors.hasObservers()) {
                 throw UndeliverableException(
-                        "Exception could not be delivered because nobody is observing errors observer",
-                        exception
+                    "Exception could not be delivered because nobody is observing errors observer",
+                    exception
                 )
             }
 

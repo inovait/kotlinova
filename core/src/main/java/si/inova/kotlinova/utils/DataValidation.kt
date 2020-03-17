@@ -74,8 +74,8 @@ inline fun <reified T> checkNullAndSafeCast(input: Any?, fieldName: String): T {
         return input as T
     } catch (_: ClassCastException) {
         throw InvalidDataFormatException(
-                "$fieldName should be ${T::class.java.name}, " +
-                        "but is ${input::class.java.name}"
+            "$fieldName should be ${T::class.java.name}, " +
+                "but is ${input::class.java.name}"
         )
     }
 }
@@ -97,8 +97,8 @@ inline fun <reified T> safeCastNull(input: Any?, fieldName: String): T? {
         return input as T
     } catch (_: ClassCastException) {
         throw InvalidDataFormatException(
-                "$fieldName should be ${T::class.java.name}, " +
-                        "but is ${input::class.java.name}"
+            "$fieldName should be ${T::class.java.name}, " +
+                "but is ${input::class.java.name}"
         )
     }
 }

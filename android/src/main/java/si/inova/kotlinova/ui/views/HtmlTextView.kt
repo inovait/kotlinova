@@ -24,9 +24,9 @@ import androidx.appcompat.widget.AppCompatTextView
  * @author Matej Drobnic
  */
 class HtmlTextView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
     override fun setText(text: CharSequence?, type: BufferType) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

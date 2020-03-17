@@ -67,8 +67,8 @@ class MockDocument<T>(val key: String) {
     }
 
     fun <C> createMapSubCollection(
-            name: String,
-            data: List<Pair<String, Map<String, Any>>>
+        name: String,
+        data: List<Pair<String, Map<String, Any>>>
     ): MockCollection<C> {
         val collection = createSubCollection<C>(name)
 
@@ -150,8 +150,8 @@ class MockDocument<T>(val key: String) {
         whenever(ref.update(any<Map<String, Any>>())).then {
             if (ref.get().result?.exists() != true) {
                 throw IllegalStateException(
-                        "DocumentReference.update() can only be called " +
-                                "when there is existing value"
+                    "DocumentReference.update() can only be called " +
+                        "when there is existing value"
                 )
             }
 

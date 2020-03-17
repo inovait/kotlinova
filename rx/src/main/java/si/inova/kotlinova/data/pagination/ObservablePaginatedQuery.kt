@@ -41,7 +41,7 @@ interface ObservablePaginatedQuery<T> {
  * Apply operations on raw observable of this query
  */
 inline fun <I, O> ObservablePaginatedQuery<I>.mutateRaw(
-        converter: Flowable<Resource<List<I>>>.() -> Flowable<Resource<List<O>>>
+    converter: Flowable<Resource<List<I>>>.() -> Flowable<Resource<List<O>>>
 ): ObservablePaginatedQuery<O> {
     val original = this
     val mutatedData = with(data) { converter() }
@@ -66,7 +66,7 @@ inline fun <I, O> ObservablePaginatedQuery<I>.mutateRaw(
  * Apply operations on whole list of this query
  */
 inline fun <I, O> ObservablePaginatedQuery<I>.mutate(crossinline converter: (List<I>) -> List<O>):
-        ObservablePaginatedQuery<O> {
+    ObservablePaginatedQuery<O> {
     return mutateRaw {
         map { resource ->
             resource.mapData(converter)
@@ -78,7 +78,7 @@ inline fun <I, O> ObservablePaginatedQuery<I>.mutate(crossinline converter: (Lis
  * Apply operations on single element of this query
  */
 inline fun <I, O> ObservablePaginatedQuery<I>.map(crossinline converter: (I) -> O):
-        ObservablePaginatedQuery<O> {
+    ObservablePaginatedQuery<O> {
     return mutate { list ->
         list.map(converter)
     }

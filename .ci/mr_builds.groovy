@@ -36,7 +36,6 @@ try {
         stage('Prepare') {
             abortPreviousRunningBuilds()
             checkout scm
-            setBuildStatus("Waiting for build executor", "pending")
         }
     }
 
@@ -44,7 +43,6 @@ try {
         try {
             stage('Start') {
                 checkout scm
-                setBuildStatus("Building", "pending")
             }
             stage('Build app') {
                 sh './gradlew clean assemble'
@@ -72,7 +70,6 @@ try {
                         sourceExclusionPattern: '',
                         execPattern: '**/*.exec **/*.ex'
             }
-            setBuildStatus("Build finished", "success")
         } finally {
             androidLint()
             checkstyle canComputeNew: false, defaultEncoding: '',
@@ -95,11 +92,6 @@ try {
         }
     }
 } catch (Exception e) {
-    if (!(e instanceof InterruptedException || (e.message != null && e.message.contains("task was cancelled")))) {
-        currentBuild.result = 'FAILURE'
-    }
-    setBuildStatus("Build finished", "success")
-
     def sw = new StringWriter()
     def pw = new PrintWriter(sw)
     e.printStackTrace(pw)
@@ -107,15 +99,4 @@ try {
 
     throw e
 }
-
-void setBuildStatus(String message, String state) {
-    step([
-            $class            : "GitHubCommitStatusSetter",
-            reposSource       : [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/inovait/kotlinova"],
-            contextSource     : [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-            errorHandlers     : [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-            statusResultSource: [$class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]]]
-    ]);
-}
-
 

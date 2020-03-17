@@ -17,7 +17,14 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.tasks.Tasks
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -59,7 +66,7 @@ class LocationCoroutinesTest {
 
         val callbackCaptor = argumentCaptor<LocationCallback>()
         verify(locationClient)
-                .requestLocationUpdates(eq(locationRequest), callbackCaptor.capture(), anyOrNull())
+            .requestLocationUpdates(eq(locationRequest), callbackCaptor.capture(), anyOrNull())
 
         val callback = callbackCaptor.firstValue
         verify(locationClient).removeLocationUpdates(callback)
@@ -77,7 +84,7 @@ class LocationCoroutinesTest {
 
         val callbackCaptor = argumentCaptor<LocationCallback>()
         verify(locationClient)
-                .requestLocationUpdates(eq(locationRequest), callbackCaptor.capture(), anyOrNull())
+            .requestLocationUpdates(eq(locationRequest), callbackCaptor.capture(), anyOrNull())
 
         verify(locationClient, never()).removeLocationUpdates(any<LocationCallback>())
         val callback = callbackCaptor.firstValue

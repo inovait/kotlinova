@@ -21,7 +21,7 @@ import si.inova.kotlinova.testing.fakes.MemorySharedPreferences
 
 class PreferencesRxTest {
     private val preferences = InstrumentationRegistry.getInstrumentation()
-            .targetContext.getSharedPreferences("test", Context.MODE_PRIVATE)
+        .targetContext.getSharedPreferences("test", Context.MODE_PRIVATE)
 
     @After
     fun tearDown() {
@@ -35,21 +35,21 @@ class PreferencesRxTest {
         val subscriber = observable.test()
 
         preferences.edit()
-                .putInt("A", 10)
-                .apply()
+            .putInt("A", 10)
+            .apply()
 
         preferences.edit()
-                .putInt("B", 20)
-                .apply()
+            .putInt("B", 20)
+            .apply()
 
         preferences.edit()
-                .putInt("C", 30)
-                .apply()
+            .putInt("C", 30)
+            .apply()
 
         subscriber.awaitCount(
-                3,
-                BaseTestConsumer.TestWaitStrategy.SLEEP_10MS,
-                5_000
+            3,
+            BaseTestConsumer.TestWaitStrategy.SLEEP_10MS,
+            5_000
         )
         subscriber.assertValues("A", "B", "C")
     }

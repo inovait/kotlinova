@@ -24,7 +24,7 @@ import javax.inject.Inject
  */
 @OpenForTesting
 class InjectableViewModelFactory<VM : ViewModel> @Inject constructor(
-        private val viewModel: Lazy<VM>
+    private val viewModel: Lazy<VM>
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

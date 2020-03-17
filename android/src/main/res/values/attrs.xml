@@ -21,9 +21,9 @@
         </attr>
     </declare-styleable>
     <declare-styleable name="CoveredSwipeMenuView">
-        <attr name="leftItem" format="reference"/>
-        <attr name="rightItem" format="reference"/>
-        <attr name="swipingItem" format="reference"/>
-        <attr name="behindBackground" format="reference"/>
+        <attr name="leftItem" format="reference" />
+        <attr name="rightItem" format="reference" />
+        <attr name="swipingItem" format="reference" />
+        <attr name="behindBackground" format="reference" />
     </declare-styleable>
 </resources>

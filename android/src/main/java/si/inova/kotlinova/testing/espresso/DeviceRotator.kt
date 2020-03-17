@@ -22,7 +22,7 @@ import androidx.test.uiautomator.UiDevice
 object DeviceRotator {
     fun forcePortrait() {
         UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-                .setOrientationNatural()
+            .setOrientationNatural()
     }
 
     fun forceLandscape() {
@@ -33,8 +33,8 @@ object DeviceRotator {
         val context = instrumentation.targetContext
 
         val intent = context.packageManager
-                .getLaunchIntentForPackage("com.google.android.dialer")
-                ?: error("Dialer app is not installed")
+            .getLaunchIntentForPackage("com.google.android.dialer")
+            ?: error("Dialer app is not installed")
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 

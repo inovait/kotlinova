@@ -108,15 +108,15 @@ class FullScreenProgressBarTest {
         lateinit var fullScreenProgressBar: FullScreenProgressBar
 
         override fun onCreateView(
-                inflater: LayoutInflater,
-                container: ViewGroup?,
-                savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
         ): View? {
             return FullScreenProgressBar(requireContext())
-                    .also {
-                        it.id = 1337
-                        fullScreenProgressBar = it
-                    }
+                .also {
+                    it.id = 1337
+                    fullScreenProgressBar = it
+                }
         }
     }
 }

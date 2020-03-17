@@ -11,7 +11,9 @@
 
 package si.inova.kotlinova.data
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import si.inova.kotlinova.time.AndroidTimeProvider
@@ -95,7 +97,7 @@ class DocumentMemoryCacheTest {
     fun getOrProduceForce() {
         documentMemoryCache[1] = "A"
         assertEquals("B",
-                documentMemoryCache.getOrProduce(1, forceProduce = true) { "B" })
+            documentMemoryCache.getOrProduce(1, forceProduce = true) { "B" })
 
         assertEquals("B", documentMemoryCache[1])
     }
@@ -108,7 +110,7 @@ class DocumentMemoryCacheTest {
         AndroidTimeProvider.elapsedRealtimeProvider = { 10000 }
 
         assertEquals("B",
-                documentMemoryCache.getOrProduce(1) { "B" })
+            documentMemoryCache.getOrProduce(1) { "B" })
 
         assertEquals("B", documentMemoryCache[1])
     }

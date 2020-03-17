@@ -22,17 +22,17 @@ import androidx.recyclerview.widget.RecyclerView
  * @author Matej Drobnic
  */
 class LayoutCallbackLinearLayoutManager(
-        context: Context,
-        orientation: Int,
-        reverseLayout: Boolean
+    context: Context,
+    orientation: Int,
+    reverseLayout: Boolean
 ) : LinearLayoutManager(context, orientation, reverseLayout) {
 
     var callback: (() -> Unit)? = null
 
     override fun scrollVerticallyBy(
-            dy: Int,
-            recycler: RecyclerView.Recycler?,
-            state: RecyclerView.State?
+        dy: Int,
+        recycler: RecyclerView.Recycler?,
+        state: RecyclerView.State?
     ): Int {
         val scrolled = super.scrollVerticallyBy(dy, recycler, state)
         triggerCallback()
@@ -40,9 +40,9 @@ class LayoutCallbackLinearLayoutManager(
     }
 
     override fun scrollHorizontallyBy(
-            dx: Int,
-            recycler: RecyclerView.Recycler?,
-            state: RecyclerView.State?
+        dx: Int,
+        recycler: RecyclerView.Recycler?,
+        state: RecyclerView.State?
     ): Int {
         val scrolled = super.scrollHorizontallyBy(dx, recycler, state)
         triggerCallback()

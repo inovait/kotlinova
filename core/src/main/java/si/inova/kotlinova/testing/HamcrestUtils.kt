@@ -18,8 +18,8 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 
 inline fun <I, O> that(
-        descriptionText: String? = null,
-        crossinline check: (O) -> Boolean
+    descriptionText: String? = null,
+    crossinline check: (O) -> Boolean
 ): Matcher<I> where O : I {
     @Suppress("UNCHECKED_CAST")
     return object : BaseMatcher<I>() {

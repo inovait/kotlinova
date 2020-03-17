@@ -13,7 +13,11 @@ package si.inova.kotlinova.retrofit
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import retrofit2.*
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 import java.io.IOException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -32,21 +36,21 @@ import java.lang.reflect.Type
  */
 @Deprecated("Use suspend retrofit methods + ErrorHandlerCallAdapterFactory")
 class CoroutineCallAdapterFactory constructor(
-        private val responseParser: ResponseParser = DefaultResponseParser
+    private val responseParser: ResponseParser = DefaultResponseParser
 ) :
-        CallAdapter.Factory() {
+    CallAdapter.Factory() {
     override fun get(
-            returnType: Type,
-            annotations: Array<out Annotation>,
-            retrofit: Retrofit
+        returnType: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
     ): CallAdapter<*, *>? {
         if (Deferred::class.java != getRawType(returnType)) {
             return null
         }
         if (returnType !is ParameterizedType) {
             throw IllegalStateException(
-                    "Deferred return type must be parameterized " +
-                            "as Deferred<Foo> or Deferred<out Foo>"
+                "Deferred return type must be parameterized " +
+                    "as Deferred<Foo> or Deferred<out Foo>"
             )
         }
         val responseType = getParameterUpperBound(0, returnType)
@@ -55,7 +59,7 @@ class CoroutineCallAdapterFactory constructor(
     }
 
     private inner class BodyCallAdapter<T>(
-            private val responseType: Type
+        private val responseType: Type
     ) : CallAdapter<T, Deferred<T>> {
 
         override fun responseType() = responseType

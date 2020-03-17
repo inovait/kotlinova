@@ -24,11 +24,11 @@ import android.widget.FrameLayout
  * @author Bojan Kseneman, adapted by Matej Drobnic
  */
 open class TouchTakeOverFrameLayout @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) :
-        FrameLayout(context, attrs, defStyleAttr) {
+    FrameLayout(context, attrs, defStyleAttr) {
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return true
     }

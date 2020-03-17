@@ -27,9 +27,9 @@ import si.inova.kotlinova.ui.components.NestedAnimatedFragment
  */
 class BackstackFragment : NestedAnimatedFragment(), ResettableFragment {
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.single_container, container, false)
     }
@@ -48,17 +48,17 @@ class BackstackFragment : NestedAnimatedFragment(), ResettableFragment {
         val useBackStack = childFragmentManager.findFragmentById(R.id.container) != null
 
         childFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.container, fragment)
-                .apply {
-                    if (useBackStack) {
-                        addToBackStack(null)
-                        commit()
-                    } else {
-                        commitNow()
-                    }
+            .beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .replace(R.id.container, fragment)
+            .apply {
+                if (useBackStack) {
+                    addToBackStack(null)
+                    commit()
+                } else {
+                    commitNow()
                 }
+            }
     }
 
     companion object {

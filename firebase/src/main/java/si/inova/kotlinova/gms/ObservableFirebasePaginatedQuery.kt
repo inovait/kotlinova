@@ -11,7 +11,12 @@
 
 package si.inova.kotlinova.gms
 
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,11 +33,11 @@ import si.inova.kotlinova.utils.use
  * Wrapper around Firebase Firestore's query that can retrieve data in observable pages.
  */
 class ObservableFirebasePaginatedQuery(
-        private val baseQuery: Query,
-        private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
+    private val baseQuery: Query,
+    private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
 ) : OnDemandProvider<Resource<List<DocumentSnapshot>>>(Dispatchers.Main),
-        EventListener<QuerySnapshot>,
-        ObservablePaginatedQuery<DocumentSnapshot> {
+    EventListener<QuerySnapshot>,
+    ObservablePaginatedQuery<DocumentSnapshot> {
 
     private var currentQuery: Query? = null
     private var currentListenerRegistration: ListenerRegistration? = null
@@ -112,7 +117,7 @@ class ObservableFirebasePaginatedQuery(
         currentQuery?.let {
             waitingForFirstValue = true
             currentListenerRegistration =
-                    it.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
+                it.addSnapshotListener(this@ObservableFirebasePaginatedQuery)
         }
     }
 
@@ -126,7 +131,7 @@ class ObservableFirebasePaginatedQuery(
  * Convenience operator that converts regular [Query] into [ObservablePaginatedQuery]
  */
 fun Query.paginateObservable(
-        itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
+    itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
 ): ObservablePaginatedQuery<DocumentSnapshot> {
     return ObservableFirebasePaginatedQuery(this, itemsPerPage)
 }

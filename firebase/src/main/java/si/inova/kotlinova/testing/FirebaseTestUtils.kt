@@ -22,7 +22,7 @@ import org.junit.Assert
 fun assertDocumentsEqual(expected: DocumentSnapshot, actual: DocumentSnapshot) {
     Assert.assertEquals(expected.id, actual.id)
     Assert
-            .assertEquals(expected.toObject(Any::class.java), expected.toObject(Any::class.java))
+        .assertEquals(expected.toObject(Any::class.java), expected.toObject(Any::class.java))
 }
 
 fun assertDocumentsEqual(expected: List<DocumentSnapshot>, actual: List<DocumentSnapshot>) {

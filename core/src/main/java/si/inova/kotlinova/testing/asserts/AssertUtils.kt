@@ -21,8 +21,8 @@ import org.assertj.core.api.Condition
  * to last parameter
  */
 fun <S : AbstractAssert<S, T>, T> AbstractAssert<S, T>.matches(
-        description: String,
-        predicate: (T) -> Boolean
+    description: String,
+    predicate: (T) -> Boolean
 ): S {
     return matches(predicate, description)
 }

@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
-import java.util.*
+import java.util.LinkedList
 
 /**
  * RecyclerView section that displays single view.
@@ -32,7 +32,7 @@ import java.util.*
  * @author Matej Drobnic
  */
 class SingleViewSection(
-        @LayoutRes private val layout: Int = 0
+    @LayoutRes private val layout: Int = 0
 ) : RecyclerSection<SingleViewSection.SingleViewHolder>() {
 
     private val viewUpdateCallbacks = LinkedList<(View) -> Unit>()
@@ -66,8 +66,8 @@ class SingleViewSection(
     protected fun createView(parent: ViewGroup): View {
         if (layout == 0) {
             throw IllegalArgumentException(
-                    "If layout is not provided in constructor, " +
-                            "you must override createView() function"
+                "If layout is not provided in constructor, " +
+                    "you must override createView() function"
             )
         }
 

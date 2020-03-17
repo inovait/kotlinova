@@ -43,8 +43,8 @@ class StateSaverFragmentTest {
         Espresso.onIdle()
 
         val recreatedFragment = activityRule.activity
-                .supportFragmentManager
-                .findFragmentById(R.id.container) as TestFragment
+            .supportFragmentManager
+            .findFragmentById(R.id.container) as TestFragment
 
         assertEquals(20, recreatedFragment.testInt)
         assertEquals("TeST", recreatedFragment.testString)

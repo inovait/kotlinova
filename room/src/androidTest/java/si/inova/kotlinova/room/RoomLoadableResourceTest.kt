@@ -15,7 +15,11 @@ import androidx.room.Room
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.idling.concurrent.IdlingThreadPoolExecutor
 import androidx.test.platform.app.InstrumentationRegistry
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -25,7 +29,11 @@ import si.inova.kotlinova.data.resources.Resource
 import si.inova.kotlinova.room.db.TestDatabase
 import si.inova.kotlinova.room.db.TextEntry
 import si.inova.kotlinova.testing.UncaughtExceptionThrowRule
-import si.inova.kotlinova.testing.asserts.*
+import si.inova.kotlinova.testing.asserts.assertThatValue
+import si.inova.kotlinova.testing.asserts.isError
+import si.inova.kotlinova.testing.asserts.isLoadingWithValue
+import si.inova.kotlinova.testing.asserts.isSuccess
+import si.inova.kotlinova.testing.asserts.isSuccessWithValue
 import si.inova.kotlinova.testing.espresso.IdlingResourceRule
 import si.inova.kotlinova.testing.espresso.IgnoreIdlingResource
 import si.inova.kotlinova.testing.espresso.coroutines.DispatchersIdlingResourceRule
@@ -37,18 +45,18 @@ class RoomLoadableResourceTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     private val roomExecutor = IdlingThreadPoolExecutor(
-            "TestRoomExecutor",
-            Runtime.getRuntime().availableProcessors(),
-            Runtime.getRuntime().availableProcessors(),
-            0,
-            TimeUnit.SECONDS,
-            LinkedBlockingDeque(),
-            Executors.defaultThreadFactory()
+        "TestRoomExecutor",
+        Runtime.getRuntime().availableProcessors(),
+        Runtime.getRuntime().availableProcessors(),
+        0,
+        TimeUnit.SECONDS,
+        LinkedBlockingDeque(),
+        Executors.defaultThreadFactory()
     )
 
     private val db = Room.inMemoryDatabaseBuilder(context, TestDatabase::class.java)
-            .setQueryExecutor(roomExecutor)
-            .build()
+        .setQueryExecutor(roomExecutor)
+        .build()
 
     private val dao = db.testDao()
 
@@ -90,10 +98,10 @@ class RoomLoadableResourceTest {
         assertThat(receivedValues).last().isSuccess()
 
         assertThat(receivedValues)
-                .filteredOn { it is Resource.Success }
-                .allSatisfy {
-                    assertThat(it).isSuccessWithValue(listOf(TextEntry("A"), TextEntry("B")))
-                }
+            .filteredOn { it is Resource.Success }
+            .allSatisfy {
+                assertThat(it).isSuccessWithValue(listOf(TextEntry("A"), TextEntry("B")))
+            }
     }
 
     @Test
@@ -111,14 +119,14 @@ class RoomLoadableResourceTest {
         assertThat(receivedValues).last().isSuccess()
 
         assertThat(receivedValues)
-                .describedAs("All successes should only contain latest data")
-                .filteredOn { it is Resource.Success }
-                .allSatisfy {
-                    assertThat(it)
-                            .assertThatValue()
-                            .asList()
-                            .contains(TextEntry("C"))
-                }
+            .describedAs("All successes should only contain latest data")
+            .filteredOn { it is Resource.Success }
+            .allSatisfy {
+                assertThat(it)
+                    .assertThatValue()
+                    .asList()
+                    .contains(TextEntry("C"))
+            }
     }
 
     @Test
@@ -137,7 +145,7 @@ class RoomLoadableResourceTest {
 
         assertThat(receivedValues).noneSatisfy { assertThat(it).isSuccess() }
         assertThat(receivedValues).last().isLoadingWithValue(
-                listOf(TextEntry("A"), TextEntry("B"))
+            listOf(TextEntry("A"), TextEntry("B"))
         )
 
         loadJob.cancel()
@@ -163,8 +171,8 @@ class RoomLoadableResourceTest {
         Espresso.onIdle()
 
         assertThat(subscriber.values())
-                .last()
-                .isEqualTo(Resource.Success(listOf(TextEntry("A"), TextEntry("B"), TextEntry("C"))))
+            .last()
+            .isEqualTo(Resource.Success(listOf(TextEntry("A"), TextEntry("B"), TextEntry("C"))))
     }
 
     @Test
@@ -196,21 +204,21 @@ class RoomLoadableResourceTest {
         Espresso.onIdle()
 
         subscriber.assertValues(
-                Resource.Loading(
-                        listOf(
-                                TextEntry("A"),
-                                TextEntry("B"),
-                                TextEntry("C")
-                        )
-                ),
-                Resource.Success(
-                        listOf(
-                                TextEntry("A"),
-                                TextEntry("B"),
-                                TextEntry("C"),
-                                TextEntry("D")
-                        )
+            Resource.Loading(
+                listOf(
+                    TextEntry("A"),
+                    TextEntry("B"),
+                    TextEntry("C")
                 )
+            ),
+            Resource.Success(
+                listOf(
+                    TextEntry("A"),
+                    TextEntry("B"),
+                    TextEntry("C"),
+                    TextEntry("D")
+                )
+            )
         )
     }
 
@@ -234,54 +242,54 @@ class RoomLoadableResourceTest {
         assertThat(receivedValues).first().isInstanceOf(Resource.Loading::class.java)
 
         assertThat(receivedValues).containsSubsequence(
-                listOf(
-                        Resource.Loading(
-                                listOf(
-                                        TextEntry("A"),
-                                        TextEntry("B")
-                                )
-                        ),
-                        Resource.Loading(
-                                listOf(
-                                        TextEntry("A"),
-                                        TextEntry("B"),
-                                        TextEntry("C")
-                                )
-                        ),
-                        Resource.Loading(
-                                listOf(
-                                        TextEntry("A"),
-                                        TextEntry("B"),
-                                        TextEntry("C"),
-                                        TextEntry("D")
-                                )
-                        ),
-                        Resource.Success(
-                                listOf(
-                                        TextEntry("A"),
-                                        TextEntry("B"),
-                                        TextEntry("C"),
-                                        TextEntry("D")
-                                )
-                        )
-                )
-        )
-
-        assertThat(receivedValues).last().isSuccessWithValue(
-                listOf(
+            listOf(
+                Resource.Loading(
+                    listOf(
+                        TextEntry("A"),
+                        TextEntry("B")
+                    )
+                ),
+                Resource.Loading(
+                    listOf(
+                        TextEntry("A"),
+                        TextEntry("B"),
+                        TextEntry("C")
+                    )
+                ),
+                Resource.Loading(
+                    listOf(
                         TextEntry("A"),
                         TextEntry("B"),
                         TextEntry("C"),
                         TextEntry("D")
+                    )
+                ),
+                Resource.Success(
+                    listOf(
+                        TextEntry("A"),
+                        TextEntry("B"),
+                        TextEntry("C"),
+                        TextEntry("D")
+                    )
                 )
+            )
+        )
+
+        assertThat(receivedValues).last().isSuccessWithValue(
+            listOf(
+                TextEntry("A"),
+                TextEntry("B"),
+                TextEntry("C"),
+                TextEntry("D")
+            )
         )
     }
 
     private inner class TestRoomLoadableResource(private val loader: suspend () -> Unit) :
-            RoomLoadableResource<TextEntry>(
-                    db,
-                    "entries"
-            ) {
+        RoomLoadableResource<TextEntry>(
+            db,
+            "entries"
+        ) {
 
         @Volatile
         var numDatabaseCalls: Int = 0
@@ -297,10 +305,10 @@ class RoomLoadableResourceTest {
     }
 
     private inner class CrashingRoomLoadableResource() :
-            RoomLoadableResource<TextEntry>(
-                    db,
-                    "entries"
-            ) {
+        RoomLoadableResource<TextEntry>(
+            db,
+            "entries"
+        ) {
 
         override suspend fun loadDataFromServerAndSaveToDb() {}
 

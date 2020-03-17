@@ -34,10 +34,10 @@ val <T> Resource<T>.value: T?
 inline fun <I, O> Resource<I>.mapData(mapper: (I) -> O): Resource<O> {
     return when (this) {
         is Resource.Success -> Resource.Success(
-                mapper(data)
+            mapper(data)
         )
         is Resource.Error -> Resource.Error(
-                exception
+            exception
         )
         is Resource.Cancelled -> Resource.Cancelled()
         is Resource.Loading -> {

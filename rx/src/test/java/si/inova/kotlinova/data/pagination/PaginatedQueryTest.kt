@@ -12,7 +12,9 @@
 package si.inova.kotlinova.data.pagination
 
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import si.inova.kotlinova.testing.pagination.PaginatedList
 
@@ -21,9 +23,9 @@ import si.inova.kotlinova.testing.pagination.PaginatedList
  */
 class PaginatedQueryConvertersTest {
     val data = listOf(
-            listOf(1, 2),
-            listOf(3, 4),
-            listOf(5)
+        listOf(1, 2),
+        listOf(3, 4),
+        listOf(5)
     )
 
     @Test

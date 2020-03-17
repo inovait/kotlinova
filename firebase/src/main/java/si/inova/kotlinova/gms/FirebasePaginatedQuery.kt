@@ -24,8 +24,8 @@ const val DEFAULT_PAGINATION_LIMIT = 20
  * Wrapper around Firebase Firestore's query that can retrieve data in pages.
  */
 class FirebasePaginatedQuery(
-        private val baseQuery: Query,
-        private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
+    private val baseQuery: Query,
+    private val itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
 ) : PaginatedQuery<DocumentSnapshot> {
 
     private var lastDocument: DocumentSnapshot? = null
@@ -54,7 +54,7 @@ class FirebasePaginatedQuery(
  * Convenience operator that converts regular [Query] into [PaginatedQuery]
  */
 fun Query.paginate(
-        itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
+    itemsPerPage: Int = DEFAULT_PAGINATION_LIMIT
 ): PaginatedQuery<DocumentSnapshot> {
     return FirebasePaginatedQuery(this, itemsPerPage)
 }

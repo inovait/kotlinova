@@ -20,11 +20,11 @@ import si.inova.kotlinova.ui.lists.LimitingDividerItemDecoration
  * @author Matej Drobnic
  */
 class SectionDividerItemDecoration(
-        context: Context,
-        orientation: Int,
-        private val sectionAdapter: SectionRecyclerAdapter
+    context: Context,
+    orientation: Int,
+    private val sectionAdapter: SectionRecyclerAdapter
 ) :
-        LimitingDividerItemDecoration(context, orientation) {
+    LimitingDividerItemDecoration(context, orientation) {
 
     var sectionsToDisplay: List<Int> = emptyList()
 

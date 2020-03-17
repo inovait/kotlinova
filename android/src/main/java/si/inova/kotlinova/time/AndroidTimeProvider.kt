@@ -13,7 +13,12 @@ package si.inova.kotlinova.time
 
 import android.os.SystemClock
 import androidx.annotation.RestrictTo
-import org.threeten.bp.*
+import org.threeten.bp.Clock
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZoneOffset
 
 /**
  * Time provider for Android system time and backported ThreeTen time objects
@@ -34,12 +39,12 @@ object AndroidTimeProvider {
     fun uptimeMillis(): Long = uptimeMillisProvider()
 
     fun currentInstant(): Instant =
-            Instant.now(clockProvider(ZoneOffset.UTC))
+        Instant.now(clockProvider(ZoneOffset.UTC))
 
     fun todayLocalDate(): LocalDate = LocalDate.now(clockProvider(ZoneId.systemDefault()))
 
     fun currentLocalDateTime(): LocalDateTime =
-            LocalDateTime.now(clockProvider(ZoneId.systemDefault()))
+        LocalDateTime.now(clockProvider(ZoneId.systemDefault()))
 
     @RestrictTo(RestrictTo.Scope.TESTS)
     var elapsedRealtimeProvider = { SystemClock.elapsedRealtime() }

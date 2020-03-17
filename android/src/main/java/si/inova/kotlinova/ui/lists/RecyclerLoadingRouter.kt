@@ -36,8 +36,8 @@ import si.inova.kotlinova.ui.lists.sections.SingleViewSection
  */
 
 class RecyclerLoadingRouter(
-        private val swipeRefreshLayout: SwipeRefreshLayout,
-        private val bottomLoadingDisplay: SingleViewSection? = null
+    private val swipeRefreshLayout: SwipeRefreshLayout,
+    private val bottomLoadingDisplay: SingleViewSection? = null
 ) {
     var refreshListener: SwipeRefreshLayout.OnRefreshListener? = null
     private var nextLoadingStyle = LoadingStyle.SWIPE_REFRESH

@@ -40,9 +40,9 @@ import kotlin.coroutines.CoroutineContext
  */
 
 abstract class OnDemandProvider<T>(
-        private val launchingContext: CoroutineContext = TestableDispatchers.Default,
-        rxScheduler: Scheduler = Schedulers.computation(),
-        val debounceTimeout: Long = DEFAULT_DEBOUNCE_TIMEOUT
+    private val launchingContext: CoroutineContext = TestableDispatchers.Default,
+    rxScheduler: Scheduler = Schedulers.computation(),
+    val debounceTimeout: Long = DEFAULT_DEBOUNCE_TIMEOUT
 ) {
     private val mutext = Mutex()
 
@@ -65,33 +65,33 @@ abstract class OnDemandProvider<T>(
     // We use GlobalScope here so this is not an issue
     @Suppress("EXPERIMENTAL_API_USAGE")
     val flowable: Flowable<T> = Flowable.fromPublisher(publish<T>(launchingContext) {
-                mutext.withLock {
-                    try {
-                        producer = this
-                        isActive = true
-                        onActive()
-                        awaitCancellation()
-                    } finally {
-                        isActive = false
+        mutext.withLock {
+            try {
+                producer = this
+                isActive = true
+                onActive()
+                awaitCancellation()
+            } finally {
+                isActive = false
 
-                        onInactive()
-                        producer = null
-                    }
-                }
-            })
-            .replay(1)
-            .run {
-                if (debounceTimeout <= 0) {
-                    refCount()
-                } else {
-                    refCount(debounceTimeout.toLong(), TimeUnit.MILLISECONDS)
-                }
+                onInactive()
+                producer = null
             }
-            .subscribeOn(rxScheduler)
+        }
+    })
+        .replay(1)
+        .run {
+            if (debounceTimeout <= 0) {
+                refCount()
+            } else {
+                refCount(debounceTimeout.toLong(), TimeUnit.MILLISECONDS)
+            }
+        }
+        .subscribeOn(rxScheduler)
 
     protected suspend fun send(value: T) {
         val producer =
-                producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
+            producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
 
         @Suppress("EXPERIMENTAL_API_USAGE")
         producer.send(value)
@@ -99,7 +99,7 @@ abstract class OnDemandProvider<T>(
 
     protected fun sendBlocking(value: T) {
         val producer =
-                producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
+            producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
 
         @Suppress("EXPERIMENTAL_API_USAGE")
         producer.sendBlocking(value)
@@ -107,7 +107,7 @@ abstract class OnDemandProvider<T>(
 
     protected fun offer(value: T) {
         val producer =
-                producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
+            producer ?: throw IllegalStateException("Cannot send data when provider is inactive")
 
         @Suppress("EXPERIMENTAL_API_USAGE")
         producer.offer(value)

@@ -29,8 +29,8 @@ class IdlingResourceRule(private val resource: IdlingResource) : TestWatcher() {
 
         if (resource is ActivityLifecycleCallback) {
             ActivityLifecycleMonitorRegistry
-                    .getInstance()
-                    .addLifecycleCallback(resource)
+                .getInstance()
+                .addLifecycleCallback(resource)
         }
 
         super.starting(description)
@@ -43,8 +43,8 @@ class IdlingResourceRule(private val resource: IdlingResource) : TestWatcher() {
 
         if (resource is ActivityLifecycleCallback) {
             ActivityLifecycleMonitorRegistry
-                    .getInstance()
-                    .removeLifecycleCallback(resource)
+                .getInstance()
+                .removeLifecycleCallback(resource)
         }
     }
 

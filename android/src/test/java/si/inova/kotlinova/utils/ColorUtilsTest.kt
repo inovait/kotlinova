@@ -39,23 +39,23 @@ class ColorUtilsTest {
     @Test
     fun testLightening() {
         assertEquals(
-                Color.rgb(80, 80, 80),
-                lightenColor(Color.rgb(100, 100, 100), 0.8)
+            Color.rgb(80, 80, 80),
+            lightenColor(Color.rgb(100, 100, 100), 0.8)
         )
 
         assertEquals(
-                Color.rgb(120, 120, 120),
-                lightenColor(Color.rgb(100, 100, 100), 1.2)
+            Color.rgb(120, 120, 120),
+            lightenColor(Color.rgb(100, 100, 100), 1.2)
         )
 
         assertEquals(
-                Color.rgb(15, 75, 150),
-                lightenColor(Color.rgb(10, 50, 100), 1.5)
+            Color.rgb(15, 75, 150),
+            lightenColor(Color.rgb(10, 50, 100), 1.5)
         )
 
         assertEquals(
-                Color.rgb(255, 255, 255),
-                lightenColor(Color.rgb(255, 255, 255), 1.5)
+            Color.rgb(255, 255, 255),
+            lightenColor(Color.rgb(255, 255, 255), 1.5)
         )
     }
 }

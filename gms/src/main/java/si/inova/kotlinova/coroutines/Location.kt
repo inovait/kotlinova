@@ -31,7 +31,7 @@ import kotlin.coroutines.resume
  */
 @SuppressLint("MissingPermission")
 suspend fun FusedLocationProviderClient.awaitSingleLocation(
-        locationRequest: LocationRequest
+    locationRequest: LocationRequest
 ): Location {
     return suspendCancellableCoroutine { continuation ->
         val locationCallback = object : LocationCallback() {

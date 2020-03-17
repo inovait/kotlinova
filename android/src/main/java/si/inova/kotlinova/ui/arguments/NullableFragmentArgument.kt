@@ -29,9 +29,9 @@ class NullableFragmentArgument<T : Any> : kotlin.properties.ReadWriteProperty<Fr
     override operator fun getValue(thisRef: Fragment, property: KProperty<*>): T? {
         if (value == null) {
             val args = thisRef.arguments
-                    ?: throw IllegalStateException(
-                            "Cannot read property ${property.name} if no arguments have been set"
-                    )
+                ?: throw IllegalStateException(
+                    "Cannot read property ${property.name} if no arguments have been set"
+                )
             @Suppress("UNCHECKED_CAST")
             value = args.get(property.name) as T?
         }

@@ -23,17 +23,17 @@ class ObservablePaginatedQueryTest {
     @Test
     fun mutateRaw() {
         val data = listOf(
-                1,
-                2,
-                3,
-                4,
-                5
+            1,
+            2,
+            3,
+            4,
+            5
         )
 
         val expected = listOf(
-                "2",
-                "6",
-                "10"
+            "2",
+            "6",
+            "10"
         )
 
         val initialQuery = SinglePageObservablePaginatedQuery<Int>(data)
@@ -43,9 +43,9 @@ class ObservablePaginatedQueryTest {
             map { resource ->
                 if (resource is Resource.Success) {
                     Resource.Success(resource.data
-                            .filterNot { it % 2 == 0 }
-                            .map { it * 2 }
-                            .map { it.toString() }) as Resource<List<String>>
+                        .filterNot { it % 2 == 0 }
+                        .map { it * 2 }
+                        .map { it.toString() }) as Resource<List<String>>
                 } else {
                     throw Exception()
                 }
@@ -58,24 +58,24 @@ class ObservablePaginatedQueryTest {
     @Test
     fun mutate() {
         val data = listOf(
-                5,
-                10,
-                15,
-                20
+            5,
+            10,
+            15,
+            20
         )
 
         val expected = listOf(
-                "1T",
-                "2T",
-                "3T"
+            "1T",
+            "2T",
+            "3T"
         )
 
         val initialQuery = SinglePageObservablePaginatedQuery(data)
 
         val mutated = initialQuery.mutate { list ->
             list.filter { it < 20 }
-                    .map { it / 5 }
-                    .map { "${it}T" }
+                .map { it / 5 }
+                .map { "${it}T" }
         }
 
         assertEquals(expected, mutated.getAll())
@@ -84,17 +84,17 @@ class ObservablePaginatedQueryTest {
     @Test
     fun map() {
         val data = listOf(
-                2,
-                4,
-                6,
-                8
+            2,
+            4,
+            6,
+            8
         )
 
         val expected = listOf(
-                3,
-                5,
-                7,
-                9
+            3,
+            5,
+            7,
+            9
         )
 
         val initialQuery = SinglePageObservablePaginatedQuery(data)

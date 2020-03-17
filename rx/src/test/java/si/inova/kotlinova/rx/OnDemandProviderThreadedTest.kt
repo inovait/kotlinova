@@ -65,8 +65,8 @@ class OnDemandProviderThreadedTest {
     }
 
     private open class TestProvider(debounce: Boolean = true) : OnDemandProvider<Unit>(
-            rxScheduler = Schedulers.trampoline(),
-            debounceTimeout = if (debounce) 500L else 0L
+        rxScheduler = Schedulers.trampoline(),
+        debounceTimeout = if (debounce) 500L else 0L
     ) {
         private val currentlyActive = AtomicBoolean(false)
 

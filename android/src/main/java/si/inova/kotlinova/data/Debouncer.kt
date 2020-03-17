@@ -11,7 +11,11 @@
 
 package si.inova.kotlinova.data
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -19,8 +23,8 @@ import kotlin.coroutines.CoroutineContext
  * another task being added.
  */
 class Debouncer(
-        private val debouncingTimeMs: Long = 500L,
-        private val targetContext: CoroutineContext = Dispatchers.Main
+    private val debouncingTimeMs: Long = 500L,
+    private val targetContext: CoroutineContext = Dispatchers.Main
 ) {
     private var previousJob: Job? = null
 

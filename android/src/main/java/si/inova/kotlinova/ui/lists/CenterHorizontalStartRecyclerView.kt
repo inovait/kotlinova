@@ -26,9 +26,9 @@ import androidx.recyclerview.widget.RecyclerView
  * @author Matej Drobnic
  */
 class CenterHorizontalStartRecyclerView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : RecyclerView(context, attrs, defStyleAttr) {
     private var setupCenterOnPreDraw = true
 
@@ -39,7 +39,7 @@ class CenterHorizontalStartRecyclerView @JvmOverloads constructor(
     private fun setupCenteredPadding() {
         if (childCount < 1) {
             throw IllegalStateException(
-                    "Padding centering should never be called before children are added"
+                "Padding centering should never be called before children are added"
             )
         }
 
@@ -48,7 +48,7 @@ class CenterHorizontalStartRecyclerView @JvmOverloads constructor(
         val child = getChildAt(0)
         if (!ViewCompat.isLaidOut(child)) {
             throw IllegalStateException(
-                    "Padding centering should never be called before children are laid out"
+                "Padding centering should never be called before children are laid out"
             )
         }
 

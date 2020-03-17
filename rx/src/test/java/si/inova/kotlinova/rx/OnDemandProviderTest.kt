@@ -11,9 +11,19 @@
 
 package si.inova.kotlinova.rx
 
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.only
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyZeroInteractions
+import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.functions.Consumer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -539,7 +549,7 @@ class OnDemandProviderTest {
     }
 
     private open class TestProvider(debounce: Boolean = true) : OnDemandProvider<Int>(
-            debounceTimeout = if (debounce) 500L else 0L
+        debounceTimeout = if (debounce) 500L else 0L
     ) {
         var activeCallback: (() -> Unit)? = null
         var inactiveCallback: (() -> Unit)? = null

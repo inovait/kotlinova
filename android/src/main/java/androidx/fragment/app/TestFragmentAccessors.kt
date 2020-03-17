@@ -25,10 +25,10 @@ fun Fragment.setHost(host: FragmentHostCallback<*>) {
 
 fun Fragment.setContext(context: Context) {
     setHost(mock<FragmentHostCallback<Unit>>()
-            .apply { whenever(getContext()).thenReturn(context) })
-            .apply {
-                if (context is FragmentActivity) {
-                    whenever(activity).thenReturn(context)
-                }
+        .apply { whenever(getContext()).thenReturn(context) })
+        .apply {
+            if (context is FragmentActivity) {
+                whenever(activity).thenReturn(context)
             }
+        }
 }

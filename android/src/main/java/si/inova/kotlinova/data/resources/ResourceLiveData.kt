@@ -32,7 +32,7 @@ import kotlin.reflect.KProperty
  * @author Matej Drobnic
  */
 class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
-        ReadOnlyProperty<Any, LiveData<Resource<T>>> {
+    ReadOnlyProperty<Any, LiveData<Resource<T>>> {
     /**
      * Interceptor that intercepts any incoming values. When returning [true], value is consumed and
      * is not forwarded to observers.
@@ -45,8 +45,8 @@ class ResourceLiveData<T> : ExtendedMediatorLiveData<Resource<T>>(),
     @Deprecated("Use sendValue() instead", ReplaceWith("sendValue(value)"))
     override fun postValue(value: Resource<T>) {
         throw IllegalStateException(
-                "postValue is not supported for ResourceLiveData. " +
-                        "Use sendValue instead."
+            "postValue is not supported for ResourceLiveData. " +
+                "Use sendValue instead."
         )
     }
 

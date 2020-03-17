@@ -27,7 +27,7 @@ class BehaviorSubjectProxyTest {
     fun setUp() {
         testObservable = PublishSubject.create<Int>()
         behaviorSubjectProxy =
-                BehaviorSubjectProxy(testObservable.toFlowable(BackpressureStrategy.LATEST))
+            BehaviorSubjectProxy(testObservable.toFlowable(BackpressureStrategy.LATEST))
     }
 
     @Test

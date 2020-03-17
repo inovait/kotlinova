@@ -20,9 +20,9 @@ import java.lang.ref.WeakReference
  * original cannot be used beacuse it is packate-protected inside Room library
  */
 class WeakInvalidationObserver(
-        tables: Array<out String>,
-        private val invalidationTracker: InvalidationTracker,
-        trigger: () -> Unit
+    tables: Array<out String>,
+    private val invalidationTracker: InvalidationTracker,
+    trigger: () -> Unit
 ) : InvalidationTracker.Observer(tables) {
     private val triggerRef: WeakReference<() -> Unit> = WeakReference(trigger)
 

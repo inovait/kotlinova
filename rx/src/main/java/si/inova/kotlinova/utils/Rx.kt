@@ -62,8 +62,8 @@ inline fun <T> Publisher<T>.use(block: () -> Unit) {
 // We use GlobalScope here so this is not an issue
 @UseExperimental(ExperimentalCoroutinesApi::class)
 fun <I, O> Flowable<I>.mapAsync(
-        context: CoroutineContext = TestableDispatchers.Default,
-        mapper: suspend (I) -> O
+    context: CoroutineContext = TestableDispatchers.Default,
+    mapper: suspend (I) -> O
 ): Flowable<O> {
     return switchMap { originalValue ->
         publish<O>(context, {

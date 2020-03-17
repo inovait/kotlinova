@@ -9,7 +9,7 @@
  *
  */
 
-buildscript{
+buildscript {
     repositories {
         mavenCentral()
     }

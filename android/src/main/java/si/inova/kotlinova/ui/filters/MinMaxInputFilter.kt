@@ -32,12 +32,12 @@ class MinMaxInputFilter
     private val allowSignedNumbers: Boolean = min < 0
 
     override fun filter(
-            source: CharSequence,
-            start: Int,
-            end: Int,
-            dest: Spanned,
-            dstart: Int,
-            dend: Int
+        source: CharSequence,
+        start: Int,
+        end: Int,
+        dest: Spanned,
+        dstart: Int,
+        dend: Int
     ): CharSequence? {
         var returnValue: String? = ""
         try {

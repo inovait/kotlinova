@@ -26,8 +26,8 @@ import kotlin.reflect.KProperty
  * This will NOT get triggered when value gets restored when Activity/Fragment gets recreated
  */
 class StateSavedProperty<T>(
-        defaultValue: T,
-        private val setNotification: ((T) -> Unit)? = null
+    defaultValue: T,
+    private val setNotification: ((T) -> Unit)? = null
 ) : StateSaver<T>(), ReadWriteProperty<StateSavingComponent, T> {
     var value: T = defaultValue
     var initialized = false

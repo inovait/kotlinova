@@ -58,8 +58,8 @@ androidExtensions {
 }
 
 dependencies {
-    implementation "si.inova.kotlinova:core:${VERSION}"
-    implementation "si.inova.kotlinova:rx:${VERSION}"
+    implementation "com.github.inovait.kotlinova:core:${VERSION}"
+    implementation "com.github.inovait.kotlinova:rx:${VERSION}"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"

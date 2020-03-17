@@ -38,7 +38,7 @@ class CoroutinesTimeMachine : TestWatcher(), TimeMachine {
         Dispatchers.setMain(coroutineContext)
         JavaTimeProvider.currentTimeMillisProvider = { now }
         JavaTimeProvider.clockProvider =
-                { Clock.fixed(Instant.ofEpochMilli(now), ZoneId.of("UTC")) }
+            { Clock.fixed(Instant.ofEpochMilli(now), ZoneId.of("UTC")) }
 
         coroutineContext.pauseDispatcher()
     }

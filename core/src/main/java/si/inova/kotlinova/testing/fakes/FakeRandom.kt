@@ -11,7 +11,8 @@
 
 package si.inova.kotlinova.testing.fakes
 
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
 import kotlin.random.Random
 
 class FakeRandom : Random() {

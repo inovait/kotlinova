@@ -17,7 +17,12 @@ import android.util.SparseArray
 import android.view.View
 import android.widget.Adapter
 import android.widget.AdapterView
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argThat
+import com.nhaarman.mockitokotlin2.inOrder
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -65,7 +70,7 @@ class AdapterViewStateSaverTest {
     fun restoring() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         adapterViewStateSaver.notifyDataLoaded()
 
@@ -76,7 +81,7 @@ class AdapterViewStateSaverTest {
     fun restoringTwice() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         adapterViewStateSaver.notifyDataLoaded()
         adapterViewStateSaver.notifyDataLoaded()
@@ -91,7 +96,7 @@ class AdapterViewStateSaverTest {
     fun restoringNoId() {
         val testParcelable = StringParcelable("Test")
         whenever(stateSaverManager.getLastLoadedValue<Parcelable>(SAVER_KEY))
-                .thenReturn(testParcelable)
+            .thenReturn(testParcelable)
 
         whenever(adapterView.id).thenReturn(View.NO_ID)
         adapterViewStateSaver.notifyDataLoaded()
@@ -100,7 +105,7 @@ class AdapterViewStateSaverTest {
 
 class StringParcelable(val text: String) : Parcelable {
     constructor(parcel: Parcel) :
-            this(parcel.readString() ?: error("System returned null string"))
+        this(parcel.readString() ?: error("System returned null string"))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(text)

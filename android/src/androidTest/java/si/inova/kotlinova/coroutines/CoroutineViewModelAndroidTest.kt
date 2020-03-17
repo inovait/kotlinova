@@ -64,7 +64,7 @@ class CoroutineViewModelAndroidTest {
                 Espresso.onIdle()
 
                 assertTrue(
-                        (testViewModel.testResource.value as Resource.Error).exception is IOException
+                    (testViewModel.testResource.value as Resource.Error).exception is IOException
                 )
                 assertFalse(testViewModel.testResource.hasAnySources())
             })
@@ -100,4 +100,4 @@ class CoroutineViewModelAndroidTest {
 }
 
 private val TEST_CONTAINER_LIVE_DATA =
-        MutableLiveData<Resource<Int>>().apply { postValue(Resource.Success(5)) }
+    MutableLiveData<Resource<Int>>().apply { postValue(Resource.Success(5)) }

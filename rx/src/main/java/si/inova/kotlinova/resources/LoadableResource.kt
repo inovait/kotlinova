@@ -23,7 +23,7 @@ interface LoadableResource<T> {
 }
 
 inline fun <T, R> LoadableResource<T>.map(crossinline mapper: (Resource<T>) -> Resource<R>):
-        LoadableResource<R> {
+    LoadableResource<R> {
     val original = this
 
     return object : LoadableResource<R> {

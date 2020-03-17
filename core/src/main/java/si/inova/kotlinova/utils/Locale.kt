@@ -11,7 +11,7 @@
 
 package si.inova.kotlinova.utils
 
-import java.util.*
+import java.util.Locale
 
 /**
  * @author Kristjan Kotnik

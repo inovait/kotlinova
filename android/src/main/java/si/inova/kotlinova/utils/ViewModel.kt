@@ -49,7 +49,7 @@ inline fun <reified T : ViewModel> ViewModelProvider.Factory.create(fragment: Fr
  * Used to share same ViewModel instances across different fragments inside activity.
  */
 inline fun <reified T : ViewModel> ViewModelProvider.Factory.createFromActivity(
-        fragment: Fragment
+    fragment: Fragment
 ): T {
     return ViewModelProviders.of(fragment.requireActivity(), this).load()
 }
