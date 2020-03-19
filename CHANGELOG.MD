@@ -1,3 +1,9 @@
+## [2.9.4](https://github.com/inovait/kotlinovacompare/v2.9.3...v2.9.4) (2020-03-19)
+
+### Bug Fixes
+
+* ErrorHandlerCallAdapter factory throwing NotImplementedError when network call is executed by blocking execute() method ([81d55ced](https://github.com/inovait/kotlinovacommit/81d55ced6520f0d60f93015e19aa7121ea0ad689))
+
 ## [2.9.3](https://github.com/inovait/kotlinovacompare/v2.9.2...v2.9.3) (2020-03-17)
 
 ### Bug Fixes
