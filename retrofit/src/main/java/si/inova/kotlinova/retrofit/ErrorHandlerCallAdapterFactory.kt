@@ -48,11 +48,11 @@ class ErrorHandlerCallAdapterFactory constructor(
 
     private inner class ResultAdapter<T>(private val responseType: Type) : CallAdapter<T, Call<T>> {
         override fun adapt(call: Call<T>): Call<T> = ResultCall(call)
-
         override fun responseType(): Type = responseType
     }
 
     private inner class ResultCall<T>(proxy: Call<T>) : CallDelegate<T, T>(proxy) {
+
         override fun enqueueImpl(callback: Callback<T>) {
             proxy.enqueue(object : Callback<T> {
                 override fun onFailure(call: Call<T>, t: Throwable) {
@@ -76,12 +76,21 @@ class ErrorHandlerCallAdapterFactory constructor(
         }
 
         override fun cloneImpl(): Call<T> = ResultCall(proxy.clone())
+
+        override fun executeImpl(): Response<T> {
+            val response = proxy.execute()
+            if (!response.isSuccessful) {
+                throw errorHandler.generateExceptionFromErrorBody(response)
+                    ?: HttpException(response)
+            }
+            return response
+        }
     }
 
     private abstract class CallDelegate<TIn, TOut>(
         protected val proxy: Call<TIn>
     ) : Call<TOut> {
-        override fun execute(): Response<TOut> = throw NotImplementedError()
+        override fun execute(): Response<TOut> = executeImpl()
         final override fun enqueue(callback: Callback<TOut>) = enqueueImpl(callback)
         final override fun clone(): Call<TOut> = cloneImpl()
 
@@ -92,6 +101,7 @@ class ErrorHandlerCallAdapterFactory constructor(
 
         abstract fun enqueueImpl(callback: Callback<TOut>)
         abstract fun cloneImpl(): Call<TOut>
+        abstract fun executeImpl(): Response<TOut>
     }
 
     interface ErrorHandler {
