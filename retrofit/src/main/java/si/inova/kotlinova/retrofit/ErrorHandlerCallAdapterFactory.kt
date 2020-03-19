@@ -88,7 +88,7 @@ class ErrorHandlerCallAdapterFactory constructor(
     }
 
     private abstract class CallDelegate<TIn, TOut>(
-            protected val proxy: Call<TIn>
+        protected val proxy: Call<TIn>
     ) : Call<TOut> {
         override fun execute(): Response<TOut> = executeImpl()
         final override fun enqueue(callback: Callback<TOut>) = enqueueImpl(callback)
