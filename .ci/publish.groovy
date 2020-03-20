@@ -52,7 +52,7 @@ node('android-linux') {
             commits,
             curVersionName,
             newVersionName,
-            "https://github.com/inovait/kotlinova")
+            "https://github.com/inovait/kotlinova/")
 
     stage('Update Version') {
         def versionProperties = "MAJOR=${newVersion[0]}\n" +

@@ -71,3 +71,7 @@ To contribute to this set of libraries:
 4. Try to avoid breaking changes, but if it cannot be avoided, you must put `BREAKING CHANGE` in the footer of the commit mesasage and explain the change.
 5. Create merge request
 6. When your MR is merged, new release will be generated automatically
+
+### Code Style
+
+Please import included `Style.xml` into your Android Studio / IntelliJ before contributing to conform to the project's code style. Pull Requests will be checked for style before merging. You can perform the check yourself by running `ktlint` gradle task.
