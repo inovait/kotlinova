@@ -1,26 +1,26 @@
-## [2.9.4](https://github.com/inovait/kotlinovacompare/v2.9.3...v2.9.4) (2020-03-19)
+## [2.9.4](https://github.com/inovait/kotlinova/compare/v2.9.3...v2.9.4) (2020-03-19)
 
 ### Bug Fixes
 
-* ErrorHandlerCallAdapter factory throwing NotImplementedError when network call is executed by blocking execute() method ([81d55ced](https://github.com/inovait/kotlinovacommit/81d55ced6520f0d60f93015e19aa7121ea0ad689))
+* ErrorHandlerCallAdapter factory throwing NotImplementedError when network call is executed by blocking execute() method ([81d55ced](https://github.com/inovait/kotlinova/commit/81d55ced6520f0d60f93015e19aa7121ea0ad689))
 
-## [2.9.3](https://github.com/inovait/kotlinovacompare/v2.9.2...v2.9.3) (2020-03-17)
-
-### Bug Fixes
-
-* publishing not working at all ([829d5cf2](https://github.com/inovait/kotlinovacommit/829d5cf27a0a9253723fabcd45aa52c49bc585ed))
-
-## [2.9.2](https://github.com/inovait/kotlinovacompare/v2.9.1...v2.9.2) (2020-03-17)
+## [2.9.3](https://github.com/inovait/kotlinova/compare/v2.9.2...v2.9.3) (2020-03-17)
 
 ### Bug Fixes
 
-* remove reduntant maven plugin ([22a13146](https://github.com/inovait/kotlinovacommit/22a1314698b20b4f7d62bc7583f502757f8894f6))
+* publishing not working at all ([829d5cf2](https://github.com/inovait/kotlinova/commit/829d5cf27a0a9253723fabcd45aa52c49bc585ed))
 
-## [2.9.1](https://github.com/inovait/kotlinovacompare/v2.9.0...v2.9.1) (2020-03-17)
+## [2.9.2](https://github.com/inovait/kotlinova/compare/v2.9.1...v2.9.2) (2020-03-17)
 
 ### Bug Fixes
 
-* update dependencies on other projects ([0951fdab](https://github.com/inovait/kotlinovacommit/0951fdab0ce0f48e7defe03aa099eea48424eaef))
+* remove reduntant maven plugin ([22a13146](https://github.com/inovait/kotlinova/commit/22a1314698b20b4f7d62bc7583f502757f8894f6))
+
+## [2.9.1](https://github.com/inovait/kotlinova/compare/v2.9.0...v2.9.1) (2020-03-17)
+
+### Bug Fixes
+
+* update dependencies on other projects ([0951fdab](https://github.com/inovait/kotlinova/commit/0951fdab0ce0f48e7defe03aa099eea48424eaef))
 
 ## [2.9.0](https://github.com/inovait/kotlinova/compare/v2.8.0...v2.9.0) (2020-01-13)
 
