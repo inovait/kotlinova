@@ -97,6 +97,10 @@ class MockDocument<T>(val key: String) {
                 objectValue
             }
 
+            whenever(it.reference).thenAnswer {
+                toDocumentRef()
+            }
+
             whenever(it.data).thenAnswer {
                 if (mapValue == null) {
                     throw RuntimeException("Snapshot does not contain key-value pairs")
@@ -131,6 +135,7 @@ class MockDocument<T>(val key: String) {
 
     fun toDocumentRef(): DocumentReference = mock { ref ->
         whenever(ref.id).thenReturn(key)
+        whenever(ref.path).thenReturn(key)
 
         whenever(ref.get()).thenAnswer {
             Tasks.forResult(createSnapshot())
