@@ -1,3 +1,9 @@
+## [2.9.5](https://github.com/inovait/kotlinova/compare/v2.9.4...v2.9.5) (2020-04-01)
+
+### Bug Fixes
+
+* **firebase:** fix MockDocument not properly returning reference and its url ([c06afb44](https://github.com/inovait/kotlinova/commit/c06afb44f6a02ed4debafcef4d68eb32cb1db07a))
+
 ## [2.9.4](https://github.com/inovait/kotlinova/compare/v2.9.3...v2.9.4) (2020-03-19)
 
 ### Bug Fixes
