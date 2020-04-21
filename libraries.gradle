@@ -28,7 +28,7 @@ ext {
 
             // Features libraries
             playServices          : '15.0.1',
-            retrofit              : '2.4.0',
+            retrofit              : '2.8.1',
             threeTenAndroid       : '1.1.0',
             picasso               : '2.71828',
             room                  : '2.0.0',
