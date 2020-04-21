@@ -12,6 +12,7 @@
 package si.inova.kotlinova.retrofit
 
 import okhttp3.Request
+import okio.Timeout
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Callback
@@ -85,6 +86,8 @@ class ErrorHandlerCallAdapterFactory constructor(
             }
             return response
         }
+
+        override fun timeout(): Timeout = proxy.timeout()
     }
 
     private abstract class CallDelegate<TIn, TOut>(
