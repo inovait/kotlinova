@@ -1,3 +1,9 @@
+## [2.9.6](https://github.com/inovait/kotlinova/compare/v2.9.5...v2.9.6) (2020-04-21)
+
+### Bug Fixes
+
+* **retrofit:** fix missing method in new retrofit version ([56d2ef7a](https://github.com/inovait/kotlinova/commit/56d2ef7a56e3ada57757f8b2bb79c728047e6454))
+
 ## [2.9.5](https://github.com/inovait/kotlinova/compare/v2.9.4...v2.9.5) (2020-04-01)
 
 ### Bug Fixes
