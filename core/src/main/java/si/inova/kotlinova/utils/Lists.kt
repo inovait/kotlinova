@@ -66,3 +66,10 @@ fun <T> List<T>?.isNotNullOrEmpty(): Boolean {
 
     return this != null && this.isNotEmpty()
 }
+
+/**
+ * Returns *true* if collection contains only selected element and no others
+ */
+fun <T> List<T>.containsOnly(element: T): Boolean {
+    return size == 1 && first() == element
+}
