@@ -9,28 +9,17 @@
  *
  */
 
-package si.inova.kotlinova.retrofit
+package si.inova.kotlinova.testing
 
-import okhttp3.ResponseBody
-import retrofit2.Converter
-import retrofit2.Retrofit
-import java.lang.reflect.Type
+import androidx.lifecycle.Observer
 
 /**
- * [Converter.Factory] that allows retrofit endpoints to return [Unit]
+ * Simple observer that puts all received items into list
  */
-object UnitConverterFactory : Converter.Factory() {
-    override fun responseBodyConverter(
-        type: Type,
-        annotations: Array<out Annotation>,
-        retrofit: Retrofit
-    ): Converter<ResponseBody, *>? {
-        return if (type == Unit::class.java) UnitConverter else null
-    }
+class ListObserver<T> : Observer<T> {
+    val receivedItems = ArrayList<T>()
 
-    private object UnitConverter : Converter<ResponseBody, Unit> {
-        override fun convert(value: ResponseBody) {
-            value.close()
-        }
+    override fun onChanged(item: T) {
+        receivedItems += item
     }
 }

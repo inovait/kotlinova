@@ -73,11 +73,11 @@ dependencies {
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
     compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
-    compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    compileOnly "androidx.arch.core:core-testing:${versions.coreTesting}"
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
-    testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    testImplementation "androidx.arch.core:core-testing:${versions.coreTesting}"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.kotlinCoroutines}"
 
     androidTestImplementation "androidx.test:runner:${versions.androidTestRunner}"

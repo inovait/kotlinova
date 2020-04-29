@@ -62,7 +62,14 @@ class ErrorHandlerCallAdapterFactory constructor(
 
                 override fun onResponse(call: Call<T>, response: Response<T>) {
                     if (response.isSuccessful) {
-                        callback.onResponse(call, response)
+                        if (response.body() == null) {
+                            // Body can be null when server returns 204. Assume we are expecting
+                            // Unit type and return it accordingly
+                            @Suppress("UNCHECKED_CAST")
+                            callback.onResponse(call, Response.success(Unit as T, response.raw()))
+                        } else {
+                            callback.onResponse(call, response)
+                        }
                     } else {
                         val exception = try {
                             errorHandler.generateExceptionFromErrorBody(response)

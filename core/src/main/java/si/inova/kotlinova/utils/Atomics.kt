@@ -9,28 +9,27 @@
  *
  */
 
-package si.inova.kotlinova.retrofit
+package si.inova.kotlinova.utils
 
-import okhttp3.ResponseBody
-import retrofit2.Converter
-import retrofit2.Retrofit
-import java.lang.reflect.Type
+import java.util.concurrent.atomic.AtomicReference
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
- * [Converter.Factory] that allows retrofit endpoints to return [Unit]
+ * Updates reference atomically using the specified [function] of its value.
  */
-object UnitConverterFactory : Converter.Factory() {
-    override fun responseBodyConverter(
-        type: Type,
-        annotations: Array<out Annotation>,
-        retrofit: Retrofit
-    ): Converter<ResponseBody, *>? {
-        return if (type == Unit::class.java) UnitConverter else null
+@OptIn(ExperimentalContracts::class)
+inline fun <T> AtomicReference<T>.update(function: (T) -> T) {
+    contract {
+        callsInPlace(function, InvocationKind.AT_LEAST_ONCE)
     }
 
-    private object UnitConverter : Converter<ResponseBody, Unit> {
-        override fun convert(value: ResponseBody) {
-            value.close()
+    while (true) {
+        val current = get()
+        val new = function(current)
+        if (compareAndSet(current, new)) {
+            break
         }
     }
 }
