@@ -64,13 +64,16 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinCoroutines}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
     implementation "androidx.lifecycle:lifecycle-reactivestreams:${versions.architectureComponents}"
-    implementation "androidx.core:core-ktx:${versions.ktx}"
+    implementation "androidx.core:core-ktx:${versions.androidXCore}"
 
     implementation "androidx.appcompat:appcompat:${versions.appCompat}"
     implementation "com.google.android.material:material:${versions.material}"
     implementation "androidx.recyclerview:recyclerview:${versions.recyclerView}"
+    implementation "androidx.asynclayoutinflater:asynclayoutinflater:${versions.asyncLayoutInflater}"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:${versions.swipeRefreshLayout}"
 
     implementation "androidx.lifecycle:lifecycle-extensions:${versions.architectureComponents}"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.architectureComponents}"
     implementation "com.jakewharton.threetenabp:threetenabp:${versions.threeTenAndroid}"
 
     compileOnly "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
@@ -84,7 +87,7 @@ dependencies {
     compileOnly "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
     compileOnly "org.robolectric:robolectric:${versions.roboletric}"
     compileOnly "org.robolectric:shadows-play-services:${versions.roboletricSupport}"
-    compileOnly "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    compileOnly "androidx.arch.core:core-testing:${versions.coreTesting}"
     compileOnly "androidx.test.espresso:espresso-core:${versions.espresso}"
     compileOnly "androidx.test.uiautomator:uiautomator:${versions.uiAutomator}"
     compileOnly "androidx.test:rules:${versions.androidTestRunner}"
@@ -94,7 +97,7 @@ dependencies {
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockitoKotlin}"
-    testImplementation "androidx.arch.core:core-testing:${versions.architectureComponents}"
+    testImplementation "androidx.arch.core:core-testing:${versions.coreTesting}"
     testImplementation "org.assertj:assertj-core:${versions.assertJ}"
     testImplementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
     testImplementation "io.reactivex.rxjava2:rxkotlin:${versions.rxKotlin}"

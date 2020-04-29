@@ -15,16 +15,16 @@ ext {
 
             // Support/Architecture libraries
             kotlinCoroutines      : '1.3.5',
-            appCompat             : '1.0.1',
-            material              : '1.0.0',
-            recyclerView          : '1.0.0',
-            architectureComponents: '2.0.0',
+            appCompat             : '1.1.0',
+            material              : '1.1.0',
+            recyclerView          : '1.1.0',
+            architectureComponents: '2.2.0',
             rxJava                : '2.2.3',
             rxKotlin              : '2.2.0',
             dagger                : '2.16',
             timber                : '4.7.0',
             moshi                 : '1.6.0',
-            ktx                   : '1.0.0',
+            androidXCore          : '1.2.0',
 
             // Features libraries
             playServices          : '15.0.1',
@@ -33,6 +33,8 @@ ext {
             picasso               : '2.71828',
             room                  : '2.0.0',
             guava                 : '28.1-android',
+            asyncLayoutInflater   : '1.0.0',
+            swipeRefreshLayout    : '1.0.0',
 
             // Firebase
             firebaseCore          : '17.2.0',
@@ -45,14 +47,15 @@ ext {
             //Testing
             junit                 : '4.12',
             androidXjunit         : '1.0.0',
-            androidTestRunner     : '1.1.0',
-            espresso              : '3.1.0',
+            androidTestRunner     : '1.2.0',
+            espresso              : '3.2.0',
             mockitoKotlin         : '2.2.0',
             assertJ               : '3.11.1',
             roboletric            : '4.2',
             roboletricSupport     : '3.3.2',
             mockitoAndroid        : '2.24.0',
             uiAutomator           : '2.2.0',
+            coreTesting           : '2.1.0',
 
             unmock                : '0.6.5',
             unmockAndroidVersion  : '8.1.0-robolectric-4611349'
