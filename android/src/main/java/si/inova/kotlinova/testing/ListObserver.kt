@@ -16,7 +16,7 @@ import androidx.lifecycle.Observer
 /**
  * Simple observer that puts all received items into list
  */
-class ListObserver<T>: Observer<T> {
+class ListObserver<T> : Observer<T> {
     val receivedItems = ArrayList<T>()
 
     override fun onChanged(item: T) {

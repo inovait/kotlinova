@@ -179,5 +179,4 @@ class LiveDataFlowsTest {
             Resource.Success(3)
         )
     }
-
 }
