@@ -75,4 +75,3 @@ To contribute to this set of libraries:
 ### Code Style
 
 Please import included `Style.xml` into your Android Studio / IntelliJ before contributing to conform to the project's code style. Pull Requests will be checked for style before merging. You can perform the check yourself by running `ktlint` gradle task.
-There is a handy bash script in the `scripts` folder to simply import of the code style.
