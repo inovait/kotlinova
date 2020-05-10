@@ -95,7 +95,7 @@ abstract class ListSection<T, VH : RecyclerView.ViewHolder> : RecyclerSection<VH
     }
 
     /**
-     * Clear this section immediatelly.
+     * Clear this section immediately.
      */
     @Deprecated(
         "updateList also has synchronous behavior now when inserting empty list",
