@@ -16,7 +16,7 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import dagger.android.AndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import org.robolectric.Robolectric
 import org.robolectric.android.controller.ActivityController
 import si.inova.kotlinova.ui.ActivityWithFragments
@@ -24,7 +24,7 @@ import si.inova.kotlinova.ui.ActivityWithFragments
 /**
  * @author Matej Drobnic
  */
-class FragmentTestActivity : ActivityWithFragments(), HasSupportFragmentInjector {
+class FragmentTestActivity : ActivityWithFragments(), HasAndroidInjector {
 
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class FragmentTestActivity : ActivityWithFragments(), HasSupportFragmentInjector
         setContentView(FrameLayout(this).apply { id = 1 })
     }
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+    override fun androidInjector(): AndroidInjector<Any> {
         return AndroidInjector { }
     }
 }

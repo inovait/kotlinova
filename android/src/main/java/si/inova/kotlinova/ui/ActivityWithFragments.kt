@@ -14,7 +14,7 @@ package si.inova.kotlinova.ui
 import androidx.fragment.app.Fragment
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import si.inova.kotlinova.ui.components.StateSaverActivity
 import javax.inject.Inject
 
@@ -25,13 +25,12 @@ import javax.inject.Inject
  *
  * @author Matej Drobnic
  */
-abstract class ActivityWithFragments : StateSaverActivity(), HasSupportFragmentInjector {
+abstract class ActivityWithFragments : StateSaverActivity(), HasAndroidInjector {
     @Inject
     @JvmField
-    var fragmentInjector: DispatchingAndroidInjector<Fragment>? = null
+    var androidInjector: DispatchingAndroidInjector<Any>? = null
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentInjector
-        ?: AndroidInjector { }
+    override fun androidInjector(): AndroidInjector<Any> = androidInjector ?: AndroidInjector { }
 
     var createFragment: (() -> Fragment) -> Fragment = { it() }
 }
