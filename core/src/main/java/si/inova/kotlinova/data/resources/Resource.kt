@@ -22,9 +22,9 @@ sealed class Resource<T> {
 }
 
 val <T> Resource<T>.value: T?
-    get() = when {
-        this is Resource.Success -> data
-        this is Resource.Loading -> data
+    get() = when (this) {
+        is Resource.Success -> data
+        is Resource.Loading -> data
         else -> null
     }
 
