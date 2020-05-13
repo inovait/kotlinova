@@ -1,3 +1,19 @@
+## [2.10.0](https://github.com/inovait/kotlinova/compare/v2.9.6...v2.10.0) (2020-05-12)
+
+### Features
+
+* **retrofit:** add support for 204 returns in ErrorHandlerCallAdapterFactory ([9b262082](https://github.com/inovait/kotlinova/commit/9b262082aab3c6e96e30c9ab8905e7b955a45ceb))
+* **core:** add containsOnly utility ([06c212b2](https://github.com/inovait/kotlinova/commit/06c212b2a1f036e8a0d9d59e6fd9672314990869))
+* **core:** add update loop method for AtomicReference ([373db16b](https://github.com/inovait/kotlinova/commit/373db16bd35ee585c7b6ce3f29ea4686d28afd1a))
+* **core:** add MulticastFlow ([4c9788df](https://github.com/inovait/kotlinova/commit/4c9788df764404eadd7a9bd5535b1bac16f0b601))
+* require RX java use to be explicit ([7f008cfd](https://github.com/inovait/kotlinova/commit/7f008cfdc85c683d1c2fcbfda39a561229f38a22))
+* **android:** add ListObserver test utility ([4f785474](https://github.com/inovait/kotlinova/commit/4f785474c6386ac91f3032285b57404727df5e21))
+* **android:** add flow extensions to LiveData ([4c0ac5f3](https://github.com/inovait/kotlinova/commit/4c0ac5f3095516b16b2e13397a7429e533280eea))
+
+### Bug Fixes
+
+* use android injector since dagger removed individually injectors ([3f5020a8](https://github.com/inovait/kotlinova/commit/3f5020a8096e53f8838c3017f6a80cadebff4ec7))
+
 ## [2.9.6](https://github.com/inovait/kotlinova/compare/v2.9.5...v2.9.6) (2020-04-21)
 
 ### Bug Fixes
