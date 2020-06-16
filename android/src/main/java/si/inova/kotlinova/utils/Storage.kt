@@ -44,6 +44,7 @@ operator fun Bundle.set(key: String, value: Any) {
         is Binder -> BundleCompat.putBinder(this, key, value)
         is Parcelable -> putParcelable(key, value)
         is Serializable -> putSerializable(key, value)
+        is Enum<*> -> putString(key, value.name)
         else -> throw IllegalStateException(
             "Type ${value.javaClass.canonicalName} of property $key is not supported in bundle"
         )
@@ -55,12 +56,22 @@ inline fun <reified T> SharedPreferences.get(key: String, default: T): T {
     return get(key, default, T::class.java)
 }
 
+fun SharedPreferences.getEnum(key: String, default: Any?, klass: Class<Enum<*>>): Any? {
+    val enumKey = getString(key, null) ?: return default
+
+    @Suppress("UNNECESSARY_SAFE_CALL")
+    return klass.enumConstants?.firstOrNull { it.name == enumKey } ?: default
+}
+
 @Suppress("IMPLICIT_CAST_TO_ANY")
 fun <T> SharedPreferences.get(key: String, default: T, klass: Class<T>): T {
     if (!contains(key)) {
         return default
     }
-
+    if (Enum::class.java.isAssignableFrom(klass)) {
+        @Suppress("UNCHECKED_CAST")
+        return getEnum(key, default, klass as Class<Enum<*>>) as T
+    }
     @Suppress("UNCHECKED_CAST")
     return when (klass) {
         String::class.java -> getString(key, default as String?)
@@ -88,6 +99,7 @@ fun SharedPreferences.Editor.put(key: String, value: Any): SharedPreferences.Edi
         is Float -> putFloat(key, value)
         is Boolean -> putBoolean(key, value)
         is Set<*> -> putStringSet(key, value as MutableSet<String>)
+        is Enum<*> -> putString(key, value.name)
         else -> throw IllegalStateException(
             "Type ${value.javaClass.canonicalName} of property $key " +
                 "is not supported in SharedPreferences"
