@@ -35,6 +35,7 @@ class PreferencePropertyTest {
             .clear()
             .put("a", 10)
             .put("b", "Test")
+            .put("d", TestEnum.TEST)
             .apply()
     }
 
@@ -44,11 +45,15 @@ class PreferencePropertyTest {
             var a by preference(sharedPreferences, 50)
             var b by preference(sharedPreferences, "NotTest")
             var c by preference(sharedPreferences, 99)
+            var d by preference(sharedPreferences, TestEnum.ENUM)
+            var e by preference(sharedPreferences, TestEnum.TEST)
         }
 
         assertEquals(10, dataObject.a)
         assertEquals("Test", dataObject.b)
         assertEquals(99, dataObject.c)
+        assertEquals(TestEnum.TEST, dataObject.d)
+        assertEquals(TestEnum.TEST, dataObject.e)
     }
 
     @Test
@@ -64,6 +69,21 @@ class PreferencePropertyTest {
         }
 
         assertEquals(86, secondDataObject.d)
+    }
+
+    @Test
+    fun testSavingAndGettingEnum() {
+        val dataObject = object {
+            var d by preference(sharedPreferences, TestEnum.ENUM)
+        }
+
+        dataObject.d = TestEnum.TEST
+
+        val secondDataObject = object {
+            var d by preference(sharedPreferences, TestEnum.ENUM)
+        }
+
+        assertEquals(TestEnum.TEST, secondDataObject.d)
     }
 
     @Test
@@ -89,6 +109,28 @@ class PreferencePropertyTest {
     }
 
     @Test
+    fun testSavingAndGettingNullEnum() {
+        val dataObject = object {
+            var d by preference<TestEnum?>(sharedPreferences, TestEnum.ENUM)
+        }
+
+        dataObject.d = TestEnum.TEST
+
+        val secondDataObject = object {
+            var d by preference<TestEnum?>(sharedPreferences, TestEnum.ENUM)
+        }
+
+        assertEquals(TestEnum.TEST, secondDataObject.d)
+        secondDataObject.d = null
+
+        val thirdDataObject = object {
+            var d by preference<TestEnum?>(sharedPreferences, TestEnum.ENUM)
+        }
+
+        assertEquals(TestEnum.ENUM, thirdDataObject.d)
+    }
+
+    @Test
     fun testNullDefault() {
         val dataObject = object {
             var e by preference<String?>(sharedPreferences, null)
@@ -103,6 +145,23 @@ class PreferencePropertyTest {
         }
 
         assertEquals("abc", secondDataObject.e)
+    }
+
+    @Test
+    fun testNullDefaultEnum() {
+        val dataObject = object {
+            var e by preference<TestEnum?>(sharedPreferences, null)
+        }
+
+        assertNull(dataObject.e)
+
+        dataObject.e = TestEnum.TEST
+
+        val secondDataObject = object {
+            var e by preference<TestEnum?>(sharedPreferences, null)
+        }
+
+        assertEquals(TestEnum.TEST, secondDataObject.e)
     }
 
     @Test
@@ -121,5 +180,23 @@ class PreferencePropertyTest {
         }
 
         assertEquals(10, dataObject.a)
+    }
+
+    @Test
+    fun testReturnNullWhenDefaultEnumIsNullAndPropertyNotPresent() {
+        val dataObject = object {
+            var e by preference<TestEnum?>(sharedPreferences, null)
+        }
+
+        assertNull(dataObject.e)
+    }
+
+    @Test
+    fun testReturnEnumWhenDefaultEnumIsNullAndPropertyPresent() {
+        val dataObject = object {
+            var d by preference<TestEnum?>(sharedPreferences, null)
+        }
+
+        assertEquals(TestEnum.TEST, dataObject.d)
     }
 }
