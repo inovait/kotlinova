@@ -1,3 +1,9 @@
+## [2.11.0](https://github.com/inovait/kotlinova/compare/v2.10.0...v2.11.0) (2020-06-16)
+
+### Features
+
+* **android:** support enums in shared preferences ([14c7e056](https://github.com/inovait/kotlinova/commit/14c7e056407f192de4bff8a1291079f832b187d1))
+
 ## [2.10.0](https://github.com/inovait/kotlinova/compare/v2.9.6...v2.10.0) (2020-05-12)
 
 ### Features
