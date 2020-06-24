@@ -15,6 +15,8 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import java.util.Collections.newSetFromMap
+import java.util.WeakHashMap
 
 /**
  * A lifecycle-aware observable that sends only new updates after subscription, used for events like
@@ -32,7 +34,7 @@ import androidx.lifecycle.Observer
  * [Google's Examples](https://github.com/googlesamples/android-architecture/blob/dev-t&#111;do-mvvm-live/todoapp/app/src/main/java/com/example/android/architecture/blueprints/todoapp/SingleLiveEvent.java)
  */
 open class SingleLiveEvent<T> : MutableLiveData<T>() {
-    private val deliveredTo = HashSet<Observer<in T>>()
+    private val deliveredTo = newSetFromMap(WeakHashMap<Observer<in T>, Boolean>())
 
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
