@@ -1,3 +1,9 @@
+## [2.11.1](https://github.com/inovait/kotlinova/compare/v2.11.0...v2.11.1) (2020-06-24)
+
+### Bug Fixes
+
+* **android:** use weak set for observers to prevent memory leak ([e5f2caf1](https://github.com/inovait/kotlinova/commit/e5f2caf1a1da71eeb2a6edde6ead31b50acef5a4))
+
 ## [2.11.0](https://github.com/inovait/kotlinova/compare/v2.10.0...v2.11.0) (2020-06-16)
 
 ### Features
