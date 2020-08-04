@@ -37,24 +37,42 @@ import androidx.fragment.app.Fragment
 var View.isVisibleWithFade: Boolean
     get() = isVisible
     set(value) {
-        val targetAlpha = if (value) 1f else 0f
-
-        if (!isVisible && value && alpha == 1f) {
-            alpha = 0f
-        }
-
-        isVisible = true
-
-        animate()
-            .alpha(targetAlpha)
-            .apply {
-                if (!value) {
-                    withEndAction { isVisible = false }
-                }
-            }
-            .setDuration(250)
-            .start()
+        setVisibilityWithFade(250L, value)
     }
+
+/**
+ * Variant of [isVisibleWithFade] with duration option
+ */
+fun View.setVisibilityWithFade(duration: Long, visible: Boolean) =
+    if (visible) showWithFade(duration) else hideWithFade(duration)
+
+/**
+ * Fades view in
+ */
+fun View.showWithFade(duration: Long) {
+    val targetAlpha = 1f
+
+    if (!isVisible && alpha == 1f) {
+        alpha = 0f
+    }
+
+    isVisible = true
+
+    animate().alpha(targetAlpha).setDuration(duration).start()
+}
+
+/**
+ * Fades view out
+ */
+fun View.hideWithFade(duration: Long) {
+    val targetAlpha = 0f
+
+    animate()
+        .alpha(targetAlpha)
+        .apply { withEndAction { isVisible = false } }
+        .setDuration(duration)
+        .start()
+}
 
 /**
  * Helper method to inflate given layout asynchronously
