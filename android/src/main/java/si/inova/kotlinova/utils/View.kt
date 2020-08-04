@@ -37,7 +37,10 @@ import androidx.fragment.app.Fragment
 var View.isVisibleWithFade: Boolean
     get() = isVisible
     set(value) {
-        setVisibilityWithFade(250L, value)
+        setVisibilityWithFade(
+            resources.getInteger(android.R.integer.config_shortAnimTime).toLong(),
+            value
+        )
     }
 
 /**
