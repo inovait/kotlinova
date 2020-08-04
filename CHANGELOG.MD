@@ -1,3 +1,13 @@
+## [2.12.0](https://github.com/inovait/kotlinova/compare/v2.11.1...v2.12.0) (2020-08-04)
+
+### Features
+
+* **android:** add showWithFade, hideWithFade and setVisibilityWithFade methods ([76244098](https://github.com/inovait/kotlinova/commit/762440982ff7160c5bd78148a048b8b7173a9466))
+
+### Bug Fixes
+
+* **android:** use predefined value for fade animation time ([3c62d972](https://github.com/inovait/kotlinova/commit/3c62d972ebad709abe1a1f4c171debdddba9c4cc))
+
 ## [2.11.1](https://github.com/inovait/kotlinova/compare/v2.11.0...v2.11.1) (2020-06-24)
 
 ### Bug Fixes
