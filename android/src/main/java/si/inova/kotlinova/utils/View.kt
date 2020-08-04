@@ -42,12 +42,16 @@ var View.isVisibleWithFade: Boolean
 
 /**
  * Variant of [isVisibleWithFade] with duration option
+ *
+ * Duration is in milliseconds
  */
 fun View.setVisibilityWithFade(duration: Long, visible: Boolean) =
     if (visible) showWithFade(duration) else hideWithFade(duration)
 
 /**
- * Fades view in
+ * Fades view in with duration
+ *
+ * Duration is in milliseconds
  */
 fun View.showWithFade(duration: Long) {
     val targetAlpha = 1f
@@ -62,7 +66,9 @@ fun View.showWithFade(duration: Long) {
 }
 
 /**
- * Fades view out
+ * Fades view out with duration
+ *
+ * Duration is in milliseconds
  */
 fun View.hideWithFade(duration: Long) {
     val targetAlpha = 0f
