@@ -1,3 +1,9 @@
+## [2.13.0](https://github.com/inovait/kotlinova/compare/v2.12.0...v2.13.0) (2020-08-07)
+
+### Features
+
+* **android:** add fragment auto cleared value ([a7f0b4e6](https://github.com/inovait/kotlinova/commit/a7f0b4e61237249bcceb2202c59dc9f0d4a87486))
+
 ## [2.12.0](https://github.com/inovait/kotlinova/compare/v2.11.1...v2.12.0) (2020-08-04)
 
 ### Features
