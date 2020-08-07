@@ -65,6 +65,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${versions.kotlinCoroutines}"
     implementation "androidx.lifecycle:lifecycle-reactivestreams:${versions.architectureComponents}"
     implementation "androidx.core:core-ktx:${versions.androidXCore}"
+    implementation "android.arch.lifecycle:common-java8:${versions.lifecycle}"
 
     implementation "androidx.appcompat:appcompat:${versions.appCompat}"
     implementation "com.google.android.material:material:${versions.material}"
