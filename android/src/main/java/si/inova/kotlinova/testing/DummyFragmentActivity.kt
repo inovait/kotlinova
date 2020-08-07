@@ -21,7 +21,7 @@ import si.inova.kotlinova.android.R
  * Dummy activity class for testing fragments
  */
 open class DummyFragmentActivity : FragmentActivity() {
-    protected var targetFragment: Fragment? = null
+    private var targetFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +31,12 @@ open class DummyFragmentActivity : FragmentActivity() {
     }
 
     protected open fun attemptSetup() {
-        val targetFragment = targetFragment
-
-        if (targetFragment == null ||
-            supportFragmentManager.findFragmentById(R.id.container) != null
-        ) {
-            return
-        }
+        val targetFragment = targetFragment ?: return
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, targetFragment)
-            .commitNowAllowingStateLoss()
+            .addToBackStack(targetFragment::class.java.name)
+            .commitAllowingStateLoss()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -51,8 +46,6 @@ open class DummyFragmentActivity : FragmentActivity() {
     }
 
     open fun swapFragment(fragment: Fragment) {
-        check(targetFragment == null) { "Target fragment already set to $targetFragment" }
-
         targetFragment = fragment
         attemptSetup()
     }
