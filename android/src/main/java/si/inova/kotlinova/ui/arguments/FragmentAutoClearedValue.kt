@@ -18,6 +18,10 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
+ * A lazy property that gets cleaned up when the fragment's view is destroyed.
+ *
+ * Accessing this variable while the fragment's view is destroyed will throw [IllegalStateException].
+ *
  * This avoids a memory leak and prevent crashing while stacking fragments and going back.
  *
  * Adapted from https://halcyonmobile.com/blog/mobile-app-development/android-app-development/patching-fragment-memory-leaks-2019/
