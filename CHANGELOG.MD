@@ -1,3 +1,9 @@
+## [2.14.0](https://github.com/inovait/kotlinova/compare/v2.13.0...v2.14.0) (2020-08-11)
+
+### Features
+
+* **android:** add fragment manager extension function isInBackStack ([6e201903](https://github.com/inovait/kotlinova/commit/6e2019038c87b6736c487a5776819f811b315bbb))
+
 ## [2.13.0](https://github.com/inovait/kotlinova/compare/v2.12.0...v2.13.0) (2020-08-07)
 
 ### Features
