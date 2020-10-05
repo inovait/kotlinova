@@ -18,6 +18,7 @@ package si.inova.kotlinova.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import si.inova.kotlinova.ui.lists.sections.ListSection
 
 /**
  * This method only works with [LinearLayoutManager].
@@ -30,4 +31,19 @@ fun RecyclerView.isAtBottom(numChildrenToCheck: Int? = null): Boolean {
     val visibleItemCount = layoutManager.childCount
     val pastVisibleItems = layoutManager.findFirstVisibleItemPosition()
     return pastVisibleItems + visibleItemCount >= totalItemCount - 1
+}
+
+/**
+ * This method gets triggered after [data][ListSection.data] is updated.
+ */
+inline fun <T, VH : RecyclerView.ViewHolder> ListSection<T, VH>.doOnUpdate(
+    crossinline action: () -> Unit
+) {
+    lateinit var actionListener: () -> Unit
+    actionListener = {
+        action()
+        removeUpdateListener(actionListener)
+    }
+
+    addUpdateListener(actionListener)
 }
