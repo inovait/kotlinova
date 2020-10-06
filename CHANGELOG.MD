@@ -1,3 +1,9 @@
+## [2.15.0](https://github.com/inovait/kotlinova/compare/v2.14.0...v2.15.0) (2020-10-06)
+
+### Features
+
+* **android:** add doOnUpdate() extension function ([9d2a1379](https://github.com/inovait/kotlinova/commit/9d2a137991b73faa21ef4a9099f226b9c8a8abbe))
+
 ## [2.14.0](https://github.com/inovait/kotlinova/compare/v2.13.0...v2.14.0) (2020-08-11)
 
 ### Features
