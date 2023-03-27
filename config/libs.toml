@@ -1,0 +1,23 @@
+[versions]
+androidGradlePlugin = "7.4.0"
+androidGradleCacheFix = "2.7.0"
+androidx-core = "1.9.0"
+androidx-lifecycle = "2.5.1"
+detekt = "1.22.0"
+kotlin = "1.8.0"
+junit4 = "4.13.2"
+versionsChecker = "0.44.0"
+
+[libraries]
+androidGradleCacheFix = { module = "org.gradle.android.cache-fix:org.gradle.android.cache-fix.gradle.plugin", version.ref = "androidGradleCacheFix" }
+android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+detekt-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+junit4 = { module = "junit:junit", version.ref = "junit4" }
+kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+versionsCheckerPlugin = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "versionsChecker" }
+
+[plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
