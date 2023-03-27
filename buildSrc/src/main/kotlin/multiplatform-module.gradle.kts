@@ -9,27 +9,38 @@
  */
 
 plugins {
-   id("checks")
-   signing
+   id("standard-config")
 
+   id("android-commons")
+   kotlin("multiplatform")
    id("maven-publish")
 }
 
-group = "si.inova.kotlinova"
-version = File(rootDir, "version.txt").readText().trim()
+kotlin {
+   android {
+      publishLibraryVariants("release")
+   }
 
-signing {
-   sign(publishing.publications)
-}
+   jvm {
+      jvmToolchain(11)
 
-publishing {
-   repositories {
-      maven {
-         setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-         credentials {
-            username = property("ossrhUsername") as String
-            password = property("ossrhPassword") as String
+      testRuns["test"].executionTask.configure {
+         useJUnitPlatform()
+      }
+   }
+
+   sourceSets {
+      val commonMain by getting
+      val jvmMain by getting {
+         dependencies {
+            implementation(kotlin("test"))
          }
       }
+      val jvmTest by getting
+      val androidMain by getting {
+//         dependsOn(jvmMain)
+      }
+      val androidUnitTest by getting
+      val androidInstrumentedTest by getting
    }
 }

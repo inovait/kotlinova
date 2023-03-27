@@ -9,27 +9,9 @@
  */
 
 plugins {
-   id("checks")
-   signing
-
-   id("maven-publish")
+   multiplatformModule
 }
 
-group = "si.inova.kotlinova"
-version = File(rootDir, "version.txt").readText().trim()
-
-signing {
-   sign(publishing.publications)
-}
-
-publishing {
-   repositories {
-      maven {
-         setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-         credentials {
-            username = property("ossrhUsername") as String
-            password = property("ossrhPassword") as String
-         }
-      }
-   }
+android {
+   namespace = "si.inova.kotlinova.core"
 }
