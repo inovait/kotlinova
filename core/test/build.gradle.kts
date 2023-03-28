@@ -40,7 +40,6 @@ afterEvaluate {
    publishing {
       publications.withType<MavenPublication> {
          artifactId = artifactId.replace("test", "core-test")
-         println("NAME '$name' '$artifactId'")
       }
    }
 }
