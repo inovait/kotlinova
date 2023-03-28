@@ -5,6 +5,7 @@ androidx-compose-runtime = "1.4.0"
 androidx-core = "1.9.0"
 androidx-fragment = "1.5.6"
 androidx-lifecycle = "2.5.1"
+dokka = "1.8.10"
 anvil = "2.4.4"
 desugarJdkLibs = "2.0.2"
 dagger = "2.45"
@@ -34,6 +35,7 @@ desugarJdkLibs = { module = " com.android.tools:desugar_jdk_libs", version.ref =
 detekt-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 dispatch = { module = "com.rickbusarow.dispatch:dispatch-core", version.ref = "dispatch" }
+dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit5-api = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
