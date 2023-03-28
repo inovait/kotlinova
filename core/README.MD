@@ -3,11 +3,18 @@
 Direct gradle usage:
 
 `implementation("si.inova.kotlinova:core:X.Y.Z")`
+
 `implementation("si.inova.kotlinova:core-test:X.Y.Z")`
 
 Version catalogs usage:
 
 ```toml
+[versions]
+kotlinova = "X.Y.Z"
+```
+
+```toml
+[libraries]
 kotlinova-core = { module = "si.inova.kotlinova:core", version.ref = "kotlinova" }
 kotlinova-core-test = { module = "si.inova.kotlinova:core-test", version.ref = "kotlinova" }
 ```
