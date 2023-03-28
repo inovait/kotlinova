@@ -16,6 +16,10 @@
 
 package si.inova.kotlinova.core.outcome
 
+/**
+ * Exception that represents the cause of failure. Exceptions extending this should be more high level and less technical
+ * than normal exceptions, allowing for easier mapping to UI error display.
+ */
 @Suppress("MemberVisibilityCanBePrivate") // We want those to be accessible
 abstract class CauseException(
    message: String? = null,

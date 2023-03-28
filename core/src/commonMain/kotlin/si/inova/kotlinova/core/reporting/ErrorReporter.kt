@@ -16,6 +16,10 @@
 
 package si.inova.kotlinova.core.reporting
 
+/**
+ * Error reporter that collects all non-fatal (but potentially still bad) exceptions. Can represent an error reporting service
+ * such as Firebase Crashlytics.
+ */
 fun interface ErrorReporter {
    fun report(throwable: Throwable)
 }
