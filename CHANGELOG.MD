@@ -1,3 +1,9 @@
+# 3.0.0-alpha3
+
+### Bug Fixes
+
+* also publish javadoc and SCM URL ([bfcb2a2b](https://github.com/inovait/kotlinova/commit/bfcb2a2be52fca4cae5042067a86834fe33d93f6))
+
 # 3.0.0-alpha2
 
 ### Features
