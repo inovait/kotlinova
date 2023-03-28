@@ -38,6 +38,7 @@ dependencies {
    implementation(libs.android.agp)
    implementation(libs.anvil)
    implementation(libs.detekt.plugin)
+   implementation(libs.dokka)
    implementation(libs.kotlin.plugin)
    implementation(libs.versionsCheckerPlugin)
 
@@ -53,5 +54,5 @@ tasks.register("pre-commit-hook", Copy::class) {
 }
 
 afterEvaluate {
-   tasks.getByName("check").dependsOn("pre-commit-hook")
+   tasks.getByName("jar").dependsOn("pre-commit-hook")
 }
