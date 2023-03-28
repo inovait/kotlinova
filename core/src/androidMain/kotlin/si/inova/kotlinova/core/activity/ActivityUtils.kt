@@ -20,6 +20,9 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.fragment.app.FragmentActivity
 
+/**
+ * Find an activity that owns this context or *null* if there is no such activity
+ */
 fun Context.findActivity(): FragmentActivity? {
    var currentContext: Context? = this
 
@@ -42,6 +45,9 @@ fun Context.findActivity(): FragmentActivity? {
    return null
 }
 
+/**
+ * Find an activity that owns this context or throw [IllegalStateException] if there is no such activity
+ */
 fun Context.requireActivity(): FragmentActivity {
    return findActivity() ?: error("$this is not an activity context")
 }

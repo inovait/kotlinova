@@ -21,6 +21,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
+/**
+ * @return Flow that will emit *true* whenever this flow has shared subscribers or *false* otherwise.
+ */
 fun MutableSharedFlow<*>.hasActiveSubscribersFlow(): Flow<Boolean> {
    return subscriptionCount.map { it > 0 }.distinctUntilChanged()
 }
