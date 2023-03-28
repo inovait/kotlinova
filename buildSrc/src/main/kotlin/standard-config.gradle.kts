@@ -75,6 +75,15 @@ if (properties.containsKey("ossrhUsername")) {
       sign(publishing.publications)
    }
 
+   // Workaround for the https://youtrack.jetbrains.com/issue/KT-46466
+   tasks.withType(Sign::class.java) {
+      val signingTask = this
+      tasks.withType(AbstractPublishToMaven::class.java) {
+         val publishTask = this
+         publishTask.dependsOn(signingTask)
+      }
+   }
+
    publishing {
       repositories {
          maven {
