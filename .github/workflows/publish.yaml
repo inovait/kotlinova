@@ -1,0 +1,76 @@
+name: publish
+run-name: "Publish"
+on:
+  workflow_dispatch:
+jobs:
+  build-app:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+    runs-on: "ubuntu-latest"
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: temurin
+      - name: Setup Android SDK
+        uses: inovait/actions-common/android-setup@4dc77cecea31741a4f027f8e0bb00475d0add381
+      - name: Check if there were any new fix or feature commits
+        id: version-check
+        uses: inovait/actions-common/bump-version-since-last-build@65b8068061b1194955cda928d172cddafa5c1b98
+        with:
+          version: '1.0.0'
+      - run: "echo \"No feature or fix commits. Skipping build...\""
+        if: steps.version-check.outputs.version == "1.0.0"
+      - uses: andymckay/cancel-action@0.3
+        if: steps.version-check.outputs.version == "1.0.0"
+      - name: "Wait for cancel to stick"
+        run: "sleep 99999"
+        if: steps.version-check.outputs.version == "1.0.0"
+      - run: "./bump_version.sh"
+      - run: "v=$(cat version.txt);echo \"VERSION=$v\" > $GITHUB_ENV"
+      - run: "New version: ${{ env.VERSION }}"
+      - name: Compile library
+        run: "./gradlew --parallel assemble"
+      - name: Compile Unit Tests
+        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid"
+      - name: Lint
+        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest lint"
+      - name: Run Unit Tests
+        run: "./gradlew test jvmTest"
+      - name: Generate Changelog
+        id: changelog
+        uses: inovait/actions-common/changelog-since-last-build@124186f75a1b8da2ef430d8ba120a01debe03b12
+        with:
+          git_commit_url_prefix: 'https://github.com/inovait/kotlinova'
+      - run: "old_changelog=$(cat CHANGELOG.MD); echo \"# ${{ env.VERSION }}\n\n${{ steps.changelog.outputs.changelog }}\n\n$old_changelog\ > CHANGELOG.MD"
+      - name: 'Save GPG key'
+        run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
+      - name: 'Publish'
+        run: './gradlew publish 
+                -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
+                -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}''
+                -Psigning.secretKeyRingFile=signing_key.gpg 
+                -Psigning.password=''${{ secrets.GPG_SIGNING_PASSPHRASE }}'' 
+                -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
+      - name: 'Add changelog and version'
+        run: 'git add version.txt CHANGELOG.MD'
+      - name: 'Commit changelog and version'
+        run: 'git commit -m "chore: release ${{ env.VERSION }}"'
+      - name: 'Push changelog and version'
+        run: 'git push'
+      - name: 'Create tag'
+        run: 'git tag ${{ env.VERSION }}'
+      - name: 'Push tag'
+        run: 'git push origin ${{ github.event.inputs.version }}'
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: always()
+        with:
+          comment_mode: failures
+          junit_files: |
+            **/build/outputs/*-results/**/*.xml
+            **/build/*-results/**/*.xml
