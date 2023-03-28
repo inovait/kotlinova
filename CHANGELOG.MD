@@ -1,4 +1,4 @@
-# 3.0.0-alpha01
+# 3.0.0-alpha1
 
 ## BREAKING
 
