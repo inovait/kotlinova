@@ -32,7 +32,6 @@ anvil {
 group = "si.inova.kotlinova"
 version = File(rootDir, "version.txt").readText().trim()
 
-
 tasks.getByName("dokkaJavadoc").also {
    println("javadocType: ${it.javaClass}")
 }
