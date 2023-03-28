@@ -66,6 +66,13 @@ commonAndroid {
          excludes += "/META-INF/{AL2.0,LGPL2.1}"
       }
    }
+
+   lint {
+      lintConfig = file("$rootDir/config/android-lint.xml")
+      abortOnError = true
+
+      warningsAsErrors = true
+   }
 }
 
 dependencies {
