@@ -54,5 +54,5 @@ tasks.register("pre-commit-hook", Copy::class) {
 }
 
 afterEvaluate {
-   tasks.getByName("check").dependsOn("pre-commit-hook")
+   tasks.getByName("jar").dependsOn("pre-commit-hook")
 }
