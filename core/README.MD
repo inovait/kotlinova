@@ -2,9 +2,10 @@
 
 Direct gradle usage:
 
-`implementation("si.inova.kotlinova:core:X.Y.Z")`
-
-`implementation("si.inova.kotlinova:core-test:X.Y.Z")`
+```kotlin
+implementation("si.inova.kotlinova:core:X.Y.Z")
+testImplementation("si.inova.kotlinova:core-test:X.Y.Z")
+```
 
 Version catalogs usage:
 
@@ -17,6 +18,11 @@ kotlinova = "X.Y.Z"
 [libraries]
 kotlinova-core = { module = "si.inova.kotlinova:core", version.ref = "kotlinova" }
 kotlinova-core-test = { module = "si.inova.kotlinova:core-test", version.ref = "kotlinova" }
+```
+
+```kotlin
+implementation(libs.kotlinova.core)
+testImplementation(libs.kotlinova.core.test)
 ```
 
 Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.

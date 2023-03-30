@@ -1,3 +1,5 @@
+import util.publishLibrary
+
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -21,6 +23,12 @@ plugins {
 android {
    namespace = "si.inova.kotlinova.core.test"
 }
+
+publishLibrary(
+   userFriendlyName = "kotlinova-core",
+   description = "A collection of core utilities",
+   githubPath = "core"
+)
 
 kotlin {
    sourceSets {
