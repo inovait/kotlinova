@@ -77,6 +77,12 @@ private fun Project.setProjectMetadata(
                developerConnection.set("scm:git:$projectGitUrl")
                url.set(projectGitUrl)
             }
+            developers {
+               developer {
+                  name.set("Inova IT")
+                  url.set("https://inova.si/")
+               }
+            }
          }
       }
    }
