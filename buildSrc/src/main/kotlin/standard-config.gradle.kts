@@ -1,5 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -31,68 +29,3 @@ anvil {
 
 group = "si.inova.kotlinova"
 version = File(rootDir, "version.txt").readText().trim()
-
-tasks.getByName("dokkaJavadoc").also {
-   println("javadocType: ${it.javaClass}")
-}
-
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-   val dokkaJavadocTask = tasks.getByName("dokkaJavadoc", DokkaTask::class)
-   dependsOn(dokkaJavadocTask)
-   archiveClassifier.set("javadoc")
-   from(dokkaJavadocTask.outputDirectory)
-}
-
-publishing {
-   publications.withType<MavenPublication> {
-      artifact(javadocJar)
-
-      pom {
-         val projectGitUrl = "https://github.com/inovait/kotlinova"
-         url.set(projectGitUrl)
-         inceptionYear.set("2023")
-         licenses {
-            license {
-               name.set("MIT")
-               url.set("https://opensource.org/licenses/MIT")
-            }
-         }
-         issueManagement {
-            system.set("GitHub")
-            url.set("$projectGitUrl/issues")
-         }
-         scm {
-            connection.set("scm:git:$projectGitUrl")
-            developerConnection.set("scm:git:$projectGitUrl")
-            url.set(projectGitUrl)
-         }
-      }
-   }
-}
-
-if (properties.containsKey("ossrhUsername")) {
-   signing {
-      sign(publishing.publications)
-   }
-
-   // Workaround for the https://youtrack.jetbrains.com/issue/KT-46466
-   tasks.withType(Sign::class.java) {
-      val signingTask = this
-      tasks.withType(AbstractPublishToMaven::class.java) {
-         val publishTask = this
-         publishTask.dependsOn(signingTask)
-      }
-   }
-
-   publishing {
-      repositories {
-         maven {
-            setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-            credentials {
-               username = property("ossrhUsername") as String
-               password = property("ossrhPassword") as String
-            }
-         }
-      }
-   }
-}

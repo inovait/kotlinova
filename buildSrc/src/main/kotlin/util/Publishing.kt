@@ -1,0 +1,122 @@
+/*
+ * Copyright 2023 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+ *  is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package util
+
+import gradle.kotlin.dsl.accessors._40894cca5fd1b381109c1a52a6ab3602.publishing
+import gradle.kotlin.dsl.accessors._40894cca5fd1b381109c1a52a6ab3602.signing
+import org.gradle.api.Project
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.withType
+import org.gradle.plugins.signing.Sign
+import org.jetbrains.dokka.gradle.DokkaTask
+
+fun Project.publishLibrary(
+   userFriendlyName: String,
+   description: String,
+   githubPath: String,
+   artifactName: String = project.name
+) {
+   val javadocJar: TaskProvider<Jar> = tasks.register("javadocJar", Jar::class.java) {
+      val dokkaJavadocTask = tasks.getByName("dokkaJavadoc", DokkaTask::class)
+      dependsOn(dokkaJavadocTask)
+      archiveClassifier.set("javadoc")
+      from(dokkaJavadocTask.outputDirectory)
+   }
+
+   setProjectMetadata(javadocJar, userFriendlyName, description, githubPath)
+   configureForMavenCentral()
+   forceArtifactName(artifactName)
+}
+
+private fun Project.setProjectMetadata(
+   javadocJar: TaskProvider<Jar>,
+   userFriendlyName: String,
+   description: String,
+   githubPath: String
+) {
+   publishing {
+      publications.withType<MavenPublication> {
+         artifact(javadocJar)
+
+         pom {
+            name.set(userFriendlyName)
+            this.description.set(description)
+            val projectGitUrl = "https://github.com/inovait/kotlinova"
+            url.set("$projectGitUrl/tree/master/$githubPath")
+            inceptionYear.set("2023")
+            licenses {
+               license {
+                  name.set("MIT")
+                  url.set("https://opensource.org/licenses/MIT")
+               }
+            }
+            issueManagement {
+               system.set("GitHub")
+               url.set("$projectGitUrl/issues")
+            }
+            scm {
+               connection.set("scm:git:$projectGitUrl")
+               developerConnection.set("scm:git:$projectGitUrl")
+               url.set(projectGitUrl)
+            }
+         }
+      }
+   }
+}
+
+private fun Project.configureForMavenCentral() {
+   if (properties.containsKey("ossrhUsername")) {
+      signing {
+         sign(publishing.publications)
+      }
+
+      // Workaround for the https://youtrack.jetbrains.com/issue/KT-46466
+      tasks.withType(Sign::class.java) {
+         val signingTask = this
+         tasks.withType(AbstractPublishToMaven::class.java) {
+            val publishTask = this
+            publishTask.dependsOn(signingTask)
+         }
+      }
+
+      publishing {
+         repositories {
+            maven {
+               setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+               credentials {
+                  username = property("ossrhUsername") as String
+                  password = property("ossrhPassword") as String
+               }
+            }
+         }
+      }
+   }
+}
+
+private fun Project.forceArtifactName(artifactName: String) {
+   afterEvaluate {
+      publishing {
+         publications.withType<MavenPublication> {
+            artifactId = artifactId.replace(project.name, artifactName)
+         }
+      }
+   }
+}

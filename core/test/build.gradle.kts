@@ -1,3 +1,5 @@
+import util.publishLibrary
+
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -22,6 +24,13 @@ android {
    namespace = "si.inova.kotlinova.core"
 }
 
+publishLibrary(
+   userFriendlyName = "Kotlinova core test",
+   description = "Test helpers for kotlinova-core",
+   githubPath = "core",
+   artifactName = "core-test"
+)
+
 kotlin {
    sourceSets {
       commonMain {
@@ -32,14 +41,6 @@ kotlin {
             implementation(libs.turbine)
             implementation(libs.dispatch)
          }
-      }
-   }
-}
-
-afterEvaluate {
-   publishing {
-      publications.withType<MavenPublication> {
-         artifactId = artifactId.replace("test", "core-test")
       }
    }
 }
