@@ -1,3 +1,9 @@
+# 3.0.0-alpha5
+
+### Bug Fixes
+
+* publish developer name ([f451c88e](https://github.com/inovait/kotlinova/commit/f451c88e288a49e61bb93ea0524595fe0dbcbaec))
+
 # 3.0.0-alpha4
 
 ### Bug Fixes
