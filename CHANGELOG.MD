@@ -1,3 +1,9 @@
+# 3.0.0-alpha4
+
+### Bug Fixes
+
+* publish name and description ([59c88086](https://github.com/inovait/kotlinova/commit/59c8808646e94aab672b1093e8eb7ebb316fc7cc))
+
 # 3.0.0-alpha3
 
 ### Bug Fixes
