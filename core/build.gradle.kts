@@ -34,7 +34,6 @@ kotlin {
    sourceSets {
       androidMain {
          dependencies {
-            implementation(libs.androidx.fragment)
             implementation(libs.dagger.runtime)
 
             compileOnly(libs.androidx.compose.runtime)
