@@ -47,3 +47,4 @@ rootProject.name = "kotlinova"
 
 include(":core")
 include(":core:test")
+include(":compose")

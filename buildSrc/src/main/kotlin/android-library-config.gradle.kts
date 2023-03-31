@@ -35,46 +35,29 @@ import org.gradle.accessors.dm.LibrariesForLibs
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("com.android.library")
-   id("standard-config")
+   id("android-commons")
+   kotlin("android")
 }
 
 android {
-   compileSdk = 33
-
-   compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_11
-      targetCompatibility = JavaVersion.VERSION_11
-
-      isCoreLibraryDesugaringEnabled = true
-   }
-
-   defaultConfig {
-      minSdk = 24
-
-      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-   }
-
-   testOptions {
-      unitTests.all {
-         it.useJUnitPlatform()
+   publishing {
+      singleVariant("release") {
+         withJavadocJar()
+         withSourcesJar()
       }
-   }
-
-   packagingOptions {
-      resources {
-         excludes += "/META-INF/{AL2.0,LGPL2.1}"
-      }
-   }
-
-   lint {
-      lintConfig = file("$rootDir/config/android-lint.xml")
-      abortOnError = true
-
-      warningsAsErrors = true
    }
 }
 
-dependencies {
-   add("coreLibraryDesugaring", libs.desugarJdkLibs)
+publishing {
+   publications {
+      register<MavenPublication>("release") {
+         groupId = project.group.toString()
+         artifactId = project.name
+         version = project.version.toString()
+
+         afterEvaluate {
+            from(components["release"])
+         }
+      }
+   }
 }

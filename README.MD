@@ -6,6 +6,8 @@ An opinionated set of common utility classes for Kotlin projects, primarily base
 
 ### • [Core](core/README.MD)
 
+### • [Compose](compose/README.MD)
+
 ## Versioning
 
 This library uses [Semantic Versioning](https://semver.org/). Version number is updated automatically whenever new release is
