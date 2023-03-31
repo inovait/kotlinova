@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-   namespace = "si.inova.kotlinova.core.test"
+   namespace = "si.inova.kotlinova.core"
 }
 
 publishLibrary(
