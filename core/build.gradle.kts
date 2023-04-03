@@ -42,6 +42,7 @@ kotlin {
       commonMain {
          dependencies {
             implementation(libs.kotlin.coroutines)
+            implementation(libs.dispatch)
          }
       }
       jvmTest {

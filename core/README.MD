@@ -129,3 +129,22 @@ It will ensure that only one coroutine for a specified data is being active at a
 data as a `Outcome.Error`.
 
 See docs on this class for more info.
+
+## AccessCallbackDispatcherProvider
+
+Wrapper for a DispatcherProvider from [Dispatch](https://github.com/RBusarow/Dispatch) that triggers `onDispatcherAccess`
+callback every time dispatcher is accessed.
+
+You can use it to override `DefaultDispatcherProvider` to ensure it is never actually used
+(dispatchers should be passed down via structured concurrency, not using default dispatcher singleton).
+
+For example, you can do this in your Applicaton.onCreate:
+
+```kotlin
+DefaultDispatcherProvider.set(
+ AccessCallbackDispatcherProvider(DefaultDispatcherProvider.get()) {
+    if (BuildConfig.DEBUG) {
+       throw IllegalStateException("Dispatchers not provided via coroutine scope.")
+    }
+ }
+)
