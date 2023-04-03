@@ -14,39 +14,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
+// We are forced to use this package to access packate-private retrofit things
+@file:Suppress("PackageNaming")
 
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
-   }
+package retrofit2
+
+import okhttp3.Response
+
+fun <T> Call<T>.parseResponse(response: Response): retrofit2.Response<T> {
+   return (this as OkHttpCall<T>).parseResponse(response)
 }
-
-dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
-   repositories {
-      google()
-      mavenCentral()
-   }
-
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
-      }
-   }
-}
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "kotlinova"
-
-include(":core")
-include(":core:test")
-include(":compose")
-include(":retrofit")
-include(":retrofit:retrofit-test")

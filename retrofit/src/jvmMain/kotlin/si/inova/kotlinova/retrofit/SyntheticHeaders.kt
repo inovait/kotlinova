@@ -14,39 +14,8 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
+package si.inova.kotlinova.retrofit
 
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
-   }
+object SyntheticHeaders {
+   const val HEADER_FORCE_REFRESH = "Force-Refresh-From-Network"
 }
-
-dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
-   repositories {
-      google()
-      mavenCentral()
-   }
-
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
-      }
-   }
-}
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "kotlinova"
-
-include(":core")
-include(":core:test")
-include(":compose")
-include(":retrofit")
-include(":retrofit:retrofit-test")

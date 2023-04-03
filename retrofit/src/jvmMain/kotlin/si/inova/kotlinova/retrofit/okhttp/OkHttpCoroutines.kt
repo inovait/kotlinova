@@ -14,39 +14,30 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
+package si.inova.kotlinova.retrofit.okhttp
 
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
-   }
-}
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import okio.IOException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
-dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+suspend fun Call.enqueueAndAwait(): Response {
+   return suspendCancellableCoroutine { continuation ->
+      enqueue(object : Callback {
+         override fun onFailure(call: Call, e: IOException) {
+            continuation.resumeWithException(e)
+         }
 
-   repositories {
-      google()
-      mavenCentral()
-   }
+         override fun onResponse(call: Call, response: Response) {
+            continuation.resume(response)
+         }
+      })
 
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
+      continuation.invokeOnCancellation {
+         cancel()
       }
    }
 }
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "kotlinova"
-
-include(":core")
-include(":core:test")
-include(":compose")
-include(":retrofit")
-include(":retrofit:retrofit-test")

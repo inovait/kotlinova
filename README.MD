@@ -8,6 +8,8 @@ An opinionated set of common utility classes for Kotlin projects, primarily base
 
 ### • [Compose](compose/README.MD)
 
+### • [Retrofit](retrofit/README.MD)
+
 ## Versioning
 
 This library uses [Semantic Versioning](https://semver.org/). Version number is updated automatically whenever new release is

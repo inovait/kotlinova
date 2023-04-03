@@ -1,3 +1,5 @@
+import util.publishLibrary
+
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -14,39 +16,48 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
-
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
-   }
+plugins {
+   multiplatformModule
 }
 
-dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+android {
+   namespace = "si.inova.kotlinova.retrofit"
+}
 
-   repositories {
-      google()
-      mavenCentral()
-   }
+publishLibrary(
+   userFriendlyName = "kotlinova-retrofit",
+   description = "A collection of utilities for retrofit requests",
+   githubPath = "retrofit"
+)
 
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
+kotlin {
+   sourceSets {
+      androidMain {
+         dependencies {
+            implementation(libs.dagger.runtime)
+            implementation(libs.androidx.core)
+
+            compileOnly(libs.androidx.compose.runtime)
+         }
+      }
+      jvmMain {
+         dependencies {
+            api(libs.okhttp)
+            api(libs.moshi)
+            api(libs.retrofit)
+
+            implementation(projects.core)
+            implementation(libs.dispatch)
+            implementation(libs.retrofit.moshi)
+            implementation(libs.kotlin.coroutines)
+         }
+      }
+      jvmTest {
+         dependencies {
+            implementation(projects.core.test)
+            implementation(projects.retrofit.retrofitTest)
+            implementation(libs.turbine)
+         }
       }
    }
 }
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "kotlinova"
-
-include(":core")
-include(":core:test")
-include(":compose")
-include(":retrofit")
-include(":retrofit:retrofit-test")
