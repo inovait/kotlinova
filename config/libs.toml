@@ -23,7 +23,7 @@ junit4 = "4.13.2"
 junit5 = "5.9.2"
 moshi = "1.14.0"
 retrofit = "2.9.0"
-turbine = "0.12.1"
+turbine = "0.12.3"
 versionsChecker = "0.44.0"
 
 [libraries]

@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.retrofit.callfactory
 
+import app.cash.turbine.test
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -38,7 +39,6 @@ import si.inova.kotlinova.core.outcome.Outcome
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeSuccessWithData
-import si.inova.kotlinova.core.test.util.testWithExceptions
 import si.inova.kotlinova.retrofit.SyntheticHeaders
 import si.inova.kotlinova.retrofit.mockWebServer
 import si.inova.kotlinova.retrofit.setJsonBody
@@ -64,7 +64,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             socketPolicy = SocketPolicy.NO_RESPONSE
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
             awaitComplete()
          }
@@ -80,7 +80,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
             awaitComplete()
          }
@@ -96,7 +96,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("{")
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
             awaitComplete()
          }
@@ -112,7 +112,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"THIRD\"")
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
             awaitComplete()
          }
@@ -128,7 +128,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"THIRD\"")
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             val exception = awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
 
             exception.message.shouldNotBeNull().apply {
@@ -155,7 +155,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"TEST ERROR MESSAGE\"")
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             val exception = awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class.java)
 
             exception.cause.shouldNotBeNull().message.apply {
@@ -177,7 +177,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"FIRST\"")
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeSuccessWithData(FakeEnumResult.FIRST)
             awaitComplete()
          }
@@ -200,7 +200,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"SECOND\"")
          }
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeProgressWith(FakeEnumResult.FIRST)
             awaitItem().shouldBeSuccessWithData(FakeEnumResult.SECOND)
             awaitComplete()
@@ -221,7 +221,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
 
          service.getEnumResult().collect()
 
-         service.getEnumResult().testWithExceptions {
+         service.getEnumResult().test {
             awaitItem().shouldBeSuccessWithData(FakeEnumResult.FIRST)
             awaitComplete()
          }
@@ -247,7 +247,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"SECOND\"")
          }
 
-         service.getEnumResult(force = true).testWithExceptions {
+         service.getEnumResult(force = true).test {
             awaitItem().shouldBeProgressWith(FakeEnumResult.FIRST)
             awaitItem().shouldBeSuccessWithData(FakeEnumResult.SECOND)
             awaitComplete()
@@ -272,7 +272,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             setJsonBody("\"SECOND\"")
          }
 
-         service.getEnumResult(force = true).testWithExceptions {
+         service.getEnumResult(force = true).test {
             awaitItem().shouldBeProgressWith(FakeEnumResult.FIRST)
             awaitItem().shouldBeSuccessWithData(FakeEnumResult.SECOND)
             awaitComplete()

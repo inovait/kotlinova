@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.core.flow
 
+import app.cash.turbine.test
 import io.kotest.matchers.nulls.shouldNotBeNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
@@ -27,7 +28,6 @@ import si.inova.kotlinova.core.outcome.Outcome
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWithData
 import si.inova.kotlinova.core.test.outcomes.shouldBeSuccessWithData
-import si.inova.kotlinova.core.test.util.testWithExceptions
 
 internal class BlinkingPreventionTest {
    @Test
@@ -35,7 +35,7 @@ internal class BlinkingPreventionTest {
       val source = MutableStateFlow<Outcome<Int>>(Outcome.Success(1))
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem().shouldNotBeNull() shouldBeSuccessWithData 1
 
          source.value = Outcome.Progress(1)
@@ -55,7 +55,7 @@ internal class BlinkingPreventionTest {
          doNotWaitForInterimLoadings = true
       )
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem().shouldNotBeNull() shouldBeSuccessWithData 1
 
          source.value = Outcome.Progress(1)
@@ -70,7 +70,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          expectNoEvents()
 
          advanceTimeBy(150)
@@ -88,7 +88,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          expectNoEvents()
 
          advanceTimeBy(150)
@@ -107,7 +107,7 @@ internal class BlinkingPreventionTest {
 
          val flowWithoutBlinking = source.withBlinkingPrevention(doNotWaitForInterimLoadings = true)
 
-         flowWithoutBlinking.testWithExceptions {
+         flowWithoutBlinking.test {
             expectNoEvents()
 
             advanceTimeBy(150)
@@ -122,7 +122,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          expectNoEvents()
 
          advanceTimeBy(50)
@@ -141,7 +141,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          expectNoEvents()
 
          advanceTimeBy(50)
@@ -160,7 +160,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem().shouldNotBeNull() shouldBeSuccessWithData 1
 
          source.value = Outcome.Progress(2)
@@ -180,7 +180,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem() // Ignore initial Success
 
          source.value = Outcome.Progress(1)
@@ -205,7 +205,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem() // Ignore initial Success
 
          source.value = Outcome.Progress(1)
@@ -230,7 +230,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem() // Ignore initial Success
 
          source.value = Outcome.Progress(1)
@@ -251,7 +251,7 @@ internal class BlinkingPreventionTest {
 
       val flowWithoutBlinking = source.withBlinkingPrevention()
 
-      flowWithoutBlinking.testWithExceptions {
+      flowWithoutBlinking.test {
          awaitItem() // Ignore initial Success
 
          source.value = Outcome.Progress(1)
