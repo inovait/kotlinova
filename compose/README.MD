@@ -70,7 +70,7 @@ Button(onClick = { store.sendResult(resultKey, "Hello from second screen") })
 If receiver is in the active composition at the time of sending, it will receive the result immediately. Otherwise it will receive
 as soon as it becomes active again.
 
-### Blinking prevention
+## Blinking prevention
 
 You can use `Flow.collectAsStateWithLifecycleAndBlinkingPrevention()` as an easier entry to the
 [kotlinova core's blinking prevention](../core/README.MD#blinking-prevention)
