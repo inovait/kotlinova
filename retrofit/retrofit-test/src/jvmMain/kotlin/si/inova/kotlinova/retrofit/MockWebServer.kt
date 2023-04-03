@@ -34,7 +34,7 @@ inline fun TestScope.mockWebServer(
 ) {
    val server = MockWebServer()
 
-   val scope = MockWebServerScope(server, server.url("").toString(), this)
+   val scope = MockWebServerScope(server, server.url("").toString())
    server.dispatcher = scope
 
    try {
@@ -44,7 +44,7 @@ inline fun TestScope.mockWebServer(
    }
 }
 
-class MockWebServerScope(val server: MockWebServer, val baseUrl: String, val testScope: TestScope) : Dispatcher() {
+class MockWebServerScope(val server: MockWebServer, val baseUrl: String) : Dispatcher() {
    private val responses = HashMap<String, MockResponse>()
 
    override fun dispatch(request: RecordedRequest): MockResponse {

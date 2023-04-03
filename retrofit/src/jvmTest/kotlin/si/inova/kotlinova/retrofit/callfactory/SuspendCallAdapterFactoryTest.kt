@@ -52,7 +52,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Throw NoNetworkException if request timeouts`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             socketPolicy = SocketPolicy.NO_RESPONSE
@@ -67,7 +67,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Throw NoNetworkException if request fails to download`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
@@ -82,7 +82,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Throw DataParsingException if json parsing fails`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             setJsonBody("{")
@@ -97,7 +97,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Throw DataParsingException if json parsing has wrong fields`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             setJsonBody("\"THIRD\"")
@@ -112,7 +112,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Include URL in the json parsing exceptions`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             setJsonBody("\"THIRD\"")
@@ -134,6 +134,7 @@ class SuspendCallAdapterFactoryTest {
       mockWebServer {
          val service: TestRetrofitService =
             createRetrofitService(
+               this@runTest,
                errorHandler = { response: Response<*>, cause: Exception ->
                   val text = response.errorBody()?.string() ?: "NO_ERROR_MESSAGE"
                   TestErrorResponseException(text, cause)
@@ -159,7 +160,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Return cached version if cached version is still fresh`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")
@@ -178,7 +179,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Ignore cache freshness when synthetic force refresh header is set`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")
@@ -199,7 +200,7 @@ class SuspendCallAdapterFactoryTest {
    @Test
    internal fun `Remove synthetic force refresh header when set`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")

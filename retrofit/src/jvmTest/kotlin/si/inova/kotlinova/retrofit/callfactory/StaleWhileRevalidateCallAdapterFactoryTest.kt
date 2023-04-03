@@ -58,7 +58,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Throw NoNetworkException if request timeouts`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             socketPolicy = SocketPolicy.NO_RESPONSE
@@ -74,7 +74,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Throw NoNetworkException if request fails to download`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
@@ -90,7 +90,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Throw DataParsingException if json parsing fails`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             setJsonBody("{")
@@ -106,7 +106,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Throw DataParsingException if json parsing has wrong fields`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             setJsonBody("\"THIRD\"")
@@ -122,7 +122,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Include URL in the json parsing exceptions`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService()
+         val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
             setJsonBody("\"THIRD\"")
@@ -145,7 +145,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    internal fun `Parse error with error handler`() = runTest {
       mockWebServer {
          val service: TestRetrofitService =
-            createRetrofitService(errorHandler = { response: Response<*>, cause: Exception ->
+            createRetrofitService(this@runTest, errorHandler = { response: Response<*>, cause: Exception ->
                val text = response.errorBody()?.string() ?: "NO_ERROR_MESSAGE"
                TestErrorResponseException(text, cause)
             })
@@ -171,7 +171,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Just return single success when there is no cache`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setJsonBody("\"FIRST\"")
@@ -187,7 +187,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Return cached version as Progress, followed by real request as Success`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")
@@ -211,7 +211,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Return cache as success if cached version is still fresh`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")
@@ -233,7 +233,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Ignore cache freshness when synthetic force refresh header is set`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")
@@ -258,7 +258,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @Test
    internal fun `Remove synthetic force refresh header when set`() = runTest {
       mockWebServer {
-         val service: TestRetrofitService = createRetrofitService(cache = tempCache)
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
             setHeader("ETag", "a")

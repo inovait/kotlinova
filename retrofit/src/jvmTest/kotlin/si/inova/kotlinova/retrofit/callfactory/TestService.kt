@@ -17,6 +17,7 @@
 package si.inova.kotlinova.retrofit.callfactory
 
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.test.TestScope
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -30,6 +31,7 @@ import si.inova.kotlinova.retrofit.moshi.adapters.JavaTimeMoshiAdapter
 import java.util.concurrent.TimeUnit
 
 inline fun <reified T> MockWebServerScope.createRetrofitService(
+   testScope: TestScope,
    cache: Cache? = null,
    errorHandler: ErrorHandler? = null
 ): T {
