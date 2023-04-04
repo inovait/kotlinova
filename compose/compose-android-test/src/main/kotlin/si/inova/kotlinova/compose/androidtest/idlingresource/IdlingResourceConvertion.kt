@@ -14,40 +14,20 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
+package si.inova.kotlinova.compose.androidtest.idlingresource
 
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
-   }
-}
+import androidx.compose.ui.test.IdlingResource
 
-dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+/**
+ * Convert espresso idling resource to compose idling resource.
+ */
+fun androidx.test.espresso.IdlingResource.asComposeIdlingResource(busyMessage: (() -> String)? = null): IdlingResource {
+   return object : IdlingResource {
+      override val isIdleNow: Boolean
+         get() = this@asComposeIdlingResource.isIdleNow
 
-   repositories {
-      google()
-      mavenCentral()
-   }
-
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
+      override fun getDiagnosticMessageIfBusy(): String {
+         return busyMessage?.invoke() ?: "${this@asComposeIdlingResource.name} is busy"
       }
    }
 }
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "kotlinova"
-
-include(":core")
-include(":core:test")
-include(":compose")
-include(":compose:compose-android-test")
-include(":retrofit")
-include(":retrofit:retrofit-test")
