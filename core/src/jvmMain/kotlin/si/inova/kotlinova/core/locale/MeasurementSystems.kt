@@ -1,5 +1,3 @@
-import util.publishLibrary
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -16,36 +14,20 @@ import util.publishLibrary
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-   multiplatformModule
-}
+package si.inova.kotlinova.core.locale
 
-android {
-   namespace = "si.inova.kotlinova.core.test"
-}
+import java.util.Locale
 
-publishLibrary(
-   userFriendlyName = "Kotlinova core test",
-   description = "Test helpers for kotlinova-core",
-   githubPath = "core",
-   artifactName = "core-test"
-)
-
-kotlin {
-   sourceSets {
-      val commonMain by getting {
-         dependencies {
-            api(projects.core)
-            implementation(libs.kotlin.coroutines.test)
-            implementation(libs.kotest.assertions)
-            implementation(libs.turbine)
-            implementation(libs.dispatch)
-         }
-      }
-      val androidMain by getting {
-         dependencies {
-            implementation(libs.androidx.core)
-         }
-      }
+/**
+ * Returns *true* when user's current country is using metric measurement system
+ */
+fun Locale.isMetric(): Boolean {
+   when (Locale.getDefault().country) {
+      "US" -> return false
+      "LR" -> return false
+      "MM" -> return false
+      "" -> return false
+      null -> return false
    }
+   return true
 }

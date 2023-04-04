@@ -1,5 +1,3 @@
-import util.publishLibrary
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -16,36 +14,41 @@ import util.publishLibrary
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-   multiplatformModule
+@file:JvmName("MathUtils")
+
+package si.inova.kotlinova.core.math
+
+/**
+ * @return Square of provided number
+ */
+fun Double.squared(): Double {
+   return this * this
 }
 
-android {
-   namespace = "si.inova.kotlinova.core.test"
+/**
+ * @return Square of provided number
+ */
+fun Float.squared(): Float {
+   return this * this
 }
 
-publishLibrary(
-   userFriendlyName = "Kotlinova core test",
-   description = "Test helpers for kotlinova-core",
-   githubPath = "core",
-   artifactName = "core-test"
-)
+/**
+ * @return Square of provided number
+ */
+fun Int.squared(): Int {
+   return this * this
+}
 
-kotlin {
-   sourceSets {
-      val commonMain by getting {
-         dependencies {
-            api(projects.core)
-            implementation(libs.kotlin.coroutines.test)
-            implementation(libs.kotest.assertions)
-            implementation(libs.turbine)
-            implementation(libs.dispatch)
-         }
-      }
-      val androidMain by getting {
-         dependencies {
-            implementation(libs.androidx.core)
-         }
-      }
-   }
+/**
+ * @return Square of provided number
+ */
+fun Long.squared(): Long {
+   return this * this
+}
+
+/**
+ * @return Square of provided number
+ */
+fun Short.squared(): Int {
+   return this * this
 }

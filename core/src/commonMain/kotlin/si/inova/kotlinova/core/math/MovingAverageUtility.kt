@@ -1,5 +1,3 @@
-import util.publishLibrary
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -16,36 +14,43 @@ import util.publishLibrary
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-   multiplatformModule
-}
+package si.inova.kotlinova.core.math
 
-android {
-   namespace = "si.inova.kotlinova.core.test"
-}
+/**
+ * Calculates a moving average over a set of values
+ */
+class MovingAverageUtility(private var maSize: Int) {
+   private val maValues = ArrayDeque<Double>()
+   private var maVal: Double = 0.toDouble()
 
-publishLibrary(
-   userFriendlyName = "Kotlinova core test",
-   description = "Test helpers for kotlinova-core",
-   githubPath = "core",
-   artifactName = "core-test"
-)
+   fun clear() {
+      maVal = 0.0
+      maValues.clear()
+   }
 
-kotlin {
-   sourceSets {
-      val commonMain by getting {
-         dependencies {
-            api(projects.core)
-            implementation(libs.kotlin.coroutines.test)
-            implementation(libs.kotest.assertions)
-            implementation(libs.turbine)
-            implementation(libs.dispatch)
-         }
+   fun resize(size: Int) {
+      maSize = size
+      while (maValues.size > maSize) {
+         maValues.removeFirst()
       }
-      val androidMain by getting {
-         dependencies {
-            implementation(libs.androidx.core)
-         }
+   }
+
+   fun add(force: Double) {
+      maValues.add(force)
+      val maNumSamples = maValues.size
+      if (maNumSamples > maSize) {
+         maVal -= maValues.removeFirst() / maSize
+         maVal += force / maSize
+      } else {
+         maVal = (maVal * (maNumSamples - 1) + force) / maNumSamples
       }
+   }
+
+   operator fun plusAssign(force: Double) {
+      add(force)
+   }
+
+   fun get(): Double {
+      return maVal
    }
 }

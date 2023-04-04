@@ -37,6 +37,7 @@ val libs = the<LibrariesForLibs>()
 plugins {
    id("com.android.library")
    id("standard-config")
+   id("kotlin-parcelize")
 }
 
 android {

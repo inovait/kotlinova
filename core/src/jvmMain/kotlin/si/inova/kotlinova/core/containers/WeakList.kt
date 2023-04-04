@@ -1,5 +1,3 @@
-import util.publishLibrary
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -16,35 +14,43 @@ import util.publishLibrary
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-   multiplatformModule
-}
+package si.inova.kotlinova.core.containers
 
-android {
-   namespace = "si.inova.kotlinova.core.test"
-}
+import java.lang.ref.WeakReference
+import java.util.LinkedList
 
-publishLibrary(
-   userFriendlyName = "Kotlinova core test",
-   description = "Test helpers for kotlinova-core",
-   githubPath = "core",
-   artifactName = "core-test"
-)
+/**
+ * Collection that holds weak references to objects.
+ * Since references are cleaned up while iterating, only supported reading operation is
+ * iterating.
+ */
+class WeakList<T> : Iterable<T> {
+   private val storage: MutableList<WeakReference<T>> = LinkedList<WeakReference<T>>()
 
-kotlin {
-   sourceSets {
-      val commonMain by getting {
-         dependencies {
-            api(projects.core)
-            implementation(libs.kotlin.coroutines.test)
-            implementation(libs.kotest.assertions)
-            implementation(libs.turbine)
-            implementation(libs.dispatch)
-         }
-      }
-      val androidMain by getting {
-         dependencies {
-            implementation(libs.androidx.core)
+   fun add(item: T) {
+      storage.add(WeakReference(item))
+   }
+
+   fun remove(item: T) {
+      storage.removeAll { it.get() == item }
+   }
+
+   fun clear() {
+      storage.clear()
+   }
+
+   override fun iterator(): Iterator<T> {
+      return iterator {
+         val storageIterator = storage.iterator()
+         while (storageIterator.hasNext()) {
+            val ref = storageIterator.next()
+            val item = ref.get()
+
+            if (item == null) {
+               storageIterator.remove()
+            } else {
+               yield(item)
+            }
          }
       }
    }
