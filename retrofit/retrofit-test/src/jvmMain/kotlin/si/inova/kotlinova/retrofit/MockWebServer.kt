@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.retrofit
 
-import kotlinx.coroutines.test.TestScope
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -29,7 +28,7 @@ import org.intellij.lang.annotations.Language
  * You can use [MockWebServerScope.baseUrl] inside the provided block to initialize your Retrofit service
  * and [MockWebServerScope.mockResponse] to create mock HTTP responses.
  */
-inline fun TestScope.mockWebServer(
+inline fun mockWebServer(
    block: MockWebServerScope.() -> Unit
 ) {
    val server = MockWebServer()

@@ -138,16 +138,35 @@ Class that automatically determines proper OkHttp cache size based on the
 
 # Test utilities
 
+## MockWebServer creator
+
+A builder that allows you to easily create OKHttp mock server and perform service tests:
+
+```kotlin
+@Test
+fun `A MockWebServer test`() {
+   mockWebServer {
+      mockJsonResponse("/data") {
+         setJsonBody("""{"key": "value"}""")
+      }
+
+      val service: TestRetrofitService = createRetrofitService(this.baseUrl)
+
+      ...
+   }
+}
+```
+
 ## ServiceTestingHelper
 
 Utility that allows easy creation of fake retrofit services. For example:
 
 ```kotlin
 class FakeMyService(private val helper: ServiceTestingHelper = ServiceTestingHelper()) : MyService, FakeService by helper {
-    override suspend fun getData(): Data {
-        helper.intercept()
+   override suspend fun getData(): Data {
+      helper.intercept()
 
-        return ...
+      return ...
     }
 }
 ```
