@@ -131,3 +131,42 @@ okHttpBuilder.cache(manager.cache)
 Class that automatically determines proper OkHttp cache size based on the
 [Android system's assigned quota](https://developer.android.com/reference/android/os/storage/StorageManager#getCacheQuotaBytes(java.util.UUID))
 .
+
+## Miscellaneous collections of utility methods
+
+* [Moshi](src/jvmMain/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
+
+# Test utilities
+
+## ServiceTestingHelper
+
+Utility that allows easy creation of fake retrofit services. For example:
+
+```kotlin
+class FakeMyService(private val helper: ServiceTestingHelper = ServiceTestingHelper()) : MyService, FakeService by helper {
+    override suspend fun getData(): Data {
+        helper.intercept()
+
+        return ...
+    }
+}
+```
+
+Then tests can easily make the service return loading or error:
+
+```kotlin
+val service = FakeMyService()
+
+// Normal call
+val data = service.getData()
+
+// Infinite loading
+service.interceptNextCallWith(InterceptionStyle.InfiniteLoad)
+val data = service.getData()
+service.completeInfiniteLoad() // Can resume later with this call
+
+
+// Error
+service.interceptNextCallWith(InterceptionStyle.Error(IOException))
+val data = service.getData()
+```
