@@ -1,5 +1,3 @@
-import util.publishLibrary
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -15,6 +13,8 @@ import util.publishLibrary
  *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+import util.publishLibrary
 
 plugins {
    multiplatformModule
