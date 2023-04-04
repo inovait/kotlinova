@@ -27,7 +27,7 @@ testImplementation(libs.kotlinova.core.test)
 
 Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
 
-# Features
+# General Features
 
 Library is a collection of core utilities. Notable features include:
 
@@ -148,3 +148,15 @@ DefaultDispatcherProvider.set(
     }
  }
 )
+```
+
+# Android-specific utilities
+
+## LocalizedText
+
+Generally, you should only call `context.getString()` on Android from activity context. This ensures that, 
+when configuration change happens, text will get re-loaded with the new Locale.
+
+This means that there is no good way to load text anywhere else (for example in ViewModels). 
+[LocalizedText](src/androidMain/kotlin/si/inova/kotlinova/core/data/LocalizedText.kt) attempts to fix that by allowing you
+to expose a piece of text that uses Android string resources, but still gets resolved on the activity context.
