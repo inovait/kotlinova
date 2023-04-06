@@ -32,6 +32,7 @@ dependencyResolutionManagement {
    repositories {
       google()
       mavenCentral()
+      maven("https://jitpack.io")
    }
 
    versionCatalogs {
@@ -49,5 +50,9 @@ include(":core")
 include(":core:test")
 include(":compose")
 include(":compose:compose-android-test")
+include(":navigation")
+include(":navigation:navigation-compiler")
+include(":navigation:navigation-fragment")
+include(":navigation:tests")
 include(":retrofit")
 include(":retrofit:retrofit-test")
