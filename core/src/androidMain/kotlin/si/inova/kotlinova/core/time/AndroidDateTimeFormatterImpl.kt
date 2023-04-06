@@ -17,6 +17,7 @@
 package si.inova.kotlinova.core.time
 
 import android.content.Context
+import android.os.Build
 import android.text.format.DateFormat
 import si.inova.kotlinova.core.reporting.ErrorReporter
 import java.text.SimpleDateFormat
@@ -54,17 +55,23 @@ class AndroidDateTimeFormatterImpl @Inject constructor(
    override fun extractPrimaryLocale(): Locale {
       val configuration = context.resources.configuration
       var locale: Locale? = null
-      val localeList = configuration.locales
-      if (!localeList.isEmpty) {
-         locale = localeList[0]
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+         val localeList = configuration.locales
+         if (!localeList.isEmpty) {
+            locale = localeList[0]
+         }
       }
+
       if (locale == null) {
          @Suppress("DEPRECATION")
          locale = configuration.locale
       }
+
       if (locale == null) {
          locale = Locale.getDefault() ?: error("Default locale should never be null")
       }
+
       return locale
    }
 }

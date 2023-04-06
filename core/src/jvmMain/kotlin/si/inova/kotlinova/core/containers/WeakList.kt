@@ -14,35 +14,44 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.core.test.util
+package si.inova.kotlinova.core.containers
 
-import app.cash.turbine.ReceiveTurbine
-import app.cash.turbine.test
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlin.coroutines.coroutineContext
-import kotlin.time.Duration
+import java.lang.ref.WeakReference
+import java.util.LinkedList
 
 /**
- * Start turbine test without eating exceptions.
- *
- * This is a workaround for the https://github.com/cashapp/turbine/issues/205,
- * will be deprecated when that issue fix gets released.
- *
- * @see Flow.test
+ * Collection that holds weak references to objects.
+ * Since references are cleaned up while iterating, only supported reading operation is
+ * iterating.
  */
-suspend fun <T> Flow<T>.testWithExceptions(
-   timeout: Duration? = null,
-   name: String? = null,
-   validate: suspend ReceiveTurbine<T>.() -> Unit,
-) {
-   val coroutineExceptionHandler =
-      requireNotNull(coroutineContext[CoroutineExceptionHandler]) {
-         "testWithException should only be called inside runTest scope"
-      }
+class WeakList<T> : Iterable<T> {
+   private val storage: MutableList<WeakReference<T>> = LinkedList<WeakReference<T>>()
 
-   return this.catch {
-      coroutineExceptionHandler.handleException(coroutineContext, it)
-   }.test(timeout, name, validate)
+   fun add(item: T) {
+      storage.add(WeakReference(item))
+   }
+
+   fun remove(item: T) {
+      storage.removeAll { it.get() == item }
+   }
+
+   fun clear() {
+      storage.clear()
+   }
+
+   override fun iterator(): Iterator<T> {
+      return iterator {
+         val storageIterator = storage.iterator()
+         while (storageIterator.hasNext()) {
+            val ref = storageIterator.next()
+            val item = ref.get()
+
+            if (item == null) {
+               storageIterator.remove()
+            } else {
+               yield(item)
+            }
+         }
+      }
+   }
 }

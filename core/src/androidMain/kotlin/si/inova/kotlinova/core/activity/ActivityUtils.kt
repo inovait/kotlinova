@@ -16,19 +16,19 @@
 
 package si.inova.kotlinova.core.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import androidx.fragment.app.FragmentActivity
 
 /**
  * Find an activity that owns this context or *null* if there is no such activity
  */
-fun Context.findActivity(): FragmentActivity? {
+fun Context.findActivity(): Activity? {
    var currentContext: Context? = this
 
    while (currentContext != null) {
       when (currentContext) {
-         is FragmentActivity -> {
+         is Activity -> {
             return currentContext
          }
 
@@ -48,6 +48,6 @@ fun Context.findActivity(): FragmentActivity? {
 /**
  * Find an activity that owns this context or throw [IllegalStateException] if there is no such activity
  */
-fun Context.requireActivity(): FragmentActivity {
+fun Context.requireActivity(): Activity {
    return findActivity() ?: error("$this is not an activity context")
 }

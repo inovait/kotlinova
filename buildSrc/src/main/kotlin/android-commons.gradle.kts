@@ -15,7 +15,6 @@
  */
 
 import org.gradle.accessors.dm.LibrariesForLibs
-import util.commonAndroid
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -37,9 +36,11 @@ val libs = the<LibrariesForLibs>()
 
 plugins {
    id("com.android.library")
+   id("standard-config")
+   id("kotlin-parcelize")
 }
 
-commonAndroid {
+android {
    compileSdk = 33
 
    compileOptions {
@@ -50,7 +51,7 @@ commonAndroid {
    }
 
    defaultConfig {
-      minSdk = 24
+      minSdk = 23
 
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
    }

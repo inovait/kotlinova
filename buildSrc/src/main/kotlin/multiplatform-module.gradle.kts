@@ -15,6 +15,7 @@
  */
 
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.dokka.gradle.DokkaTask
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -35,11 +36,8 @@ import org.gradle.accessors.dm.LibrariesForLibs
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("standard-config")
-
    id("android-commons")
    kotlin("multiplatform")
-   id("maven-publish")
 }
 
 kotlin {
@@ -81,5 +79,18 @@ kotlin {
          dependsOn(jvmTest)
       }
       val androidInstrumentedTest by getting
+   }
+}
+
+val javadocJar: TaskProvider<Jar> = tasks.register("javadocJar", Jar::class.java) {
+   val dokkaJavadocTask = tasks.getByName("dokkaJavadoc", DokkaTask::class)
+   dependsOn(dokkaJavadocTask)
+   archiveClassifier.set("javadoc")
+   from(dokkaJavadocTask.outputDirectory)
+}
+
+publishing {
+   publications.withType<MavenPublication> {
+      artifact(javadocJar)
    }
 }

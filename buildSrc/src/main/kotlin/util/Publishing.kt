@@ -21,12 +21,8 @@ import gradle.kotlin.dsl.accessors._40894cca5fd1b381109c1a52a6ab3602.signing
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
-import org.jetbrains.dokka.gradle.DokkaTask
 
 fun Project.publishLibrary(
    userFriendlyName: String,
@@ -34,28 +30,18 @@ fun Project.publishLibrary(
    githubPath: String,
    artifactName: String = project.name
 ) {
-   val javadocJar: TaskProvider<Jar> = tasks.register("javadocJar", Jar::class.java) {
-      val dokkaJavadocTask = tasks.getByName("dokkaJavadoc", DokkaTask::class)
-      dependsOn(dokkaJavadocTask)
-      archiveClassifier.set("javadoc")
-      from(dokkaJavadocTask.outputDirectory)
-   }
-
-   setProjectMetadata(javadocJar, userFriendlyName, description, githubPath)
+   setProjectMetadata(userFriendlyName, description, githubPath)
    configureForMavenCentral()
    forceArtifactName(artifactName)
 }
 
 private fun Project.setProjectMetadata(
-   javadocJar: TaskProvider<Jar>,
    userFriendlyName: String,
    description: String,
    githubPath: String
 ) {
    publishing {
       publications.withType<MavenPublication> {
-         artifact(javadocJar)
-
          pom {
             name.set(userFriendlyName)
             this.description.set(description)

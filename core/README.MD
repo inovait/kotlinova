@@ -27,7 +27,7 @@ testImplementation(libs.kotlinova.core.test)
 
 Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
 
-# Features
+# General Features
 
 Library is a collection of core utilities. Notable features include:
 
@@ -129,3 +129,77 @@ It will ensure that only one coroutine for a specified data is being active at a
 data as a `Outcome.Error`.
 
 See docs on this class for more info.
+
+## AccessCallbackDispatcherProvider
+
+Wrapper for a DispatcherProvider from [Dispatch](https://github.com/RBusarow/Dispatch) that triggers `onDispatcherAccess`
+callback every time dispatcher is accessed.
+
+You can use it to override `DefaultDispatcherProvider` to ensure it is never actually used
+(dispatchers should be passed down via structured concurrency, not using default dispatcher singleton).
+
+For example, you can do this in your Applicaton.onCreate:
+
+```kotlin
+DefaultDispatcherProvider.set(
+ AccessCallbackDispatcherProvider(DefaultDispatcherProvider.get()) {
+    if (BuildConfig.DEBUG) {
+       throw IllegalStateException("Dispatchers not provided via coroutine scope.")
+    }
+ }
+)
+```
+
+## Debouncer
+
+Debouncer will only execute target task when `executeDebouncing` is not called within some time.
+
+This can be used to, for example, not make any requests on user typing unless user stops typing.
+
+```kotlin
+val debouncer = Debouncer(backgroundScope, timeProvider)
+
+...
+
+debouncer.executeDebouncing {
+   ...
+}
+```
+
+## Miscellaneous
+
+* [Math utilities](src/commonMain/kotlin/si/inova/kotlinova/core/math/Math.kt)
+* [Moving Averager](src/commonMain/kotlin/si/inova/kotlinova/core/math/MovingAverageUtility.kt)
+* [3D Vector](src/commonMain/kotlin/si/inova/kotlinova/core/math/Vector3.kt)
+* [Unit conversions](src/commonMain/kotlin/si/inova/kotlinova/core/units/UnitConverters.kt)
+* [List Extensions](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/List.kt)
+* [Map Extensions](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/Map.kt)
+* [Weak List](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/WeakList.kt)
+* [Locale metric system check](src/jvmMain/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
+
+# Android-specific utilities
+
+## LocalizedText
+
+Generally, you should only call `context.getString()` on Android from activity context. This ensures that, 
+when configuration change happens, text will get re-loaded with the new Locale.
+
+This means that there is no good way to load text anywhere else (for example in ViewModels). 
+[LocalizedText](src/androidMain/kotlin/si/inova/kotlinova/core/data/LocalizedText.kt) attempts to fix that by allowing you
+to expose a piece of text that uses Android string resources, but still gets resolved on the activity context.
+
+## Miscellaneous
+
+* [Context extensions](src/androidMain/kotlin/si/inova/kotlinova/core/android/Context.kt)
+* [Location extensions](src/androidMain/kotlin/si/inova/kotlinova/core/android/Location.kt)
+* [Bundle extensions](src/androidMain/kotlin/si/inova/kotlinova/core/state/Bundle.kt)
+* [Shared Preferences extensions](src/androidMain/kotlin/si/inova/kotlinova/core/state/SharedPreferences.kt)
+* [ColorInt extensions](src/androidMain/kotlin/si/inova/kotlinova/core/ui/Colors.kt)
+
+# Test utilities
+
+## FakeActivity and FakeResources (Android)
+
+You can use them in unit and android tests as a replacements for real Activity and Resources.
+
+To use them in unit tests, you also must have [Unmock](https://github.com/bjoernQ/unmock-plugin) unmock plugin.

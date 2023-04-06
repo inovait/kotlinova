@@ -47,3 +47,7 @@ rootProject.name = "kotlinova"
 
 include(":core")
 include(":core:test")
+include(":compose")
+include(":compose:compose-android-test")
+include(":retrofit")
+include(":retrofit:retrofit-test")

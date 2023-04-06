@@ -1,5 +1,3 @@
-import util.publishLibrary
-
 /*
  * Copyright 2023 INOVA IT d.o.o.
  *
@@ -16,12 +14,14 @@ import util.publishLibrary
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import util.publishLibrary
+
 plugins {
    multiplatformModule
 }
 
 android {
-   namespace = "si.inova.kotlinova.core.test"
+   namespace = "si.inova.kotlinova.core"
 }
 
 publishLibrary(
@@ -32,20 +32,21 @@ publishLibrary(
 
 kotlin {
    sourceSets {
-      androidMain {
+      val androidMain by getting {
          dependencies {
-            implementation(libs.androidx.fragment)
+            implementation(libs.androidx.core)
             implementation(libs.dagger.runtime)
 
             compileOnly(libs.androidx.compose.runtime)
          }
       }
-      commonMain {
+      val commonMain by getting {
          dependencies {
             implementation(libs.kotlin.coroutines)
+            implementation(libs.dispatch)
          }
       }
-      jvmTest {
+      val jvmTest by getting {
          dependencies {
             implementation(projects.kotlinova.core.test)
          }
