@@ -1,3 +1,27 @@
+# 3.0.0-alpha6
+
+### Features
+
+* add compose module ([ed47bfe8](https://github.com/inovait/kotlinova/commit/ed47bfe862f24305e869349fc5dd28f868bc7696))
+* add retrofit module ([c5e752c7](https://github.com/inovait/kotlinova/commit/c5e752c78aa06e9a946a3f4041e39e98fbecb95d))
+* **core**: add AccessCallbackDispatcherProvider ([9150d253](https://github.com/inovait/kotlinova/commit/9150d253c573f20e53a33f83345851600fbe0a31))
+* **core**: remove Flow.testWithExceptions utility ([428ff470](https://github.com/inovait/kotlinova/commit/428ff470a93d81de82fb2cce0b721b1d80b227f2))
+* lower min sdk to 23 ([b74fa00b](https://github.com/inovait/kotlinova/commit/b74fa00be03b7d186743d3612b7b751e3fa9986c))
+* **core**: add LocalizedText ([d2d8921f](https://github.com/inovait/kotlinova/commit/d2d8921fd6b117400431d437495a27c1e8a6db25))
+* **retrofit**: add ServiceTestingHelper and moshi utilities ([3ed29517](https://github.com/inovait/kotlinova/commit/3ed29517e5c2f41205291cf47aa1ca391a74901a))
+* **core**: add Debouncer ([5bac35e5](https://github.com/inovait/kotlinova/commit/5bac35e5fb154c6beebf118d1c42df3f375d1694))
+* **core**: add several miscellaneous utilities ([5cdfd7a7](https://github.com/inovait/kotlinova/commit/5cdfd7a7cf16ca580003f1ae2a0965e9ca199e04))
+* **retrofit-test**: remove the need to use mockWebServer in TestScope ([823e99e0](https://github.com/inovait/kotlinova/commit/823e99e0ecb9ad4be986ed0d5eb7d171ded84711))
+* add compose-android-test ([1ebd0ae6](https://github.com/inovait/kotlinova/commit/1ebd0ae6f809204a9b3e7047a93c7db8feb08c6f))
+
+### Bug Fixes
+
+* **core**: Context.findActivity now returns regular Activity ([c744e6b2](https://github.com/inovait/kotlinova/commit/c744e6b263620926cf807489f8ebb5a855b96448))
+* **core**: wrong BuildConfig entries ([17cc1bda](https://github.com/inovait/kotlinova/commit/17cc1bdaf5d1e9687cf85cd0b3e7bb52e8fcfa83))
+* **core**: AndroidDateTimeFormatterImpl crashing on SDK 23 ([f52e75d1](https://github.com/inovait/kotlinova/commit/f52e75d1d056c22a57bd457715df11e5754d2599))
+
+* localized text amend ([74b158bf](https://github.com/inovait/kotlinova/commit/74b158bf5942d35019d11dade3c8b06d0fbe6831))
+
 # 3.0.0-alpha5
 
 ### Bug Fixes
