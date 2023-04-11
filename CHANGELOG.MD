@@ -1,3 +1,10 @@
+# 3.0.0-alpha8
+
+### Features
+
+* add gradle module ([5b8821f8](https://github.com/inovait/kotlinova/commit/5b8821f8d065cff325cbb3dcc53802ed94f80f3d))
+* **kotlinova-gradle**: print failed version checks ([1081657b](https://github.com/inovait/kotlinova/commit/1081657bb80e40f7fcbbb18e48bde752c3b52272))
+
 # 3.0.0-alpha7
 
 ### Features
