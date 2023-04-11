@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.sample.conditional
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button

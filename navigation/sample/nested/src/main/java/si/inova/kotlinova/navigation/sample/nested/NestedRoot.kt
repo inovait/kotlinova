@@ -27,7 +27,6 @@ import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 
 class NestedRootScreen(

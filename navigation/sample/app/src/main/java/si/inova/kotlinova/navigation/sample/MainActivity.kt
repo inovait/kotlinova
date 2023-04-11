@@ -16,29 +16,20 @@
 
 package si.inova.kotlinova.navigation.sample
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import androidx.core.util.Consumer
 import androidx.fragment.app.FragmentActivity
 import com.deliveryhero.whetstone.Whetstone
 import com.deliveryhero.whetstone.activity.ContributesActivityInjector
-import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.History
 import si.inova.kotlinova.navigation.deeplink.HandleNewIntentDeepLinks
 import si.inova.kotlinova.navigation.deeplink.MainDeepLinkHandler
 import si.inova.kotlinova.navigation.di.NavigationContext
-import si.inova.kotlinova.navigation.di.NavigationContextImpl
 import si.inova.kotlinova.navigation.di.NavigationInjection
-import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
 import si.inova.kotlinova.navigation.sample.ui.theme.NavigationSampleTheme
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer

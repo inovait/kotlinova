@@ -18,7 +18,6 @@ package si.inova.kotlinova.navigation.sample.keys
 
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 @Parcelize
 object MainScreenKey : NoArgsScreenKey()

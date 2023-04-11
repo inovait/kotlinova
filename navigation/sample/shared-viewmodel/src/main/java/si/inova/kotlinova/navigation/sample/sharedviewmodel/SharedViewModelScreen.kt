@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.update
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.sample.keys.SharedViewModelScreenKey
-import si.inova.kotlinova.navigation.sample.sharedviewmodel.SharedService
 import si.inova.kotlinova.navigation.screens.Screen
 
 class SharedViewModelScreen(
