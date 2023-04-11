@@ -30,5 +30,6 @@ To contribute to this set of libraries:
    be the name of the module you are updating.
 4. Try to avoid breaking changes, but if it cannot be avoided, you must put `BREAKING CHANGE` in the footer of the commit mesasage
    and explain the change.
+5. Manually run instrumented tests (`./gradlew connectedCheck`) - we do not run those on CI at the moment.
 5. Create merge request
 6. When your PR is merged, new release will be generated automatically
