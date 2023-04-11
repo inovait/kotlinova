@@ -1,3 +1,11 @@
+# 3.0.0-alpha7
+
+### Features
+
+* add navigation ([689c65b3](https://github.com/inovait/kotlinova/commit/689c65b36acaee855259cfe2cd4b90779933a1d2))
+
+* Revert ci: run emulator tests ([15258e7d](https://github.com/inovait/kotlinova/commit/15258e7db6939e083cc9b2b75fb9ea6a1dc879b8))
+
 # 3.0.0-alpha6
 
 ### Features
