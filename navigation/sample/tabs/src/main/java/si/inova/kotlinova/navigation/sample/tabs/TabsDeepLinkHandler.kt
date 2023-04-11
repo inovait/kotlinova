@@ -18,12 +18,10 @@ package si.inova.kotlinova.navigation.sample.tabs
 
 import android.net.Uri
 import com.squareup.anvil.annotations.ContributesMultibinding
-import com.squareup.anvil.annotations.ContributesTo
 import si.inova.kotlinova.navigation.deeplink.DeepLinkHandler
 import si.inova.kotlinova.navigation.deeplink.handleMultipleDeepLinks
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
-import si.inova.kotlinova.navigation.instructions.OpenScreen
 import si.inova.kotlinova.navigation.instructions.OpenScreenOrMoveToTop
 import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey

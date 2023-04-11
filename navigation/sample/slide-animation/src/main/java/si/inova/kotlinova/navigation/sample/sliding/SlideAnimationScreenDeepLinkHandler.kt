@@ -22,7 +22,6 @@ import si.inova.kotlinova.navigation.deeplink.DeepLinkHandler
 import si.inova.kotlinova.navigation.deeplink.matchDeepLink
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
-import si.inova.kotlinova.navigation.instructions.OpenScreen
 import si.inova.kotlinova.navigation.instructions.OpenScreenOrMoveToTop
 import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey

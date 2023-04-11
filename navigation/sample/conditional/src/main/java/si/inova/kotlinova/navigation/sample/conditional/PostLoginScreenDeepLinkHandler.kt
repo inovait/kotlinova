@@ -22,12 +22,10 @@ import si.inova.kotlinova.navigation.deeplink.DeepLinkHandler
 import si.inova.kotlinova.navigation.deeplink.matchDeepLink
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.instructions.ClearBackstackAnd
-import si.inova.kotlinova.navigation.instructions.MultiNavigationInstructions
 import si.inova.kotlinova.navigation.instructions.NavigateWithConditions
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.instructions.OpenScreenOrMoveToTop
 import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
-import si.inova.kotlinova.navigation.instructions.ReplaceBackstackOrOpenScreen
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
 import javax.inject.Inject
 

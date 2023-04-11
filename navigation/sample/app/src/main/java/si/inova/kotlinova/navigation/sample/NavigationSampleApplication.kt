@@ -20,7 +20,6 @@ import android.app.Application
 import com.deliveryhero.whetstone.app.ApplicationComponent
 import com.deliveryhero.whetstone.app.ApplicationComponentOwner
 import com.deliveryhero.whetstone.app.ContributesAppInjector
-import si.inova.kotlinova.navigation.sample.DaggerNavigationSampleApplicationComponent
 
 @ContributesAppInjector(generateAppComponent = false)
 class NavigationSampleApplication : Application(), ApplicationComponentOwner {
