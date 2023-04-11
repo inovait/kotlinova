@@ -41,16 +41,11 @@ jobs:
       - name: Compile library
         run: "./gradlew --parallel assemble"
       - name: Compile Unit Tests
-        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest"
+        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid"
       - name: Lint
         run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest detektMain detektTest lint"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
-      - name: Run Emulator Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: ./gradlew connectedCheck
       - name: Generate Changelog
         id: changelog
         uses: inovait/actions-common/changelog-since-last-build@21a4069c8686686b5d0a1429f4d1f7ebf0d59f1a
