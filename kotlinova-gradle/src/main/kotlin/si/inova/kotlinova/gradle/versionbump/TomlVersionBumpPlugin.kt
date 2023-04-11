@@ -97,6 +97,7 @@ open class UpdateTomlLibs : DefaultTask() {
 
    private fun parseDependencyUpdates(): Map<String, String> {
       val requestedUpdates = HashMap<String, String>()
+      val failedUpdates = HashSet<String>()
 
       for (dependencyReport in reportFiles) {
          val jsonString = dependencyReport.readText()
@@ -117,7 +118,24 @@ open class UpdateTomlLibs : DefaultTask() {
 
             requestedUpdates["$group:$name"] = newVersion
          }
+
+         obj.getJSONObject("unresolved").getJSONArray("dependencies").forEach {
+            val dependencyObj = it as JSONObject
+
+            val group = dependencyObj.getString("group")
+            val name = dependencyObj.getString("name")
+
+            failedUpdates += "$group:$name"
+         }
       }
+
+      for (failedUpdate in failedUpdates) {
+         println(
+            "WARNING: Failed to check for updates for '$failedUpdate'. " +
+               "Please check and update manually. See dependencyUpdates output for more info."
+         )
+      }
+
       return requestedUpdates
    }
 
