@@ -8,6 +8,8 @@ An opinionated set of common utility classes for Kotlin projects, primarily base
 
 ### • [Compose](compose/README.MD)
 
+### • [Gradle](kotlinova-gradle/README.MD)
+
 ### • [Navigation](navigation/README.MD)
 
 ### • [Retrofit](retrofit/README.MD)
