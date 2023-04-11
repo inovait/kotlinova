@@ -44,6 +44,8 @@ publishing {
          artifactId = "gradle"
          version = project.version.toString()
 
+         from(components["java"])
+
          pom {
             name.set(userFriendlyName)
             this.description.set(description)
@@ -112,6 +114,8 @@ java {
 }
 
 gradlePlugin {
+   isAutomatedPublishing = false
+
    plugins {
       create("toml-version-bump") {
          id = "toml-version-bump"
