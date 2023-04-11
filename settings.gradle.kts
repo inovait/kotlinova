@@ -40,6 +40,8 @@ dependencyResolutionManagement {
          from(files("config/libs.toml"))
       }
    }
+
+   includeBuild("kotlinova-gradle")
 }
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
@@ -50,6 +52,7 @@ include(":core")
 include(":core:test")
 include(":compose")
 include(":compose:compose-android-test")
+includeBuild("kotlinova-gradle") // Include kotlinova gradle build to allow common maven publishing and checking
 include(":navigation")
 include(":navigation:navigation-compiler")
 include(":navigation:navigation-fragment")

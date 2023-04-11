@@ -18,7 +18,21 @@
 // AGP 7.4.0 has a bug where it marks most things as incubating
 @file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
 
+pluginManagement {
+   repositories {
+      google()
+      mavenCentral()
+      gradlePluginPortal()
+   }
+}
+
 dependencyResolutionManagement {
+   repositories {
+      google()
+      mavenCentral()
+      gradlePluginPortal()
+   }
+
    versionCatalogs {
       create("libs") {
          from(files("../config/libs.toml"))
@@ -26,6 +40,4 @@ dependencyResolutionManagement {
    }
 }
 
-includeBuild("../kotlinova-gradle")
-
-rootProject.name = "buildSrc"
+rootProject.name = "kotlinova-gradle"

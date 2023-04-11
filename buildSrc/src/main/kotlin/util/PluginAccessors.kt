@@ -25,3 +25,6 @@ inline val PluginDependenciesSpec.androidLibraryModule: PluginDependencySpec
 
 inline val PluginDependenciesSpec.androidCommon: PluginDependencySpec
    get() = id("android-commons")
+
+inline val PluginDependenciesSpec.pureJvmProject: PluginDependencySpec
+   get() = id("pure-jvm-project")

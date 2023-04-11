@@ -14,18 +14,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
+package si.inova.kotlinova.gradle.versionbump
 
-dependencyResolutionManagement {
-   versionCatalogs {
-      create("libs") {
-         from(files("../config/libs.toml"))
-      }
-   }
+import org.gradle.api.file.FileTree
+import org.gradle.api.provider.Property
+import java.io.File
+
+interface TomlVersionBumpExtension {
+   val versionReportFiles: Property<FileTree>
+   val tomlFile: Property<File>
 }
-
-includeBuild("../kotlinova-gradle")
-
-rootProject.name = "buildSrc"

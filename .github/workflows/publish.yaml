@@ -39,11 +39,11 @@ jobs:
       - run: "v=$(cat version.txt);echo \"VERSION=$v\" > $GITHUB_ENV"
       - run: "echo \"# Release version ${{ env.VERSION }}\" > $GITHUB_STEP_SUMMARY"
       - name: Compile library
-        run: "./gradlew --parallel assemble"
+        run: "./gradlew --parallel assemble :kotlinova-gradle:jar"
       - name: Compile Unit Tests
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest detektMain detektTest lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
       - name: Generate Changelog
@@ -55,7 +55,7 @@ jobs:
       - name: 'Save GPG key'
         run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
       - name: 'Publish'
-        run: './gradlew publish
+        run: './gradlew publish :kotlinova-gradle:publish
                 -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
                 -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}''
                 -Psigning.secretKeyRingFile=$(pwd)/signing_key.gpg

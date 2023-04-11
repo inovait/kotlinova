@@ -17,9 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   id("standard-config")
-   id("java-library")
-   id("org.jetbrains.kotlin.jvm")
+   pureJvmProject
    id("kotlin-kapt")
 }
 
@@ -29,25 +27,6 @@ publishLibrary(
    githubPath = "navigation-compiler"
 )
 
-publishing {
-   publications {
-      create<MavenPublication>("maven") {
-         groupId = project.group.toString()
-         artifactId = "navigation-compiler"
-         version = project.version.toString()
-
-         from(components["java"])
-      }
-   }
-}
-
-java {
-   withJavadocJar()
-   withSourcesJar()
-
-   sourceCompatibility = JavaVersion.VERSION_11
-   targetCompatibility = JavaVersion.VERSION_11
-}
 
 dependencies {
    api(libs.anvil.api)

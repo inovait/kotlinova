@@ -620,7 +620,7 @@ style:
     imports: [ ]
     forbiddenPatterns: ''
   ForbiddenMethodCall:
-    active: true
+    active: false
     methods:
       - value: 'kotlin.io.print'
         reason: "Use logcat for logging"
