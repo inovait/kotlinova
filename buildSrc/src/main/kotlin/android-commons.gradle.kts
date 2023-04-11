@@ -15,6 +15,7 @@
  */
 
 import org.gradle.accessors.dm.LibrariesForLibs
+import util.commonAndroid
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -35,12 +36,10 @@ import org.gradle.accessors.dm.LibrariesForLibs
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("com.android.library")
    id("standard-config")
-   id("kotlin-parcelize")
 }
 
-android {
+commonAndroid {
    compileSdk = 33
 
    compileOptions {

@@ -22,3 +22,6 @@ inline val PluginDependenciesSpec.multiplatformModule: PluginDependencySpec
 
 inline val PluginDependenciesSpec.androidLibraryModule: PluginDependencySpec
    get() = id("android-library-config")
+
+inline val PluginDependenciesSpec.androidCommon: PluginDependencySpec
+   get() = id("android-commons")

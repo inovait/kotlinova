@@ -43,7 +43,7 @@ jobs:
       - name: Compile Unit Tests
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest detektMain detektTest lint"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
       - name: Generate Changelog
