@@ -37,6 +37,7 @@ android {
       applicationId = namespace
       versionCode = 1
       versionName = "1.0"
+      targetSdk = 33
    }
 
    buildFeatures {
