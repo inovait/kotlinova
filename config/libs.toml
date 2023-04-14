@@ -24,6 +24,7 @@ kotlin = "1.8.0"
 kotlin-coroutines = "1.6.4"
 # Do not update kotest until https://github.com/kotest/kotest/issues/3407 fix is released
 kotest = "5.5.4"
+nexusPublish = "1.3.0"
 junit4 = "4.13.2"
 junit5 = "5.9.2"
 moshi = "1.14.0"
@@ -88,3 +89,4 @@ versionsCheckerPlugin = { module = "com.github.ben-manes:gradle-versions-plugin"
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }

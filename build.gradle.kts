@@ -19,6 +19,20 @@
 
 plugins {
    id("toml-version-bump")
+   alias(libs.plugins.nexusPublish)
+}
+
+group = "si.inova.kotlinova"
+
+if (properties.containsKey("ossrhUsername")) {
+   nexusPublishing {
+      repositories {
+         sonatype {
+            username.set(property("ossrhUsername") as String)
+            password.set(property("ossrhPassword") as String)
+         }
+      }
+   }
 }
 
 tomlVersionBump {
