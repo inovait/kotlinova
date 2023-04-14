@@ -28,7 +28,6 @@ if (properties.containsKey("ossrhUsername")) {
    nexusStaging {
       username = property("ossrhUsername") as String
       password = property("ossrhPassword") as String
-      stagingProfileId = "si.inova"
    }
 }
 
