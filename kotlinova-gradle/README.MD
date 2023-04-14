@@ -1,4 +1,4 @@
-# Navigation
+# Gradle Utilities
 
 Direct gradle usage:
 
