@@ -22,12 +22,11 @@ plugins {
    alias(libs.plugins.nexusPublish)
 }
 
-group = "si.inova.kotlinova"
-
 if (properties.containsKey("ossrhUsername")) {
    nexusStaging {
       username = property("ossrhUsername") as String
       password = property("ossrhPassword") as String
+      packageGroup = "si.inova"
    }
 }
 
