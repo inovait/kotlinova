@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.fragment
 
-import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -46,7 +45,6 @@ abstract class FragmentScreen<K>(
    override fun Content(key: K) {
       val activity = LocalContext.current.requireActivity() as FragmentActivity
 
-      View.generateViewId()
       val fragmentViewId = rememberSaveable { Random.nextInt(MAX_VIEW_ID) }
 
       AndroidView({ context ->

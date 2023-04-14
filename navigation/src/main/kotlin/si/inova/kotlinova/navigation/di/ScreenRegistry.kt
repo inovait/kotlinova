@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.navigation.di
 
+import com.zhuinden.simplestack.Backstack
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.ScopedService
@@ -26,8 +27,9 @@ import javax.inject.Provider
  * Registry of all screen currently known by the navigation.
  */
 class ScreenRegistry @Inject constructor(
+   private val backstack: Backstack,
    private val staticRegistrations: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenRegistration<*>>,
-   private val screenFactories: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards Provider<Screen<*>>>,
+   private val screenFactories: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards Provider<ScreenFactory<*>>>,
 ) {
    @Suppress("UNCHECKED_CAST")
    fun <T : ScreenKey> createScreen(key: T): Screen<T> {
@@ -36,7 +38,7 @@ class ScreenRegistry @Inject constructor(
       val factory = screenFactories[registration.screenClass]
          ?: error("Missing screen factory for the ${registration.screenClass.name}")
 
-      return factory.get() as Screen<T>
+      return factory.get().create(key.scopeTag, backstack) as Screen<T>
    }
 
    @Suppress("UNCHECKED_CAST")
@@ -55,3 +57,7 @@ class ScreenRegistration<T : ScreenKey>(
    val screenClass: Class<out Screen<T>>,
    vararg val serviceClasses: Class<out ScopedService>
 )
+
+fun interface ScreenFactory<T : Screen<*>> {
+   fun create(scope: String, backstack: Backstack): T
+}

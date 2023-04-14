@@ -57,3 +57,8 @@ internal val SCREEN_REGISTRATION = ClassName(
    "si.inova.kotlinova.navigation.di",
    "ScreenRegistration"
 )
+
+internal val SCREEN_FACTORY = ClassName(
+   "si.inova.kotlinova.navigation.di",
+   "ScreenFactory"
+)

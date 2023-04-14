@@ -25,8 +25,12 @@ import si.inova.kotlinova.navigation.services.ScopedService
 @Module
 abstract class EmptyNavigationModule {
    @Multibinds
-   abstract fun provideEmptyScreenMultibinds():
+   abstract fun provideEmptyScreenRegistrationMultibinds():
       Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenRegistration<*>>
+
+   @Multibinds
+   abstract fun provideEmptyScreenFactoryMultibinds():
+      Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenFactory<*>>
 
    @Multibinds
    abstract fun provideScopedServiceMultibinds():

@@ -61,6 +61,10 @@ jobs:
                 -Psigning.secretKeyRingFile=$(pwd)/signing_key.gpg
                 -Psigning.password=''${{ secrets.GPG_SIGNING_PASSPHRASE }}''
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
+      - name: 'Release staging repository'
+        run: './gradlew closeAndReleaseSonatypeStagingRepository
+                -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
+                -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}'''
       - name: 'Add changelog and version'
         run: 'git add version.txt CHANGELOG.MD'
       - run: 'git config --global user.email "ci@inova.si"'

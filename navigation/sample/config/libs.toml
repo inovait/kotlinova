@@ -10,7 +10,7 @@ androidx-lifecycle = "2.6.1"
 anvil = "2.4.4"
 dagger = "2.45"
 kotlin = "1.8.0"
-kotlinova = "3.0.0-alpha7"
+kotlinova = "3.0.0-alpha9"
 whetstone = "0.4.0"
 
 [libraries]

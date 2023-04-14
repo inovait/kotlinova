@@ -35,7 +35,6 @@ import org.junit.Test
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.screens.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
@@ -48,20 +47,25 @@ class ServiceScopes {
 
    @Test
    internal fun doNotShareServicesByDefault() {
-      rule.insertTestNavigation(
-         NestedNavigationScreenKey(listOf(NotSharedServiceScreenKey()))
+      val backstack = rule.insertTestNavigation(
+         NotSharedServiceScreenKey()
       )
 
       rule.onNodeWithText("+").performClick()
       rule.onNodeWithText("Open another screen").performClick()
-
       rule.onNodeWithText("0").assertIsDisplayed()
+
+      rule.runOnUiThread {
+         backstack.goBack()
+      }
+
+      rule.onNodeWithText("1").assertIsDisplayed()
    }
 
    @Test
    internal fun shareServicesWhenKeysHaveSameServiceTag() {
       rule.insertTestNavigation(
-         NestedNavigationScreenKey(listOf(SharedServiceScreenKey()))
+         SharedServiceScreenKey()
       )
 
       rule.onNodeWithText("+").performClick()
