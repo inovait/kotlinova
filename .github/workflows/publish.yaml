@@ -62,7 +62,7 @@ jobs:
                 -Psigning.password=''${{ secrets.GPG_SIGNING_PASSPHRASE }}''
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
       - name: 'Release staging repository'
-        run: './gradlew closeAndReleaseSonatypeStagingRepository
+        run: './gradlew closeAndReleaseRepository
                 -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
                 -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}'''
       - name: 'Add changelog and version'
