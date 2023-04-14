@@ -25,13 +25,10 @@ plugins {
 group = "si.inova.kotlinova"
 
 if (properties.containsKey("ossrhUsername")) {
-   nexusPublishing {
-      repositories {
-         sonatype {
-            username.set(property("ossrhUsername") as String)
-            password.set(property("ossrhPassword") as String)
-         }
-      }
+   nexusStaging {
+      username = property("ossrhUsername") as String
+      password = property("ossrhPassword") as String
+      stagingProfileId = "si.inova"
    }
 }
 
