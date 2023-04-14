@@ -1,3 +1,9 @@
+# 3.0.0-alpha9
+
+### Bug Fixes
+
+* **navigation**: scoped services not being per-screen on backing out ([493a319d](https://github.com/inovait/kotlinova/commit/493a319d1692424a7c4e196130c8bd2e007fc33f))
+
 # 3.0.0-alpha8
 
 ### Features
