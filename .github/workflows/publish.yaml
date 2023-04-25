@@ -41,7 +41,9 @@ jobs:
       - name: Compile library
         run: "./gradlew --parallel assemble :kotlinova-gradle:jar"
       - name: Compile Unit Tests
-        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid"
+        # We cannot run instrumented tests on CI, but at least we can compile them to ensure
+        # that anvil build passes.
+        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest"
       - name: Lint
         run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
