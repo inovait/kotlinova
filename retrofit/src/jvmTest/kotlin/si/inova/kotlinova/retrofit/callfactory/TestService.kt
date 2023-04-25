@@ -23,7 +23,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
-import si.inova.kotlinova.core.test.outcomes.throwingErrorReporter
+import si.inova.kotlinova.core.test.outcomes.ThrowingErrorReporter
 import si.inova.kotlinova.retrofit.MockWebServerScope
 import si.inova.kotlinova.retrofit.converter.LazyRetrofitConverterFactory
 import si.inova.kotlinova.retrofit.interceptors.BypassCacheInterceptor
@@ -49,7 +49,7 @@ inline fun <reified T> MockWebServerScope.createRetrofitService(
       .client(client)
       .baseUrl(baseUrl)
       .addConverterFactory(LazyRetrofitConverterFactory(lazy { MoshiConverterFactory.create(moshi) }))
-      .addCallAdapterFactory(StaleWhileRevalidateCallAdapterFactory(errorHandler, testScope.throwingErrorReporter()))
+      .addCallAdapterFactory(StaleWhileRevalidateCallAdapterFactory(errorHandler, ThrowingErrorReporter(testScope)))
       .addCallAdapterFactory(ErrorHandlingAdapterFactory(testScope, errorHandler))
       .build()
 
