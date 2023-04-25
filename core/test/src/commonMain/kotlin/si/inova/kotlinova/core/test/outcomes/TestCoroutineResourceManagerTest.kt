@@ -18,6 +18,7 @@ package si.inova.kotlinova.core.test.outcomes
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.test.TestScope
+import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.CoroutineResourceManager
 import si.inova.kotlinova.core.reporting.ErrorReporter
 
@@ -26,13 +27,35 @@ import si.inova.kotlinova.core.reporting.ErrorReporter
  * reports all unknown exceptions to the test coroutine runner.
  */
 fun TestScope.testCoroutineResourceManager(): CoroutineResourceManager {
-   return CoroutineResourceManager(backgroundScope, throwingErrorReporter())
+   return CoroutineResourceManager(backgroundScope, ThrowingErrorReporter(this))
 }
 
 /**
- * ErrorReporter that will throw all reported exceptions at the end of the test
+ErrorReporter that will collect all reported exceptions and optionally throw them at the end of the test
+
+All exceptions with [CauseException.shouldReport] set to false will be ignored.
+
+[receivedExceptions] will contain all exceptions that were reported. If [reportToTestScope] is set to true (default),
+all exceptions will also be reported to the provided [TestScope], causing test to fail at the end of the run.
  */
-fun TestScope.throwingErrorReporter(): ErrorReporter {
-   val coroutineExceptionHandler = requireNotNull(coroutineContext[CoroutineExceptionHandler])
-   return ErrorReporter { coroutineExceptionHandler.handleException(coroutineContext, it) }
+class ThrowingErrorReporter(private val testScope: TestScope) : ErrorReporter {
+   val receivedExceptions = ArrayList<Throwable>()
+   var reportToTestScope: Boolean = true
+
+   private val coroutineExceptionHandler = requireNotNull(
+      testScope.coroutineContext[CoroutineExceptionHandler]
+   ) { "TestScope must have CoroutineExceptionHandler registered" }
+
+   override fun report(throwable: Throwable) {
+      if (throwable !is CauseException || throwable.shouldReport) {
+         receivedExceptions += throwable
+
+         if (reportToTestScope) {
+            coroutineExceptionHandler.handleException(
+               testScope.coroutineContext,
+               AssertionError("Got reported exception while executing this test", throwable)
+            )
+         }
+      }
+   }
 }

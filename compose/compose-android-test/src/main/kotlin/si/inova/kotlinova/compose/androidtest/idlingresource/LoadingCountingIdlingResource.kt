@@ -56,9 +56,10 @@ class RegisteringCoroutineResourceManager(scope: CoroutineScope, reportService: 
       resource: MutableStateFlow<Outcome<T>>,
       currentValue: T?,
       context: CoroutineContext,
+      keepDataOnExceptions: Boolean,
       block: suspend ResourceControlBlock<T>.() -> Unit
    ) {
       LoadingCountingIdlingResource.registerResource(resource)
-      super.launchResourceControlTask(resource, currentValue, context, block)
+      super.launchResourceControlTask(resource, currentValue, context, keepDataOnExceptions, block)
    }
 }

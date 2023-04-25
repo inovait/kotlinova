@@ -52,13 +52,15 @@ open class CoroutineResourceManager(
     *    (this data can be overridden using [currentValue] parameter)
     * 3. Calls your provided task
     * 4. Automatically handles cancellation exceptions
-    * 5. Automatically forwards exceptions to the resource as [Outcome.Error]
+    * 5. Automatically forwards thrown exceptions to the resource as [Outcome.Error], with original data being kept
+    *    (unless [keepDataOnExceptions] is disabled)
     * 6. Automatically reports exceptions to the provided ReportService
     */
    open fun <T> launchResourceControlTask(
       resource: MutableStateFlow<Outcome<T>>,
       currentValue: T? = resource.value.data,
       context: CoroutineContext = EmptyCoroutineContext,
+      keepDataOnExceptions: Boolean = true,
       block: suspend ResourceControlBlock<T>.() -> Unit
    ) = launchBoundControlTask(resource, context) {
       try {
@@ -76,7 +78,7 @@ open class CoroutineResourceManager(
 
          interceptException(e)
 
-         resource.value = Outcome.Error(exception)
+         resource.value = Outcome.Error(exception, resource.value.data.takeIf { keepDataOnExceptions })
       }
    }
 

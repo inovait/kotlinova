@@ -20,6 +20,7 @@ import com.zhuinden.simplestack.Bundleable
 import com.zhuinden.statebundle.StateBundle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import si.inova.kotlinova.navigation.util.set
 import kotlin.properties.ReadOnlyProperty
@@ -49,7 +50,7 @@ abstract class SaveableScopedService(
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
    fun <T> saved(
-      defaultValue: T,
+      defaultValue: () -> T,
    ): ReadWriteProperty<SaveableScopedService, T> {
       return StateSavedProperty(defaultValue)
    }
@@ -60,10 +61,28 @@ abstract class SaveableScopedService(
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
    fun <T> savedFlow(
-      defaultValue: T,
+      defaultValue: () -> T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       return StateSavedFlowProperty(defaultValue)
    }
+
+   /**
+    * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> saved(
+      defaultValue: T,
+   ): ReadWriteProperty<SaveableScopedService, T> = saved { defaultValue }
+
+   /**
+    * Flow of a property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> savedFlow(
+      defaultValue: T,
+   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow { defaultValue }
 
    override fun toBundle(): StateBundle {
       return bundle
@@ -76,25 +95,26 @@ abstract class SaveableScopedService(
    }
 
    private class StateSavedProperty<T>(
-      defaultValue: T
+      private val defaultValue: () -> T
    ) : ReadWriteProperty<SaveableScopedService, T> {
-      var value: T = defaultValue
+      var value: T? = null
       var initialized = false
 
+      @Suppress("UNCHECKED_CAST")
       override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): T {
          if (!initialized) {
-            @Suppress("UNCHECKED_CAST")
-            val savedValue = thisRef.bundle.get(property.name) as T
-            if (savedValue != null) {
-               value = savedValue
+            if (thisRef.bundle.containsKey(property.name)) {
+               value = thisRef.bundle.get(property.name) as T
             } else {
-               save(value, thisRef, property)
+               val default = defaultValue()
+               value = default
+               save(default, thisRef, property)
             }
 
             initialized = true
          }
 
-         return value
+         return value as T
       }
 
       override fun setValue(thisRef: SaveableScopedService, property: KProperty<*>, value: T) {
@@ -118,29 +138,36 @@ abstract class SaveableScopedService(
    }
 
    private class StateSavedFlowProperty<T>(
-      defaultValue: T
+      private val defaultValue: () -> T
    ) : ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
-      val flow = MutableStateFlow(defaultValue)
-      var initialized = false
+      var flow: MutableStateFlow<T>? = null
 
       override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): MutableStateFlow<T> {
-         if (!initialized) {
-            @Suppress("UNCHECKED_CAST")
-            (thisRef.bundle.get(property.name) as T)?.let { flow.value = it }
-
-            startObservingFlow(thisRef, property)
-            initialized = true
+         val existingFlow = flow
+         if (existingFlow != null) {
+            return existingFlow
          }
 
-         return flow
+         @Suppress("UNCHECKED_CAST")
+         val initialValue = if (thisRef.bundle.containsKey(property.name)) {
+            thisRef.bundle.get(property.name) as T
+         } else {
+            defaultValue()
+         }
+
+         val newFlow = MutableStateFlow(initialValue)
+         newFlow.startObserving(thisRef, property)
+
+         this.flow = newFlow
+         return newFlow
       }
 
-      private fun startObservingFlow(
+      private fun StateFlow<T>.startObserving(
          thisRef: SaveableScopedService,
          property: KProperty<*>
       ) {
          thisRef.coroutineScope.launch {
-            flow.collect { value ->
+            collect { value ->
                if (value != null) {
                   thisRef.bundle[property.name] = value
                } else {

@@ -370,4 +370,40 @@ internal class CoroutineResourceManagerTest {
 
       reportedErrors.shouldBeEmpty()
    }
+
+   @Test
+   internal fun `launchResourceControlTask should keep old data by default when exception is thrown`() = scope.runTest {
+      val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
+
+      manager.launchResourceControlTask(resource) {
+         emit(Outcome.Success(18))
+         throw NoNetworkException()
+      }
+
+      runCurrent()
+
+      resource.value.shouldBeErrorWith(
+         expectedData = 18,
+         exceptionType = NoNetworkException::class.java,
+      )
+      reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
+   }
+
+   @Test
+   internal fun `launchResourceControlTask should not keep old data when exception is thrown when disabled`() = scope.runTest {
+      val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
+
+      manager.launchResourceControlTask(resource, keepDataOnExceptions = false) {
+         emit(Outcome.Success(18))
+         throw NoNetworkException()
+      }
+
+      runCurrent()
+
+      resource.value.shouldBeErrorWith(
+         expectedData = null,
+         exceptionType = NoNetworkException::class.java,
+      )
+      reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
+   }
 }

@@ -17,12 +17,16 @@
 package si.inova.kotlinova.core.outcome
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 /**
  * Map data of this outcome, while keeping the type.
+ *
+ * If provided Outcome has no data, [mapper] never gets called.
  */
 fun <A, B> Outcome<A>.mapData(mapper: (A) -> B): Outcome<B> {
    return when (this) {
@@ -33,12 +37,40 @@ fun <A, B> Outcome<A>.mapData(mapper: (A) -> B): Outcome<B> {
 }
 
 /**
+ * Map data of this outcome, while keeping the type.
+ *
+ * If provided Outcome has no data, [mapper] gets called with null data.
+ */
+fun <A, B> Outcome<A>.mapNullableData(mapper: (A?) -> B): Outcome<B> {
+   return when (this) {
+      is Outcome.Error -> Outcome.Error(exception, mapper(data))
+      is Outcome.Progress -> Outcome.Progress(mapper(data), progress, style)
+      is Outcome.Success -> Outcome.Success(mapper(data))
+   }
+}
+
+/**
  * Map data of this outcome, while keeping the type, using suspend [mapper].
+ *
+ * If provided Outcome has no data, [mapper] never gets called.
  */
 suspend fun <A, B> Outcome<A>.mapDataSuspend(mapper: suspend (A) -> B): Outcome<B> {
    return when (this) {
       is Outcome.Error -> Outcome.Error(exception, data?.let { mapper(it) })
       is Outcome.Progress -> Outcome.Progress(data?.let { mapper(it) }, progress, style)
+      is Outcome.Success -> Outcome.Success(mapper(data))
+   }
+}
+
+/**
+ * Map data of this outcome, while keeping the type, using suspend [mapper].
+ *
+ * If provided Outcome has no data, [mapper] gets called with null data.
+ */
+suspend fun <A, B> Outcome<A>.mapNullableDataSuspend(mapper: suspend (A?) -> B): Outcome<B> {
+   return when (this) {
+      is Outcome.Error -> Outcome.Error(exception, mapper(data))
+      is Outcome.Progress -> Outcome.Progress(mapper(data), progress, style)
       is Outcome.Success -> Outcome.Success(mapper(data))
    }
 }
@@ -98,5 +130,35 @@ fun <T> Outcome<T>.downgradeTo(
 
       targetType is Outcome.Progress -> Outcome.Progress(data, targetType.progress, targetType.style)
       else -> this
+   }
+}
+
+/**
+ * Updates the data of the Outcome inside the [MutableStateFlow.value]
+ * atomically using the specified [function] of its value.
+ *
+ * [function] may be evaluated multiple times, if value is being concurrently updated.
+ *
+ * If provided Outcome has no data, [function] never gets called.
+ */
+
+fun <T> MutableStateFlow<Outcome<T>>.updateData(function: (T) -> T) {
+   return update { outcome ->
+      outcome.mapData(function)
+   }
+}
+
+/**
+ * Updates the data of the Outcome inside the [MutableStateFlow.value]
+ * atomically using the specified [function] of its value.
+ *
+ * [function] may be evaluated multiple times, if value is being concurrently updated.
+ *
+ * If provided Outcome has no data, [function] gets called with null data.
+ */
+
+fun <T> MutableStateFlow<Outcome<T>>.updateNullableData(function: (T?) -> T) {
+   return update { outcome ->
+      outcome.mapNullableData(function)
    }
 }
