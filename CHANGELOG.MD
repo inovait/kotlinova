@@ -1,3 +1,12 @@
+# 3.0.0-alpha10
+
+### Features
+
+* **core**: add data keeping to launchResourceControlTask ([945d0133](https://github.com/inovait/kotlinova/commit/945d013379bd37717b19b0132e31b38b1843a11f))
+* **core**: defer default value init in SaveableScopedService ([fd738fa5](https://github.com/inovait/kotlinova/commit/fd738fa530820170c78249d77e4dabc63c9f709e))
+* **core**: add more Outcome mapping functions ([fdab58f6](https://github.com/inovait/kotlinova/commit/fdab58f67473a59565f281de99ba48cee2d91f96))
+* **core-test**: improve throwing error reporter ([cd5d78e3](https://github.com/inovait/kotlinova/commit/cd5d78e3ea8fd12dea063d8074988d401d38eed5))
+
 # 3.0.0-alpha9
 
 ### Bug Fixes
