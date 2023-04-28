@@ -56,6 +56,7 @@ includeBuild("kotlinova-gradle") // Include kotlinova gradle build to allow comm
 include(":navigation")
 include(":navigation:navigation-compiler")
 include(":navigation:navigation-fragment")
+include(":navigation:navigation-test")
 include(":navigation:tests")
 include(":retrofit")
 include(":retrofit:retrofit-test")

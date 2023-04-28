@@ -6,6 +6,7 @@ Direct gradle usage:
 implementation("si.inova.kotlinova:navigation:X.Y.Z")
 anvil("si.inova.kotlinova:navigation-compiler:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
+testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
 ```
 
 Version catalogs usage:
@@ -20,12 +21,14 @@ kotlinova = "X.Y.Z"
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
+kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", version.ref = "kotlinova" }
 ```
 
 ```kotlin
 implementation(libs.kotlinova.navigation)
 anvil(libs.kotlinova.navigation.compiler)
 implementation(libs.kotlinova.navigation.fragment)
+test(libs.kotlinova.navigation.test)
 ```
 
 Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
