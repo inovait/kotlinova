@@ -22,13 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +41,7 @@ import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.services.SingleScreenViewModel
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
+import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
 import javax.inject.Inject
 
 private var lastReceivedKey: Any? = null
@@ -88,7 +86,7 @@ class ServicesTest {
       rule.onNodeWithText("Increase").performClick()
 
       rule.waitForIdle()
-      removeBackstackFromMemory()
+      rule.removeBackstackFromMemory()
 
       stateRestorationTester.emulateSavedInstanceStateRestore()
 
@@ -104,7 +102,7 @@ class ServicesTest {
       rule.onNodeWithText("Increase").performClick()
 
       rule.waitForIdle()
-      removeBackstackFromMemory()
+      rule.removeBackstackFromMemory()
 
       stateRestorationTester.emulateSavedInstanceStateRestore()
 
@@ -117,14 +115,6 @@ class ServicesTest {
       rule.insertTestNavigation(key)
 
       lastReceivedKey shouldBe key
-   }
-
-   @Suppress("UNCHECKED_CAST")
-   private fun removeBackstackFromMemory() {
-      val vmStore = (rule as AndroidComposeTestRule<*, *>).activity.viewModelStore
-      val map: MutableMap<String, ViewModel> = ViewModelStore::class.java.getDeclaredField("map").also { it.isAccessible = true }
-         .get(vmStore) as MutableMap<String, ViewModel>
-      map.remove("androidx.lifecycle.ViewModelProvider.DefaultKey:com.zhuinden.simplestack.navigator.BackstackHolderViewModel")
    }
 
    @Parcelize

@@ -17,6 +17,7 @@
 package si.inova.kotlinova.navigation.compiler
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.MemberName
 
 internal val ACTIVITY_SCOPE_ANNOTATION = ClassName(
    "si.inova.kotlinova.navigation.di",
@@ -61,4 +62,19 @@ internal val SCREEN_REGISTRATION = ClassName(
 internal val SCREEN_FACTORY = ClassName(
    "si.inova.kotlinova.navigation.di",
    "ScreenFactory"
+)
+
+internal val LOOKUP_FROM_SCOPE_WITH_INHERITANCE = MemberName(
+   "si.inova.kotlinova.navigation.simplestack",
+   "lookupFromScopeWithParentFallback"
+)
+
+internal val ANNOTATION_CURRENT_SCOPE_TAG = ClassName(
+   "si.inova.kotlinova.navigation.services",
+   "CurrentScopeTag"
+)
+
+internal val ANNOTATION_INHERITED = ClassName(
+   "si.inova.kotlinova.navigation.services",
+   "Inherited"
 )

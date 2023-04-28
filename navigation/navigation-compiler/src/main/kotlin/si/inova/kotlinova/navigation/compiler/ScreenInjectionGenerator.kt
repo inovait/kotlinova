@@ -116,6 +116,11 @@ class ScreenInjectionGenerator : CodeGenerator {
          null
       }
 
+      val suppressAnnotation = AnnotationSpec
+         .builder(ClassName("kotlin", "Suppress"))
+         .addMember("\"NAME_SHADOWING\", \"UNUSED_ANONYMOUS_PARAMETER\"")
+         .build()
+
       val content = FileSpec.buildFile(
          packageName = packageName,
          fileName = outputFileName,
@@ -130,6 +135,7 @@ class ScreenInjectionGenerator : CodeGenerator {
             .addAnnotation(Module::class)
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(contributesToAnnotation)
+            .addAnnotation(suppressAnnotation)
             .addFunction(bindsScreenFactoryFunction)
             .addType(companionObject)
             .build()
@@ -137,9 +143,7 @@ class ScreenInjectionGenerator : CodeGenerator {
          addType(moduleInterfaceSpec)
       }
 
-      return listOf(
-         createGeneratedFile(codeGenDir, packageName, outputFileName, content)
-      )
+      return listOf(createGeneratedFile(codeGenDir, packageName, outputFileName, content))
    }
 
    private fun screenServiceRegistrationFunction(
@@ -169,7 +173,14 @@ class ScreenInjectionGenerator : CodeGenerator {
    ): FunSpec {
       val (scopedServiceConstructorParameters,
          nonScopedServiceParameters) =
-         allConstructorParameters.partition { it.type().isScopedService() }
+         allConstructorParameters
+            .filterNot {
+               it.annotations.any { annotation ->
+                  val type = annotation.classReference.asClassName()
+                  type == ANNOTATION_CURRENT_SCOPE_TAG
+               }
+            }
+            .partition { it.type().isScopedService() }
 
       val (nestedScreenConstructorParameters,
          externalDependenciesConstructorParameters) =
@@ -183,11 +194,7 @@ class ScreenInjectionGenerator : CodeGenerator {
             className
          )
 
-      val lambdaParameters = if (scopedServiceConstructorParameters.isNotEmpty()) {
-         "scope, backstack ->"
-      } else {
-         "_, _ ->"
-      }
+      val lambdaParameters = "scope, backstack ->"
 
       return FunSpec.builder("providesScreenFactory")
          .returns(SCREEN_FACTORY.parameterizedBy(className))
@@ -229,8 +236,9 @@ class ScreenInjectionGenerator : CodeGenerator {
             val serviceType = service.type().asTypeName()
 
             addStatement(
-               "val %L = backstack.lookupFromScope<%T>(%L, %T::class.java.name)",
+               "val %L = backstack.%M<%T>(%L, %T::class.java.name)",
                service.name,
+               LOOKUP_FROM_SCOPE_WITH_INHERITANCE,
                serviceType,
                "scope",
                serviceType
@@ -243,6 +251,20 @@ class ScreenInjectionGenerator : CodeGenerator {
                nestedScreenParameter.name,
                "${nestedScreenParameter.name}Factory",
             )
+         }
+
+         for (parameter in allConstructorParameters) {
+            if (
+               parameter.annotations.any { annotation ->
+                  annotation.classReference.asClassName() == ANNOTATION_CURRENT_SCOPE_TAG
+               }
+            ) {
+               addStatement(
+                  "val %L = %L",
+                  parameter.name,
+                  "scope"
+               )
+            }
          }
 
          addStatement("%T(${allConstructorParameters.joinToString { it.name }})", className)
@@ -258,7 +280,9 @@ class ScreenInjectionGenerator : CodeGenerator {
 
       val mergedConstructors = constructorsOfAllNestedScreens + listOf(constructorParameters)
       return mergedConstructors.flatMap { constructor ->
-         constructor.filter { it.type().isScopedService() }
+         constructor
+            .filterNot { it.annotations.any { annotation -> annotation.classReference.asClassName() == ANNOTATION_INHERITED } }
+            .filter { it.type().isScopedService() }
       }
    }
 

@@ -342,7 +342,8 @@ inject `@MainNavigation private val mainNavigator: Navigator` which will navigat
 See [NestedScreen in sample](sample/nested/src/main/java/si/inova/kotlinova/navigation/sample/nested/NestedScreen.kt)
 for example.
 
-Note that main and nested screen do not share scoped services - nested screens have their own scope.
+Nested screens can also use parent's scoped services by putting the service into the constructor (like usual), and annotating it
+with `@Inherited`.
 
 ## Conditional navigation
 
