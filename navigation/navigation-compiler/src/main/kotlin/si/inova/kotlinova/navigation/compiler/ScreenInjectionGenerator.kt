@@ -68,11 +68,11 @@ class ScreenInjectionGenerator : CodeGenerator {
 
          val screenType = it.getScreenKeyIfItExists() ?: return@mapNotNull null
 
-         generateScreenFactory(codeGenDir, it, screenType)
+         generateScreenModule(codeGenDir, it, screenType)
       }.flatten().toList()
    }
 
-   private fun generateScreenFactory(
+   private fun generateScreenModule(
       codeGenDir: File,
       clas: ClassReference.Psi,
       screenKeyType: ClassReference
@@ -84,21 +84,73 @@ class ScreenInjectionGenerator : CodeGenerator {
       )
       val outputFileName = className.simpleName + "Module"
 
+      val constructorParameters = clas.constructors.firstOrNull()?.parameters ?: emptyList()
+
+      val screenFactoryProvider = createScreenFactoryProvider(
+         className,
+         constructorParameters
+      )
+
+      val bindScreenFactoryToFactoryMultibindsFunction = createBindScreenFactoryToFactoryMultibindsFunction(className)
+
+      val screenRegistrationFunction = createScreenServiceRegistrationFunction(
+         screenKeyType,
+         constructorParameters,
+         className
+      )
+
+      val screenFactoryToParentFactoryBindingFunction = createScreenFactoryToParentFactoryBindingFunction(
+         clas,
+         className
+      )
+
+      val suppressAnnotation = AnnotationSpec
+         .builder(ClassName("kotlin", "Suppress"))
+         .addMember("\"NAME_SHADOWING\", \"UNUSED_ANONYMOUS_PARAMETER\", \"UNCHECKED_CAST\"")
+         .build()
+
       val contributesToAnnotation = AnnotationSpec.builder(ContributesTo::class)
          .addMember("%T::class", ACTIVITY_SCOPE_ANNOTATION)
          .build()
 
+      val content = FileSpec.buildFile(
+         packageName = packageName,
+         fileName = outputFileName,
+         generatorComment = "Automatically generated file. DO NOT MODIFY!"
+      ) {
+         val companionObject = TypeSpec.companionObjectBuilder()
+            .addFunction(screenFactoryProvider)
+            .also { if (screenRegistrationFunction != null) it.addFunction(screenRegistrationFunction) }
+            .also {
+               if (screenFactoryToParentFactoryBindingFunction != null) {
+                  it.addFunction(screenFactoryToParentFactoryBindingFunction)
+               }
+            }
+            .build()
+
+         val moduleInterfaceSpec = TypeSpec.classBuilder(outputFileName)
+            .addAnnotation(Module::class)
+            .addModifiers(KModifier.ABSTRACT)
+            .addAnnotation(contributesToAnnotation)
+            .addAnnotation(suppressAnnotation)
+            .addFunction(bindScreenFactoryToFactoryMultibindsFunction)
+            .addType(companionObject)
+            .build()
+
+         addType(moduleInterfaceSpec)
+      }
+
+      return listOf(createGeneratedFile(codeGenDir, packageName, outputFileName, content))
+   }
+
+   private fun createBindScreenFactoryToFactoryMultibindsFunction(
+      className: ClassName
+   ): FunSpec {
       val classKeyAnnotation = AnnotationSpec.builder(ClassKey::class)
          .addMember("%T::class", className)
          .build()
 
-      val screenKeyClassKeyAnnotation = AnnotationSpec.builder(ClassKey::class)
-         .addMember("%T::class", screenKeyType.asTypeName())
-         .build()
-
-      val constructorParameters = clas.constructors.firstOrNull()?.parameters ?: emptyList()
-
-      val bindsScreenFactoryFunction = FunSpec.builder("bindsScreenFactory")
+      return FunSpec.builder("bindsScreenFactory")
          .addModifiers(KModifier.ABSTRACT)
          .returns(SCREEN_FACTORY.parameterizedBy(STAR))
          .addAnnotation(Binds::class)
@@ -106,18 +158,41 @@ class ScreenInjectionGenerator : CodeGenerator {
          .addParameter("screenFactory", SCREEN_FACTORY.parameterizedBy(className))
          .addAnnotation(classKeyAnnotation)
          .build()
+   }
 
-      val screenFactoryFunction = createScreenFactoryProvider(
-         className,
-         constructorParameters
-      )
+   private fun createScreenServiceRegistrationFunction(
+      screenKeyType: ClassReference,
+      constructorParameters: List<ParameterReference.Psi>,
+      className: ClassName
+   ): FunSpec? {
+      val screenKeyClassKeyAnnotation = AnnotationSpec.builder(ClassKey::class)
+         .addMember("%T::class", screenKeyType.asTypeName())
+         .build()
 
       val screenRegistrationFunction = if (!screenKeyType.isAbstract()) {
-         screenServiceRegistrationFunction(screenKeyClassKeyAnnotation, constructorParameters, className)
+         val allRequiredScopedServices = getRequiredScopedServices(constructorParameters)
+         FunSpec.builder("providesScreenRegistration")
+            .returns(SCREEN_REGISTRATION.parameterizedBy(STAR))
+            .addAnnotation(Provides::class)
+            .addAnnotation(IntoMap::class)
+            .addAnnotation(screenKeyClassKeyAnnotation)
+            .addStatement(
+               "return %T(%T::class.java, ${allRequiredScopedServices.joinToString { "%T::class.java" }})",
+               SCREEN_REGISTRATION,
+               className,
+               *allRequiredScopedServices.map { it.type().asTypeName() }.toTypedArray()
+            )
+            .build()
       } else {
          null
       }
+      return screenRegistrationFunction
+   }
 
+   private fun createScreenFactoryToParentFactoryBindingFunction(
+      clas: ClassReference.Psi,
+      className: ClassName
+   ): FunSpec? {
       val contributeScreenBindingAnnotation = clas.annotations.firstOrNull {
          it.fqName.toString() == ANNOTATION_CONTRIBUTES_SCREEN_BINDING.toString()
       }
@@ -140,57 +215,7 @@ class ScreenInjectionGenerator : CodeGenerator {
       } else {
          null
       }
-
-      val suppressAnnotation = AnnotationSpec
-         .builder(ClassName("kotlin", "Suppress"))
-         .addMember("\"NAME_SHADOWING\", \"UNUSED_ANONYMOUS_PARAMETER\", \"UNCHECKED_CAST\"")
-         .build()
-
-      val content = FileSpec.buildFile(
-         packageName = packageName,
-         fileName = outputFileName,
-         generatorComment = "Automatically generated file. DO NOT MODIFY!"
-      ) {
-         val companionObject = TypeSpec.companionObjectBuilder()
-            .addFunction(screenFactoryFunction)
-            .also { if (screenRegistrationFunction != null) it.addFunction(screenRegistrationFunction) }
-            .also { if (screenBindingFunction != null) it.addFunction(screenBindingFunction) }
-            .build()
-
-         val moduleInterfaceSpec = TypeSpec.classBuilder(outputFileName)
-            .addAnnotation(Module::class)
-            .addModifiers(KModifier.ABSTRACT)
-            .addAnnotation(contributesToAnnotation)
-            .addAnnotation(suppressAnnotation)
-            .addFunction(bindsScreenFactoryFunction)
-            .addType(companionObject)
-            .build()
-
-         addType(moduleInterfaceSpec)
-      }
-
-      return listOf(createGeneratedFile(codeGenDir, packageName, outputFileName, content))
-   }
-
-   private fun screenServiceRegistrationFunction(
-      screenKeyClassKeyAnnotation: AnnotationSpec,
-      constructorParameters: List<ParameterReference.Psi>,
-      className: ClassName
-   ): FunSpec {
-      val allRequiredScopedServices = getRequiredScopedServices(constructorParameters)
-
-      return FunSpec.builder("providesScreenRegistration")
-         .returns(SCREEN_REGISTRATION.parameterizedBy(STAR))
-         .addAnnotation(Provides::class)
-         .addAnnotation(IntoMap::class)
-         .addAnnotation(screenKeyClassKeyAnnotation)
-         .addStatement(
-            "return %T(%T::class.java, ${allRequiredScopedServices.joinToString { "%T::class.java" }})",
-            SCREEN_REGISTRATION,
-            className,
-            *allRequiredScopedServices.map { it.type().asTypeName() }.toTypedArray()
-         )
-         .build()
+      return screenBindingFunction
    }
 
    private fun createScreenFactoryProvider(
