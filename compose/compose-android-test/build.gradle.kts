@@ -23,7 +23,7 @@ plugins {
 publishLibrary(
    userFriendlyName = "Compose Android Test",
    description = "Set of utilities for instrumented tests with Jetpack Compose",
-   githubPath = "compose-android-test"
+   githubPath = "compose"
 )
 
 android {
