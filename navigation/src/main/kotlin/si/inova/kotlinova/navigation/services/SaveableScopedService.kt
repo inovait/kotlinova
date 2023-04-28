@@ -129,11 +129,7 @@ abstract class SaveableScopedService(
          thisRef: SaveableScopedService,
          property: KProperty<*>
       ) {
-         if (value != null) {
-            thisRef.bundle[property.name] = value
-         } else {
-            thisRef.bundle.remove(property.name)
-         }
+         thisRef.bundle[property.name] = value
       }
    }
 
@@ -168,11 +164,7 @@ abstract class SaveableScopedService(
       ) {
          thisRef.coroutineScope.launch {
             collect { value ->
-               if (value != null) {
-                  thisRef.bundle[property.name] = value
-               } else {
-                  thisRef.bundle.remove(property.name)
-               }
+               thisRef.bundle[property.name] = value
             }
          }
       }
