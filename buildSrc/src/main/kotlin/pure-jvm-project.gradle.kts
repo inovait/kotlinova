@@ -55,6 +55,10 @@ publishing {
    }
 }
 
+kotlin {
+   jvmToolchain(11)
+}
+
 java {
    withJavadocJar()
    withSourcesJar()

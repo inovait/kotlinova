@@ -56,6 +56,10 @@ android {
    }
 }
 
+kotlin {
+   jvmToolchain(11)
+}
+
 publishing {
    publications {
       register<MavenPublication>("release") {
