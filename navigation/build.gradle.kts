@@ -60,8 +60,10 @@ dependencies {
    debugImplementation(libs.androidx.compose.ui.tooling)
    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-   androidTestImplementation(libs.junit4)
-   androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-   kaptAndroidTest(libs.dagger.compiler)
-   anvilAndroidTest(projects.navigation.navigationCompiler)
+   testImplementation(projects.navigation.navigationTest)
+   testImplementation(libs.turbine)
+   testImplementation(libs.kotlin.coroutines.test)
+   testImplementation(libs.kotest.assertions)
+   testImplementation(libs.junit5.api)
+   testRuntimeOnly(libs.junit5.engine)
 }

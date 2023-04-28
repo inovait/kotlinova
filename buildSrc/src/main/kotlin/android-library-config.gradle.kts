@@ -48,6 +48,12 @@ android {
          withSourcesJar()
       }
    }
+
+   testOptions {
+      unitTests.all {
+         it.useJUnitPlatform()
+      }
+   }
 }
 
 publishing {
