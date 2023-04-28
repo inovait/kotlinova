@@ -49,7 +49,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T> saved(
+   fun <T : Any> saved(
       defaultValue: () -> T,
    ): ReadWriteProperty<SaveableScopedService, T> {
       return StateSavedProperty(defaultValue)
@@ -60,7 +60,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T> savedFlow(
+   fun <T : Any> savedFlow(
       defaultValue: () -> T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       return StateSavedFlowProperty(defaultValue)
@@ -71,7 +71,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T> saved(
+   fun <T : Any> saved(
       defaultValue: T,
    ): ReadWriteProperty<SaveableScopedService, T> = saved { defaultValue }
 
@@ -80,7 +80,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T> savedFlow(
+   fun <T : Any> savedFlow(
       defaultValue: T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow { defaultValue }
 
@@ -94,7 +94,7 @@ abstract class SaveableScopedService(
       }
    }
 
-   private class StateSavedProperty<T>(
+   private class StateSavedProperty<T : Any>(
       private val defaultValue: () -> T
    ) : ReadWriteProperty<SaveableScopedService, T> {
       var value: T? = null
@@ -137,7 +137,7 @@ abstract class SaveableScopedService(
       }
    }
 
-   private class StateSavedFlowProperty<T>(
+   private class StateSavedFlowProperty<T : Any>(
       private val defaultValue: () -> T
    ) : ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       var flow: MutableStateFlow<T>? = null
