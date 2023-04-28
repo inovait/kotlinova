@@ -78,3 +78,8 @@ internal val ANNOTATION_INHERITED = ClassName(
    "si.inova.kotlinova.navigation.services",
    "Inherited"
 )
+
+internal val ANNOTATION_CONTRIBUTES_SCREEN_BINDING = ClassName(
+   "si.inova.kotlinova.navigation.di",
+   "ContributesScreenBinding"
+)

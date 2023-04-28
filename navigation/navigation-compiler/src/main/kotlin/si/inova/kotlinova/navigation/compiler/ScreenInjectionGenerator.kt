@@ -26,6 +26,8 @@ import com.squareup.anvil.compiler.api.createGeneratedFile
 import com.squareup.anvil.compiler.internal.buildFile
 import com.squareup.anvil.compiler.internal.reference.ClassReference
 import com.squareup.anvil.compiler.internal.reference.ParameterReference
+import com.squareup.anvil.compiler.internal.reference.TypeReference
+import com.squareup.anvil.compiler.internal.reference.argumentAt
 import com.squareup.anvil.compiler.internal.reference.asClassName
 import com.squareup.anvil.compiler.internal.reference.asTypeName
 import com.squareup.anvil.compiler.internal.reference.classAndInnerClassReferences
@@ -116,9 +118,32 @@ class ScreenInjectionGenerator : CodeGenerator {
          null
       }
 
+      val contributeScreenBindingAnnotation = clas.annotations.firstOrNull {
+         it.fqName.toString() == ANNOTATION_CONTRIBUTES_SCREEN_BINDING.toString()
+      }
+
+      val screenBindingFunction = if (contributeScreenBindingAnnotation != null) {
+         val boundType = contributeScreenBindingAnnotation
+            .argumentAt("boundType", 1)
+            ?.value<ClassReference>()
+            ?.asTypeName()
+            ?: clas.getFirstScreenParent()?.asTypeName()
+            ?: error("Invalid @ContributesScreenBinding annotation: $clas does not extend Screen")
+
+         val returnType = SCREEN_FACTORY.parameterizedBy(boundType)
+         FunSpec.builder("bindsScreenFactoryToParentType")
+            .returns(returnType)
+            .addAnnotation(Provides::class)
+            .addParameter("screenFactory", SCREEN_FACTORY.parameterizedBy(className))
+            .addStatement("return screenFactory as %T", returnType)
+            .build()
+      } else {
+         null
+      }
+
       val suppressAnnotation = AnnotationSpec
          .builder(ClassName("kotlin", "Suppress"))
-         .addMember("\"NAME_SHADOWING\", \"UNUSED_ANONYMOUS_PARAMETER\"")
+         .addMember("\"NAME_SHADOWING\", \"UNUSED_ANONYMOUS_PARAMETER\", \"UNCHECKED_CAST\"")
          .build()
 
       val content = FileSpec.buildFile(
@@ -129,6 +154,7 @@ class ScreenInjectionGenerator : CodeGenerator {
          val companionObject = TypeSpec.companionObjectBuilder()
             .addFunction(screenFactoryFunction)
             .also { if (screenRegistrationFunction != null) it.addFunction(screenRegistrationFunction) }
+            .also { if (screenBindingFunction != null) it.addFunction(screenBindingFunction) }
             .build()
 
          val moduleInterfaceSpec = TypeSpec.classBuilder(outputFileName)
@@ -302,6 +328,10 @@ class ScreenInjectionGenerator : CodeGenerator {
       }
 
       return null
+   }
+
+   private fun ClassReference.getFirstScreenParent(): TypeReference? {
+      return directSuperTypeReferences().firstOrNull { it.asClassReference().getScreenKeyIfItExists() != null }
    }
 
    private fun ClassReference.isKey(): Boolean {

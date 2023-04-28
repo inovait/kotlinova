@@ -286,6 +286,28 @@ class TabScreen(
 Note that injected screens share same scope, so scoped services of sub-screens will have
 the same lifecycle as the parent screen.
 
+You can also use `@ContributesScreenBinding` to reference an abstract screen that can then be implemented in some other module.
+For example:
+
+```kotlin
+abstract class FirstTabScreen : Screen<ScreenKey>
+
+class TabScreen(
+   private val firstTabSubscreen: FirstTabScreen,
+   ...
+) : Screen<TabScreenKey>() {
+   ...
+}
+
+@ContributesScreenBinding
+class FirstTabScreenImpl : FirstTabScreen {
+   @Composable
+   override fun Content(key: ScreenKey) {
+      ...
+   }
+}
+```
+
 ## Advanced Navigation
 
 You might have noticed that `Navigator.navigateTo` is an extension method and the only method on the actual
