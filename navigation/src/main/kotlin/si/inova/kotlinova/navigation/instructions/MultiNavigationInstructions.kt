@@ -50,4 +50,20 @@ class MultiNavigationInstructions(
       return "MultiNavigationInstructions(instructions=${instructions.contentToString()}, " +
          "overrideDirection=${overrideDirection ?: "null"})"
    }
+
+   override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (other !is MultiNavigationInstructions) return false
+
+      if (!instructions.contentEquals(other.instructions)) return false
+      if (overrideDirection != other.overrideDirection) return false
+
+      return true
+   }
+
+   override fun hashCode(): Int {
+      var result = instructions.contentHashCode()
+      result = 31 * result + (overrideDirection ?: 0)
+      return result
+   }
 }
