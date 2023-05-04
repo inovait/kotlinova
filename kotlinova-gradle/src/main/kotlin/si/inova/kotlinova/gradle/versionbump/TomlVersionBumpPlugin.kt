@@ -71,7 +71,8 @@ open class UpdateTomlLibs : DefaultTask() {
       for (entry in libraries.entrySet()) {
          val tomlValue = entry.value as TomlTable
          val module = tomlValue.get("module")
-         val versionRef = tomlValue.get("version.ref") as String
+         val versionRef = tomlValue.get("version.ref") as? String?
+            ?: error("Missing version.ref for module ${entry.key}. Is the toml file valid?")
          val targetVersion = requestedUpdates[module]
 
          if (targetVersion != null) {
@@ -86,7 +87,9 @@ open class UpdateTomlLibs : DefaultTask() {
 
       var updatedText = originalTomlText
       for (bump in targetBumps) {
-         val currentVersion = libsToml.get("versions.${bump.key}") as String
+         val currentVersion = libsToml.get("versions.${bump.key}") as? String?
+            ?: error("Missing ${bump.key} in the toml file. Is the toml file valid?")
+
          println("Bumping ${bump.key} from $currentVersion to ${bump.value}")
 
          updatedText = updatedText.replace("${bump.key} = \"$currentVersion\"", "${bump.key} = \"${bump.value}\"")
