@@ -21,43 +21,28 @@ import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 
 /**
- * Open provided screen. If screen has any [ScreenKey.navigationConditions], they will be navigated to if they are not met.
+ * Remove the top of the backstack and replace it with the provided instructions
+ *
+ * @param direction Optional animation direction of the [StateChange]:
+ *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
+ *   Defaults to [StateChange.REPLACE].
  */
 @Parcelize
-data class OpenScreen(val screen: ScreenKey) : NavigationInstruction() {
+class ReplaceTop(val with: NavigationInstruction, private val direction: Int = StateChange.REPLACE) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
-      return if (backstack.isNotEmpty() && screen is SingleTopKey && backstack.last().javaClass == screen.javaClass) {
-         val newBackstack = backstack.dropLast(1) + screen
-         NavigationResult(newBackstack, StateChange.REPLACE)
-      } else {
-         if (backstack.lastOrNull() == screen) {
-            error(
-               "Cannot add $screen to the backstack twice back to back. If you want same screen on the" +
-                  " backstack twice, add a random identifier to the key, such as an UUID."
-            )
-         }
-         NavigationResult(backstack + screen, StateChange.FORWARD)
-      }
+      return with.performNavigation(backstack.dropLast(1), context).copy(direction = direction)
    }
 }
 
 /**
- * Either open this screen or navigate to condition resolving first, if this screen has any unmet conditions.
+ * Replace the top of the backstack with the provided screen
+ *
+ * @param direction Optional animation direction of the [StateChange]:
+ *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
+ *   Defaults to [StateChange.REPLACE].
  */
-fun OpenScreen.withConditions(): NavigationInstruction {
-   return if (screen.navigationConditions.isEmpty()) {
-      this
-   } else {
-      NavigateWithConditions(this, *screen.navigationConditions.toTypedArray())
-   }
-}
-
-/**
- * Open provided screen.  If screen has any [ScreenKey.navigationConditions], they will be navigated to if they are not met.
- */
-fun Navigator.navigateTo(screen: ScreenKey) {
-   navigate(OpenScreen(screen).withConditions())
+fun Navigator.replaceTopWith(screen: ScreenKey, direction: Int = StateChange.REPLACE) {
+   navigate(ReplaceTop(OpenScreen(screen).withConditions(), direction))
 }

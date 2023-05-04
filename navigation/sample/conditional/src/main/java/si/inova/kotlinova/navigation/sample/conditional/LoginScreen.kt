@@ -21,10 +21,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.instructions.GoBack
 import si.inova.kotlinova.navigation.instructions.MultiNavigationInstructions
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
+import si.inova.kotlinova.navigation.instructions.ReplaceTop
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
@@ -40,8 +42,8 @@ class LoginScreen(
 
          Button(onClick = {
             loginRepository.setUserLoggedIn(true)
-            // Close login screen and then navigate to the target screen
-            navigator.navigate(MultiNavigationInstructions(GoBack, key.postLoginNavigation))
+            // Close login screen and then navigate to the target screen, with FORWARD animation
+            navigator.navigate(ReplaceTop(key.postLoginNavigation, direction = StateChange.FORWARD))
          }) {
             Text("Login")
          }
