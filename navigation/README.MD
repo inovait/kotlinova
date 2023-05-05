@@ -286,23 +286,23 @@ class TabScreen(
 Note that injected screens share same scope, so scoped services of sub-screens will have
 the same lifecycle as the parent screen.
 
-You can also use `@ContributesScreenBinding` to reference an abstract screen that can then be implemented in some other module.
+You can also use `@ContributesScreenBinding` to reference a generic `Screen` that can then be implemented in some other module.
 For example:
 
 ```kotlin
-abstract class FirstTabScreen : Screen<ScreenKey>
+data class FirstTabKey(...) : ScreenKey
 
 class TabScreen(
-   private val firstTabSubscreen: FirstTabScreen,
+   private val firstTabSubscreen: Screen<FirstTabKey>,
    ...
 ) : Screen<TabScreenKey>() {
    ...
 }
 
 @ContributesScreenBinding
-class FirstTabScreenImpl : FirstTabScreen {
+class FirstTabScreenImpl : Screen<FirstTabKey>() {
    @Composable
-   override fun Content(key: ScreenKey) {
+   override fun Content(key: FirstTabKey) {
       ...
    }
 }

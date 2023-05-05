@@ -37,15 +37,22 @@ class AbstractScreens {
    val rule = createComposeRule()
 
    @Test
-   internal fun showScreenAbstractScreenWithSeparateImplementation() {
+   internal fun showScreenContainingAbstractScreenWithSeparateImplementation() {
       rule.insertTestNavigation(OuterScreenReferencingAbstractScreenKey)
 
       rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
    }
 
    @Test
-   internal fun showScreenAbstractScreenWithSeparateImplementationThatRequiresAService() {
+   internal fun showScreenContainingAbstractScreenWithSeparateImplementationThatRequiresAService() {
       rule.insertTestNavigation(OuterScreenReferencingAbstractScreenWithServiceKey)
+
+      rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
+   }
+
+   @Test
+   internal fun showScreenContainingGenericScreenReferenceWithCustomKey() {
+      rule.insertTestNavigation(OuterScreenReferencingGenericScreenKey)
 
       rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
    }
@@ -99,6 +106,36 @@ class AbstractScreens {
    ) : TestAbstractScreenWithService() {
       @Composable
       override fun Content(key: ScreenKey) {
+         Column {
+            Text("Hello from Inner Screen")
+         }
+      }
+   }
+
+   @Parcelize
+   object OuterScreenReferencingGenericScreenKey : NoArgsScreenKey()
+
+   class OuterScreenReferencingGenericScreen(
+      private val innerScreen: Screen<InnerScreenKey>
+   ) : Screen<OuterScreenReferencingGenericScreenKey>() {
+      @Composable
+      override fun Content(key: OuterScreenReferencingGenericScreenKey) {
+         Column {
+            innerScreen.Content(InnerScreenKey)
+         }
+      }
+   }
+
+   @Parcelize
+   object InnerScreenKey : NoArgsScreenKey()
+
+   @Suppress("unused")
+   @ContributesScreenBinding
+   class TestAbstractScreenReferencingCustomKey @Inject constructor(
+      private val service: ServiceScopes.SharedService
+   ) : Screen<InnerScreenKey>() {
+      @Composable
+      override fun Content(key: InnerScreenKey) {
          Column {
             Text("Hello from Inner Screen")
          }

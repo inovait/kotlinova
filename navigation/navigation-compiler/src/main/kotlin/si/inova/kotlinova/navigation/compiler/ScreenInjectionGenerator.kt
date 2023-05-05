@@ -345,6 +345,10 @@ class ScreenInjectionGenerator : CodeGenerator {
    }
 
    private fun ClassReference.getScreenKeyIfItExists(initialPassedKeyType: ClassReference? = null): ClassReference? {
+      if (this.asClassName() == SCREEN_BASE_CLASS) {
+         return this.typeParameters.first().declaringClass
+      }
+
       for (superReference in directSuperTypeReferences()) {
          val passedKeyType = initialPassedKeyType ?: superReference.unwrappedTypes
             .mapNotNull { it.asClassReferenceOrNull() }
