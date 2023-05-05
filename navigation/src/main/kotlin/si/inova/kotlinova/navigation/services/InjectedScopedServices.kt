@@ -34,7 +34,7 @@ class InjectedScopedServices : ScopedServices {
          scopedServicesFactories = injection.scopedServicesFactories()
       }
 
-      val serviceKeys = screenRegistry.getRegistration(serviceBinder.getKey()).serviceClasses
+      val serviceKeys = screenRegistry.getRequiredScopedServices(serviceBinder.getKey())
 
       for (key in serviceKeys) {
          val service = scopedServicesFactories.getValue(key).get()

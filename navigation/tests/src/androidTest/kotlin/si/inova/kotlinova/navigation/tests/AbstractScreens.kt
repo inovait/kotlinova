@@ -43,6 +43,13 @@ class AbstractScreens {
       rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
    }
 
+   @Test
+   internal fun showScreenAbstractScreenWithSeparateImplementationThatRequiresAService() {
+      rule.insertTestNavigation(OuterScreenReferencingAbstractScreenWithServiceKey)
+
+      rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
+   }
+
    @Parcelize
    object OuterScreenReferencingAbstractScreenKey : NoArgsScreenKey()
 
@@ -61,6 +68,35 @@ class AbstractScreens {
 
    @ContributesScreenBinding
    class TestAbstractScreenImpl @Inject constructor() : TestAbstractScreen() {
+      @Composable
+      override fun Content(key: ScreenKey) {
+         Column {
+            Text("Hello from Inner Screen")
+         }
+      }
+   }
+
+   @Parcelize
+   object OuterScreenReferencingAbstractScreenWithServiceKey : NoArgsScreenKey()
+
+   class OuterScreenReferencingAbstractScreenWithService(
+      private val innerScreen: TestAbstractScreenWithService
+   ) : Screen<OuterScreenReferencingAbstractScreenWithServiceKey>() {
+      @Composable
+      override fun Content(key: OuterScreenReferencingAbstractScreenWithServiceKey) {
+         Column {
+            innerScreen.Content(key)
+         }
+      }
+   }
+
+   abstract class TestAbstractScreenWithService : Screen<ScreenKey>()
+
+   @ContributesScreenBinding
+   @Suppress("unused")
+   class TestAbstractScreenWithServiceImpl @Inject constructor(
+      private val service: ServiceScopes.SharedService
+   ) : TestAbstractScreenWithService() {
       @Composable
       override fun Content(key: ScreenKey) {
          Column {
