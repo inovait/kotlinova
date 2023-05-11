@@ -1,3 +1,25 @@
+# 3.0.0-alpha11
+
+### BREAKING Bug Fixes
+
+* **core**: remove PureApplicationScope ([4831f8e1](https://github.com/inovait/kotlinova/commit/4831f8e1d88c4aea6f390b215d82db48280d12b4))
+
+### Features
+
+* **navigation-test**: add test util for SaveableScopedService ([a1518af9](https://github.com/inovait/kotlinova/commit/a1518af9f64aa816f09d685d2209bef915b9d4b5))
+* **navigation**: SaveableScopedService saved now requires non-null types ([435ba5d7](https://github.com/inovait/kotlinova/commit/435ba5d72eb6cfe9451e95f6b74c7c97345a4549))
+* **navigation**: add scoped service inheritance ([fdd610de](https://github.com/inovait/kotlinova/commit/fdd610defed17f03d8b68018cffb0405741725fa))
+* **navigation**: add @ContributesScreenBinding ([260a92f2](https://github.com/inovait/kotlinova/commit/260a92f2beac89493f4b98fa87e5f74124d30b6a))
+* **navigation-test**: add FakeNavigator ([16f82a89](https://github.com/inovait/kotlinova/commit/16f82a8944c224ff121ab856e028df13bab1c1aa))
+* **navigation**: add ReplaceTop instruction ([84d68681](https://github.com/inovait/kotlinova/commit/84d686813bb090614f0675ca5c5791e6ccad1be4))
+* **navigation**: allow referencing generic Screen when performing screen composition ([23fb0a9c](https://github.com/inovait/kotlinova/commit/23fb0a9c886758060ed2b93cece9405f22a39e35))
+
+### Bug Fixes
+
+* **gradle**: improve error messages for missing toml entries ([1b61882a](https://github.com/inovait/kotlinova/commit/1b61882a6b2d4c6453894d5cc937a061a4217511))
+* **navigation**: equals and hashcode implementation for MultiNavigationInstructions ([6199c5ff](https://github.com/inovait/kotlinova/commit/6199c5ff2e967b987e7cee65dfe24b2a68526a7d))
+* **navigation**: scoped services not being initialized for abstract screens ([89f6f361](https://github.com/inovait/kotlinova/commit/89f6f3610287cee635e876c0eb8e0f9d37ecd137))
+
 # 3.0.0-alpha10
 
 ### Features
