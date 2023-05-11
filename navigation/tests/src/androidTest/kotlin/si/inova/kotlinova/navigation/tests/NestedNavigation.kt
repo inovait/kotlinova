@@ -16,10 +16,13 @@
 
 package si.inova.kotlinova.navigation.tests
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -33,8 +36,10 @@ import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.NestedBackstackScreen
 import si.inova.kotlinova.navigation.screens.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.Inherited
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
 class NestedNavigation {
@@ -66,6 +71,44 @@ class NestedNavigation {
       rule.onNodeWithText("Hello").assertIsDisplayed()
    }
 
+   @Test
+   internal fun shareScopedServicesBetweenParentAndNestedScreen() {
+      rule.insertTestNavigation(ParentScreenWithSharedServiceKey())
+
+      rule.onNodeWithText("333").assertIsDisplayed()
+   }
+
+   @Test
+   internal fun onlyInheritServicesFromTheParentScreen() {
+      val backstack = rule.insertTestNavigation(ParentScreenWithSharedServiceKey())
+
+      rule.runOnUiThread {
+         backstack.goTo(ParentScreenWithSharedServiceKey(666))
+      }
+
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.goBack()
+      }
+
+      rule.waitForIdle()
+      Thread.sleep(1000)
+
+      rule.onNodeWithText("333").assertIsDisplayed()
+   }
+
+   @Test
+   internal fun preserveInheritanceAfterProcessKill() {
+      val stateRestorationTester = StateRestorationTester(rule)
+      stateRestorationTester.insertTestNavigation(rule, ParentScreenWithSharedServiceKey())
+
+      rule.waitForIdle()
+      stateRestorationTester.emulateSavedInstanceStateRestore()
+
+      rule.onNodeWithText("333").assertIsDisplayed()
+   }
+
    @Parcelize
    object NestedScreenGoingBackKey : NoArgsScreenKey() {
       override val navigationConditions: List<NavigationCondition>
@@ -81,6 +124,35 @@ class NestedNavigation {
          Button(onClick = { mainNavigator.goBack() }) {
             Text("Go back")
          }
+      }
+   }
+
+   @Parcelize
+   data class ParentScreenWithSharedServiceKey(val number: Int = 333) : NoArgsScreenKey()
+
+   class ParentScreenWithSharedService(
+      private val service: ServiceScopes.SharedService,
+      private val nestedScreen: NestedBackstackScreen
+   ) : Screen<ParentScreenWithSharedServiceKey>() {
+      @SuppressLint("StateFlowValueCalledInComposition")
+      @Composable
+      override fun Content(key: ParentScreenWithSharedServiceKey) {
+         service.number.value = key.number
+
+         nestedScreen.Content(NestedNavigationScreenKey(listOf(ChildScreenWithSharedServiceKey)))
+      }
+   }
+
+   @Parcelize
+   object ChildScreenWithSharedServiceKey : NoArgsScreenKey()
+
+   class ChildScreenWithSharedService(
+      @Inherited
+      private val service: ServiceScopes.SharedService
+   ) : Screen<ChildScreenWithSharedServiceKey>() {
+      @Composable
+      override fun Content(key: ChildScreenWithSharedServiceKey) {
+         Text(service.number.collectAsState().value.toString())
       }
    }
 }

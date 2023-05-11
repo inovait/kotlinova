@@ -49,9 +49,11 @@ fun NavigationInjection.Factory.rememberBackstack(
    id: String = "SINGLE",
    interceptBackButton: Boolean = true,
    overrideMainBackstack: Backstack? = null,
+   parentBackstack: Backstack? = null,
+   parentBackstackScope: String? = null,
    initialHistory: () -> List<ScreenKey>
 ): Backstack {
-   return com.zhuinden.simplestack.navigator.rememberBackstack(stateChanger, id, interceptBackButton, init = {
+   return rememberBackstack(stateChanger, id, interceptBackButton, init = {
       val scopedServices = InjectedScopedServices()
 
       lateinit var navigationInjection: NavigationInjection
@@ -62,6 +64,11 @@ fun NavigationInjection.Factory.rememberBackstack(
          globalServicesFactory = {
             GlobalServices.builder()
                .addService(NavigationInjection::class.java.name, navigationInjection)
+               .apply {
+                  if (parentBackstack != null && parentBackstackScope != null) {
+                     registerParentBackstack(parentBackstack, parentBackstackScope)
+                  }
+               }
                .build()
          }
       )

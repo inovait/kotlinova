@@ -24,8 +24,10 @@ import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.MainNavigation
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.services.CurrentScopeTag
 import si.inova.kotlinova.navigation.simplestack.BackstackProvider
 import si.inova.kotlinova.navigation.simplestack.ComposeStateChanger
+import si.inova.kotlinova.navigation.simplestack.LocalBackstack
 import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 
 /**
@@ -34,19 +36,25 @@ import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 class NestedBackstackScreen(
    private val navigationStackComponentFactory: NavigationInjection.Factory,
    @MainNavigation
-   private val mainBackstack: Backstack
+   private val mainBackstack: Backstack,
+   @CurrentScopeTag
+   val scope: String
 ) : Screen<NestedNavigationScreenKey>() {
    @Composable
    override fun Content(key: NestedNavigationScreenKey) {
       val composeStateChanger = remember { ComposeStateChanger() }
       val asyncStateChanger = remember(composeStateChanger) { AsyncStateChanger(composeStateChanger) }
 
+      val parentBackstack = LocalBackstack.current
+
       val backstack = navigationStackComponentFactory.rememberBackstack(
          asyncStateChanger,
          id = key.id,
          initialHistory = { key.initialHistory },
          interceptBackButton = key.interceptBackButton,
-         overrideMainBackstack = mainBackstack
+         overrideMainBackstack = mainBackstack,
+         parentBackstack = parentBackstack,
+         parentBackstackScope = scope
       )
 
       BackstackProvider(backstack) {

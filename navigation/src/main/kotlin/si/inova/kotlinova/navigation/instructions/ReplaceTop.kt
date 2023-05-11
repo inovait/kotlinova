@@ -19,51 +19,30 @@ package si.inova.kotlinova.navigation.instructions
 import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.NavigationContext
+import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 /**
- * Execute multiple navigation instructions sequentially
- * @param overrideDirection The direction of the [StateChange]:
+ * Remove the top of the backstack and replace it with the provided instructions
+ *
+ * @param direction Optional animation direction of the [StateChange]:
  *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
- *   When not provided, direction of the last performed
- *   instruction is used instead.
+ *   Defaults to [StateChange.REPLACE].
  */
 @Parcelize
-class MultiNavigationInstructions(
-   vararg val instructions: NavigationInstruction,
-   val overrideDirection: Int? = null
-) : NavigationInstruction() {
+class ReplaceTop(val with: NavigationInstruction, private val direction: Int = StateChange.REPLACE) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
-      var lastDirection = StateChange.REPLACE
-      var currentBackstack = backstack
-
-      for (instruction in instructions) {
-         val res = instruction.performNavigation(currentBackstack, context)
-         lastDirection = res.direction
-         currentBackstack = res.newBackstack
-      }
-
-      return NavigationResult(currentBackstack, overrideDirection ?: lastDirection)
+      return with.performNavigation(backstack.dropLast(1), context).copy(direction = direction)
    }
+}
 
-   override fun toString(): String {
-      return "MultiNavigationInstructions(instructions=${instructions.contentToString()}, " +
-         "overrideDirection=${overrideDirection ?: "null"})"
-   }
-
-   override fun equals(other: Any?): Boolean {
-      if (this === other) return true
-      if (other !is MultiNavigationInstructions) return false
-
-      if (!instructions.contentEquals(other.instructions)) return false
-      if (overrideDirection != other.overrideDirection) return false
-
-      return true
-   }
-
-   override fun hashCode(): Int {
-      var result = instructions.contentHashCode()
-      result = 31 * result + (overrideDirection ?: 0)
-      return result
-   }
+/**
+ * Replace the top of the backstack with the provided screen
+ *
+ * @param direction Optional animation direction of the [StateChange]:
+ *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
+ *   Defaults to [StateChange.REPLACE].
+ */
+fun Navigator.replaceTopWith(screen: ScreenKey, direction: Int = StateChange.REPLACE) {
+   navigate(ReplaceTop(OpenScreen(screen).withConditions(), direction))
 }

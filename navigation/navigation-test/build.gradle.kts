@@ -21,37 +21,15 @@ plugins {
 }
 
 publishLibrary(
-   userFriendlyName = "Compose Android Test",
-   description = "Set of utilities for instrumented tests with Jetpack Compose",
-   githubPath = "compose-android-test"
+   userFriendlyName = "Navigation Test",
+   description = "Set of utilities for unit tests with Kotlinova Navigation",
+   githubPath = "navigation"
 )
 
 android {
-   namespace = "si.inova.kotlinova.compose.androidtest"
-
-   buildFeatures {
-      compose = true
-   }
-   composeOptions {
-      kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-   }
+   namespace = "si.inova.kotlinova.navigation.test"
 }
 
 dependencies {
-   api(projects.kotlinova.compose)
-   api(projects.kotlinova.retrofit.retrofitTest)
-   api(libs.dispatch.espresso)
-
-   implementation(projects.kotlinova.core)
-   implementation(projects.kotlinova.core.test)
-   implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.ui.util)
-   implementation(libs.androidx.compose.ui.test.junit4)
-   implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.compose)
-   implementation(libs.coil)
-
-   debugImplementation(libs.androidx.compose.ui.tooling)
+   api(projects.kotlinova.navigation)
 }

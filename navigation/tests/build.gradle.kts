@@ -48,6 +48,10 @@ android {
    }
 }
 
+kotlin {
+   jvmToolchain(11)
+}
+
 dependencies {
    androidTestImplementation(projects.kotlinova.navigation)
    androidTestImplementation(projects.kotlinova.navigation.navigationFragment)

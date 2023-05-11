@@ -6,6 +6,7 @@ Direct gradle usage:
 implementation("si.inova.kotlinova:navigation:X.Y.Z")
 anvil("si.inova.kotlinova:navigation-compiler:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
+testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
 ```
 
 Version catalogs usage:
@@ -20,12 +21,14 @@ kotlinova = "X.Y.Z"
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
+kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", version.ref = "kotlinova" }
 ```
 
 ```kotlin
 implementation(libs.kotlinova.navigation)
 anvil(libs.kotlinova.navigation.compiler)
 implementation(libs.kotlinova.navigation.fragment)
+test(libs.kotlinova.navigation.test)
 ```
 
 Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
@@ -283,6 +286,28 @@ class TabScreen(
 Note that injected screens share same scope, so scoped services of sub-screens will have
 the same lifecycle as the parent screen.
 
+You can also use `@ContributesScreenBinding` to reference a generic `Screen` that can then be implemented in some other module.
+For example:
+
+```kotlin
+data class FirstTabKey(...) : ScreenKey
+
+class TabScreen(
+   private val firstTabSubscreen: Screen<FirstTabKey>,
+   ...
+) : Screen<TabScreenKey>() {
+   ...
+}
+
+@ContributesScreenBinding
+class FirstTabScreenImpl : Screen<FirstTabKey>() {
+   @Composable
+   override fun Content(key: FirstTabKey) {
+      ...
+   }
+}
+```
+
 ## Advanced Navigation
 
 You might have noticed that `Navigator.navigateTo` is an extension method and the only method on the actual
@@ -339,7 +364,8 @@ inject `@MainNavigation private val mainNavigator: Navigator` which will navigat
 See [NestedScreen in sample](sample/nested/src/main/java/si/inova/kotlinova/navigation/sample/nested/NestedScreen.kt)
 for example.
 
-Note that main and nested screen do not share scoped services - nested screens have their own scope.
+Nested screens can also use parent's scoped services by putting the service into the constructor (like usual), and annotating it
+with `@Inherited`.
 
 ## Conditional navigation
 

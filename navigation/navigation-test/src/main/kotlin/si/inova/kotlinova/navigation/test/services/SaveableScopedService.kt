@@ -14,20 +14,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.compose.androidtest.idlingresource
+package si.inova.kotlinova.navigation.test.services
 
-import androidx.compose.ui.test.IdlingResource
+import si.inova.kotlinova.navigation.services.SaveableScopedService
 
 /**
- * Convert espresso idling resource to compose idling resource.
+ * Copy saved state from another saveable service to this service. This can be used to test service resilience over
+ * process death (create another service, copy state from the old service and check that the new state matches)
  */
-fun androidx.test.espresso.IdlingResource.asComposeIdlingResource(busyMessage: (() -> String)? = null): IdlingResource {
-   return object : IdlingResource {
-      override val isIdleNow: Boolean
-         get() = this@asComposeIdlingResource.isIdleNow
-
-      override fun getDiagnosticMessageIfBusy(): String {
-         return busyMessage?.invoke() ?: "${this@asComposeIdlingResource.name} is busy"
-      }
-   }
+fun <T : SaveableScopedService> T.copyStateFrom(another: T) {
+   fromBundle(another.toBundle())
 }

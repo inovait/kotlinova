@@ -14,11 +14,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.core.di
+package si.inova.kotlinova.navigation.services
+
+import si.inova.kotlinova.navigation.screens.Screen
 
 /**
- * Anvil scope marker class for bindings that should exist for the life of an application.
- *
- * This is an alternative to the Whetstone's *ApplicationScope* for non-android modules.
+ * Qualifier-like annotation for [Screen]'s constructor parameter. When [String] parameter is annotated with this annotation,
+ * it will be injected with the tag of the current simple stack scope.
  */
-class PureApplicationScope private constructor()
+annotation class CurrentScopeTag

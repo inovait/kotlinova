@@ -45,14 +45,19 @@ data class OpenScreen(val screen: ScreenKey) : NavigationInstruction() {
 }
 
 /**
+ * Either open this screen or navigate to condition resolving first, if this screen has any unmet conditions.
+ */
+fun OpenScreen.withConditions(): NavigationInstruction {
+   return if (screen.navigationConditions.isEmpty()) {
+      this
+   } else {
+      NavigateWithConditions(this, *screen.navigationConditions.toTypedArray())
+   }
+}
+
+/**
  * Open provided screen.  If screen has any [ScreenKey.navigationConditions], they will be navigated to if they are not met.
  */
 fun Navigator.navigateTo(screen: ScreenKey) {
-   val instruction = if (screen.navigationConditions.isEmpty()) {
-      OpenScreen(screen)
-   } else {
-      NavigateWithConditions(OpenScreen(screen), *screen.navigationConditions.toTypedArray())
-   }
-
-   navigate(instruction)
+   navigate(OpenScreen(screen).withConditions())
 }

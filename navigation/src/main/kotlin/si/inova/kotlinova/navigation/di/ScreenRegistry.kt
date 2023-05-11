@@ -21,7 +21,6 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.ScopedService
 import javax.inject.Inject
-import javax.inject.Provider
 
 /**
  * Registry of all screen currently known by the navigation.
@@ -29,16 +28,16 @@ import javax.inject.Provider
 class ScreenRegistry @Inject constructor(
    private val backstack: Backstack,
    private val staticRegistrations: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenRegistration<*>>,
-   private val screenFactories: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards Provider<ScreenFactory<*>>>,
+   private val screenFactories: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenFactory<*>>,
 ) {
    @Suppress("UNCHECKED_CAST")
    fun <T : ScreenKey> createScreen(key: T): Screen<T> {
       val registration = getRegistration(key)
 
-      val factory = screenFactories[registration.screenClass]
-         ?: error("Missing screen factory for the ${registration.screenClass.name}")
+      val factory = screenFactories[registration.mainScreenClass]
+         ?: error("Missing screen factory for the ${registration.mainScreenClass.name}")
 
-      return factory.get().create(key.scopeTag, backstack) as Screen<T>
+      return factory.create(key.scopeTag, backstack) as Screen<T>
    }
 
    @Suppress("UNCHECKED_CAST")
@@ -51,13 +50,28 @@ class ScreenRegistry @Inject constructor(
 
       return reg as ScreenRegistration<T>
    }
+
+   fun getRequiredScopedServices(key: ScreenKey): List<Class<out ScopedService>> {
+      val registration = getRegistration(key)
+
+      val factory = screenFactories[registration.mainScreenClass]
+         ?: error("Missing screen factory for the $key")
+
+      return factory.getAllRequiredScopedServices()
+   }
 }
 
-class ScreenRegistration<T : ScreenKey>(
-   val screenClass: Class<out Screen<T>>,
-   vararg val serviceClasses: Class<out ScopedService>
-)
+class ScreenRegistration<T : ScreenKey>(val mainScreenClass: Class<out Screen<T>>)
+class ScreenFactory<T : Screen<*>>(
+   val requiredScopedServices: List<Class<out ScopedService>>,
+   val composedScreenFactories: List<ScreenFactory<*>>,
+   private val factory: (String, Backstack) -> T
+) {
+   fun create(scope: String, backstack: Backstack): T {
+      return factory(scope, backstack)
+   }
+}
 
-fun interface ScreenFactory<T : Screen<*>> {
-   fun create(scope: String, backstack: Backstack): T
+private fun ScreenFactory<*>.getAllRequiredScopedServices(): List<Class<out ScopedService>> {
+   return requiredScopedServices + composedScreenFactories.flatMap { it.getAllRequiredScopedServices() }
 }

@@ -32,6 +32,9 @@ plugins {
 group = "si.inova.kotlinova"
 version = File(rootDir, "../version.txt").readText().trim()
 
+kotlin {
+   jvmToolchain(11)
+}
 
 publishing {
    val userFriendlyName = "Kotlinova Gradle"

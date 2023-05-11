@@ -48,6 +48,16 @@ android {
          withSourcesJar()
       }
    }
+
+   testOptions {
+      unitTests.all {
+         it.useJUnitPlatform()
+      }
+   }
+}
+
+kotlin {
+   jvmToolchain(11)
 }
 
 publishing {
