@@ -24,6 +24,7 @@ import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.test.runTest
 import okhttp3.Cache
 import okhttp3.mockwebserver.SocketPolicy
+import okio.Buffer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -47,6 +48,24 @@ class SuspendCallAdapterFactoryTest {
       cacheDirectory: File
    ) {
       tempCache = Cache(cacheDirectory, 100_000)
+   }
+
+   @Test
+   internal fun `Provide response normally`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(
+            this@runTest,
+            cache = tempCache,
+         )
+
+         mockResponse("/data") {
+            setJsonBody("\"FIRST\"")
+         }
+
+         service.getEnumResult() shouldBe FakeEnumResult.FIRST
+
+         server.requestCount shouldBe 1
+      }
    }
 
    @Test
@@ -221,12 +240,34 @@ class SuspendCallAdapterFactoryTest {
       }
    }
 
+   @Test
+   internal fun `Allow blank response response`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/dataBlank") {
+            setResponseCode(204)
+            setBody(Buffer())
+         }
+
+         service.getUnitResult()
+
+         server.requestCount shouldBe 1
+      }
+   }
+
    private interface TestRetrofitService {
       @GET("/data")
       suspend fun getEnumResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
          force: Boolean = false
       ): FakeEnumResult
+
+      @GET("/dataBlank")
+      suspend fun getUnitResult(
+         @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
+         force: Boolean = false
+      )
    }
 
    private enum class FakeEnumResult {
