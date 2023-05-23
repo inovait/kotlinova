@@ -46,7 +46,7 @@ object LoadingCountingIdlingResource : IdlingResource {
       }
 
    override fun getDiagnosticMessageIfBusy(): String {
-      return "Resources ${flows.filter { it.value !is Outcome.Progress<*> }.toList()} are busy"
+      return "Resources ${flows.filter { it.value is Outcome.Progress<*> }.map { it.value }.toList()} are busy"
    }
 }
 
