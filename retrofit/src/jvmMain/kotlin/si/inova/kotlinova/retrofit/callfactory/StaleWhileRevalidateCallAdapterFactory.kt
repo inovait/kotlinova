@@ -155,7 +155,7 @@ class StaleWhileRevalidateCallAdapterFactory(
 
             parseResultFromCacheResponse(parsedResponse, networkRequest, originalCall)
          } catch (e: Exception) {
-            handleCacheError(networkRequest, e.transformRetrofitException(originalCall.request().url), originalCall)
+            handleCacheError(networkRequest, e.transformRetrofitException(originalCall.request().url.toString()), originalCall)
             networkRequest to null
          }
       }
@@ -175,7 +175,7 @@ class StaleWhileRevalidateCallAdapterFactory(
 
             send(result)
          } catch (e: Exception) {
-            send(Outcome.Error(e.transformRetrofitException(networkRequest.url), dataFromCache))
+            send(Outcome.Error(e.transformRetrofitException(networkRequest.url.toString()), dataFromCache))
          }
       }
 

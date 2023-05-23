@@ -75,7 +75,7 @@ class ErrorHandlingAdapterFactory(
          coroutineScope.launch {
             proxy.enqueue(object : Callback<T> {
                override fun onFailure(call: Call<T>, t: Throwable) {
-                  callback.onFailure(call, t.transformRetrofitException(request().url))
+                  callback.onFailure(call, t.transformRetrofitException(request().url.toString()))
                }
 
                override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -83,7 +83,7 @@ class ErrorHandlingAdapterFactory(
                      val result = response.bodyOrThrow(errorHandler)
                      callback.onResponse(call, Response.success(result))
                   } catch (e: Exception) {
-                     callback.onFailure(call, e.transformRetrofitException(request().url))
+                     callback.onFailure(call, e.transformRetrofitException(request().url.toString()))
                   }
                }
             })

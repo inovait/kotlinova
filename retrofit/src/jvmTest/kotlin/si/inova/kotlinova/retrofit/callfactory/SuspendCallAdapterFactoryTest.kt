@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.retrofit.callfactory
 
+import com.squareup.moshi.JsonEncodingException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -253,6 +254,35 @@ class SuspendCallAdapterFactoryTest {
          service.getUnitResult()
 
          server.requestCount shouldBe 1
+      }
+   }
+
+   @Test
+   internal fun `Report proper error when error body parsing fails`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService =
+            createRetrofitService(
+               this@runTest,
+               errorHandler = { _, _ ->
+                  throw JsonEncodingException("Failed to parse error body")
+               }
+            )
+
+         mockResponse("/data") {
+            setStatus("HTTP/1.1 404 NOT FOUND")
+            setJsonBody("\"TEST ERROR MESSAGE\"")
+         }
+
+         val exception = shouldThrow<DataParsingException> {
+            service.getEnumResult()
+         }
+
+         exception.shouldNotBeNull().message.apply {
+            shouldContain(" http://localhost")
+            shouldContain("/data")
+            shouldContain("404")
+            shouldContain("NOT FOUND")
+         }
       }
    }
 
