@@ -21,6 +21,9 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.intellij.lang.annotations.Language
+import si.inova.kotlinova.core.logging.LogPriority
+import si.inova.kotlinova.core.logging.logcat
+import java.net.HttpURLConnection
 
 /**
  * Create and prepare [MockWebServer] for creating tests for web services.
@@ -45,9 +48,10 @@ inline fun mockWebServer(
 
 class MockWebServerScope(val server: MockWebServer, val baseUrl: String) : Dispatcher() {
    private val responses = HashMap<String, MockResponse>()
+   var defaultResponse: (RecordedRequest) -> MockResponse = ::defaultMissingResponseRequest
 
    override fun dispatch(request: RecordedRequest): MockResponse {
-      return responses[request.path] ?: error("Response to '${request.path ?: "null"}' not mocked")
+      return responses[request.path] ?: defaultResponse(request)
    }
 
    fun mockResponse(url: String, response: MockResponse) {
@@ -60,6 +64,26 @@ class MockWebServerScope(val server: MockWebServer, val baseUrl: String) : Dispa
 
       mockResponse(url, response)
    }
+
+   inline fun setDefaultResponse(crossinline responseBuilder: MockResponse.(RecordedRequest) -> Unit) {
+      defaultResponse = { request ->
+         val response = MockResponse()
+         responseBuilder(response, request)
+         response
+      }
+   }
+}
+
+private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
+   val url = request.path ?: "UNKNOWN URL"
+
+   logcat("MockWebServer", LogPriority.ERROR) { "Response to $url not mocked" }
+
+   return MockResponse().apply {
+      setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+      addHeader("Content-Type", "text/plain")
+      setBody("Response to $url not mocked")
+   }
 }
 
 fun MockResponse.setJsonBody(
@@ -71,8 +95,6 @@ fun MockResponse.setJsonBody(
 }
 
 fun MockResponse.setJsonBodyFromResource(fileName: String) {
-   addHeader("Content-Type", "application/json")
-
    val resource = MockWebServerScope::class.java.classLoader!!.getResourceAsStream(fileName)
       ?: error("Resource $fileName does not exist")
 
