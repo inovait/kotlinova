@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.retrofit.callfactory
 
+import com.squareup.moshi.JsonEncodingException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -24,6 +25,7 @@ import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.test.runTest
 import okhttp3.Cache
 import okhttp3.mockwebserver.SocketPolicy
+import okio.Buffer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -47,6 +49,24 @@ class SuspendCallAdapterFactoryTest {
       cacheDirectory: File
    ) {
       tempCache = Cache(cacheDirectory, 100_000)
+   }
+
+   @Test
+   internal fun `Provide response normally`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(
+            this@runTest,
+            cache = tempCache,
+         )
+
+         mockResponse("/data") {
+            setJsonBody("\"FIRST\"")
+         }
+
+         service.getEnumResult() shouldBe FakeEnumResult.FIRST
+
+         server.requestCount shouldBe 1
+      }
    }
 
    @Test
@@ -221,12 +241,63 @@ class SuspendCallAdapterFactoryTest {
       }
    }
 
+   @Test
+   internal fun `Allow blank response response`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/dataBlank") {
+            setResponseCode(204)
+            setBody(Buffer())
+         }
+
+         service.getUnitResult()
+
+         server.requestCount shouldBe 1
+      }
+   }
+
+   @Test
+   internal fun `Report proper error when error body parsing fails`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService =
+            createRetrofitService(
+               this@runTest,
+               errorHandler = { _, _ ->
+                  throw JsonEncodingException("Failed to parse error body")
+               }
+            )
+
+         mockResponse("/data") {
+            setStatus("HTTP/1.1 404 NOT FOUND")
+            setJsonBody("\"TEST ERROR MESSAGE\"")
+         }
+
+         val exception = shouldThrow<DataParsingException> {
+            service.getEnumResult()
+         }
+
+         exception.shouldNotBeNull().message.apply {
+            shouldContain(" http://localhost")
+            shouldContain("/data")
+            shouldContain("404")
+            shouldContain("NOT FOUND")
+         }
+      }
+   }
+
    private interface TestRetrofitService {
       @GET("/data")
       suspend fun getEnumResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
          force: Boolean = false
       ): FakeEnumResult
+
+      @GET("/dataBlank")
+      suspend fun getUnitResult(
+         @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
+         force: Boolean = false
+      )
    }
 
    private enum class FakeEnumResult {
