@@ -1,3 +1,16 @@
+# 3.0.0-alpha12
+
+### Features
+
+* **retrofit**: improve failed error parsing error message ([f1c7190d](https://github.com/inovait/kotlinova/commit/f1c7190d2a01a5dedf6e17fe5c2dc3d86de99f54))
+* **retrofit-test**: add default response to MockWebServerScope ([96afd0ce](https://github.com/inovait/kotlinova/commit/96afd0ce4965aab30554650987503c29e5ffd48b))
+
+### Bug Fixes
+
+* **compose-android-test**: improve LoadingCountingIdlingResource error message ([d3261eb4](https://github.com/inovait/kotlinova/commit/d3261eb40780da152eab586f84e65166e647e4f4))
+* **navigation-fragment**: fragments being created asynchronously after first composition ([968a8f25](https://github.com/inovait/kotlinova/commit/968a8f25deb9fa3569e863ed2eca579b17ce0b98))
+* **navigation-fragment**: multiple fragments in single scope not properly destroying ([4633c3f2](https://github.com/inovait/kotlinova/commit/4633c3f26c92dfa0affa1624590c554391102256))
+
 # 3.0.0-alpha11
 
 ### BREAKING Bug Fixes
