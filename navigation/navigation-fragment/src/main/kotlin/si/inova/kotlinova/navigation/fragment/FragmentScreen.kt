@@ -61,7 +61,7 @@ abstract class FragmentScreen<K>(
             fragmentManager
                .beginTransaction()
                .replace(fragmentViewId, currentFragment, key.tag)
-               .commit()
+               .commitNow()
          }
 
          scopeExitListener.fragmentPair = WeakReference(fragmentManager to currentFragment)
