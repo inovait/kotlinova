@@ -1,3 +1,9 @@
+# 3.0.0-alpha13
+
+### Bug Fixes
+
+* compatibility with coroutines 1.7.0 ([b5ce8aa4](https://github.com/inovait/kotlinova/commit/b5ce8aa4ad3bf56bfafba870cd543eb8c6ef32cc))
+
 # 3.0.0-alpha12
 
 ### Features
