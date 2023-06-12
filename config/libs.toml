@@ -21,7 +21,7 @@ dispatch = "1.0.0-beta10"
 okhttp = "4.10.0"
 orgJson = "20230227"
 kotlin = "1.8.0"
-kotlin-coroutines = "1.6.4"
+kotlin-coroutines = "1.7.0"
 # Do not update kotest until https://github.com/kotest/kotest/issues/3407 fix is released
 kotest = "5.5.4"
 nexusPublish = "0.30.0"
