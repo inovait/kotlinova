@@ -23,9 +23,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.SelectBuilder
+import kotlinx.coroutines.selects.onTimeout
 import kotlinx.coroutines.selects.select
 import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.Outcome
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Returns a flow that will pass all data from the original flow, except that it will ensure that [Outcome.Progress] is never
@@ -130,7 +132,7 @@ private class BlinkingPrevention<T>(
       selectBuilder: SelectBuilder<Unit>,
       flowCollector: FlowCollector<Outcome<T>>
    ) {
-      selectBuilder.onTimeout(keepLoadingActiveForAtLeastMs) {
+      selectBuilder.onTimeout(keepLoadingActiveForAtLeastMs.milliseconds) {
          val currentLastError = lastError
          if (currentLastError != null) {
             flowCollector.emit(Outcome.Error(currentLastError, lastData))
@@ -147,7 +149,7 @@ private class BlinkingPrevention<T>(
       selectBuilder: SelectBuilder<Unit>,
       flowCollector: FlowCollector<Outcome<T>>
    ) {
-      selectBuilder.onTimeout(waitThisLongToShowLoadingMs) {
+      selectBuilder.onTimeout(waitThisLongToShowLoadingMs.milliseconds) {
          flowCollector.emitCurrentProgress()
          waitingToSeeIfLoadingJustFlashes = false
          waitingForProlongedLoadingToFinish = true
