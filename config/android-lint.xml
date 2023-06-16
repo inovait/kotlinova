@@ -14,4 +14,7 @@
   ~   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -->
 
-<lint />
+<lint>
+    <!-- We will update target SDK on our own terms -->
+    <issue id="OldTargetApi" severity="ignore" />
+</lint>
