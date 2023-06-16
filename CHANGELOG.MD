@@ -1,3 +1,9 @@
+# 3.0.0-alpha14
+
+### Bug Fixes
+
+* constant download attempts for lifecycle-runtime-compose:2.5.1 ([b8d55eb0](https://github.com/inovait/kotlinova/commit/b8d55eb05ec62d95a5ccc557a968eeba8050bf91))
+
 # 3.0.0-alpha13
 
 ### Bug Fixes
