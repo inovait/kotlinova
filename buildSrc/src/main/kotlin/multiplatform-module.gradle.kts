@@ -48,7 +48,10 @@ kotlin {
          }
       }
       val commonMain by getting
-      val jvmMain by getting
+      val jvmCommon by creating
+      val jvmMain by getting {
+         dependsOn(jvmCommon)
+      }
       val jvmTest by getting {
          dependencies {
             implementation(libs.turbine)
@@ -59,7 +62,7 @@ kotlin {
          }
       }
       val androidMain by getting {
-         dependsOn(jvmMain)
+         dependsOn(jvmCommon)
       }
       val androidUnitTest by getting {
          dependsOn(jvmTest)

@@ -33,7 +33,7 @@ publishLibrary(
 
 kotlin {
    sourceSets {
-      jvmMain {
+      jvmCommon {
          dependencies {
             api(projects.retrofit)
             api(libs.okhttp.mockWebServer)

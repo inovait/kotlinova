@@ -40,7 +40,7 @@ kotlin {
             compileOnly(libs.androidx.compose.runtime)
          }
       }
-      jvmMain {
+      jvmCommon {
          dependencies {
             api(libs.okhttp)
             api(libs.moshi)
