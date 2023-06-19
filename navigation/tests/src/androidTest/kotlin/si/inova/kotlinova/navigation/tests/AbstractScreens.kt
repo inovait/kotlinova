@@ -57,6 +57,13 @@ class AbstractScreens {
       rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
    }
 
+   @Test
+   internal fun showScreenContainingGenericScreenReferenceWithCustomKeyAndExplicitBoundType() {
+      rule.insertTestNavigation(OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey)
+
+      rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
+   }
+
    @Parcelize
    object OuterScreenReferencingAbstractScreenKey : NoArgsScreenKey()
 
@@ -127,7 +134,18 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object InnerScreenKey : NoArgsScreenKey()
+   object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : NoArgsScreenKey()
+
+   class OuterScreenReferencingGenericScreenWithExplicitBoundType(
+      private val innerScreen: Screen<InnerScreenKeyWithExplicitBoundType>
+   ) : Screen<OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey>() {
+      @Composable
+      override fun Content(key: OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey) {
+         Column {
+            innerScreen.Content(InnerScreenKeyWithExplicitBoundType)
+         }
+      }
+   }
 
    @Suppress("unused")
    @ContributesScreenBinding
@@ -141,4 +159,23 @@ class AbstractScreens {
          }
       }
    }
+
+   @Parcelize
+   object InnerScreenKey : NoArgsScreenKey()
+
+   @Suppress("unused")
+   @ContributesScreenBinding(boundType = Screen::class)
+   class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType @Inject constructor(
+      private val service: ServiceScopes.SharedService
+   ) : Screen<InnerScreenKeyWithExplicitBoundType>() {
+      @Composable
+      override fun Content(key: InnerScreenKeyWithExplicitBoundType) {
+         Column {
+            Text("Hello from Inner Screen")
+         }
+      }
+   }
+
+   @Parcelize
+   object InnerScreenKeyWithExplicitBoundType : NoArgsScreenKey()
 }
