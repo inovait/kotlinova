@@ -29,14 +29,17 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  */
 @SuppressLint("ComposableNaming") // Backstack return is only there as a convenience, it's mostly meant to be used without return
 @Composable
-fun NavigationInjection.Factory.RootNavigationContainer(initialHistory: () -> List<ScreenKey>): Backstack {
+fun NavigationInjection.Factory.RootNavigationContainer(
+   screenWrapper: @Composable (key: ScreenKey, screen: @Composable () -> Unit) -> Unit = { _, screen -> screen() },
+   initialHistory: () -> List<ScreenKey>
+): Backstack {
    val composeStateChanger = remember { ComposeStateChanger() }
    val asyncStateChanger = remember(composeStateChanger) { AsyncStateChanger(composeStateChanger) }
 
    val backstack = this.rememberBackstack(asyncStateChanger) { initialHistory() }
 
    BackstackProvider(backstack) {
-      composeStateChanger.Content()
+      composeStateChanger.Content(screenWrapper)
    }
 
    return backstack
