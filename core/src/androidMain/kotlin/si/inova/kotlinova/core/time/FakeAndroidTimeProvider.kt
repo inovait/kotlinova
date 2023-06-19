@@ -38,6 +38,10 @@ class FakeAndroidTimeProvider(
       return currentMilliseconds()
    }
 
+   override fun currentMonotonicTimeMillis(): Long {
+      return currentMilliseconds()
+   }
+
    override fun elapsedRealtimeNanos(): Long {
       return currentMilliseconds()
    }

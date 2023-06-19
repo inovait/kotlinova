@@ -22,10 +22,15 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.time.Duration.Companion.nanoseconds
 
 object DefaultTimeProvider : TimeProvider {
    override fun currentTimeMillis(): Long {
       return System.currentTimeMillis()
+   }
+
+   override fun currentMonotonicTimeMillis(): Long {
+      return System.nanoTime().nanoseconds.inWholeMilliseconds
    }
 
    override fun currentLocalDate(): LocalDate {

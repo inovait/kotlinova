@@ -34,6 +34,18 @@ interface TimeProvider {
     */
    fun currentTimeMillis(): Long
 
+   /**
+    * The value returned represents milliseconds since some fixed but arbitrary origin time
+    * (perhaps in the future, so values may be negative).
+    *
+    * This is not related to any other notion of system or wall-clock time,
+    * meaning the value will not change if user changes system time settings. That's why
+    * it is recommended to use this to measure elapsed time instead of [currentTimeMillis].
+    *
+    * This value should not be stored persistently between reboots / process instances. It should be kept in-memory only.
+    */
+   fun currentMonotonicTimeMillis(): Long
+
    fun currentLocalDate(): LocalDate
 
    fun currentLocalDateTime(): LocalDateTime

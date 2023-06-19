@@ -29,6 +29,10 @@ object DefaultAndroidTimeProvider : AndroidTimeProvider {
       return System.currentTimeMillis()
    }
 
+   override fun currentMonotonicTimeMillis(): Long {
+      return SystemClock.elapsedRealtime()
+   }
+
    override fun currentLocalDate(): LocalDate {
       return LocalDate.now()
    }

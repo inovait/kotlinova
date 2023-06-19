@@ -39,6 +39,10 @@ class FakeTimeProvider(
       return currentMilliseconds()
    }
 
+   override fun currentMonotonicTimeMillis(): Long {
+      return currentMilliseconds()
+   }
+
    override fun currentLocalDate(): LocalDate {
       return currentLocalDate.invoke()
    }
