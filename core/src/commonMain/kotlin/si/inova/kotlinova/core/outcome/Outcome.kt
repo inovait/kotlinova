@@ -34,5 +34,6 @@ sealed class Outcome<out T> {
 
 enum class LoadingStyle {
    NORMAL,
-   ADDITIONAL_DATA
+   ADDITIONAL_DATA,
+   USER_REQUESTED_REFRESH
 }
