@@ -16,19 +16,29 @@
 
 package si.inova.kotlinova.core.outcome
 
+import si.inova.kotlinova.core.data.Immutable
+import si.inova.kotlinova.core.outcome.Outcome.Error
+import si.inova.kotlinova.core.outcome.Outcome.Progress
+import si.inova.kotlinova.core.outcome.Outcome.Success
+
 /**
  * Standard wrapper for an operation. It can be either [Progress], [Success] or [Error].
  */
+@Immutable
 sealed class Outcome<out T> {
    abstract val data: T?
 
+   @Immutable
    data class Progress<out T>(
       override val data: T? = null,
       val progress: Float? = null,
       val style: LoadingStyle = LoadingStyle.NORMAL
    ) : Outcome<T>()
 
+   @Immutable
    data class Success<out T>(override val data: T) : Outcome<T>()
+
+   @Immutable
    data class Error<out T>(val exception: CauseException, override val data: T? = null) : Outcome<T>()
 }
 
