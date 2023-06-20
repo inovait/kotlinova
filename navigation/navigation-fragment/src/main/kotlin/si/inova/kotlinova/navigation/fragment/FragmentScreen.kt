@@ -53,6 +53,13 @@ abstract class FragmentScreen<K>(
 
       DisposableEffect(key, fragmentViewId) {
          val fragmentManager = activity.supportFragmentManager
+         if (fragmentManager.isStateSaved) {
+            // Fragment manager's state has already been saved. If we do anything, we will crash
+            // Exit here, activity is likely being closed anyway, so Fragment will re-appear
+            // on next open
+            return@DisposableEffect onDispose { }
+         }
+
          var currentFragment = fragmentManager.findFragmentByTag(key.tag)
 
          if (currentFragment == null) {
