@@ -1,3 +1,21 @@
+# 3.0.0-alpha15
+
+### Features
+
+* **core**: add USER_REQUESTED_REFRESH LoadingStyle ([04545f81](https://github.com/inovait/kotlinova/commit/04545f81dead6b04ccda866497e7d6cad8006037))
+* **navigation**: add screenWrapper to RootNavigationContainer ([e6ed7378](https://github.com/inovait/kotlinova/commit/e6ed73785f44fc20fc4bbb5ecdf3492caa717055))
+* **navigation**: allow boundType = Screen::class in @ContributesScreenBinding ([32ed4ea9](https://github.com/inovait/kotlinova/commit/32ed4ea931029006a71af7f27198755d8ce0bb07))
+* **core**: add currentMonotonicTimeMillis to TimeProvider ([4f941d34](https://github.com/inovait/kotlinova/commit/4f941d34f6996d445de94b90215685686aac1dfb))
+* **core**: add multiplatform Immutable annotation ([934a03cc](https://github.com/inovait/kotlinova/commit/934a03cce57a8aac876555c5b436ee47438ae683))
+* **core**: mark Outcome as Immutable ([d4dc95d2](https://github.com/inovait/kotlinova/commit/d4dc95d2c7857a196629a71fa8dd2a54344b286f))
+* **navigation**: improve duplicate screen error message ([5eec5f4c](https://github.com/inovait/kotlinova/commit/5eec5f4ca898bbdca4177a9ae8c6d30499d10646))
+
+### Bug Fixes
+
+* **core-test**: improve outcome assertion error messages ([d9beeba8](https://github.com/inovait/kotlinova/commit/d9beeba8015eabeb5814073630676d5acb3fe34c))
+* **navigation-fragment**: onSaveInstanceState fragment crash ([4047e001](https://github.com/inovait/kotlinova/commit/4047e00162f9143cb8b2d121ac0e0de3d56a7f47))
+* **navigation**: disable navigation while animating ([bc14a545](https://github.com/inovait/kotlinova/commit/bc14a545c368e102bc9f630b959b72dcc5db63ec))
+
 # 3.0.0-alpha14
 
 ### Bug Fixes
