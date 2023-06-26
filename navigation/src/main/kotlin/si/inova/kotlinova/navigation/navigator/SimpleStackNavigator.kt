@@ -30,6 +30,10 @@ class SimpleStackNavigator @Inject constructor(
    private val navigationContext: Lazy<NavigationContext>
 ) : Navigator {
    override fun navigate(navigationInstruction: NavigationInstruction) {
+      if (backstack.isStateChangePending) {
+         return
+      }
+
       val res = navigationInstruction.performNavigation(backstack.getHistory(), navigationContext.get())
 
       backstack.setHistory(res.newBackstack, res.direction)
