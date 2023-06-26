@@ -22,27 +22,38 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.time.Duration.Companion.nanoseconds
 
-/**
- * Injectable interface that provides current time
- */
-interface TimeProvider {
-   /**
-    * @return difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
-    *
-    * @see System.currentTimeMillis
-    */
-   fun currentTimeMillis(): Long
+object DefaultTimeProvider : TimeProvider {
+   override fun currentTimeMillis(): Long {
+      return System.currentTimeMillis()
+   }
 
-   fun currentLocalDate(): LocalDate
+   override fun currentMonotonicTimeMillis(): Long {
+      return System.nanoTime().nanoseconds.inWholeMilliseconds
+   }
 
-   fun currentLocalDateTime(): LocalDateTime
+   override fun currentLocalDate(): LocalDate {
+      return LocalDate.now()
+   }
 
-   fun currentLocalTime(): LocalTime
+   override fun currentLocalDateTime(): LocalDateTime {
+      return LocalDateTime.now()
+   }
 
-   fun currentInstant(): Instant
+   override fun currentLocalTime(): LocalTime {
+      return LocalTime.now()
+   }
 
-   fun currentZonedDateTime(): ZonedDateTime
+   override fun currentInstant(): Instant {
+      return Instant.now()
+   }
 
-   fun systemDefaultZoneId(): ZoneId
+   override fun currentZonedDateTime(): ZonedDateTime {
+      return ZonedDateTime.now()
+   }
+
+   override fun systemDefaultZoneId(): ZoneId {
+      return ZoneId.systemDefault()
+   }
 }

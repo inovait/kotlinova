@@ -36,7 +36,7 @@ data class OpenScreen(val screen: ScreenKey) : NavigationInstruction() {
          if (backstack.lastOrNull() == screen) {
             error(
                "Cannot add $screen to the backstack twice back to back. If you want same screen on the" +
-                  " backstack twice, add a random identifier to the key, such as an UUID."
+                  " backstack twice, add a random identifier to the key, such as an UUID. Current backstack $backstack"
             )
          }
          NavigationResult(backstack + screen, StateChange.FORWARD)

@@ -40,6 +40,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeSpec
@@ -197,12 +198,20 @@ class ScreenInjectionGenerator : CodeGenerator {
       }
 
       val screenBindingFunction = if (contributeScreenBindingAnnotation != null) {
-         val boundType = contributeScreenBindingAnnotation
+         var boundType = contributeScreenBindingAnnotation
             .argumentAt("boundType", 1)
             ?.value<ClassReference>()
             ?.asTypeName()
             ?: clas.getFirstScreenParent()?.asTypeName()
             ?: error("Invalid @ContributesScreenBinding annotation: $clas does not extend Screen")
+
+         if (boundType is ParameterizedTypeName &&
+            boundType.rawType == SCREEN_BASE_CLASS &&
+            boundType.typeArguments.firstOrNull() !is ClassName
+         ) {
+            val screenKey = clas.getScreenKeyIfItExists() ?: error("Unknown screen key for $clas")
+            boundType = SCREEN_BASE_CLASS.parameterizedBy(screenKey.asTypeName())
+         }
 
          val returnType = SCREEN_FACTORY.parameterizedBy(boundType)
          FunSpec.builder("bindsScreenFactoryToParentType")

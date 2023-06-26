@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.core.time
 
-import android.os.SystemClock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -24,48 +23,38 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-object DefaultAndroidTimeProvider : AndroidTimeProvider {
-   override fun currentTimeMillis(): Long {
-      return System.currentTimeMillis()
-   }
+/**
+ * Injectable interface that provides current time
+ */
+interface TimeProvider {
+   /**
+    * @return difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
+    *
+    * @see System.currentTimeMillis
+    */
+   fun currentTimeMillis(): Long
 
-   override fun currentMonotonicTimeMillis(): Long {
-      return SystemClock.elapsedRealtime()
-   }
+   /**
+    * The value returned represents milliseconds since some fixed but arbitrary origin time
+    * (perhaps in the future, so values may be negative).
+    *
+    * This is not related to any other notion of system or wall-clock time,
+    * meaning the value will not change if user changes system time settings. That's why
+    * it is recommended to use this to measure elapsed time instead of [currentTimeMillis].
+    *
+    * This value should not be stored persistently between reboots / process instances. It should be kept in-memory only.
+    */
+   fun currentMonotonicTimeMillis(): Long
 
-   override fun currentLocalDate(): LocalDate {
-      return LocalDate.now()
-   }
+   fun currentLocalDate(): LocalDate
 
-   override fun currentLocalDateTime(): LocalDateTime {
-      return LocalDateTime.now()
-   }
+   fun currentLocalDateTime(): LocalDateTime
 
-   override fun currentLocalTime(): LocalTime {
-      return LocalTime.now()
-   }
+   fun currentLocalTime(): LocalTime
 
-   override fun currentInstant(): Instant {
-      return Instant.now()
-   }
+   fun currentInstant(): Instant
 
-   override fun currentZonedDateTime(): ZonedDateTime {
-      return ZonedDateTime.now()
-   }
+   fun currentZonedDateTime(): ZonedDateTime
 
-   override fun systemDefaultZoneId(): ZoneId {
-      return ZoneId.systemDefault()
-   }
-
-   override fun elapsedRealtime(): Long {
-      return SystemClock.elapsedRealtime()
-   }
-
-   override fun elapsedRealtimeNanos(): Long {
-      return SystemClock.elapsedRealtimeNanos()
-   }
-
-   override fun uptimeMillis(): Long {
-      return SystemClock.uptimeMillis()
-   }
+   fun systemDefaultZoneId(): ZoneId
 }

@@ -14,50 +14,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+package si.inova.kotlinova.core.data
 
-plugins {
-   multiplatformModule
-}
+import androidx.compose.runtime.StableMarker
 
-android {
-   namespace = "si.inova.kotlinova.retrofit"
-}
-
-publishLibrary(
-   userFriendlyName = "kotlinova-retrofit",
-   description = "A collection of utilities for retrofit requests",
-   githubPath = "retrofit"
-)
-
-kotlin {
-   sourceSets {
-      androidMain {
-         dependencies {
-            implementation(libs.dagger.runtime)
-            implementation(libs.androidx.core)
-
-            compileOnly(libs.androidx.compose.runtime)
-         }
-      }
-      jvmCommon {
-         dependencies {
-            api(libs.okhttp)
-            api(libs.moshi)
-            api(libs.retrofit)
-
-            implementation(projects.core)
-            implementation(libs.dispatch)
-            implementation(libs.retrofit.moshi)
-            implementation(libs.kotlin.coroutines)
-         }
-      }
-      jvmTest {
-         dependencies {
-            implementation(projects.core.test)
-            implementation(projects.retrofit.retrofitTest)
-            implementation(libs.turbine)
-         }
-      }
-   }
-}
+/**
+ * Multiplatform marker that marks this class as Immutable. On some platforms (such as Android's Jetpack Compose)
+ * this can be used for extra optimizations.
+ */
+@StableMarker
+actual annotation class Immutable()

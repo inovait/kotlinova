@@ -117,8 +117,10 @@ fun <T> Outcome<T>.downgradeTo(
       this is Outcome.Progress -> {
          if (targetType is Outcome.Progress) {
             val combinedProgress = targetType.progress?.let { progress?.times(it) }
-            val style = if (targetType.style == LoadingStyle.ADDITIONAL_DATA || this.style == LoadingStyle.ADDITIONAL_DATA) {
-               LoadingStyle.ADDITIONAL_DATA
+            val style = if (targetType.style != LoadingStyle.NORMAL) {
+               targetType.style
+            } else if (this.style != LoadingStyle.NORMAL) {
+               this.style
             } else {
                LoadingStyle.NORMAL
             }
