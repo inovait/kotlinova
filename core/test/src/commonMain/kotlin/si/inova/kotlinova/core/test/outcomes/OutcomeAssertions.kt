@@ -46,6 +46,7 @@ infix fun <T> Outcome<T>.shouldBeSuccessWithData(expectedData: T) {
       } else if (this is Outcome.Error) {
          reportContainingError()
       }
+      Unit
    }
 }
 
@@ -64,6 +65,7 @@ infix fun <T> Outcome<T>.shouldBeProgressWithData(expectedData: T?) {
       } else if (this is Outcome.Error) {
          reportContainingError()
       }
+      Unit
    }
 }
 
@@ -95,6 +97,7 @@ fun <T> Outcome<T>.shouldBeProgressWith(
       } else if (this is Outcome.Error) {
          reportContainingError()
       }
+      Unit
    }
 }
 
