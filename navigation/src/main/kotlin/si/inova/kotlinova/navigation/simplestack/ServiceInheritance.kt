@@ -36,7 +36,7 @@ fun <T> Backstack.lookupFromScopeWithParentFallback(scopeTag: String, serviceTag
    return if (parentBackstack == null || canFindFromScope(scopeTag, serviceTag)) {
       lookupFromScope<T>(scopeTag, serviceTag)
    } else {
-      parentBackstack.lookupFromScope(parentBackstackHolder.scopeTag, serviceTag)
+      parentBackstack.lookupFromScopeWithParentFallback(parentBackstackHolder.scopeTag, serviceTag)
    }
 }
 
