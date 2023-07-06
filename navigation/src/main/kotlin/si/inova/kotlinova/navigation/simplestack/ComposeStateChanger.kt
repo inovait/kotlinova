@@ -162,7 +162,7 @@ class ComposeStateChanger : AsyncStateChanger.NavigationHandler {
 
    private fun ScreenKey.contentKey(): Any {
       return if (this is SingleTopKey && isSingleTop) {
-         this.javaClass
+         this.javaClass.name
       } else {
          this
       }

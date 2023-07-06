@@ -127,6 +127,9 @@ class ComposeAndroidDateTimeFormatter(private val androidDateTimeFormatter: Andr
     * This method will only use patterns that are in CLDR, and is useful whenever you know what elements you want
     * in your format string but don't want to make your code specific to any one locale.
     *
+    * "TTT" inside skeleton will get formatted as either 12 hour time (hh:MM) or 24 hour time (HH:mm a),
+    * depending on the user's locale settings
+    *
     * @param skeleton a skeleton as described above
     * @return a formatter with the localized pattern based on the skeleton
     */
@@ -162,6 +165,9 @@ class ComposeAndroidDateTimeFormatter(private val androidDateTimeFormatter: Andr
     *
     * This method will only use patterns that are in CLDR, and is useful whenever you know what elements you want
     * in your format string but don't want to make your code specific to any one locale.
+    *
+    * "TTT" inside skeleton will get formatted as either 12 hour time (hh:MM) or 24 hour time (HH:mm a),
+    * depending on the user's locale settings
     *
     * @param skeleton a skeleton as described above
     * @param locale the locale into which the skeleton should be localized
