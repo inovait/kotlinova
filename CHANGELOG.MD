@@ -1,3 +1,11 @@
+# 3.0.0-alpha16
+
+### Bug Fixes
+
+* migrate to kotest 5.6.2 ([02e4b6f9](https://github.com/inovait/kotlinova/commit/02e4b6f94b939528135574c1b95ee9b1fb7cd368))
+* **navigation**: @Inherited not recursively fetching more than one level ([a00fd828](https://github.com/inovait/kotlinova/commit/a00fd8286c0115b3a39e3d05e5f4ebc6417f62a8))
+* **navigation**: SingleTopKey not saving state after process kill ([8edffa7a](https://github.com/inovait/kotlinova/commit/8edffa7abd36438944ec04264c1b8c397e0480b0))
+
 # 3.0.0-alpha15
 
 ### Features
