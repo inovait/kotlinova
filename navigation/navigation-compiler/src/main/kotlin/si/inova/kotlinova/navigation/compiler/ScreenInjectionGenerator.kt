@@ -307,9 +307,8 @@ class ScreenInjectionGenerator : CodeGenerator {
             val serviceType = service.type().asTypeName()
 
             addStatement(
-               "val %L = backstack.%M<%T>(%L, %T::class.java.name)",
+               "val %L = backstack.lookupFromScope<%T>(%L, %T::class.java.name)",
                service.name,
-               LOOKUP_FROM_SCOPE_WITH_INHERITANCE,
                serviceType,
                "scope",
                serviceType
