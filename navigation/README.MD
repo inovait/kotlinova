@@ -57,7 +57,7 @@ data class MyScreenKey(
 ) : ScreenKey()
 ```
 
-[!WARNING]  
+**Warning**     
 You should not put any enums inside your keys,
 as [they do not have deterministic hashcode and thus break state restoration](https://github.com/Zhuinden/simple-stack-compose-integration/issues/29).
 You can add detekt plugin to safeguard against accidental inclusion of enums (see "Detekt plugin" below).
