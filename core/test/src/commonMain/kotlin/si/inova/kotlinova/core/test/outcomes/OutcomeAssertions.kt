@@ -19,21 +19,20 @@ package si.inova.kotlinova.core.test.outcomes
 import io.kotest.assertions.Actual
 import io.kotest.assertions.Expected
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.collectOrThrow
-import io.kotest.assertions.errorCollector
 import io.kotest.assertions.intellijFormatError
 import io.kotest.assertions.print.Printed
 import io.kotest.assertions.withClue
+import io.kotest.matchers.Matcher
+import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.beInstanceOf
 import io.kotest.matchers.types.shouldBeInstanceOf
 import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.Outcome
 
 infix fun <T> Outcome<T>.shouldBeSuccessWithData(expectedData: T) {
    assertSoftly {
-      this should beInstanceOf<Outcome.Success<T>>()
+      this should beInstanceOfOutcome<Outcome.Success<T>>()
 
       if (this is Outcome.Success) {
          this
@@ -43,8 +42,6 @@ infix fun <T> Outcome<T>.shouldBeSuccessWithData(expectedData: T) {
                   it.shouldBe(expectedData)
                }
             }
-      } else if (this is Outcome.Error) {
-         reportContainingError()
       }
       Unit
    }
@@ -52,7 +49,7 @@ infix fun <T> Outcome<T>.shouldBeSuccessWithData(expectedData: T) {
 
 infix fun <T> Outcome<T>.shouldBeProgressWithData(expectedData: T?) {
    assertSoftly {
-      this should beInstanceOf<Outcome.Progress<T>>()
+      this should beInstanceOfOutcome<Outcome.Progress<T>>()
 
       if (this is Outcome.Progress) {
          this
@@ -62,8 +59,6 @@ infix fun <T> Outcome<T>.shouldBeProgressWithData(expectedData: T?) {
                   it.shouldBe(expectedData)
                }
             }
-      } else if (this is Outcome.Error) {
-         reportContainingError()
       }
       Unit
    }
@@ -74,7 +69,7 @@ fun <T> Outcome<T>.shouldBeProgressWith(
    expectedProgress: Float? = null
 ) {
    assertSoftly {
-      this should beInstanceOf<Outcome.Progress<T>>()
+      this should beInstanceOfOutcome<Outcome.Progress<T>>()
 
       if (this is Outcome.Progress) {
          this
@@ -94,8 +89,6 @@ fun <T> Outcome<T>.shouldBeProgressWith(
                      }
                }
             }
-      } else if (this is Outcome.Error) {
-         reportContainingError()
       }
       Unit
    }
@@ -150,6 +143,19 @@ fun <T> Outcome<T>.shouldBeErrorWith(
    return returnException
 }
 
-private fun Outcome.Error<*>.reportContainingError() {
-   errorCollector.collectOrThrow(AssertionError("Reported error: $exception", exception))
+private inline fun <reified T : Outcome<*>> beInstanceOfOutcome() = object : Matcher<Outcome<*>> {
+   override fun test(value: Outcome<*>): MatcherResult {
+      return MatcherResult(
+         value is T,
+         {
+            if (value is Outcome.Error) {
+               "Outcome should be a ${T::class.simpleName} but was an Outcome.Error " +
+                  "with exception ${value.exception.stackTraceToString()}"
+            } else {
+               "Outcome should be a ${T::class.simpleName} but was a ${value.javaClass.simpleName}."
+            }
+         },
+         { "Outcome should not be a ${T::class.simpleName} but it was." }
+      )
+   }
 }

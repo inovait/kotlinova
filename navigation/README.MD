@@ -7,6 +7,7 @@ implementation("si.inova.kotlinova:navigation:X.Y.Z")
 anvil("si.inova.kotlinova:navigation-compiler:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
 testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
+detektPlugins("si.inova.kotlinova:navigation-detekt:X.Y.Z")
 ```
 
 Version catalogs usage:
@@ -20,6 +21,7 @@ kotlinova = "X.Y.Z"
 [libraries]
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
+kotlinova-navigation-detekt = { module = "si.inova.kotlinova:navigation-detekt", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
 kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", version.ref = "kotlinova" }
 ```
@@ -29,6 +31,7 @@ implementation(libs.kotlinova.navigation)
 anvil(libs.kotlinova.navigation.compiler)
 implementation(libs.kotlinova.navigation.fragment)
 test(libs.kotlinova.navigation.test)
+detektPlugins(libs.kotlinova.navigation.detekt)
 ```
 
 Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
@@ -53,6 +56,11 @@ data class MyScreenKey(
    val secondArgument: String
 ) : ScreenKey()
 ```
+
+**Warning**     
+You should not put any enums inside your keys,
+as [they do not have deterministic hashcode and thus break state restoration](https://github.com/Zhuinden/simple-stack-compose-integration/issues/29).
+You can add detekt plugin to safeguard against accidental inclusion of enums (see "Detekt plugin" below).
 
 Second, you create a Screen class that contains actual composable:
 
@@ -593,4 +601,15 @@ navigationInjectionFactory.RootNavigationContainer {
 ```kotlin
 val backstack = navigationInjectionFactory.RootNavigationContainer { ... }
 mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)
+```
+
+# Detekt plugin
+
+Navigation also contains detekt plugin to safeguard against some common mistakes. To enable it, add detekt plugin dependency
+(see the top of this README) and then add following to the detekt config:
+
+```yaml
+kotlinovanavigation:
+   NavigationKeyNoEnums:
+      active: true
 ```

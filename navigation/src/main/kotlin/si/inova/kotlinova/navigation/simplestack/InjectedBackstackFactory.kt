@@ -61,14 +61,11 @@ fun NavigationInjection.Factory.rememberBackstack(
       val backstack = createBackstack(
          initialHistory(),
          scopedServices = scopedServices,
+         parent = parentBackstack,
+         parentScope = parentBackstackScope,
          globalServicesFactory = {
             GlobalServices.builder()
                .addService(NavigationInjection::class.java.name, navigationInjection)
-               .apply {
-                  if (parentBackstack != null && parentBackstackScope != null) {
-                     registerParentBackstack(parentBackstack, parentBackstackScope)
-                  }
-               }
                .build()
          }
       )

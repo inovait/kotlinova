@@ -43,6 +43,8 @@ internal class BackstackHolderViewModel : ViewModel() {
          stateClearStrategy: Backstack.StateClearStrategy,
          scopedServices: ScopedServices?,
          globalServices: GlobalServices?,
+         parent: Backstack?,
+         parentScope: String?,
          globalServicesFactory: GlobalServices.Factory?,
       ): Backstack {
          val backstack = Backstack()
@@ -51,6 +53,8 @@ internal class BackstackHolderViewModel : ViewModel() {
          backstack.setKeyFilter(keyFilter)
          backstack.setKeyParceler(keyParceler)
          backstack.setStateClearStrategy(stateClearStrategy)
+         backstack.setParentServices(parent, parentScope)
+
          scopedServices?.let { backstack.setScopedServices(it) }
          globalServices?.let { backstack.setGlobalServices(it) }
          globalServicesFactory?.let { backstack.setGlobalServices(it) }

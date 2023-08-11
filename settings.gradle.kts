@@ -55,6 +55,7 @@ include(":compose:compose-android-test")
 includeBuild("kotlinova-gradle") // Include kotlinova gradle build to allow common maven publishing and checking
 include(":navigation")
 include(":navigation:navigation-compiler")
+include(":navigation:navigation-detekt")
 include(":navigation:navigation-fragment")
 include(":navigation:navigation-test")
 include(":navigation:tests")

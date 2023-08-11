@@ -171,6 +171,8 @@ interface ComposeNavigatorInitializer {
       stateClearStrategy: StateClearStrategy = DefaultStateClearStrategy(),
       scopedServices: ScopedServices? = null,
       globalServices: GlobalServices? = null,
+      parent: Backstack? = null,
+      parentScope: String? = null,
       globalServicesFactory: GlobalServices.Factory? = null,
    ): Backstack
 }
