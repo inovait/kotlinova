@@ -1,3 +1,9 @@
+# 3.0.0-alpha18
+
+### Bug Fixes
+
+* **navigation-detekt**: navigation detekt not being published by maven ([395ad3f4](https://github.com/inovait/kotlinova/commit/395ad3f4ad0ff8be40410482d8eafd21ff2b621e))
+
 # 3.0.0-alpha17
 
 ### Features
