@@ -1,3 +1,10 @@
+# 3.0.0-alpha17
+
+### Features
+
+* **core-test**: improve outcome assertions error messages ([43d1c57c](https://github.com/inovait/kotlinova/commit/43d1c57c13b37a18b6111fdd1fea597d1a5217ef))
+* **navigation**: add detekt plugin to safeguard against enums ([cf6432c4](https://github.com/inovait/kotlinova/commit/cf6432c44155a9b8d0231fd501237c980cfba53c))
+
 # 3.0.0-alpha16
 
 ### Bug Fixes
