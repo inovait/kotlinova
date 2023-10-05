@@ -1,3 +1,10 @@
+# 3.0.0-alpha19
+
+### Features
+
+* **core-test**: add plurals to FakeResources ([41fc4aa6](https://github.com/inovait/kotlinova/commit/41fc4aa6232b91e7144532c9a19238cba4d836c0))
+* **gradle**: skip toml entries without version.ref ([bbdb753e](https://github.com/inovait/kotlinova/commit/bbdb753ec8b05de0e290cda166e0405ef2cc90e3))
+
 # 3.0.0-alpha18
 
 ### Bug Fixes
