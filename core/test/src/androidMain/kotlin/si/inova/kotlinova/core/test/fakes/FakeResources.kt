@@ -29,14 +29,15 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import java.io.InputStream
 
 /**
  * Fake resources class that provides fake resource strings.
  *
- * You can either use [putString] to provide test fakes or enable [useResourceIdAsPlaceholder] to automatically generate
- * resource strings based on the resource ids.
+ * You can either use [putString], [putPlural] to provide test fakes or enable [useResourceIdAsPlaceholder] to automatically
+ * generate resource strings based on the resource ids.
  *
  * To get this to work in regular unit tests, you need to use the Unmock plugin: https://github.com/bjoernQ/unmock-plugin
  */
@@ -45,6 +46,7 @@ import java.io.InputStream
 @SuppressLint("UseSparseArrays")
 class FakeResources : Resources(null, null, null) {
    private val stringMap = HashMap<Int, (Array<out Any?>) -> String>()
+   private val pluralMap = HashMap<Int, (quantity: Int, Array<out Any?>) -> String>()
    private var lastStringArguments: List<Any?>? = null
 
    var useResourceIdAsPlaceholder: Boolean = false
@@ -65,6 +67,13 @@ class FakeResources : Resources(null, null, null) {
       stringMap[resource] = textGenerator
    }
 
+   fun putPlural(
+      @PluralsRes
+      resource: Int,
+      textGenerator: (amount: Int, args: Array<out Any?>) -> String
+   ) {
+      pluralMap[resource] = textGenerator
+   }
    override fun getString(id: Int): String {
       val generator = getStringOrFallback(id)
 
@@ -91,6 +100,28 @@ class FakeResources : Resources(null, null, null) {
       lastStringArguments = formatArgs.toList()
 
       return generator(formatArgs)
+   }
+
+   private fun getPluralOrFallback(id: Int): (Int, Array<out Any?>) -> String {
+      val generator = pluralMap[id]
+
+      if (generator == null) {
+         if (useResourceIdAsPlaceholder) {
+            return { _, _ -> id.toString() }
+         } else {
+            error("Plural $id not faked")
+         }
+      }
+
+      return generator
+   }
+
+   override fun getQuantityString(id: Int, quantity: Int, vararg formatArgs: Any?): String {
+      return getPluralOrFallback(id).invoke(quantity, formatArgs)
+   }
+
+   override fun getQuantityString(id: Int, quantity: Int): String {
+      return getPluralOrFallback(id).invoke(quantity, emptyArray())
    }
 
    override fun getTextArray(id: Int): Array<CharSequence> {
@@ -147,14 +178,6 @@ class FakeResources : Resources(null, null, null) {
 
    @SuppressLint("DiscouragedApi")
    override fun getValue(name: String?, outValue: TypedValue?, resolveRefs: Boolean) {
-      throw UnsupportedOperationException("Method not supported by FakeResources")
-   }
-
-   override fun getQuantityString(id: Int, quantity: Int, vararg formatArgs: Any?): String {
-      throw UnsupportedOperationException("Method not supported by FakeResources")
-   }
-
-   override fun getQuantityString(id: Int, quantity: Int): String {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
