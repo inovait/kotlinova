@@ -72,7 +72,7 @@ open class UpdateTomlLibs : DefaultTask() {
          val tomlValue = entry.value as TomlTable
          val module = tomlValue.get("module")
          val versionRef = tomlValue.get("version.ref") as? String?
-            ?: error("Missing version.ref for module ${entry.key}. Is the toml file valid?")
+            ?: continue
          val targetVersion = requestedUpdates[module]
 
          if (targetVersion != null) {
