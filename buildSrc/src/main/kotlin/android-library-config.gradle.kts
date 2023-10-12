@@ -44,7 +44,8 @@ plugins {
 android {
    publishing {
       singleVariant("release") {
-         withJavadocJar()
+         // Disable javadoc generation until https://github.com/Kotlin/dokka/issues/2956 is resolved
+         // withJavadocJar()
          withSourcesJar()
       }
    }
@@ -69,6 +70,11 @@ publishing {
 
          afterEvaluate {
             from(components["release"])
+         }
+
+         // Add empty javadoc until https://github.com/Kotlin/dokka/issues/2956 is resolved
+         artifact("${rootProject.rootDir}/config/empty-javadoc.jar") {
+            classifier = "javadoc"
          }
       }
    }
