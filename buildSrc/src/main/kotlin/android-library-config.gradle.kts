@@ -61,6 +61,23 @@ kotlin {
    jvmToolchain(17)
 }
 
+// We cannot reuse empty-javadoc.jar over different projects, because that breaks Gradle's project isolation.
+// Instead, we copy empty javadoc to project's build folder and then use this one
+val dummyJavadocFolder = File(rootProject.buildDir, "emptyJavadoc").also { it.mkdirs() }
+val copyJavadocTask = tasks.register<Copy>("copyJavadoc") {
+   from("${rootProject.rootDir}/config/empty-javadoc.jar")
+   into(dummyJavadocFolder)
+}
+
+afterEvaluate {
+   tasks.withType<Sign>().configureEach {
+      dependsOn(copyJavadocTask)
+   }
+   tasks.withType<AbstractPublishToMaven>().configureEach {
+      dependsOn(copyJavadocTask)
+   }
+}
+
 publishing {
    publications {
       register<MavenPublication>("release") {
@@ -73,7 +90,7 @@ publishing {
          }
 
          // Add empty javadoc until https://github.com/Kotlin/dokka/issues/2956 is resolved
-         artifact("${rootProject.rootDir}/config/empty-javadoc.jar") {
+         artifact("$dummyJavadocFolder/empty-javadoc.jar") {
             classifier = "javadoc"
          }
       }
