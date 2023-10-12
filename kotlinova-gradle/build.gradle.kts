@@ -86,13 +86,10 @@ if (properties.containsKey("ossrhUsername")) {
       sign(publishing.publications)
    }
 
-   // Workaround for the https://youtrack.jetbrains.com/issue/KT-46466
-   tasks.withType(Sign::class.java) {
-      val signingTask = this
-      tasks.withType(AbstractPublishToMaven::class.java) {
-         val publishTask = this
-         publishTask.dependsOn(signingTask)
-      }
+   // Workaround for the https://github.com/gradle/gradle/issues/26091
+   tasks.withType<AbstractPublishToMaven>().configureEach {
+      val signingTasks = tasks.withType<Sign>()
+      mustRunAfter(signingTasks)
    }
 
    publishing {
