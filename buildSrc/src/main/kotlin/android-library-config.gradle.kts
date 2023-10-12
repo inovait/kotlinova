@@ -63,7 +63,7 @@ kotlin {
 
 // We cannot reuse empty-javadoc.jar over different projects, because that breaks Gradle's project isolation.
 // Instead, we copy empty javadoc to project's build folder and then use this one
-val dummyJavadocFolder = File(rootProject.buildDir, "emptyJavadoc").also { it.mkdirs() }
+val dummyJavadocFolder = File(project.buildDir, "emptyJavadoc").also { it.mkdirs() }
 val copyJavadocTask = tasks.register<Copy>("copyJavadoc") {
    from("${rootProject.rootDir}/config/empty-javadoc.jar")
    into(dummyJavadocFolder)
