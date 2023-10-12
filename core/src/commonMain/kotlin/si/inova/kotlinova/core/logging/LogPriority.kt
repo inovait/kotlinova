@@ -29,5 +29,5 @@ enum class LogPriority(
    INFO(4),
    WARN(5),
    ERROR(6),
-   ASSERT(7);
+   ASSERT(7)
 }

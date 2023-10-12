@@ -18,7 +18,7 @@ package si.inova.kotlinova.navigation.screenkeys
 
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -26,7 +26,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import com.zhuinden.simplestack.ScopeKey
 import com.zhuinden.simplestack.StateChange
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
@@ -48,9 +48,9 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * for syntax and examples.
     */
    @OptIn(ExperimentalAnimationApi::class)
-   open fun forwardAnimation(scope: AnimatedContentScope<StateChangeResult>): ContentTransform {
+   open fun forwardAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       return if (scope.targetState.direction == StateChange.REPLACE) {
-         fadeIn() with fadeOut()
+         fadeIn() togetherWith fadeOut()
       } else {
          // Rough match of the FragmentTransaction.TRANSITION_OPEN
 
@@ -64,7 +64,7 @@ abstract class ScreenKey : Parcelable, ScopeKey {
             targetScale = 1.10f,
          ) + fadeOut(tween(delayMillis = 100, durationMillis = 50))
 
-         enter with exit
+         enter togetherWith exit
       }
    }
 
@@ -76,7 +76,7 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * for syntax and examples.
     */
    @OptIn(ExperimentalAnimationApi::class)
-   open fun backAnimation(scope: AnimatedContentScope<StateChangeResult>): ContentTransform {
+   open fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       // Rough match of the FragmentTransaction.TRANSITION_CLOSE
 
       val enter = scaleIn(
@@ -89,7 +89,7 @@ abstract class ScreenKey : Parcelable, ScopeKey {
          targetScale = 0.90f,
       ) + fadeOut(tween(delayMillis = 100, durationMillis = 50))
 
-      return enter with exit
+      return enter togetherWith exit
    }
 
    // Force subclasses to implement toString, equals and hashCode, since compose and default getScopeTag relies on it.

@@ -65,8 +65,7 @@ internal class NavDeepLink constructor(
    private var isSingleQueryParamValueOnly = false
 
    // fragment
-   private val fragArgsAndRegex: Pair<MutableList<String>, String>? by
-   lazy(LazyThreadSafetyMode.NONE) { parseFragment() }
+   private val fragArgsAndRegex: Pair<MutableList<String>, String>? by lazy(LazyThreadSafetyMode.NONE) { parseFragment() }
    private val fragArgs by lazy(LazyThreadSafetyMode.NONE) {
       fragArgsAndRegex?.first ?: mutableListOf()
    }

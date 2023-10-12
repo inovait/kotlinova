@@ -16,11 +16,10 @@
 
 package util
 
-import gradle.kotlin.dsl.accessors._40894cca5fd1b381109c1a52a6ab3602.publishing
-import gradle.kotlin.dsl.accessors._40894cca5fd1b381109c1a52a6ab3602.signing
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.signing.Sign
 
@@ -40,7 +39,7 @@ private fun Project.setProjectMetadata(
    description: String,
    githubPath: String
 ) {
-   publishing {
+   extensions.configure<org.gradle.api.publish.PublishingExtension>("publishing") {
       publications.withType<MavenPublication> {
          pom {
             name.set(userFriendlyName)
@@ -76,8 +75,8 @@ private fun Project.setProjectMetadata(
 
 private fun Project.configureForMavenCentral() {
    if (properties.containsKey("ossrhUsername")) {
-      signing {
-         sign(publishing.publications)
+      extensions.configure<org.gradle.plugins.signing.SigningExtension>("signing") {
+         sign(extensions.getByName<org.gradle.api.publish.PublishingExtension>("publishing").publications)
       }
 
       // Workaround for the https://youtrack.jetbrains.com/issue/KT-46466
@@ -89,7 +88,7 @@ private fun Project.configureForMavenCentral() {
          }
       }
 
-      publishing {
+      extensions.configure<org.gradle.api.publish.PublishingExtension>("publishing") {
          repositories {
             maven {
                setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
@@ -105,7 +104,7 @@ private fun Project.configureForMavenCentral() {
 
 private fun Project.forceArtifactName(artifactName: String) {
    afterEvaluate {
-      publishing {
+      extensions.configure<org.gradle.api.publish.PublishingExtension>("publishing") {
          publications.withType<MavenPublication> {
             artifactId = artifactId.replace(project.name, artifactName)
          }

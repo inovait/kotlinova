@@ -425,7 +425,6 @@ naming:
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   EnumNaming:
     active: true
     enumEntryPattern: '[A-Z][_a-zA-Z0-9]*'
@@ -446,13 +445,11 @@ naming:
     excludes: *testFolders
     functionPattern: '([a-z][a-zA-Z0-9]*)|(`.*`)'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
     ignoreAnnotated: [ 'Composable' ]
   FunctionParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   InvalidPackageDeclaration:
     active: true
     excludes: [ '**/*.kts' ]
@@ -494,7 +491,6 @@ naming:
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
 
 performance:
   active: true
@@ -587,6 +583,8 @@ potential-bugs:
 
 style:
   active: true
+  BracesOnIfStatements:
+    active: true
   ClassOrdering:
     active: false
   CollapsibleIfStatements:
@@ -612,7 +610,7 @@ style:
     includeLineWrapping: false
   ForbiddenComment:
     active: true
-    values:
+    comments:
       - 'STOPSHIP:'
     allowedPatterns: ''
   ForbiddenImport:
@@ -659,8 +657,6 @@ style:
     ignoreExtensionFunctions: true
     ignoreAnnotated:
       - 'Preview'
-  MandatoryBracesIfStatements:
-    active: true
   MandatoryBracesLoops:
     active: true
   MaxLineLength:
@@ -686,8 +682,6 @@ style:
   OptionalAbstractKeyword:
     active: true
   OptionalUnit:
-    active: false
-  OptionalWhenBraces:
     active: false
   PreferToOverPairSyntax:
     active: false

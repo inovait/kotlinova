@@ -27,12 +27,12 @@ plugins {
 }
 
 kotlin {
-   android {
+   androidTarget {
       publishLibraryVariants("release")
    }
 
    jvm {
-      jvmToolchain(11)
+      jvmToolchain(17)
 
       testRuns["test"].executionTask.configure {
          useJUnitPlatform()

@@ -92,6 +92,7 @@ import java.util.concurrent.Executor
  *
  * To get this to work in regular unit tests, you need to use the Unmock plugin: https://github.com/bjoernQ/unmock-plugin
  */
+@Suppress("OVERRIDE_DEPRECATION")
 @SuppressLint("MissingSuperCall")
 class FakeActivity : Activity() {
    val resources = FakeResources()
@@ -329,7 +330,7 @@ class FakeActivity : Activity() {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
 
-   override fun bindService(service: Intent?, conn: ServiceConnection, flags: Int): Boolean {
+   override fun bindService(service: Intent, conn: ServiceConnection, flags: Int): Boolean {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
 
