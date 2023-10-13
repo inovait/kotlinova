@@ -95,7 +95,8 @@ if (properties.containsKey("ossrhUsername")) {
    publishing {
       repositories {
          maven {
-            setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2")
+            val repositoryId = property("ossrhRepId") ?: error("Missing property: ossrhRepId")
+            setUrl("https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/")
             credentials {
                username = property("ossrhUsername") as String
                password = property("ossrhPassword") as String
