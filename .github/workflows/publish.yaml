@@ -79,6 +79,7 @@ jobs:
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
       - name: 'Release staging repository'
         run: './gradlew closeAndReleaseRepository
+                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
                 -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
                 -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}'''
       - name: Discard nexus staging repository

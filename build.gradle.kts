@@ -27,6 +27,7 @@ if (properties.containsKey("ossrhUsername")) {
       username = property("ossrhUsername") as String
       password = property("ossrhPassword") as String
       packageGroup = "si.inova"
+      stagingRepositoryId = property("ossrhRepId") as String
    }
 }
 
