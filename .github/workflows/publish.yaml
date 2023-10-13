@@ -59,7 +59,7 @@ jobs:
       - name: 'Save GPG key'
         run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
       - id: create_staging_repository
-        uses: nexus-actions/create-nexus-staging-repo@10a43a22d0278ed006f1293214b99184c60fbdff // v1.1
+        uses: nexus-actions/create-nexus-staging-repo@v1.2
         with:
           # The username you use to connect to Sonatype's Jira
           username: ${{ secrets.OSSRH_USERNAME }}
@@ -78,13 +78,13 @@ jobs:
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
       - name: Discard
         if: ${{ failure() && steps.create_staging_repository.outputs.repository_id != null }}
-        uses: nexus-actions/drop-nexus-staging-repo@fe83783967a063540320ace3c8942608246705a1 // v1
+        uses: nexus-actions/drop-nexus-staging-repo@v1
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
           staging_repository_id: ${{ steps.create_staging_repository.outputs.repository_id }}
       - name: Release
-        uses: nexus-actions/release-nexus-staging-repo@36161f25ef98cc3821eabb11ab742d2e9d479e52 // v1.2
+        uses: nexus-actions/release-nexus-staging-repo@v1.2
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
