@@ -59,15 +59,16 @@ jobs:
       - name: 'Save GPG key'
         run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
       - id: create_staging_repository
+        name: "Create nexus staging repository"
         uses: nexus-actions/create-nexus-staging-repo@v1.2
         with:
           # The username you use to connect to Sonatype's Jira
           username: ${{ secrets.OSSRH_USERNAME }}
           password: ${{ secrets.OSSRH_PASSWORD }}
           # Your staging profile ID. You can get it at https://oss.sonatype.org/#stagingProfiles;$staginProfileId
-          staging-profile-id: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
+          staging_profile_id: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
           # a description to identify your repository in the UI
-          description: Created by $GITHUB_WORKFLOW ($GITHUB_ACTION) for $GITHUB_REPOSITORY
+          description: Created by Automatic Github flow
       - name: 'Publish'
         run: './gradlew publish :kotlinova-gradle:publish
                 -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
@@ -76,14 +77,14 @@ jobs:
                 -Psigning.secretKeyRingFile=$(pwd)/signing_key.gpg
                 -Psigning.password=''${{ secrets.GPG_SIGNING_PASSPHRASE }}''
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
-      - name: Discard
+      - name: Discard nexus staging repository
         if: ${{ failure() && steps.create_staging_repository.outputs.repository_id != null }}
         uses: nexus-actions/drop-nexus-staging-repo@v1
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
           staging_repository_id: ${{ steps.create_staging_repository.outputs.repository_id }}
-      - name: Release
+      - name: Release nexus staging repository
         uses: nexus-actions/release-nexus-staging-repo@v1.2
         with:
           username: ${{ secrets.SONATYPE_USERNAME }}
