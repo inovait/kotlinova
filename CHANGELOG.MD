@@ -1,3 +1,9 @@
+# 3.0.0-alpha20
+
+### Bug Fixes
+
+* **navigation**: update to compose 1.5.x ([4f6110ff](https://github.com/inovait/kotlinova/commit/4f6110ffb5414b933b657efd3d9bfe8569946af0))
+
 # 3.0.0-alpha19
 
 ### Features
