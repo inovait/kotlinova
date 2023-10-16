@@ -64,10 +64,6 @@ kotlin {
       val androidMain by getting {
          dependsOn(jvmCommon)
       }
-      val androidUnitTest by getting {
-         dependsOn(jvmTest)
-      }
-      val androidInstrumentedTest by getting
    }
 }
 
