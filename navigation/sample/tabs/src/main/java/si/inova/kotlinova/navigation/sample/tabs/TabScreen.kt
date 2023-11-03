@@ -18,8 +18,9 @@ package si.inova.kotlinova.navigation.sample.tabs
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -66,14 +67,14 @@ class TabScreen(
          AnimatedContent(selectedTab,
             transitionSpec = {
                if (targetState.ordinal > initialState.ordinal) {
-                  slideIntoContainer(AnimatedContentScope.SlideDirection.Left) with
-                     slideOutOfContainer(AnimatedContentScope.SlideDirection.Left)
+                  slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) togetherWith
+                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
                } else {
-                  slideIntoContainer(AnimatedContentScope.SlideDirection.Right) with
-                     slideOutOfContainer(AnimatedContentScope.SlideDirection.Right)
+                  slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) togetherWith
+                     slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                }
             }) {
-            val targetScreen = when (selectedTab) {
+            val targetScreen = when (it) {
                TabScreenKey.SelectedTab.A -> subscreenA
                TabScreenKey.SelectedTab.B -> subscreenB
                TabScreenKey.SelectedTab.C -> subscreenC
