@@ -172,10 +172,10 @@ debouncer.executeDebouncing {
 * [Moving Averager](src/commonMain/kotlin/si/inova/kotlinova/core/math/MovingAverageUtility.kt)
 * [3D Vector](src/commonMain/kotlin/si/inova/kotlinova/core/math/Vector3.kt)
 * [Unit conversions](src/commonMain/kotlin/si/inova/kotlinova/core/units/UnitConverters.kt)
-* [List Extensions](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/List.kt)
-* [Map Extensions](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/Map.kt)
-* [Weak List](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/WeakList.kt)
-* [Locale metric system check](src/jvmMain/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
+* [List Extensions](src/jvmCommon/kotlin/si/inova/kotlinova/core/containers/List.kt)
+* [Map Extensions](src/jvmCommon/kotlin/si/inova/kotlinova/core/containers/Map.kt)
+* [Weak List](src/jvmCommon/kotlin/si/inova/kotlinova/core/containers/WeakList.kt)
+* [Locale metric system check](src/jvmCommon/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
 
 # Android-specific utilities
 
