@@ -203,3 +203,9 @@ to expose a piece of text that uses Android string resources, but still gets res
 You can use them in unit and android tests as a replacements for real Activity and Resources.
 
 To use them in unit tests, you also must have [Unmock](https://github.com/bjoernQ/unmock-plugin) unmock plugin.
+
+## Dispatch utilities
+
+[Several utilites](test/src/commonMain/kotlin/si/inova/kotlinova/core/test/TestDispatchers.kt)
+for [Dispatch](https://github.com/RBusarow/Dispatch)
+library, for using that library with TestScope, as the core library has not yet been updated for that.

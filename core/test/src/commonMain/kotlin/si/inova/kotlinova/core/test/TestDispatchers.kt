@@ -21,7 +21,10 @@ import dispatch.core.MainImmediateCoroutineScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.job
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * A [DispatcherProvider] that provides test dispatcher for all dispatchers.
@@ -37,6 +40,15 @@ val TestScope.testDispatcherProvider: DispatcherProvider
  */
 val TestScope.testMainImmediateBackgroundScope: MainImmediateCoroutineScope
    get() = MainImmediateCoroutineScope(SupervisorJob(backgroundScope.coroutineContext.job), testDispatcherProvider)
+
+/**
+ * Creates a [TestScope] with a [DispatcherProvider] installed that provides TestScope's test dispatchers as all dispatchers.
+ */
+fun TestScopeWithDispatcherProvider(context: CoroutineContext = EmptyCoroutineContext): TestScope {
+   val testDispatcher = StandardTestDispatcher()
+   val testDispatcherProvider = SingleDispatcherProvider(testDispatcher)
+   return TestScope(context + testDispatcherProvider + testDispatcher)
+}
 
 /**
  * Dispatcher provider that provides a single dispatcher as every other
