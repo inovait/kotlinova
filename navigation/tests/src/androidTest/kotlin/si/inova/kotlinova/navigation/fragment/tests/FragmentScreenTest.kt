@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,7 +23,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -48,6 +50,7 @@ import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
+import si.inova.kotlinova.navigation.testutils.exists
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import java.util.UUID
 
@@ -60,6 +63,24 @@ class FragmentScreenTest {
       rule.insertTestNavigation(TestFragmentScreenKey("Hello"))
 
       Espresso.onView(withText("Hello From Fragment")).check(matches(isDisplayed()))
+   }
+
+   @Test
+   internal fun showScreenWhileStopped() {
+      rule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+      rule.waitForIdle()
+
+      rule.insertTestNavigation(TestFragmentScreenKey("Hello"))
+
+      rule.waitForIdle()
+      rule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+
+      rule.waitForIdle()
+
+      // We cannot check for isDisplayed() due to https://issuetracker.google.com/issues/321086832 bug
+      // (that bug appears to only happen in tests)
+      // Instead we just check that the view exists
+      Espresso.onView(withText("Hello From Fragment")).check(exists())
    }
 
    @Test
@@ -196,8 +217,14 @@ class FragmentScreenTest {
    class TestFragment : Fragment() {
       var onDestroyCalled = false
       override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+         println("onCreateView")
+
          return TextView(requireContext()).apply {
             text = "Hello From Fragment"
+
+            doOnLayout {
+               println("on text layout")
+            }
          }
       }
 
@@ -227,6 +254,12 @@ class FragmentScreenTest {
    class TestFragmentScreen(scopeExitListener: ScopeExitListener) : FragmentScreen<TestFragmentScreenKey>(scopeExitListener) {
       override fun createFragment(key: TestFragmentScreenKey, fragmentManager: FragmentManager): Fragment {
          return TestFragment()
+      }
+
+      @Composable
+      override fun Content(key: TestFragmentScreenKey) {
+         println("Fragment Screen Content ${LocalLifecycleOwner.current.lifecycle.currentState}")
+         super.Content(key)
       }
    }
 
