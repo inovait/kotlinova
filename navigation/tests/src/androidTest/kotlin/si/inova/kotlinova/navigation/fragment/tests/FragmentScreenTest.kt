@@ -23,9 +23,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
@@ -217,14 +215,8 @@ class FragmentScreenTest {
    class TestFragment : Fragment() {
       var onDestroyCalled = false
       override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-         println("onCreateView")
-
          return TextView(requireContext()).apply {
             text = "Hello From Fragment"
-
-            doOnLayout {
-               println("on text layout")
-            }
          }
       }
 
@@ -254,12 +246,6 @@ class FragmentScreenTest {
    class TestFragmentScreen(scopeExitListener: ScopeExitListener) : FragmentScreen<TestFragmentScreenKey>(scopeExitListener) {
       override fun createFragment(key: TestFragmentScreenKey, fragmentManager: FragmentManager): Fragment {
          return TestFragment()
-      }
-
-      @Composable
-      override fun Content(key: TestFragmentScreenKey) {
-         println("Fragment Screen Content ${LocalLifecycleOwner.current.lifecycle.currentState}")
-         super.Content(key)
       }
    }
 
