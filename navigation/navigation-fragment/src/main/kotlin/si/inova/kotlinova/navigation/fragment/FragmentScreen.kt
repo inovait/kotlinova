@@ -51,14 +51,18 @@ abstract class FragmentScreen<K>(
       val activity = LocalContext.current.requireActivity() as FragmentActivity
 
       val fragmentViewId = rememberSaveable { Random.nextInt(MAX_VIEW_ID) }
-
-      AndroidView({ context ->
-         FragmentContainerView(context).apply { id = fragmentViewId }
-      })
-
+      val fragmentManager = activity.supportFragmentManager
       val scope = rememberCoroutineScope()
 
-      val fragmentManager = activity.supportFragmentManager
+      AndroidView(
+         factory = { context ->
+            FragmentContainerView(context).apply { id = fragmentViewId }
+         },
+         update = { container ->
+            fragmentManager.setContainerAvailable(container)
+         },
+      )
+
       DisposableEffect(key, fragmentViewId) {
          val currentFragmentAsync = scope.async {
             activity.lifecycle.withStarted {
@@ -89,7 +93,6 @@ abstract class FragmentScreen<K>(
                      .commit()
                }
 
-               fragmentManager.setContainerAvailable(activity.findViewById(fragmentViewId))
                currentFragment
             }
          }
