@@ -17,11 +17,12 @@
 package si.inova.kotlinova.navigation.sample.keys
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -29,19 +30,17 @@ import si.inova.kotlinova.navigation.simplestack.StateChangeResult
 
 @Parcelize
 data class SlideAnimationScreenKey(val argument: String) : ScreenKey() {
-   @OptIn(ExperimentalAnimationApi::class)
-   override fun forwardAnimation(scope: AnimatedContentScope<StateChangeResult>): ContentTransform {
+   override fun forwardAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       return if (scope.targetState.direction == StateChange.REPLACE) {
-         fadeIn() with fadeOut()
+         fadeIn() togetherWith fadeOut()
       } else {
-         scope.slideIntoContainer(AnimatedContentScope.SlideDirection.Left) with
-            scope.slideOutOfContainer(AnimatedContentScope.SlideDirection.Left)
+         scope.slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) togetherWith
+            scope.slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
       }
    }
 
-   @OptIn(ExperimentalAnimationApi::class)
-   override fun backAnimation(scope: AnimatedContentScope<StateChangeResult>): ContentTransform {
-      return scope.slideIntoContainer(AnimatedContentScope.SlideDirection.Right) with
-         scope.slideOutOfContainer(AnimatedContentScope.SlideDirection.Right)
+   override fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
+      return scope.slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) togetherWith
+         scope.slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
    }
 }

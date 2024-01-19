@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -18,6 +18,7 @@ package si.inova.kotlinova.navigation.fragment
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -26,7 +27,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setContainerAvailable
+import androidx.lifecycle.withStarted
 import com.zhuinden.simplestack.ScopedServices
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import si.inova.kotlinova.navigation.fragment.util.requireActivity
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
@@ -41,6 +45,7 @@ import kotlin.random.Random
 abstract class FragmentScreen<K>(
    private val scopeExitListener: ScopeExitListener
 ) : Screen<K>() where K : FragmentScreenKey, K : ScreenKey {
+   @OptIn(ExperimentalCoroutinesApi::class)
    @Composable
    override fun Content(key: K) {
       val activity = LocalContext.current.requireActivity() as FragmentActivity
@@ -51,43 +56,60 @@ abstract class FragmentScreen<K>(
          FragmentContainerView(context).apply { id = fragmentViewId }
       })
 
+      val scope = rememberCoroutineScope()
+
+      val fragmentManager = activity.supportFragmentManager
       DisposableEffect(key, fragmentViewId) {
-         val fragmentManager = activity.supportFragmentManager
-         if (fragmentManager.isStateSaved) {
-            // Fragment manager's state has already been saved. If we do anything, we will crash
-            // Exit here, activity is likely being closed anyway, so Fragment will re-appear
-            // on next open
-            return@DisposableEffect onDispose { }
+         val currentFragmentAsync = scope.async {
+            activity.lifecycle.withStarted {
+               if (fragmentManager.isStateSaved) {
+                  // Fragment manager's state has already been saved. If we do anything, we will crash
+                  // Exit here, activity is likely being closed anyway, so Fragment will re-appear
+                  // on next open
+                  return@withStarted null
+               }
+
+               var currentFragment = fragmentManager.findFragmentByTag(key.tag)
+
+               if (currentFragment == null) {
+                  currentFragment = createFragment(key, fragmentManager)
+
+                  fragmentManager
+                     .beginTransaction()
+                     .replace(fragmentViewId, currentFragment, key.tag)
+                     .commitNow()
+               }
+
+               scopeExitListener.fragments[key.javaClass] = WeakReference(fragmentManager to currentFragment)
+
+               if (currentFragment.isDetached) {
+                  fragmentManager
+                     .beginTransaction()
+                     .attach(currentFragment)
+                     .commit()
+               }
+
+               fragmentManager.setContainerAvailable(activity.findViewById(fragmentViewId))
+               currentFragment
+            }
          }
-
-         var currentFragment = fragmentManager.findFragmentByTag(key.tag)
-
-         if (currentFragment == null) {
-            currentFragment = createFragment(key, fragmentManager)
-
-            fragmentManager
-               .beginTransaction()
-               .replace(fragmentViewId, currentFragment, key.tag)
-               .commitNow()
-         }
-
-         scopeExitListener.fragments[key.javaClass] = WeakReference(fragmentManager to currentFragment)
-
-         if (currentFragment.isDetached) {
-            fragmentManager
-               .beginTransaction()
-               .attach(currentFragment)
-               .commit()
-         }
-
-         fragmentManager.setContainerAvailable(activity.findViewById(fragmentViewId))
 
          onDispose {
+            val currentFragment = if (currentFragmentAsync.isCompleted) {
+               currentFragmentAsync.getCompleted()
+            } else {
+               null
+            }
+
+            currentFragmentAsync.cancel()
+
             if (!fragmentManager.isStateSaved) {
-               fragmentManager
-                  .beginTransaction()
-                  .detach(currentFragment)
-                  .commit()
+               currentFragment?.let {
+                  fragmentManager
+                     .beginTransaction()
+                     .detach(it)
+                     .commit()
+               }
             }
          }
       }

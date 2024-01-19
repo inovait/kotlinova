@@ -23,11 +23,11 @@ plugins {
 
 android {
    namespace = "si.inova.kotlinova.navigation.sharedviewmodel"
-   compileSdk = 33
+   compileSdk = 34
 
    defaultConfig {
       minSdk = 24
-      targetSdk = 33
+      targetSdk = 34
    }
 
    buildFeatures {
@@ -39,12 +39,12 @@ android {
    }
 
    compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_11
-      targetCompatibility = JavaVersion.VERSION_11
+      sourceCompatibility = JavaVersion.VERSION_17
+      targetCompatibility = JavaVersion.VERSION_17
    }
 
    kotlinOptions {
-      jvmTarget = "11"
+
    }
 
    anvil {

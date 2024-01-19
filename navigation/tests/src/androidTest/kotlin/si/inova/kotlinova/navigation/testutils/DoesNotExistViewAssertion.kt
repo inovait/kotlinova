@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -13,34 +13,27 @@
  *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package si.inova.kotlinova.navigation.testutils
 
-plugins {
-   id("com.android.library")
-   id("org.jetbrains.kotlin.android")
-   id("kotlin-parcelize")
-}
+import android.view.View
+import androidx.test.espresso.NoMatchingViewException
+import androidx.test.espresso.ViewAssertion
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
+import androidx.test.espresso.remote.annotation.RemoteMsgConstructor
+import org.hamcrest.Matchers.`is`
 
-android {
-   namespace = "si.inova.kotlinova.navigation.keys"
-   compileSdk = 34
-
-   defaultConfig {
-      minSdk = 24
-      targetSdk = 34
-   }
-
-   compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_17
-      targetCompatibility = JavaVersion.VERSION_17
-   }
-
-   kotlinOptions {
-
+private class ExistViewAssertion @RemoteMsgConstructor constructor() : ViewAssertion {
+   override fun check(view: View?, noView: NoMatchingViewException?) {
+      if (view == null) {
+         assertThat(
+            "View is not present in the hierarchy: " + noView?.message.orEmpty(),
+            true,
+            `is`(false)
+         )
+      }
    }
 }
 
-dependencies {
-   implementation(libs.androidx.compose.animation)
-   implementation(libs.kotlinova.navigation)
-   api(libs.kotlinova.navigation.fragment)
+fun exists(): ViewAssertion {
+   return ExistViewAssertion()
 }

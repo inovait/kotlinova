@@ -18,9 +18,12 @@
 // AGP 7.4.0 has a bug where it marks most things as incubating
 @file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
 
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 plugins {
    `kotlin-dsl`
    alias(libs.plugins.detekt)
+   alias(libs.plugins.versions)
 }
 
 repositories {
@@ -46,6 +49,21 @@ dependencies {
    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 
    detektPlugins(libs.detekt.formatting)
+}
+
+tasks.withType<DependencyUpdatesTask> {
+   gradleReleaseChannel = "current"
+
+   rejectVersionIf {
+      candidate.version.contains("alpha", ignoreCase = true) ||
+         candidate.version.contains("beta", ignoreCase = true) ||
+         candidate.version.contains("RC", ignoreCase = true) ||
+         candidate.version.contains("M", ignoreCase = true) ||
+         candidate.version.contains("eap", ignoreCase = true)
+   }
+
+   reportfileName = "versions"
+   outputFormatter = "json"
 }
 
 tasks.register("pre-commit-hook", Copy::class) {

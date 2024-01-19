@@ -172,10 +172,10 @@ debouncer.executeDebouncing {
 * [Moving Averager](src/commonMain/kotlin/si/inova/kotlinova/core/math/MovingAverageUtility.kt)
 * [3D Vector](src/commonMain/kotlin/si/inova/kotlinova/core/math/Vector3.kt)
 * [Unit conversions](src/commonMain/kotlin/si/inova/kotlinova/core/units/UnitConverters.kt)
-* [List Extensions](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/List.kt)
-* [Map Extensions](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/Map.kt)
-* [Weak List](src/jvmMain/kotlin/si/inova/kotlinova/core/containers/WeakList.kt)
-* [Locale metric system check](src/jvmMain/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
+* [List Extensions](src/jvmCommon/kotlin/si/inova/kotlinova/core/containers/List.kt)
+* [Map Extensions](src/jvmCommon/kotlin/si/inova/kotlinova/core/containers/Map.kt)
+* [Weak List](src/jvmCommon/kotlin/si/inova/kotlinova/core/containers/WeakList.kt)
+* [Locale metric system check](src/jvmCommon/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
 
 # Android-specific utilities
 
@@ -203,3 +203,9 @@ to expose a piece of text that uses Android string resources, but still gets res
 You can use them in unit and android tests as a replacements for real Activity and Resources.
 
 To use them in unit tests, you also must have [Unmock](https://github.com/bjoernQ/unmock-plugin) unmock plugin.
+
+## Dispatch utilities
+
+[Several utilites](test/src/commonMain/kotlin/si/inova/kotlinova/core/test/TestDispatchers.kt)
+for [Dispatch](https://github.com/RBusarow/Dispatch)
+library, for using that library with TestScope, as the core library has not yet been updated for that.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,6 +21,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -44,7 +46,9 @@ import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
 import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
+import si.inova.kotlinova.navigation.testutils.exists
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import java.util.UUID
 
@@ -60,6 +64,24 @@ class FragmentScreenTest {
    }
 
    @Test
+   internal fun showScreenWhileStopped() {
+      rule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+      rule.waitForIdle()
+
+      rule.insertTestNavigation(TestFragmentScreenKey("Hello"))
+
+      rule.waitForIdle()
+      rule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+
+      rule.waitForIdle()
+
+      // We cannot check for isDisplayed() due to https://issuetracker.google.com/issues/321086832 bug
+      // (that bug appears to only happen in tests)
+      // Instead we just check that the view exists
+      Espresso.onView(withText("Hello From Fragment")).check(exists())
+   }
+
+   @Test
    internal fun keepFragmentResumedWhenInFront() {
       rule.insertTestNavigation(TestFragmentScreenKey("Hello"))
 
@@ -71,7 +93,7 @@ class FragmentScreenTest {
    }
 
    @Test
-   internal fun destroyFragmentsViewWhenInBackstack() {
+   internal fun recreateFragmentsViewWhenInBackstack() {
       val backstack = rule.insertTestNavigation(TestFragmentScreenKey("Hello"))
       val navigator = NavigationInjection.fromBackstack(backstack).navigator()
       lateinit var fragment: TestFragment
@@ -94,7 +116,7 @@ class FragmentScreenTest {
    }
 
    @Test
-   internal fun recreateFragmentsViewWhenInBackstack() {
+   internal fun destroyFragmentsViewWhenInBackstack() {
       val backstack = rule.insertTestNavigation(TestFragmentScreenKey("Hello"))
       val navigator = NavigationInjection.fromBackstack(backstack).navigator()
       lateinit var fragment: TestFragment
@@ -109,6 +131,59 @@ class FragmentScreenTest {
          fragment.lifecycle.currentState shouldBe Lifecycle.State.CREATED
          fragment.view.shouldBeNull()
          fragment.onDestroyCalled.shouldBeFalse()
+      }
+   }
+
+   @Test
+   internal fun destroyMultipleFragmentsViewWhenInBackstack() {
+      val backstack = rule.insertTestNavigation(ScreenThatContainsTwoFragmentsKey)
+      val navigator = NavigationInjection.fromBackstack(backstack).navigator()
+      lateinit var fragment: TestFragment
+      lateinit var fragment2: TestFragment2
+
+      rule.runOnUiThread {
+         fragment = rule.activity.supportFragmentManager.fragments.first() as TestFragment
+         fragment2 = rule.activity.supportFragmentManager.fragments.elementAt(1) as TestFragment2
+         navigator.navigateTo(BlankScreenKey)
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         fragment.lifecycle.currentState shouldBe Lifecycle.State.CREATED
+         fragment.view.shouldBeNull()
+         fragment.onDestroyCalled.shouldBeFalse()
+         fragment2.lifecycle.currentState shouldBe Lifecycle.State.CREATED
+         fragment2.view.shouldBeNull()
+         fragment2.onDestroyCalled.shouldBeFalse()
+      }
+   }
+
+   @Test
+   internal fun recreateMultipleFragmentsViewWhenComingFromBackstack() {
+      val backstack = rule.insertTestNavigation(ScreenThatContainsTwoFragmentsKey)
+      val navigator = NavigationInjection.fromBackstack(backstack).navigator()
+      lateinit var fragment: TestFragment
+      lateinit var fragment2: TestFragment2
+
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         fragment = rule.activity.supportFragmentManager.fragments.first() as TestFragment
+         fragment2 = rule.activity.supportFragmentManager.fragments.elementAt(1) as TestFragment2
+         navigator.navigateTo(BlankScreenKey)
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         navigator.goBack()
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         fragment.lifecycle.currentState shouldBe Lifecycle.State.RESUMED
+         fragment.viewLifecycleOwner.lifecycle.currentState shouldBe Lifecycle.State.RESUMED
+         fragment2.lifecycle.currentState shouldBe Lifecycle.State.RESUMED
+         fragment2.viewLifecycleOwner.lifecycle.currentState shouldBe Lifecycle.State.RESUMED
       }
    }
 
@@ -151,12 +226,51 @@ class FragmentScreenTest {
       }
    }
 
+   class TestFragment2 : Fragment() {
+      var onDestroyCalled = false
+      override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+         return TextView(requireContext()).apply {
+            text = "Hello From Fragment 2"
+         }
+      }
+
+      override fun onDestroy() {
+         super.onDestroy()
+         onDestroyCalled = true
+      }
+   }
+
    @Parcelize
    data class TestFragmentScreenKey(override val tag: String = UUID.randomUUID().toString()) : ScreenKey(), FragmentScreenKey
 
    class TestFragmentScreen(scopeExitListener: ScopeExitListener) : FragmentScreen<TestFragmentScreenKey>(scopeExitListener) {
       override fun createFragment(key: TestFragmentScreenKey, fragmentManager: FragmentManager): Fragment {
          return TestFragment()
+      }
+   }
+
+   @Parcelize
+   data class TestFragmentScreen2Key(override val tag: String = UUID.randomUUID().toString()) : ScreenKey(), FragmentScreenKey
+
+   class TestFragmentScreen2(scopeExitListener: ScopeExitListener) : FragmentScreen<TestFragmentScreen2Key>(scopeExitListener) {
+      override fun createFragment(key: TestFragmentScreen2Key, fragmentManager: FragmentManager): Fragment {
+         return TestFragment2()
+      }
+   }
+
+   @Parcelize
+   data object ScreenThatContainsTwoFragmentsKey : ScreenKey()
+
+   class ScreenThatContainsTwoFragments(
+      private val testFragmentScreen: TestFragmentScreen,
+      private val testFragmentScreen2: TestFragmentScreen2
+   ) : Screen<ScreenThatContainsTwoFragmentsKey>() {
+      @Composable
+      override fun Content(key: ScreenThatContainsTwoFragmentsKey) {
+         Column {
+            testFragmentScreen.Content(TestFragmentScreenKey("Hello"))
+            testFragmentScreen2.Content(TestFragmentScreen2Key("Hello2"))
+         }
       }
    }
 }
