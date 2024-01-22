@@ -18,6 +18,7 @@ package si.inova.kotlinova.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import si.inova.kotlinova.gradle.sarifmerge.registerSarifMerging
 import si.inova.kotlinova.gradle.versionbump.registerTomlVersionBump
 
 class KotlinovaPlugin : Plugin<Project> {
@@ -25,5 +26,6 @@ class KotlinovaPlugin : Plugin<Project> {
       val extension = project.extensions.create("kotlinova", KotlinovaExtension::class.java)
 
       project.registerTomlVersionBump(extension)
+      project.registerSarifMerging(extension)
    }
 }

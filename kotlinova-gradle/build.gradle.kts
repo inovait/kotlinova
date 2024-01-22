@@ -134,5 +134,9 @@ dependencies {
 
    implementation(libs.orgJson)
    implementation(libs.tomlj)
+
+   // Declare those dependencies as compile only to ensure they do not leak to consumers that do not need them
+   compileOnly(libs.detekt.plugin)
+
    detektPlugins(libs.detekt.formatting)
 }

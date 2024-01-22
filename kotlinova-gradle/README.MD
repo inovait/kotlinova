@@ -85,3 +85,15 @@ kotlinova {
 After all of that, you can update all of your libraries with a single command:
 
 `./gradlew dependencyUpdates -q && ./gradlew app:updateLibsToml -q`
+
+# Detekt sarif report merging
+
+This allows one-line enabling of the
+[Detekt's report merging mechanism](https://detekt.dev/docs/introduction/reporting/#merging-reports) that will setup detekt tasks
+in this project with .sarif output and then merge output of all detekt tasks to `merge.sarif` file in top level project's root.
+
+```kotlin
+kotlinova {
+   mergeDetektSarif = true
+}
+```
