@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -118,15 +118,15 @@ gradlePlugin {
    isAutomatedPublishing = false
 
    plugins {
-      create("toml-version-bump") {
-         id = "toml-version-bump"
-         implementationClass = "si.inova.kotlinova.gradle.versionbump.TomlVersionBumpPlugin"
+      create("kotlinova") {
+         id = "kotlinova"
+         implementationClass = "si.inova.kotlinova.gradle.KotlinovaPlugin"
       }
    }
 }
 
 detekt {
-   config = files("$rootDir/../config/detekt.yml")
+   config.from(files("$rootDir/../config/detekt.yml"))
 }
 
 dependencies {
