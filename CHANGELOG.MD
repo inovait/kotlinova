@@ -1,3 +1,9 @@
+# 3.0.0-alpha23
+
+### Bug Fixes
+
+* **gradle**: compatibility with AGP 8.2.x ([dbe17ef2](https://github.com/inovait/kotlinova/commit/dbe17ef21473519ae094b625637df842d788ad92))
+
 # 3.0.0-alpha22
 
 ### Features
