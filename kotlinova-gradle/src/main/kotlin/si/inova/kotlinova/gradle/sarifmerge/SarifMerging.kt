@@ -89,7 +89,7 @@ private fun Project.registerAndroidLintSarifMerging() {
    val lintOutputs = objects.listProperty(RegularFile::class.java)
 
    tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
-      val variant = lintTask.variantInputs.name.get()
+      val variant = lintTask.variantName
       val lintSarifFile = lintTask.project.layout.buildDirectory.file(
          "reports/lint-results-$variant.sarif"
       )
