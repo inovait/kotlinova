@@ -121,3 +121,21 @@ android {
 
 Even if you don't use Detekt, you still need it on the classpath for this to work,
 since it is using merging mechanism from Detekt plugin
+
+# Detekt's pre-commit hook
+
+This allows one-line enabling of the
+[Detekt's pre-commit hook](https://detekt.dev/docs/gettingstarted/git-pre-commit-hook/) that will setup
+detekt to only scan for staged git files whenever `-precommit` flag is added to the gradle's command line.
+
+```kotlin
+kotlinova {
+   enableDetektPreCommitHook = true
+}
+```
+
+To use, add `-Pprecommit=true` flag to your pre-commit hook. For example:
+
+```kotlin
+./gradlew - Pprecommit = true detekt
+```

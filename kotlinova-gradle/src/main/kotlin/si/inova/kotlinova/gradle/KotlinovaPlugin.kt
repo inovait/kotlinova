@@ -18,6 +18,7 @@ package si.inova.kotlinova.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import si.inova.kotlinova.gradle.detektprecommit.registerDetektPreCommitHook
 import si.inova.kotlinova.gradle.sarifmerge.registerSarifMerging
 import si.inova.kotlinova.gradle.versionbump.registerTomlVersionBump
 
@@ -25,7 +26,10 @@ class KotlinovaPlugin : Plugin<Project> {
    override fun apply(project: Project) {
       val extension = project.extensions.create("kotlinova", KotlinovaExtension::class.java)
 
-      project.registerTomlVersionBump(extension)
-      project.registerSarifMerging(extension)
+      with(project) {
+         registerTomlVersionBump(extension)
+         registerSarifMerging(extension)
+         registerDetektPreCommitHook(extension)
+      }
    }
 }
