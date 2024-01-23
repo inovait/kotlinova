@@ -30,4 +30,6 @@ abstract class KotlinovaExtension @Inject constructor(objects: ObjectFactory) {
    }
 
    abstract val mergeDetektSarif: Property<Boolean>
+
+   abstract val mergeAndroidLintSarif: Property<Boolean>
 }

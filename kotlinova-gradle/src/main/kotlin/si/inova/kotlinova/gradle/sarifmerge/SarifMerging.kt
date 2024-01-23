@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.gradle.sarifmerge
 
+import com.android.build.gradle.internal.lint.AndroidLintTask
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import org.gradle.api.Project
@@ -50,27 +51,56 @@ internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
    extension.tomlVersionBump.apply {
       afterEvaluate { _ ->
          if (extension.mergeDetektSarif.getOrElse(false)) {
-            val mergeTaskProvider = createTopLevelMergeTask()
-
-            val detektOutputs = objects.listProperty(RegularFile::class.java)
-
-            tasks.withType(Detekt::class.java).configureEach { detektTask ->
-               // We need to set basePath to ensure sarif files have relative path in them
-               detektTask.basePath = this@registerSarifMerging.rootDir.absolutePath
-
-               detektTask.reports {
-                  it.sarif.required.set(true)
-               }
-
-               detektOutputs.add(detektTask.sarifReportFile)
-
-               detektTask.finalizedBy(mergeTaskProvider)
-            }
-
-            mergeTaskProvider.configure { mergeTask ->
-               mergeTask.input.from(detektOutputs)
-            }
+            registerDetektSarifMerging()
+         }
+         if (extension.mergeAndroidLintSarif.getOrElse(false)) {
+            registerAndroidLintSarifMerging()
          }
       }
+   }
+}
+
+private fun Project.registerDetektSarifMerging() {
+   val mergeTaskProvider = createTopLevelMergeTask()
+
+   val detektOutputs = objects.listProperty(RegularFile::class.java)
+
+   tasks.withType(Detekt::class.java).configureEach { detektTask ->
+      // We need to set basePath to ensure sarif files have relative path in them
+      detektTask.basePath = this.rootDir.absolutePath
+
+      detektTask.reports {
+         it.sarif.required.set(true)
+      }
+
+      detektOutputs.add(detektTask.sarifReportFile)
+
+      detektTask.finalizedBy(mergeTaskProvider)
+   }
+
+   mergeTaskProvider.configure { mergeTask ->
+
+         mergeTask.input.from(detektOutputs)
+   }
+}
+
+private fun Project.registerAndroidLintSarifMerging() {
+   val mergeTaskProvider = createTopLevelMergeTask()
+
+   val lintOutputs = objects.listProperty(RegularFile::class.java)
+
+   tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
+      val variant = lintTask.variantInputs.name.get()
+      val lintSarifFile = lintTask.project.layout.buildDirectory.file(
+         "reports/lint-results-$variant.sarif"
+      )
+
+      lintOutputs.add(lintSarifFile)
+
+      lintTask.finalizedBy(mergeTaskProvider)
+   }
+
+   mergeTaskProvider.configure { mergeTask ->
+      mergeTask.input.from(lintOutputs)
    }
 }

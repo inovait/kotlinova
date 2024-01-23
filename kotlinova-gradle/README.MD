@@ -97,3 +97,27 @@ kotlinova {
    mergeDetektSarif = true
 }
 ```
+
+# Android Lint sarif report merging
+
+This allows one-line enabling of the
+[Detekt's report merging mechanism](https://detekt.dev/docs/introduction/reporting/#merging-reports) that will setup
+merge sarif output of all Android Lint tasks to `merge.sarif` file in top level project's root.
+
+```kotlin
+kotlinova {
+   mergeAndroidLintSarif = true
+}
+```
+
+Note, that you still need to enable sarif manually in lint configuration:
+
+```kotlin
+android {
+   sarifReport = true
+}
+}
+```
+
+Even if you don't use Detekt, you still need it on the classpath for this to work,
+since it is using merging mechanism from Detekt plugin

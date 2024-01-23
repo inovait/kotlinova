@@ -137,6 +137,7 @@ dependencies {
 
    // Declare those dependencies as compile only to ensure they do not leak to consumers that do not need them
    compileOnly(libs.detekt.plugin)
+   compileOnly(libs.android.agp)
 
    detektPlugins(libs.detekt.formatting)
 }
