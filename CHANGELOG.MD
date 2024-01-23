@@ -1,3 +1,21 @@
+# 3.0.0-alpha22
+
+### Features
+
+* **core-test**: add TestScopeWithDispatcherProvider ([8644fc2e](https://github.com/inovait/kotlinova/commit/8644fc2eb07015b4e177ee18699788ee72150cb6))
+* **gradle**: add detekt sarif merge ([8aaa330a](https://github.com/inovait/kotlinova/commit/8aaa330a7c86a5e5fcc50a0d4da263be37b53ec2))
+* **gradle**: add android lint sarif merge ([e65080cd](https://github.com/inovait/kotlinova/commit/e65080cddc9d4dc74a9581f47b7513c6ba396aa3))
+* **gradle**: add detect pre-commit hook ([b7938c1d](https://github.com/inovait/kotlinova/commit/b7938c1dfda9993fab187dbd507e8e153f738037))
+* **gradle**: add android macrobenchmark upload task ([c9e0e1a1](https://github.com/inovait/kotlinova/commit/c9e0e1a1d37f51b8a6d928cb57bd51ab2f1035d5))
+
+### Bug Fixes
+
+* **navigation**: FragmentScreen not showing when activity starts in the background ([241350ff](https://github.com/inovait/kotlinova/commit/241350ff74d3f2daa7249d4519d643deddbaf898))
+
+### Miscellaneous
+
+* **gradle**: move tomlVersionBump into more general kotlinova plugin ([505f797e](https://github.com/inovait/kotlinova/commit/505f797ed3857a71b54f109146702d64bf0e3363))
+
 # 3.0.0-alpha20
 
 ### Bug Fixes
