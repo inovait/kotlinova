@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -33,10 +33,11 @@ repositories {
 }
 
 detekt {
-   config = files("$projectDir/../config/detekt.yml", "$projectDir/../config/detekt-buildSrc.yml")
+   config.from(files("$projectDir/../config/detekt.yml", "$projectDir/../config/detekt-buildSrc.yml"))
 }
 
 dependencies {
+
    implementation(libs.androidGradleCacheFix)
    implementation(libs.android.agp)
    implementation(libs.anvil)
@@ -44,6 +45,7 @@ dependencies {
    implementation(libs.dokka)
    implementation(libs.kotlin.plugin)
    implementation(libs.versionsCheckerPlugin)
+   implementation("si.inova.kotlinova:kotlinova-gradle")
 
    // Workaround to have libs accessible (from https://github.com/gradle/gradle/issues/15383)
    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))

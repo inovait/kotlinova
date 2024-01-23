@@ -20,3 +20,4 @@
 .cxx
 local.properties
 /.idea/deploymentTargetDropDown.xml
+merge.sarif

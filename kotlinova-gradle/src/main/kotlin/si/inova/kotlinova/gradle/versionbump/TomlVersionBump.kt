@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,6 @@
 package si.inova.kotlinova.gradle.versionbump
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.InputFile
@@ -26,19 +25,8 @@ import org.gradle.api.tasks.TaskAction
 import org.json.JSONObject
 import org.tomlj.Toml
 import org.tomlj.TomlTable
+import si.inova.kotlinova.gradle.KotlinovaExtension
 import java.io.File
-
-class TomlVersionBumpPlugin : Plugin<Project> {
-   override fun apply(project: Project) {
-      val extension = project.extensions.create("tomlVersionBump", TomlVersionBumpExtension::class.java)
-
-      project.tasks.register("updateLibsToml", UpdateTomlLibs::class.java) {
-         it.reportFiles = extension.versionReportFiles.get()
-
-         it.tomlFile = extension.tomlFile.get()
-      }
-   }
-}
 
 open class UpdateTomlLibs : DefaultTask() {
    @InputFiles
@@ -147,6 +135,19 @@ open class UpdateTomlLibs : DefaultTask() {
          null
       } else {
          getString(key)
+      }
+   }
+}
+
+internal fun Project.registerTomlVersionBump(extension: KotlinovaExtension) {
+   extension.tomlVersionBump.apply {
+      afterEvaluate { _ ->
+         if (tomlFile.isPresent) {
+            project.tasks.register("updateLibsToml", UpdateTomlLibs::class.java) {
+               it.reportFiles = versionReportFiles.get()
+               it.tomlFile = tomlFile.get()
+            }
+         }
       }
    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,7 @@
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.accessors.dm.LibrariesForLibs
-import org.gradle.kotlin.dsl.the
+import si.inova.kotlinova.gradle.KotlinovaExtension
 import util.commonAndroid
 import util.isAndroidProject
 
@@ -25,6 +25,7 @@ val libs = the<LibrariesForLibs>()
 plugins {
    id("com.github.ben-manes.versions")
    id("io.gitlab.arturbosch.detekt")
+   id("kotlinova")
 }
 
 if (isAndroidProject()) {
@@ -35,6 +36,15 @@ if (isAndroidProject()) {
 
          warningsAsErrors = true
       }
+   }
+}
+
+configure<KotlinovaExtension> {
+   mergeDetektSarif = true
+   enableDetektPreCommitHook = true
+
+   if (isAndroidProject()) {
+      mergeAndroidLintSarif = true
    }
 }
 
@@ -54,7 +64,7 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 detekt {
-   config = files("$rootDir/config/detekt.yml")
+   config.from(files("$rootDir/config/detekt.yml"))
 }
 
 dependencies {
