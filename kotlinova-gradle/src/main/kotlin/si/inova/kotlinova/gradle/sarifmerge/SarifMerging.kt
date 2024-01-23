@@ -79,8 +79,7 @@ private fun Project.registerDetektSarifMerging() {
    }
 
    mergeTaskProvider.configure { mergeTask ->
-
-         mergeTask.input.from(detektOutputs)
+      mergeTask.input.from(detektOutputs)
    }
 }
 
