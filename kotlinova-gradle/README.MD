@@ -139,3 +139,49 @@ To use, add `-Pprecommit=true` flag to your pre-commit hook. For example:
 ```kotlin
 ./gradlew - Pprecommit = true detekt
 ```
+
+# Android benchmark result upload to Google Cloud metrics
+
+Plugin also contains a task that will upload results
+from [Macrobenchmark](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview)
+to [Google Cloud Monitoring](https://cloud.google.com/monitoring) where you can put results into charts and/or set up
+alerts when results change.
+
+This is similar
+to [Google's Macrobenchmarking sample](https://github.com/android/performance-samples/tree/main/MacrobenchmarkSample/ftl),
+except that no Firebase functions are required (everything happens locally in Gradle).
+
+Benchmark results are uploaded as custom metrics under, `custom.googleapis.com/android/{TEST_NAME}/{METRIC_NAME}/{PART}`,
+where `TEST_NAME` is the name of the test function that generated the result, converted to camel_case, `METRIC_NAME` is the
+remapped
+name of the defined metric (see below for mapping info) and `PART` is the name of the result part, such as `median` or `P99`.
+
+To authenticate with Google Cloud, you need to set `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
+See [their documentation](https://cloud.google.com/docs/authentication/application-default-credentials#GAC) for more info.
+
+You enable the upload by registering a new monitoring export task:
+
+```kotlin
+val benchmarkResultsUpload by tasks.registering(GoogleCloudBenchmarkUpload::class) {
+   // Project ID of the target google cloud project
+   googleCloudProjectId = "id-of-the-target-google-cloud-project"
+
+   // Set of JSON benchmark result JSON files
+   benchmarkResultFiles.from(
+      fileTree("/path/to/benchmark/json/results/") {
+         include("*-portrait/artifacts/sdcard/Download/*-benchmarkData.json")
+      }
+   )
+
+   // Map that converts metric name (which can contain invalid characters like spaces) into
+   // simple camel_case name that can be used in Google Cloud's custom metric path
+   metricMap.putAll(
+      mapOf(
+         "JIT compiling %Count" to "jit_count",
+         "timeToInitialDisplayMs" to "time_to_initial_display",
+      )
+   )
+}
+```
+
+then you call the task (`./gradlew benchmarkResultsUpload`) to initiate the upload.

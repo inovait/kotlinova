@@ -18,6 +18,11 @@ desugarJdkLibs = "2.0.3"
 dagger = "2.48.1"
 detekt = "1.23.1"
 dispatch = "1.0.0-beta10"
+# Do not update this until we update gradle
+# there is a version conflict with a gradle-supplied grpc, resulting in
+# AbstractManagedChannelImplBuilder error
+googleCloud-monitoring = "3.10.0"
+googleCloud-protobufUtil = "3.25.1"
 okhttp = "4.11.0"
 orgJson = "20230618"
 kotlin = "1.9.10"
@@ -70,6 +75,8 @@ dispatch = { module = "com.rickbusarow.dispatch:dispatch-core", version.ref = "d
 dispatch-espresso = { module = "com.rickbusarow.dispatch:dispatch-android-espresso", version.ref = "dispatch" }
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 espresso-idlingResource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
+googleCloud-monitoring = { module = "com.google.cloud:google-cloud-monitoring", version.ref = "googleCloud-monitoring" }
+googleCloud-protobufUtil = { module = "com.google.protobuf:protobuf-java-util", version.ref = "googleCloud-protobufUtil" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit5-api = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }

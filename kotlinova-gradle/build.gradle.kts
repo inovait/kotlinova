@@ -132,6 +132,8 @@ detekt {
 dependencies {
    api(gradleApi())
 
+   implementation(libs.googleCloud.monitoring)
+   implementation(libs.googleCloud.protobufUtil)
    implementation(libs.orgJson)
    implementation(libs.tomlj)
 
