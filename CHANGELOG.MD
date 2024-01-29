@@ -1,3 +1,9 @@
+# 3.0.0-alpha24
+
+### Features
+
+* **gradle**: use our own sarif merging task ([1a1dbc11](https://github.com/inovait/kotlinova/commit/1a1dbc1189456b849ecf962db1bf66d05533d371))
+
 # 3.0.0-alpha23
 
 ### Bug Fixes
