@@ -89,7 +89,7 @@ After all of that, you can update all of your libraries with a single command:
 # Detekt sarif report merging
 
 This allows one-line enabling of the
-[Detekt's report merging mechanism](https://detekt.dev/docs/introduction/reporting/#merging-reports) that will setup detekt tasks
+sarif lint report mechanism that will setup detekt
 in this project with .sarif output and then merge output of all detekt tasks to `merge.sarif` file in top level project's root.
 
 ```kotlin
@@ -101,7 +101,7 @@ kotlinova {
 # Android Lint sarif report merging
 
 This allows one-line enabling of the
-[Detekt's report merging mechanism](https://detekt.dev/docs/introduction/reporting/#merging-reports) that will setup
+sarif lint report mechanism that will
 merge sarif output of all Android Lint tasks to `merge.sarif` file in top level project's root.
 
 ```kotlin
@@ -116,11 +116,7 @@ Note, that you still need to enable sarif manually in lint configuration:
 android {
    sarifReport = true
 }
-}
 ```
-
-Even if you don't use Detekt, you still need it on the classpath for this to work,
-since it is using merging mechanism from Detekt plugin
 
 # Detekt's pre-commit hook
 

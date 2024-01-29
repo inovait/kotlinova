@@ -135,6 +135,7 @@ dependencies {
    implementation(libs.googleCloud.monitoring)
    implementation(libs.googleCloud.protobufUtil)
    implementation(libs.orgJson)
+   implementation(libs.sarif4k)
    implementation(libs.tomlj)
 
    // Declare those dependencies as compile only to ensure they do not leak to consumers that do not need them

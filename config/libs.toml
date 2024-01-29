@@ -34,6 +34,7 @@ junit4 = "4.13.2"
 junit5 = "5.10.0"
 moshi = "1.15.0"
 retrofit = "2.9.0"
+sarif4k = "0.5.0"
 simpleStack = "2.8.0"
 tomlj = "1.1.0"
 turbine = "1.0.0"
@@ -90,6 +91,7 @@ kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-te
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+sarif4k = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "sarif4k" }
 simpleStack = { module = "com.github.Zhuinden:simple-stack", version.ref = "simpleStack" }
 tomlj = { module = "org.tomlj:tomlj", version.ref = "tomlj" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }

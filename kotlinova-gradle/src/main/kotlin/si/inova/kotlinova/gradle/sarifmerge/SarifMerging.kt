@@ -18,7 +18,6 @@ package si.inova.kotlinova.gradle.sarifmerge
 
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.report.ReportMergeTask
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.file.RegularFile
@@ -26,14 +25,14 @@ import org.gradle.api.tasks.TaskProvider
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import java.io.File
 
-internal fun Project.createTopLevelMergeTask(): TaskProvider<ReportMergeTask> {
+internal fun Project.createTopLevelMergeTask(): TaskProvider<SarifMergeTask> {
    // This violates build isolation but we are forced to use it for performance reasons
    // Waiting for https://github.com/gradle/gradle/issues/25179 for a possible workaround
 
    return try {
-      rootProject.tasks.named("reportMerge", ReportMergeTask::class.java)
+      rootProject.tasks.named("reportMerge", SarifMergeTask::class.java)
    } catch (ignored: UnknownTaskException) {
-      rootProject.tasks.register("reportMerge", ReportMergeTask::class.java) { task ->
+      rootProject.tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
          task.output.set(File(rootProject.rootDir, "merge.sarif"))
 
          task.doFirst {
