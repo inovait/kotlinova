@@ -1,3 +1,9 @@
+# 3.0.0-alpha25
+
+### Bug Fixes
+
+* **gradle**: SarifMergeTask crashing on empty sarif collection ([1fc5ef46](https://github.com/inovait/kotlinova/commit/1fc5ef460075992008663a663f77535fe9611bc5))
+
 # 3.0.0-alpha24
 
 ### Features
