@@ -57,9 +57,9 @@ abstract class SarifMergeTask : DefaultTask() {
 
       val merged = sarifFiles.reduce(SarifSchema210::merge)
 
-      // Workaround for the https://github.com/security-alert/security-alert/issues/50
       val fixedSeverity = merged.copy(
          runs = merged.runs.map { run ->
+            // Workaround for the https://github.com/security-alert/security-alert/issues/50
             run.copy(
                tool = run.tool.copy(
                   driver = run.tool.driver.copy(
@@ -75,6 +75,10 @@ abstract class SarifMergeTask : DefaultTask() {
                   )
                )
             )
+         }.sortedByDescending {
+            // Display runs with fewer errors last
+            // Workaround for https://github.com/security-alert/security-alert/issues/74
+            it.results?.size ?: 0
          }
       )
 
