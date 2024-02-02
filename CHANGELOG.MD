@@ -1,3 +1,10 @@
+# 3.0.0
+
+### Bug Fixes
+
+* **gradle**: put runs with fewer errors at the end of sarif ([b621d2c2](https://github.com/inovait/kotlinova/commit/b621d2c23a8f17d5ce285bbd6bcbee4f74a082f0))
+* **navigation**: fix compatibility with compose 1.6.0 ([8a54fc85](https://github.com/inovait/kotlinova/commit/8a54fc85962691b6103b2cd4e629791f69aeb4c3))
+
 # 3.0.0-alpha25
 
 ### Bug Fixes
