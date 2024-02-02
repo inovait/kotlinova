@@ -25,19 +25,20 @@ jobs:
         uses: android-actions/setup-android@7c5672355aaa8fde5f97a91aa9a99616d1ace6bc
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6
+      - run: "v=$(cat version.txt);echo \"OLD_VERSION=$v\" > $GITHUB_ENV"
       - name: Check if there were any new fix or feature commits
         id: version-check
         uses: inovait/actions-common/bump-version-since-last-build@21a4069c8686686b5d0a1429f4d1f7ebf0d59f1a
         with:
-          version: '1.0.0'
+          version: '${{ env.OLD_VERSION }}'
       - run: "echo \"No feature or fix commits. Skipping build...\""
-        if: "${{ steps.version-check.outputs.version == '1.0.0' }}"
+        if: "${{ steps.version-check.outputs.version == env.OLD_VERSION }}"
       - uses: andymckay/cancel-action@0.3
-        if: "${{ steps.version-check.outputs.version == '1.0.0' }}"
+        if: "${{ steps.version-check.outputs.version == env.OLD_VERSION }}"
       - name: "Wait for cancel to stick"
         run: "sleep 99999"
-        if: "${{ steps.version-check.outputs.version == '1.0.0' }}"
-      - run: "./bump_version.sh"
+        if: "${{ steps.version-check.outputs.version == env.OLD_VERSION }}"
+      - run: "./bump_version.sh ${{ steps.version-check.outputs.version }}"
       - run: "v=$(cat version.txt);echo \"VERSION=$v\" > $GITHUB_ENV"
       - run: "echo \"# Release version ${{ env.VERSION }}\" > $GITHUB_STEP_SUMMARY"
       - name: Compile library

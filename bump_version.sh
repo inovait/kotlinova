@@ -15,7 +15,7 @@
 #   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-old_version=$(cat version.txt)
-alpha_number=${old_version:11:10}
-let new_number=$alpha_number+1
-echo "3.0.0-alpha$new_number" > version.txt
+echo "Bumping version to $1"
+
+# Hardcode 3.0.0 for the first release
+echo "3.0.0" > version.txt
