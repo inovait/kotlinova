@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,7 +20,6 @@ import android.os.Parcelable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,7 +46,6 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * See [Compose documentation](https://developer.android.com/jetpack/compose/animation#animatedcontent)
     * for syntax and examples.
     */
-   @OptIn(ExperimentalAnimationApi::class)
    open fun forwardAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       return if (scope.targetState.direction == StateChange.REPLACE) {
          fadeIn() togetherWith fadeOut()
@@ -75,7 +73,6 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * See [Compose documentation](https://developer.android.com/jetpack/compose/animation#animatedcontent)
     * for syntax and examples.
     */
-   @OptIn(ExperimentalAnimationApi::class)
    open fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       // Rough match of the FragmentTransaction.TRANSITION_CLOSE
 

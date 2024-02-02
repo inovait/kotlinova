@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -134,7 +134,7 @@ internal class NavDeepLink constructor(
       // Base condition of a matching fragment is a complete match on regex pattern. If a
       // required fragment arg is present while regex does not match, this will be caught later
       // on as a non-match when we check for presence of required args in the bundle.
-      val matcher = fragPattern?.matcher(fragment.toString()) ?: return
+      val matcher = fragPattern?.matcher(fragment.orEmpty()) ?: return
       if (!matcher.matches()) return
 
       this.fragArgs.mapIndexed { index, argumentName ->
