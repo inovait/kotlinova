@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,7 +21,7 @@ import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.anvil.annotations.ExperimentalAnvilApi
 import com.squareup.anvil.compiler.api.AnvilContext
 import com.squareup.anvil.compiler.api.CodeGenerator
-import com.squareup.anvil.compiler.api.GeneratedFile
+import com.squareup.anvil.compiler.api.FileWithContent
 import com.squareup.anvil.compiler.api.createGeneratedFile
 import com.squareup.anvil.compiler.internal.buildFile
 import com.squareup.anvil.compiler.internal.reference.ClassReference
@@ -64,7 +64,7 @@ class ScreenInjectionGenerator : CodeGenerator {
       codeGenDir: File,
       module: ModuleDescriptor,
       projectFiles: Collection<KtFile>
-   ): Collection<GeneratedFile> {
+   ): Collection<FileWithContent> {
       return projectFiles.classAndInnerClassReferences(module).mapNotNull {
          if (it.isAbstract()) {
             return@mapNotNull null
@@ -80,7 +80,7 @@ class ScreenInjectionGenerator : CodeGenerator {
       codeGenDir: File,
       clas: ClassReference.Psi,
       screenKeyType: ClassReference
-   ): Collection<GeneratedFile> {
+   ): Collection<FileWithContent> {
       val className = clas.asClassName()
       val packageName = clas.packageFqName.safePackageString(
          dotPrefix = false,
@@ -143,7 +143,7 @@ class ScreenInjectionGenerator : CodeGenerator {
          addType(moduleInterfaceSpec)
       }
 
-      return listOf(createGeneratedFile(codeGenDir, packageName, outputFileName, content))
+      return listOf(createGeneratedFile(codeGenDir, packageName, outputFileName, content, clas.containingFileAsJavaFile))
    }
 
    private fun createBindScreenFactoryToFactoryMultibindsFunction(
