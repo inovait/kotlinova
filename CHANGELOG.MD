@@ -1,3 +1,9 @@
+# 3.0.1
+
+### Bug Fixes
+
+* **navigation**: add support for anvil 2.5.0's incremental compilation ([11c36c81](https://github.com/inovait/kotlinova/commit/11c36c81e22f17e34c416dc342da056988d0e12d))
+
 # 3.0.0
 
 ### Bug Fixes
