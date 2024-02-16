@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,7 +21,7 @@ import com.squareup.anvil.annotations.ContributesTo
 import com.squareup.anvil.annotations.ExperimentalAnvilApi
 import com.squareup.anvil.compiler.api.AnvilContext
 import com.squareup.anvil.compiler.api.CodeGenerator
-import com.squareup.anvil.compiler.api.GeneratedFile
+import com.squareup.anvil.compiler.api.FileWithContent
 import com.squareup.anvil.compiler.api.createGeneratedFile
 import com.squareup.anvil.compiler.internal.buildFile
 import com.squareup.anvil.compiler.internal.reference.ClassReference
@@ -47,11 +47,12 @@ import java.io.File
 @Suppress("unused")
 @AutoService(CodeGenerator::class)
 class ScopedServiceInjectionGenerator : CodeGenerator {
+
    override fun generateCode(
       codeGenDir: File,
       module: ModuleDescriptor,
       projectFiles: Collection<KtFile>
-   ): Collection<GeneratedFile> {
+   ): Collection<FileWithContent> {
       return projectFiles.classAndInnerClassReferences(module).mapNotNull {
          if (it.isAbstract() || !it.isScopedService()) {
             return@mapNotNull null
@@ -64,7 +65,7 @@ class ScopedServiceInjectionGenerator : CodeGenerator {
    private fun generateScopedServiceModule(
       codeGenDir: File,
       clas: ClassReference.Psi
-   ): Collection<GeneratedFile> {
+   ): Collection<FileWithContent> {
       val className = clas.asClassName()
       val packageName = clas.packageFqName.safePackageString(
          dotPrefix = false,
@@ -123,7 +124,7 @@ class ScopedServiceInjectionGenerator : CodeGenerator {
       }
 
       return listOf(
-         createGeneratedFile(codeGenDir, packageName, outputFileName, content)
+         createGeneratedFile(codeGenDir, packageName, outputFileName, content, clas.containingFileAsJavaFile)
       )
    }
 
