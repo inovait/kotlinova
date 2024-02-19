@@ -1,3 +1,9 @@
+# 3.0.2
+
+### Bug Fixes
+
+* **gradle**: pre-commit hook not working when gradle project not in git root ([14c6e415](https://github.com/inovait/kotlinova/commit/14c6e415a0ca1c4f039d76afa4fd0cfdb6f3b1fd))
+
 # 3.0.1
 
 ### Bug Fixes
