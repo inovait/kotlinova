@@ -48,14 +48,13 @@ internal fun Project.registerDetektPreCommitHook(extension: KotlinovaExtension) 
             if (project.hasProperty("precommit")) {
                detektTask.dependsOn(gitPreCommitFileListTask)
 
-               val rootDir = project.rootDir
                val projectDir = projectDir
 
                val fileCollection = files()
 
                detektTask.setSource(
                   gitPreCommitFileListTask.flatMap { task ->
-                     task.getStagedFiles(rootDir)
+                     task.getStagedFiles()
                         .map { stagedFiles ->
                            val stagedFilesFromThisProject = stagedFiles
                               .filter { it.startsWith(projectDir) }
@@ -78,25 +77,44 @@ abstract class GitPreCommitFilesTask : DefaultTask() {
 
    @TaskAction
    fun taskAction() {
-      val gitProcess =
-         ProcessBuilder("git", "--no-pager", "diff", "--name-only", "--cached").start()
-      val error = gitProcess.errorStream.readBytes().decodeToString()
-      if (error.isNotBlank()) {
-         error("Git error : $error")
+      val gitRootProcess =
+         ProcessBuilder("git", "--no-pager", "rev-parse", "--git-dir").start()
+      val gitRootError = gitRootProcess.errorStream.readBytes().decodeToString()
+      if (gitRootError.isNotBlank()) {
+         error("Git error : $gitRootError")
       }
 
-      val gitVersion = gitProcess.inputStream.readBytes().decodeToString().trim()
+      val gitDirectory = gitRootProcess.inputStream.readBytes().decodeToString().trim()
+      val gitRootDirectory = if (gitDirectory == ".git") {
+         // If git outputs just ".git", then our current directory is the root directory of the git repo
+         System.getProperty("user.dir")
+      } else {
+         gitDirectory.removeSuffix("/.git")
+      }
 
-      gitStagedListFile.get().asFile.writeText(gitVersion)
+      val gitFileListProcess =
+         ProcessBuilder("git", "--no-pager", "diff", "--name-only", "--cached").start()
+      val gitFileListError = gitFileListProcess.errorStream.readBytes().decodeToString()
+      if (gitFileListError.isNotBlank()) {
+         error("Git error : $gitFileListError")
+      }
+
+      val gitFiles = gitFileListProcess.inputStream.readBytes().decodeToString().trim().split("\n")
+
+      val absoluteFiles = gitFiles.map {
+         "$gitRootDirectory/$it"
+      }
+
+      gitStagedListFile.get().asFile.writeText(absoluteFiles.joinToString("\n"))
    }
 }
 
-fun GitPreCommitFilesTask.getStagedFiles(rootDir: File): Provider<List<File>> {
+fun GitPreCommitFilesTask.getStagedFiles(): Provider<List<File>> {
    return gitStagedListFile.map { gitFile ->
       try {
          gitFile.asFile.readLines()
             .filter { it.isNotBlank() }
-            .map { File(rootDir, it) }
+            .map { File(it) }
       } catch (e: FileNotFoundException) {
          // See https://github.com/gradle/gradle/issues/19252
          throw IllegalStateException(
