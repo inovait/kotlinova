@@ -19,30 +19,42 @@ package si.inova.kotlinova.gradle.detektprecommit
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import java.io.File
 import java.io.FileNotFoundException
 
+internal fun Project.createTopLevelStagedFilesListTask(): TaskProvider<GitPreCommitFilesTask> {
+   // This violates build isolation but it can improve performance significantly with large projects with many modules
+   // Waiting for https://github.com/gradle/gradle/issues/25179 for a better solution
+
+   return try {
+      rootProject.tasks.named("gitPreCommitFileList", GitPreCommitFilesTask::class.java)
+   } catch (ignored: UnknownTaskException) {
+      rootProject.tasks.register("gitPreCommitFileList", GitPreCommitFilesTask::class.java) { task ->
+         val targetFile = File(
+            project.layout.buildDirectory.asFile.get(),
+            "intermediates/gitPreCommitFileList/output"
+         )
+
+         targetFile.also {
+            it.parentFile.mkdirs()
+            task.gitStagedListFile.set(it)
+         }
+         task.outputs.upToDateWhen { false }
+      }
+   }
+}
+
 internal fun Project.registerDetektPreCommitHook(extension: KotlinovaExtension) {
    afterEvaluate {
       if (extension.enableDetektPreCommitHook.getOrElse(false)) {
-         val gitPreCommitFileListTask =
-            tasks.register("gitPreCommitFileList", GitPreCommitFilesTask::class.java) { task ->
-               val targetFile = File(
-                  project.layout.buildDirectory.asFile.get(),
-                  "intermediates/gitPreCommitFileList/output"
-               )
-
-               targetFile.also {
-                  it.parentFile.mkdirs()
-                  task.gitStagedListFile.set(it)
-               }
-               task.outputs.upToDateWhen { false }
-            }
+         val gitPreCommitFileListTask = createTopLevelStagedFilesListTask()
 
          tasks.withType(Detekt::class.java).configureEach { detektTask ->
             if (project.hasProperty("precommit")) {
