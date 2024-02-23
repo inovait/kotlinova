@@ -42,7 +42,7 @@ class Debouncer(
    private var previousJob: Job? = null
    private var lastStart = 0L
 
-   fun executeDebouncing(task: suspend () -> Unit) {
+   fun executeDebouncing(debouncingTimeMs: Long = this.debouncingTimeMs, task: suspend () -> Unit) {
       previousJob?.cancel()
 
       previousJob = scope.launch(targetContext) {

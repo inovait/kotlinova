@@ -34,7 +34,7 @@ internal class DebouncerTest {
 
       val task = ExecutableTask()
 
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       runCurrent()
       task.called shouldBe false
 
@@ -50,7 +50,7 @@ internal class DebouncerTest {
 
       val task = ExecutableTask()
 
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       runCurrent()
       task.called shouldBe true
    }
@@ -61,7 +61,7 @@ internal class DebouncerTest {
 
       val task = ExecutableTask()
 
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       runCurrent()
       task.called shouldBe true
    }
@@ -74,7 +74,7 @@ internal class DebouncerTest {
 
       val task = ExecutableTask()
 
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       advanceTimeBy(600)
 
       debouncer.executeDebouncing { }
@@ -92,7 +92,7 @@ internal class DebouncerTest {
       advanceTimeBy(200)
 
       val task = ExecutableTask()
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       runCurrent()
       task.called shouldBe false
 
@@ -110,7 +110,7 @@ internal class DebouncerTest {
       advanceTimeBy(200)
 
       val task = ExecutableTask()
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       runCurrent()
       task.called shouldBe false
 
@@ -128,51 +128,37 @@ internal class DebouncerTest {
       advanceTimeBy(600)
 
       val task = ExecutableTask()
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       runCurrent()
 
       advanceTimeBy(100)
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       advanceTimeBy(100)
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       advanceTimeBy(100)
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
       advanceTimeBy(100)
-      debouncer.executeDebouncing(task)
+      debouncer.executeDebouncing(task = task)
 
       task.called shouldBe false
    }
 
-//
-//   @Test
-//   fun testTwoTasks() {
-//      val taskA: LocalFunction0<Unit> = mock()
-//      whenever(taskA.invoke()).thenReturn(Unit)
-//      val taskB: LocalFunction0<Unit> = mock()
-//      whenever(taskB.invoke()).thenReturn(Unit)
-//
-//      val inOrderTest = inOrder(taskA, taskB)
-//
-//      debouncer.executeDebouncing(taskA)
-//      scheduler.triggerActions()
-//      inOrderTest.verify(taskA, never()).invoke()
-//
-//      scheduler.advanceTime(400)
-//      inOrderTest.verify(taskA, never()).invoke()
-//
-//      debouncer.executeDebouncing(taskB)
-//      scheduler.triggerActions()
-//      inOrderTest.verify(taskB, never()).invoke()
-//
-//      scheduler.advanceTime(400)
-//      inOrderTest.verify(taskB, never()).invoke()
-//
-//      scheduler.advanceTime(500)
-//      inOrderTest.verify(taskB).invoke()
-//
-//      scheduler.advanceTime(600)
-//      inOrderTest.verifyNoMoreInteractions()
-//   }
+   @Test
+   fun `Wait for task to start when not in immediate mode with custom delay`() = runTest {
+      advanceTimeBy(100_000)
+
+      val debouncer = Debouncer(backgroundScope, virtualTimeProvider())
+
+      val task = ExecutableTask()
+
+      debouncer.executeDebouncing(task = task, debouncingTimeMs = 300L)
+      runCurrent()
+      task.called shouldBe false
+
+      advanceTimeBy(300)
+      runCurrent()
+      task.called shouldBe true
+   }
 
    private class ExecutableTask : suspend () -> Unit {
       var called = false
