@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -28,6 +28,8 @@ internal class DebouncerTest {
 
    @Test
    fun `Wait for task to start when not in immediate mode`() = runTest {
+      advanceTimeBy(100_000)
+
       val debouncer = Debouncer(backgroundScope, virtualTimeProvider())
 
       val task = ExecutableTask()
@@ -42,6 +44,19 @@ internal class DebouncerTest {
 
    @Test
    fun `Start task immediately in immediate mode`() = runTest {
+      advanceTimeBy(100_000)
+
+      val debouncer = Debouncer(backgroundScope, virtualTimeProvider(), triggerFirstImmediately = true)
+
+      val task = ExecutableTask()
+
+      debouncer.executeDebouncing(task)
+      runCurrent()
+      task.called shouldBe true
+   }
+
+   @Test
+   fun `Start task immediately in immediate mode with time being zero`() = runTest {
       val debouncer = Debouncer(backgroundScope, virtualTimeProvider(), triggerFirstImmediately = true)
 
       val task = ExecutableTask()
@@ -53,6 +68,8 @@ internal class DebouncerTest {
 
    @Test
    fun `Cancel previous task when triggering new one`() = runTest {
+      advanceTimeBy(100_000)
+
       val debouncer = Debouncer(backgroundScope, virtualTimeProvider())
 
       val task = ExecutableTask()
@@ -67,6 +84,8 @@ internal class DebouncerTest {
 
    @Test
    fun `Do not start new task until debouncing period is over`() = runTest {
+      advanceTimeBy(100_000)
+
       val debouncer = Debouncer(backgroundScope, virtualTimeProvider())
 
       debouncer.executeDebouncing {}
@@ -83,6 +102,8 @@ internal class DebouncerTest {
 
    @Test
    fun `Do not start new task until debouncing period is over even in immediate mode`() = runTest {
+      advanceTimeBy(100_000)
+
       val debouncer = Debouncer(backgroundScope, virtualTimeProvider(), triggerFirstImmediately = true)
 
       debouncer.executeDebouncing {}
@@ -99,6 +120,8 @@ internal class DebouncerTest {
 
    @Test
    fun `Do not start any task if debouncing period keeps changing`() = runTest {
+      advanceTimeBy(100_000)
+
       val debouncer = Debouncer(backgroundScope, virtualTimeProvider())
 
       debouncer.executeDebouncing {}
