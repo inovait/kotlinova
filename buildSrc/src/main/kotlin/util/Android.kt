@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,6 +20,7 @@ import com.android.build.api.dsl.AndroidResources
 import com.android.build.api.dsl.BuildFeatures
 import com.android.build.api.dsl.BuildType
 import com.android.build.api.dsl.DefaultConfig
+import com.android.build.api.dsl.Installation
 import com.android.build.api.dsl.ProductFlavor
 import com.android.build.gradle.internal.dsl.InternalTestedExtension
 import com.android.build.gradle.internal.utils.KOTLIN_ANDROID_PLUGIN_ID
@@ -35,7 +36,8 @@ fun Project.commonAndroid(
       BuildType,
       DefaultConfig,
       ProductFlavor,
-      AndroidResources
+      AndroidResources,
+      Installation
       >>
 ) {
    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("android", block)
