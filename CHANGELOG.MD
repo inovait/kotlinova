@@ -1,3 +1,17 @@
+# 3.1.0
+
+### Features
+
+* **core**: add per-execution time customization to Debouncer ([b4a9c485](https://github.com/inovait/kotlinova/commit/b4a9c4857061956a8c21a158e7025d0a7cb5b643))
+
+### Bug Fixes
+
+* **gradle**: create single gitPreCommitFileList ([e6259b2f](https://github.com/inovait/kotlinova/commit/e6259b2fff7152b724ea9a47030c8b0ce3d6fb4d))
+* **core**: Debouncer not properly delaying first trigger ([ff301e97](https://github.com/inovait/kotlinova/commit/ff301e97f006a0268a76560cb7f32b8dc231aae1))
+* **core**: CancellationException propagation with catchIntoOutcome ([9177d83e](https://github.com/inovait/kotlinova/commit/9177d83e31866be4590e107edb565c33736733e1))
+* **retrofit**: CancellationException propagation on stale while revalidate ([43c6283e](https://github.com/inovait/kotlinova/commit/43c6283e3c9dd233ce9ada324ecc256c150ba380))
+* **navigation**: compatibility with anvil 2.5.0-beta04 ([1af4a083](https://github.com/inovait/kotlinova/commit/1af4a083bbcf19d5308567af3c51ffc51bd4f037))
+
 # 3.0.2
 
 ### Bug Fixes
