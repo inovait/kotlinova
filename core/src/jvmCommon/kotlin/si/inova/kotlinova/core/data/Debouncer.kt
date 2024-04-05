@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -42,12 +42,12 @@ class Debouncer(
    private var previousJob: Job? = null
    private var lastStart = 0L
 
-   fun executeDebouncing(task: suspend () -> Unit) {
+   fun executeDebouncing(debouncingTimeMs: Long = this.debouncingTimeMs, task: suspend () -> Unit) {
       previousJob?.cancel()
 
       previousJob = scope.launch(targetContext) {
-         if ((lastStart != 0L || !triggerFirstImmediately) &&
-            (timeProvider.currentTimeMillis() - lastStart) < debouncingTimeMs
+         if (!triggerFirstImmediately || (lastStart != 0L &&
+               (timeProvider.currentTimeMillis() - lastStart) < debouncingTimeMs)
          ) {
             delay(debouncingTimeMs)
          }

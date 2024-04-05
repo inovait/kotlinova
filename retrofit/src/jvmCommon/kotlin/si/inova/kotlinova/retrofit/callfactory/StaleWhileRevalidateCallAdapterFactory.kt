@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -42,6 +42,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Call adapter factory that handles Flow<Outcome<T>> return types.
@@ -174,6 +175,8 @@ class StaleWhileRevalidateCallAdapterFactory(
             }
 
             send(result)
+         } catch (e: CancellationException) {
+            throw e
          } catch (e: Exception) {
             send(Outcome.Error(e.transformRetrofitException(networkRequest.url.toString()), dataFromCache))
          }
