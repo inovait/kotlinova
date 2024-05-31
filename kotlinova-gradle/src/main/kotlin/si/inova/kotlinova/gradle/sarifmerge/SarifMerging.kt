@@ -33,6 +33,8 @@ internal fun Project.createTopLevelMergeTask(): TaskProvider<SarifMergeTask> {
       rootProject.tasks.named("reportMerge", SarifMergeTask::class.java)
    } catch (ignored: UnknownTaskException) {
       rootProject.tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
+         task.outputs.cacheIf("IO bound task") { false }
+
          task.output.set(File(rootProject.rootDir, "merge.sarif"))
 
          task.doFirst {
