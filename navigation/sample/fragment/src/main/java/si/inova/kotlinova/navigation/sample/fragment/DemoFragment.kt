@@ -17,6 +17,7 @@
 package si.inova.kotlinova.navigation.sample.fragment
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,7 @@ class DemoFragment : Fragment() {
    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
       return TextView(requireContext()).apply {
          text = "Hello From Fragment. Got argument: ${arguments?.getInt(ARGUMENT_INPUT)}"
+         setTextColor(Color.WHITE)
       }
    }
 
