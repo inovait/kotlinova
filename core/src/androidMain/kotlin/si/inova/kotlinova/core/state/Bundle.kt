@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -50,7 +50,15 @@ operator fun Bundle.set(key: String, value: Any) {
 /**
  * Convert bundle to regular map. Mostly useful for logging.
  */
+@Deprecated("Naming was not indicative of what that function does. Use toMap() instead.", ReplaceWith("toMap()"))
 fun Bundle.asMap(): Map<String, Any?> {
+   return toMap()
+}
+
+/**
+ * Convert bundle to regular map. Mostly useful for logging.
+ */
+fun Bundle.toMap(): Map<String, Any?> {
    return keySet().associateWith {
       @Suppress("DEPRECATION") // We cannot use type safe APIs in this case
       get(it)
