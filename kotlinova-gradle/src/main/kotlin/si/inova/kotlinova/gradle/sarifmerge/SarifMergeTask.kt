@@ -48,7 +48,8 @@ abstract class SarifMergeTask : DefaultTask() {
 
    @TaskAction
    fun merge() {
-      val sarifFiles = input.files.filter { it.exists() }.map { SarifSerializer.fromJson(it.readText()) }
+      val sarifFiles =
+         input.files.filter { it.exists() }.map { SarifSerializer.fromJson(it.readText()) }
       if (sarifFiles.isEmpty()) {
          output.get().asFile.delete()
 
