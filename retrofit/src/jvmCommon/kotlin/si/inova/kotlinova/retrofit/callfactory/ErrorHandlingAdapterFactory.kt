@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -81,7 +81,7 @@ class ErrorHandlingAdapterFactory(
                override fun onResponse(call: Call<T>, response: Response<T>) {
                   return try {
                      val result = response.bodyOrThrow(errorHandler)
-                     callback.onResponse(call, Response.success(result))
+                     callback.onResponse(call, Response.success(result, response.raw()))
                   } catch (e: Exception) {
                      callback.onFailure(call, e.transformRetrofitException(request().url.toString()))
                   }
@@ -99,7 +99,7 @@ class ErrorHandlingAdapterFactory(
                ?: response.createParentException()
          }
 
-         return Response.success(response.bodyOrThrow(errorHandler))
+         return Response.success(response.bodyOrThrow(errorHandler), response.raw())
       }
 
       override fun timeout(): Timeout = proxy.timeout()
