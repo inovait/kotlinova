@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -143,6 +143,25 @@ open class CoroutineResourceManager(
       activeJobs[resource] = newJob
 
       newJob.start()
+   }
+
+   /**
+    * Launch a coroutine and report any exceptions that happen in that scope to the [reportService]
+    */
+   fun launchWithExceptionReporting(
+      context: CoroutineContext = EmptyCoroutineContext,
+      start: CoroutineStart = CoroutineStart.DEFAULT,
+      block: suspend CoroutineScope.() -> Unit
+   ) {
+      scope.launch(context, start) {
+         try {
+            block()
+         } catch (e: CancellationException) {
+            throw e
+         } catch (e: Exception) {
+            reportService.report(e)
+         }
+      }
    }
 
    /**
