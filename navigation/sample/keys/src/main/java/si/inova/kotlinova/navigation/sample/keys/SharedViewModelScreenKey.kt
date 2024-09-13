@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,13 +17,13 @@
 package si.inova.kotlinova.navigation.sample.keys
 
 import kotlinx.parcelize.Parcelize
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.sample.keys.base.BaseScreenKey
 import java.util.UUID
 
 // Adding same keys to the backstack is not allowed.
 // That's why we add a random id to the screen's key to make it unique and allow stacking.
 @Parcelize
-data class SharedViewModelScreenKey(private val id: UUID = UUID.randomUUID()) : ScreenKey() {
+data class SharedViewModelScreenKey(private val id: UUID = UUID.randomUUID()) : BaseScreenKey() {
    override fun getScopeTag(): String {
       // Any screens whose keys share the same scope name, will share their scoped services
       return "SharedScope"

@@ -42,11 +42,11 @@ android {
 dependencies {
    api(libs.simpleStack)
    api(libs.dagger.runtime) // This needs to be API to ensure generated files compile
+   api(libs.androidx.activity.compose)
 
    implementation(projects.kotlinova.core)
 
    implementation(libs.androidx.core)
-   implementation(libs.androidx.activity.compose)
    implementation(libs.androidx.compose.animation)
    implementation(libs.androidx.compose.ui)
    implementation(libs.androidx.compose.ui.graphics)

@@ -17,6 +17,8 @@
 // https://youtrack.jetbrains.com/issue/KTIJ-19369
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
+import com.android.build.gradle.BaseExtension
+
 buildscript {
    repositories {
       google()
@@ -28,5 +30,25 @@ buildscript {
       classpath(libs.anvil)
       classpath(libs.android.agp)
       classpath(libs.kotlin.plugin)
+   }
+}
+
+subprojects {
+   afterEvaluate {
+      extensions.configure<BaseExtension>("android") {
+         compileOptions {
+            isCoreLibraryDesugaringEnabled = true
+         }
+      }
+
+      dependencies {
+         add("coreLibraryDesugaring", libs.desugarJdkLibs)
+      }
+   }
+
+   configurations.all {
+      resolutionStrategy {
+         force("com.squareup.anvil:annotations-optional:2.5.0-beta09")
+      }
    }
 }

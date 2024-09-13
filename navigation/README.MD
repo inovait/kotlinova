@@ -430,6 +430,39 @@ class LoginConditionalNavigationHandler @Inject constructor(
 See [login example](sample/conditional/src/main/java/si/inova/kotlinova/navigation/sample/conditional)
 for more information.
 
+## Predictive back gesture
+
+Library supports predictive back out of the box. When is performing the back gesture, he/she is controlling the
+progress of the backward animation (see "Custom animations" above).
+
+To enable, you just opt-in in your Android Manifest:
+
+```xml
+
+<application...android:enableOnBackInvokedCallback="true"... >...</application>
+```
+
+See [Android documentation](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture#opt-predictive) for
+more info.
+
+You can customize the back animation based on which side user swipes from by accessing `scope.targetState.backSwipeEdge` property
+in the animation declaration:
+
+```kotlin
+abstract class MyScreenKey : ScreenKey() {
+   override fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
+      val animation = when (scope.targetState.backSwipeEdge) {
+         BackEventCompat.EDGE_LEFT ->...
+            BackEventCompat.EDGE_RIGHT
+         ->...
+         else ->... // Not predictive back
+      }
+
+      ...
+   }
+}
+```
+
 ## Navigating to fragments
 
 Navigation also has an optional `navigation-fragment` library that allows navigation to fragments instead of to 100% compose

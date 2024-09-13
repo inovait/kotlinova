@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -47,13 +47,12 @@ import si.inova.kotlinova.navigation.services.InjectedScopedServices
 fun NavigationInjection.Factory.rememberBackstack(
    stateChanger: StateChanger,
    id: String = "SINGLE",
-   interceptBackButton: Boolean = true,
    overrideMainBackstack: Backstack? = null,
    parentBackstack: Backstack? = null,
    parentBackstackScope: String? = null,
    initialHistory: () -> List<ScreenKey>
 ): Backstack {
-   return rememberBackstack(stateChanger, id, interceptBackButton, init = {
+   return rememberBackstack(stateChanger, id, init = {
       val scopedServices = InjectedScopedServices()
 
       lateinit var navigationInjection: NavigationInjection

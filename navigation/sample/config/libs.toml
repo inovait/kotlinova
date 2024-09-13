@@ -1,17 +1,18 @@
 [versions]
-androidGradlePlugin = "7.4.2"
-androidx-activity-compose = "1.8.0"
-androidx-core = "1.12.0"
-androidx-compose-compiler = "1.5.3"
-androidx-compose-runtime = "1.5.4"
-androidx-compose-material3 = "1.1.2"
-androidx-fragment = "1.6.2"
-androidx-lifecycle = "2.6.2"
-anvil = "2.4.8"
-dagger = "2.48.1"
-kotlin = "1.9.10"
-kotlinova = "3.0.0-alpha20"
-whetstone = "0.5.1"
+androidGradlePlugin = "8.4.2"
+androidx-activity-compose = "1.9.0"
+androidx-core = "1.13.1"
+androidx-compose-compiler = "1.5.14"
+androidx-compose-runtime = "1.7.0-beta02"
+androidx-compose-material3 = "1.2.1"
+androidx-fragment = "1.8.0"
+androidx-lifecycle = "2.7.0"
+anvil = "2.5.0-beta09"
+dagger = "2.51.1"
+desugarJdkLibs = "2.0.4"
+kotlin = "1.9.24"
+kotlinova = "3.1.0"
+whetstone = "0.9.0-beta02"
 
 [libraries]
 android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
@@ -29,10 +30,11 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
 anvil = { module = "com.squareup.anvil:gradle-plugin", version.ref = "anvil" }
-whetstone-compiler = { module = "com.deliveryhero.whetstone:whetstone-compiler", version.ref = "whetstone" }
-whetstone-runtime = { module = "com.deliveryhero.whetstone:whetstone", version.ref = "whetstone" }
+whetstone-compiler = { module = "dev.msfjarvis.whetstone:whetstone-compiler", version.ref = "whetstone" }
+whetstone-runtime = { module = "dev.msfjarvis.whetstone:whetstone", version.ref = "whetstone" }

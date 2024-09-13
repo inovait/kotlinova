@@ -63,6 +63,7 @@ android {
 
    anvil {
       syncGeneratedSources.set(true)
+      addOptionalAnnotations = true
    }
 }
 

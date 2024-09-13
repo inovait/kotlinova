@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -53,7 +53,7 @@ fun MainDeepLinkHandler.HandleNewIntentDeepLinks(activity: ComponentActivity, ba
       val navigator = NavigationInjection.fromBackstack(backstack).navigator()
 
       val newIntentListener = Consumer<Intent> { intent ->
-         intent?.data?.let { deepLink ->
+         intent.data?.let { deepLink ->
             handleDeepLink(deepLink, startup = false)?.let {
                navigator.navigate(it)
             }
