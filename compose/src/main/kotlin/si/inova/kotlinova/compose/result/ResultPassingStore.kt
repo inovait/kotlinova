@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -56,7 +56,8 @@ class ResultPassingStore(private val store: @RawValue HashMap<Int, Any> = HashMa
 
    fun <T> unregisterCallback(callback: (T) -> Unit) {
       callbacks.values.removeIf {
-         it.get() == callback
+         // Also remove all callbacks that have been garbage collected (are null)
+         it.get() == callback || it.get() == null
       }
    }
 

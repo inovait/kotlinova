@@ -17,7 +17,6 @@
 package si.inova.kotlinova.navigation.sample
 
 import android.app.Application
-import com.deliveryhero.whetstone.SingleIn
 import com.deliveryhero.whetstone.app.ApplicationComponent
 import com.deliveryhero.whetstone.app.ApplicationScope
 import com.squareup.anvil.annotations.MergeComponent
@@ -27,7 +26,6 @@ import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import javax.inject.Singleton
 
 @Singleton
-@SingleIn(ApplicationScope::class)
 @MergeComponent(ApplicationScope::class)
 @MergeComponent(OuterNavigationScope::class)
 interface NavigationSampleApplicationComponent : ApplicationComponent {

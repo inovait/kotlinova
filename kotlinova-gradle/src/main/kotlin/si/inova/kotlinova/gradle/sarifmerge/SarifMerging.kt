@@ -19,34 +19,49 @@ package si.inova.kotlinova.gradle.sarifmerge
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.Project
-import org.gradle.api.UnknownTaskException
-import org.gradle.api.file.RegularFile
-import org.gradle.api.tasks.TaskProvider
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import java.io.File
 
-internal fun Project.createTopLevelMergeTask(): TaskProvider<SarifMergeTask> {
-   // This violates build isolation but we are forced to use it for performance reasons
-   // Waiting for https://github.com/gradle/gradle/issues/25179 for a possible workaround
+internal fun Project.createTopLevelMergeTask() {
+   rootProject.tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
+      task.outputs.cacheIf("IO bound task") { false }
 
-   return try {
-      rootProject.tasks.named("reportMerge", SarifMergeTask::class.java)
-   } catch (ignored: UnknownTaskException) {
-      rootProject.tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
-         task.output.set(File(rootProject.rootDir, "merge.sarif"))
+      task.output.set(File(rootProject.rootDir, "merge.sarif"))
 
-         task.doFirst {
-            task.output.get().asFile.delete()
-         }
-
-         if (File(rootDir, "buildSrc").exists()) {
-            task.input.from(File(rootDir, "buildSrc/build/reports/detekt/detekt.sarif"))
-         }
+      task.doFirst {
+         task.output.get().asFile.delete()
       }
+
+      if (File(rootDir, "buildSrc").exists()) {
+         task.input.from(File(rootDir, "buildSrc/build/reports/detekt/detekt.sarif"))
+      }
+
+      task.input.from(configurations.getByName(CONFIGURATION_SARIF_REPORT).incoming.artifactView {
+         it.isLenient = true
+      }.files)
+   }
+
+   @Suppress("UnstableApiUsage")
+   subprojects {
+      dependencies.add(
+         CONFIGURATION_SARIF_REPORT,
+         dependencies.project(
+            mapOf(
+               "path" to it.isolated.path,
+               "configuration" to CONFIGURATION_SARIF_REPORT
+            )
+         )
+      )
    }
 }
 
 internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
+   project.configurations.create(CONFIGURATION_SARIF_REPORT)
+
+   if (this@registerSarifMerging == rootProject) {
+      createTopLevelMergeTask()
+   }
+
    extension.tomlVersionBump.apply {
       afterEvaluate { _ ->
          if (extension.mergeDetektSarif.getOrElse(false)) {
@@ -60,9 +75,11 @@ internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
 }
 
 private fun Project.registerDetektSarifMerging() {
-   val mergeTaskProvider = createTopLevelMergeTask()
+   // Artifact/configuration only works when the task succeeds. Using it normally would mean that merging would fail if
+   // any of the detekt tasks fail, which completely defeats the purpose. That's why detekt artifact actually depends on another
+   // task that always succeeds which is marked as a finalizer for the detekt task.
 
-   val detektOutputs = objects.listProperty(RegularFile::class.java)
+   val finalDetekt = tasks.register("finalDetekt")
 
    tasks.withType(Detekt::class.java).configureEach { detektTask ->
       // We need to set basePath to ensure sarif files have relative path in them
@@ -72,20 +89,21 @@ private fun Project.registerDetektSarifMerging() {
          it.sarif.required.set(true)
       }
 
-      detektOutputs.add(detektTask.sarifReportFile)
+      artifacts {
+         it.add(CONFIGURATION_SARIF_REPORT, detektTask.sarifReportFile) { artifact ->
+            artifact.builtBy(finalDetekt)
+         }
+      }
 
-      detektTask.finalizedBy(mergeTaskProvider)
-   }
-
-   mergeTaskProvider.configure { mergeTask ->
-      mergeTask.input.from(detektOutputs)
+      detektTask.finalizedBy(finalDetekt)
    }
 }
 
 private fun Project.registerAndroidLintSarifMerging() {
-   val mergeTaskProvider = createTopLevelMergeTask()
-
-   val lintOutputs = objects.listProperty(RegularFile::class.java)
+   // Artifact/configuration only works when the task succeeds. Using it normally would mean that merging would fail if
+   // any of the lint tasks fail, which completely defeats the purpose. That's why lint artifact actually depends on another
+   // task that always succeeds which is marked as a finalizer for the lint task.
+   val finalLint = tasks.register("finalLint")
 
    tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
       val variant = lintTask.variantName
@@ -93,12 +111,14 @@ private fun Project.registerAndroidLintSarifMerging() {
          "reports/lint-results-$variant.sarif"
       )
 
-      lintOutputs.add(lintSarifFile)
+      artifacts {
+         it.add(CONFIGURATION_SARIF_REPORT, lintSarifFile) { artifact ->
+            artifact.builtBy(finalLint)
+         }
+      }
 
-      lintTask.finalizedBy(mergeTaskProvider)
-   }
-
-   mergeTaskProvider.configure { mergeTask ->
-      mergeTask.input.from(lintOutputs)
+      lintTask.finalizedBy(finalLint)
    }
 }
+
+private const val CONFIGURATION_SARIF_REPORT = "sarifReport"

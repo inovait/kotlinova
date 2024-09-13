@@ -5,3 +5,6 @@
 /artifacts
 /migrations.xml
 /kotlinScripting.xml
+/appInsightsSettings.xml
+/deploymentTargetSelector.xml
+/other.xml

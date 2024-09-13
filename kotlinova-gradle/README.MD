@@ -86,11 +86,14 @@ After all of that, you can update all of your libraries with a single command:
 
 `./gradlew dependencyUpdates -q && ./gradlew app:updateLibsToml -q`
 
-# Detekt sarif report merging
+# Sarif merging
 
-This allows one-line enabling of the
-sarif lint report mechanism that will setup detekt
-in this project with .sarif output and then merge output of all detekt tasks to `merge.sarif` file in top level project's root.
+Sarif merging feature allows you to simply enable merging of all sarif reports of all static checks in sub-modules into
+one big top level `merge.sarif`.
+
+## Detekt
+
+To include detekt's sarif output, enable this on all sub-modules that produce detekt reports:
 
 ```kotlin
 kotlinova {
@@ -98,11 +101,9 @@ kotlinova {
 }
 ```
 
-# Android Lint sarif report merging
+## Android Lint
 
-This allows one-line enabling of the
-sarif lint report mechanism that will
-merge sarif output of all Android Lint tasks to `merge.sarif` file in top level project's root.
+To include detekt's sarif output, enable this on all sub-modules that produce lint reports:
 
 ```kotlin
 kotlinova {
@@ -117,6 +118,12 @@ android {
    sarifReport = true
 }
 ```
+
+## Top Level
+
+Lastly, you need to apply `kotlinova` plugin to your top-level project.
+Afterwards, you can call `reportMerge` to merge all sarif tasks. Note that, for this to work properly, you MUST call
+merging at the same time as detekt reporting (for example `./gradlew detekt reportMerge`).
 
 # Detekt's pre-commit hook
 

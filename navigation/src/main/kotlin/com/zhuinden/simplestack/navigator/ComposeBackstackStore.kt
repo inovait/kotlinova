@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,19 +16,14 @@
 
 package com.zhuinden.simplestack.navigator
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zhuinden.simplestack.AheadOfTimeWillHandleBackChangedListener
 import com.zhuinden.simplestack.BackHandlingModel
 import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.Backstack.StateClearStrategy
@@ -56,10 +51,6 @@ import com.zhuinden.statebundle.StateBundle
  * optional [id] argument allows you to have multiple backstacks inside single screen. To do that,
  * you have to provide unique ID to every distinct [rememberBackstack] call.
  *
- * Created backstack will automatically intercept all back button presses when necessary, if
- * [interceptBackButton] flag is enabled. Otherwise it is up to the caller to manually call
- * [Backstack.goBack].
- *
  * Note that backstack created with this method
  * uses [BackHandlingModel.AHEAD_OF_TIME] back handling model.
  *
@@ -70,7 +61,6 @@ import com.zhuinden.statebundle.StateBundle
 internal fun rememberBackstack(
    stateChanger: StateChanger,
    id: String = "SINGLE",
-   interceptBackButton: Boolean = true,
    init: ComposeNavigatorInitializer.() -> Backstack,
 ): Backstack {
    val viewModel = viewModel<BackstackHolderViewModel>()
@@ -78,9 +68,6 @@ internal fun rememberBackstack(
 
    SaveBackstackState(backstack)
    ListenToLifecycleEvents(backstack)
-   if (interceptBackButton) {
-      BackHandler(backstack)
-   }
 
    remember(stateChanger) {
       // Attach state changer after init call to defer first navigation. That way,
@@ -91,29 +78,6 @@ internal fun rememberBackstack(
    }
 
    return backstack
-}
-
-@Composable
-private fun BackHandler(backstack: Backstack) {
-   var backButtonEnabled by remember { mutableStateOf(false) }
-
-   DisposableEffect(backstack) {
-      backButtonEnabled = backstack.willHandleAheadOfTimeBack()
-
-      val listener = AheadOfTimeWillHandleBackChangedListener {
-         backButtonEnabled = it
-      }
-
-      backstack.addAheadOfTimeWillHandleBackChangedListener(listener)
-
-      onDispose {
-         backstack.removeAheadOfTimeWillHandleBackChangedListener(listener)
-      }
-   }
-
-   BackHandler(enabled = backButtonEnabled) {
-      backstack.goBack()
-   }
 }
 
 @Composable

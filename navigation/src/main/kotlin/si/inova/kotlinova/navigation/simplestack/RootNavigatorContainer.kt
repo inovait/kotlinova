@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,6 +19,7 @@ package si.inova.kotlinova.navigation.simplestack
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import com.zhuinden.simplestack.AsyncStateChanger
 import com.zhuinden.simplestack.Backstack
 import si.inova.kotlinova.navigation.di.NavigationInjection
@@ -33,7 +34,8 @@ fun NavigationInjection.Factory.RootNavigationContainer(
    screenWrapper: @Composable (key: ScreenKey, screen: @Composable () -> Unit) -> Unit = { _, screen -> screen() },
    initialHistory: () -> List<ScreenKey>
 ): Backstack {
-   val composeStateChanger = remember { ComposeStateChanger() }
+   val coroutineScope = rememberCoroutineScope()
+   val composeStateChanger = remember { ComposeStateChanger(coroutineScope, interceptBack = true) }
    val asyncStateChanger = remember(composeStateChanger) { AsyncStateChanger(composeStateChanger) }
 
    val backstack = this.rememberBackstack(asyncStateChanger) { initialHistory() }

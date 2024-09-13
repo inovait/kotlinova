@@ -556,6 +556,7 @@ potential-bugs:
     active: false
   MissingPackageDeclaration:
     active: true
+    excludes: [ '**/*.kts' ]
   NullableToStringCall:
     active: true
   UnconditionalJumpStatementInLoop:
