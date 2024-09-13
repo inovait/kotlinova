@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.core.time
 
+import android.annotation.SuppressLint
 import android.text.format.DateFormat
 import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
@@ -29,6 +30,7 @@ import java.util.Locale
  *
  * Adapted from https://github.com/drewhamilton/AndroidDateTimeFormatters/blob/9dee359a916a6d6e30bfa83613638ece0c3eb688/javatime/src/main/java/dev/drewhamilton/androidtime/format/AndroidDateTimeFormatter.java
  */
+@SuppressLint("NewApi") // java.time is desugared, so we don't need later SDK, https://issuetracker.google.com/issues/347167978
 abstract class BaseAndroidDateTimeFormatter : AndroidDateTimeFormatter {
 
    /**
@@ -41,6 +43,7 @@ abstract class BaseAndroidDateTimeFormatter : AndroidDateTimeFormatter {
     *
     * @return the time formatter
     */
+
    override fun ofLocalizedTime(): DateTimeFormatter {
       val contextPrimaryLocale = extractPrimaryLocale()
 
