@@ -1,3 +1,20 @@
+# 3.2.0
+
+### Features
+
+* **navigation**: enable predictive back animations ([22aa6cbc](https://github.com/inovait/kotlinova/commit/22aa6cbcf6fc6d05e8d8c33b45b65d0564663455))
+* **navigation**: enable predictive back animations ([1013bacb](https://github.com/inovait/kotlinova/commit/1013bacb5758237e510115ed4eea53268059aa7b))
+* **core**: added better-named Bundle.toMap() ([64160120](https://github.com/inovait/kotlinova/commit/64160120281dd2dad258ae29e62eba3d7aa88a8c))
+
+### Bug Fixes
+
+* **gradle**: disable build cache on reportMerge task ([dca90585](https://github.com/inovait/kotlinova/commit/dca90585126de68146cb6941b75917b2f684faa3))
+* **compose**: remove garbage collected callbacks on unregister ([df683b1c](https://github.com/inovait/kotlinova/commit/df683b1c683063e4d64f7816df0226330a18b42d))
+* **compose**: FakeCoilLoader crashing on many colors ([831a7cf2](https://github.com/inovait/kotlinova/commit/831a7cf2b138b973b61285cb37948231d13fce55))
+* **gradle**: detect pre-commit hook compatibility with project isolation ([8b354a3e](https://github.com/inovait/kotlinova/commit/8b354a3e84fbcecf60ba83debed59c1e157738bf))
+* **gradle**: sarif merging compatibility with project isolation ([3316e161](https://github.com/inovait/kotlinova/commit/3316e161551c93ca4274415e221434d0d129c89b))
+* **retrofit**: ErrorHandlingAdapterFactory stripping headers from responses ([93f0280a](https://github.com/inovait/kotlinova/commit/93f0280acc6b728cb2df3720e1df565b67a67d4c))
+
 # 3.1.0
 
 ### Features
