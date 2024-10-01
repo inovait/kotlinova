@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -63,7 +63,7 @@ kotlin {
 
 // We cannot reuse empty-javadoc.jar over different projects, because that breaks Gradle's project isolation.
 // Instead, we copy empty javadoc to project's build folder and then use this one
-val dummyJavadocFolder = File(project.buildDir, "emptyJavadoc").also { it.mkdirs() }
+val dummyJavadocFolder = File(project.layout.buildDirectory.asFile.get(), "emptyJavadoc").also { it.mkdirs() }
 val copyJavadocTask = tasks.register<Copy>("copyJavadoc") {
    from("${rootProject.rootDir}/config/empty-javadoc.jar")
    into(dummyJavadocFolder)

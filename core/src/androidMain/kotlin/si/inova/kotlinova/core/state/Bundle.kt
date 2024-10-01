@@ -19,7 +19,6 @@ package si.inova.kotlinova.core.state
 import android.os.Binder
 import android.os.Bundle
 import android.os.Parcelable
-import androidx.core.app.BundleCompat
 import java.io.Serializable
 
 /**
@@ -38,7 +37,7 @@ operator fun Bundle.set(key: String, value: Any) {
       is CharSequence -> putCharSequence(key, value)
       is Float -> putFloat(key, value)
       is Bundle -> putBundle(key, value)
-      is Binder -> BundleCompat.putBinder(this, key, value)
+      is Binder -> putBinder(key, value)
       is Parcelable -> putParcelable(key, value)
       is Serializable -> putSerializable(key, value)
       else -> error(

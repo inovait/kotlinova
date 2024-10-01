@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,7 +19,7 @@ package si.inova.kotlinova.compose.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -44,7 +44,7 @@ import androidx.compose.ui.Modifier
 inline fun <T> LazyListScope.itemsWithDivider(
    items: List<T>,
    crossinline modifier: LazyItemScope.(T) -> Modifier = { Modifier },
-   crossinline dividerContent: @Composable () -> Unit = { Divider() },
+   crossinline dividerContent: @Composable () -> Unit = { HorizontalDivider() },
    noinline key: ((item: T) -> Any)? = null,
    noinline contentType: (item: T) -> Any? = { null },
    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
