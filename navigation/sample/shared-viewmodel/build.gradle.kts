@@ -54,7 +54,6 @@ dependencies {
    implementation(libs.kotlinova.navigation)
    implementation(libs.kotlinInject.runtime)
    implementation(libs.kotlinInject.anvil.runtime)
-   implementation(libs.kotlinova.navigation.compiler)
 
    ksp(libs.kotlinInject.compiler)
    ksp(libs.kotlinInject.anvil.compiler)
