@@ -640,7 +640,14 @@ style:
     maxJumpCount: 1
   MagicNumber:
     active: true
-    excludes: *testFolders
+    excludes:
+      - '**/test/**'
+      - '**/androidTest/**'
+      - '**/commonTest/**'
+      - '**/jvmTest/**'
+      - '**/jsTest/**'
+      - '**/iosTest/**'
+      - '**/*.kts'
     ignoreNumbers:
       - '-1'
       - '0'
