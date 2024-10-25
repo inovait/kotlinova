@@ -246,6 +246,30 @@ data class SecondScreenKey(...) : ScreenKey() {
 All screens with the same scope tag will share the same service instances. For this to work properly,
 you also must inject all shared services into all screens.
 
+### Service interfaces
+
+You can use `ContributesBinding` annotation to inject a service interface into a screen, the same way it works with normal
+injection:
+
+```kotlin0
+@InjectScopedService
+@contributesBinding(BackstackScope::class)
+class MyServiceImpl @Inject constructor() : MyService {
+   ...
+}
+
+interface MyService: ScopedService {
+   ...
+}
+
+@InjectNavigationScreen
+class MyScreen(
+   private val myService: MyService
+) : Screen<MyScreenKey> {
+   ...
+}
+```
+
 ## Custom animations
 
 To customize animations, you can override `forwardAnimation` and `backwardAnimation` methods of the screen's key.

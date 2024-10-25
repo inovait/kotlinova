@@ -137,7 +137,7 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
             .addAnnotation(suppressAnnotation)
             .addFunction(bindScreenFactoryToFactoryMultibindsFunction)
             .addFunction(screenFactoryProvider)
-            .also { screenRegistrationFunction?.let { it1 -> it.addFunction(it1) } }
+            .addFunction(screenRegistrationFunction)
             .also {
                if (screenFactoryToParentFactoryBindingFunction != null) {
                   it.addFunction(screenFactoryToParentFactoryBindingFunction)

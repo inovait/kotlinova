@@ -34,6 +34,7 @@ import kotlinx.parcelize.Parcelize
 import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
+import si.inova.kotlinova.navigation.di.BackstackScope
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
@@ -44,6 +45,7 @@ import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.services.SingleScreenViewModel
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 private var lastReceivedKey: Any? = null
 
@@ -117,6 +119,15 @@ class ServicesTest {
       lastReceivedKey shouldBe key
    }
 
+   @Test
+   internal fun allowScreensInjectInterfacesOfScopedServices() {
+      rule.insertTestNavigation(ScreenWithBasicServiceWithInterfaceKey)
+
+      rule.onNodeWithText("Number: 0").assertIsDisplayed()
+      rule.onNodeWithText("Increase").performClick()
+      rule.onNodeWithText("Number: 1").assertIsDisplayed()
+   }
+
    @Parcelize
    object ScreenWithBasicServiceKey : NoArgsScreenKey()
 
@@ -181,5 +192,33 @@ class ServicesTest {
       override fun onServiceRegistered() {
          lastReceivedKey = key
       }
+   }
+
+   @Parcelize
+   object ScreenWithBasicServiceWithInterfaceKey : NoArgsScreenKey()
+
+   @InjectNavigationScreen
+   class ScreenWithBasicServiceWithInterface(
+      private val service: BasicServiceWithInterface
+   ) : Screen<ScreenWithBasicServiceWithInterfaceKey>() {
+      @Composable
+      override fun Content(key: ScreenWithBasicServiceWithInterfaceKey) {
+         Column {
+            Text("Number: ${service.data.collectAsStateWithLifecycle().value}")
+            Button(onClick = { service.data.update { it + 1 } }) {
+               Text("Increase")
+            }
+         }
+      }
+   }
+
+   @InjectScopedService
+   @ContributesBinding(BackstackScope::class)
+   class BasicServiceWithInterfaceImpl @Inject constructor() : BasicServiceWithInterface {
+      override val data = MutableStateFlow(0)
+   }
+
+   interface BasicServiceWithInterface : ScopedService {
+      val data: MutableStateFlow<Int>
    }
 }
