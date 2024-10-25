@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -31,6 +31,7 @@ import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
@@ -64,6 +65,8 @@ class BasicNavigationTest {
 
    @Parcelize
    data class TestScreenAKey(val text: String) : ScreenKey()
+
+   @InjectNavigationScreen
    class TestScreenA(
       private val navigator: Navigator
    ) : Screen<TestScreenAKey>() {
@@ -80,6 +83,8 @@ class BasicNavigationTest {
 
    @Parcelize
    data class TestScreenBKey(val text: String) : ScreenKey()
+
+   @InjectNavigationScreen
    class TestScreenB(
       private val navigator: Navigator
    ) : Screen<TestScreenBKey>() {

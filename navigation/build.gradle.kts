@@ -19,7 +19,7 @@ import util.publishLibrary
 plugins {
    androidLibraryModule
    id("kotlin-parcelize")
-   id("kotlin-kapt")
+   id("com.google.devtools.ksp")
 }
 
 publishLibrary(
@@ -41,7 +41,8 @@ android {
 
 dependencies {
    api(libs.simpleStack)
-   api(libs.dagger.runtime) // This needs to be API to ensure generated files compile
+   api(libs.kotlinInject.runtime) // This needs to be API to ensure generated files compile
+   api(libs.kotlinInject.anvil.runtime) // This needs to be API to ensure generated files compile
    api(libs.androidx.activity.compose)
 
    implementation(projects.kotlinova.core)
@@ -55,8 +56,11 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.viewModel.compose)
+   implementation(libs.kotlinInject.anvil.annotations)
 
-   anvil(projects.navigation.navigationCompiler)
+   ksp(libs.kotlinInject.compiler)
+   ksp(libs.kotlinInject.anvil.compiler)
+   ksp(projects.navigation.navigationCompiler)
 
    debugImplementation(libs.androidx.compose.ui.tooling)
    debugImplementation(libs.androidx.compose.ui.test.manifest)

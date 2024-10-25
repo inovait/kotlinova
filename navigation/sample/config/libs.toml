@@ -7,12 +7,12 @@ androidx-compose-runtime = "1.7.0-beta02"
 androidx-compose-material3 = "1.2.1"
 androidx-fragment = "1.8.0"
 androidx-lifecycle = "2.7.0"
-anvil = "2.5.0-beta09"
-dagger = "2.51.1"
-desugarJdkLibs = "2.0.4"
+desugarJdkLibs = "2.1.2"
 kotlin = "1.9.24"
-kotlinova = "3.1.0"
-whetstone = "0.9.0-beta02"
+kotlinova = "4.0.0-alpha01"
+kotlinInject = "0.7.2"
+kotlinInject-anvil = "0.0.5"
+ksp = "1.9.24-1.0.20"
 
 [libraries]
 android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
@@ -28,13 +28,14 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose-runtime" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose-runtime" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
-dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
-anvil = { module = "com.squareup.anvil:gradle-plugin", version.ref = "anvil" }
-whetstone-compiler = { module = "dev.msfjarvis.whetstone:whetstone-compiler", version.ref = "whetstone" }
-whetstone-runtime = { module = "dev.msfjarvis.whetstone:whetstone", version.ref = "whetstone" }
+kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
+kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
+kotlinInject-anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "kotlinInject-anvil" }
+kotlinInject-anvil-runtime = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime", version.ref = "kotlinInject-anvil" }
+kotlinInject-anvil-annotations = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime-optional", version.ref = "kotlinInject-anvil" }
+ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,24 +16,20 @@
 
 package si.inova.kotlinova.navigation.conditions
 
+import me.tatarka.inject.annotations.Inject
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
-import javax.inject.Inject
-import javax.inject.Provider
 
 class MainConditionalNavigationHandler @Inject constructor(
-   private val handlers: Map<
-      @JvmSuppressWildcards Class<*>,
-      @JvmSuppressWildcards Provider<ConditionalNavigationHandler>
-      >
+   private val handlers: Map<Class<out NavigationCondition>, () -> ConditionalNavigationHandler>
 ) : ConditionalNavigationHandler {
    override fun getNavigationRedirect(
       condition: NavigationCondition,
       navigateToIfConditionMet: NavigationInstruction
    ): NavigationInstruction? {
-      val handler = handlers[condition.javaClass]?.get()
+      val handler = handlers[condition.javaClass]?.invoke()
          ?: error(
             "Failed to find condition handler for condition ${condition.javaClass.name}. " +
-               "Did you add @ContributesMultibinding and @ClassKey annotations to it?"
+               "Did you add it to a Component with a @IntoMap @Provides function?"
          )
 
       return handler.getNavigationRedirect(condition, navigateToIfConditionMet)

@@ -24,16 +24,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.util.Consumer
 import com.zhuinden.simplestack.Backstack
+import me.tatarka.inject.annotations.Inject
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
-import javax.inject.Inject
 
 /**
  * Deep link handler that aggregates all deep link handlers contributed via `@ContributesMultibinding`.
  */
 class MainDeepLinkHandler @Inject constructor(
-   private val injectedHandlers: Set<@JvmSuppressWildcards DeepLinkHandler>
+   private val injectedHandlers: Set<DeepLinkHandler>
 ) : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return injectedHandlers.asSequence().mapNotNull { it.handleDeepLink(uri, startup) }.firstOrNull()

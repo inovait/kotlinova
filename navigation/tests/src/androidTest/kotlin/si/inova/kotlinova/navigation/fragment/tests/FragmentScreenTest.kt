@@ -46,6 +46,7 @@ import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
 import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.exists
@@ -243,6 +244,7 @@ class FragmentScreenTest {
    @Parcelize
    data class TestFragmentScreenKey(override val tag: String = UUID.randomUUID().toString()) : ScreenKey(), FragmentScreenKey
 
+   @InjectNavigationScreen
    class TestFragmentScreen(scopeExitListener: ScopeExitListener) : FragmentScreen<TestFragmentScreenKey>(scopeExitListener) {
       override fun createFragment(key: TestFragmentScreenKey, fragmentManager: FragmentManager): Fragment {
          return TestFragment()
@@ -252,6 +254,7 @@ class FragmentScreenTest {
    @Parcelize
    data class TestFragmentScreen2Key(override val tag: String = UUID.randomUUID().toString()) : ScreenKey(), FragmentScreenKey
 
+   @InjectNavigationScreen
    class TestFragmentScreen2(scopeExitListener: ScopeExitListener) : FragmentScreen<TestFragmentScreen2Key>(scopeExitListener) {
       override fun createFragment(key: TestFragmentScreen2Key, fragmentManager: FragmentManager): Fragment {
          return TestFragment2()
@@ -261,6 +264,7 @@ class FragmentScreenTest {
    @Parcelize
    data object ScreenThatContainsTwoFragmentsKey : ScreenKey()
 
+   @InjectNavigationScreen
    class ScreenThatContainsTwoFragments(
       private val testFragmentScreen: TestFragmentScreen,
       private val testFragmentScreen2: TestFragmentScreen2

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,13 +21,8 @@ plugins {
    id("com.android.application")
    androidCommon
    kotlin("android")
-   id("kotlin-kapt")
+   id("com.google.devtools.ksp")
    id("kotlin-parcelize")
-}
-
-anvil {
-   generateDaggerFactories.set(false)
-   syncGeneratedSources.set(true)
 }
 
 android {
@@ -68,9 +63,11 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.viewModel.compose)
+   implementation(libs.kotlinInject.anvil.annotations)
 
-   kaptAndroidTest(libs.dagger.compiler)
-   anvilAndroidTest(projects.navigation.navigationCompiler)
+   kspAndroidTest(libs.kotlinInject.compiler)
+   kspAndroidTest(libs.kotlinInject.anvil.compiler)
+   kspAndroidTest(projects.navigation.navigationCompiler)
 
    androidTestImplementation(libs.junit4)
    androidTestImplementation(libs.androidx.compose.ui.test.junit4)

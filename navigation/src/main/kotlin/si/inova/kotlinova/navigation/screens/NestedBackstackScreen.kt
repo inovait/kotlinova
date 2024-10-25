@@ -34,6 +34,7 @@ import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 /**
  *
  */
+@InjectNavigationScreen
 class NestedBackstackScreen(
    private val navigationStackComponentFactory: NavigationInjection.Factory,
    @MainNavigation

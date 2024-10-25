@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,14 +23,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import kotlinx.parcelize.Parcelize
+import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.ContributesScreenBinding
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
-import javax.inject.Inject
 
 class AbstractScreens {
    @get:Rule
@@ -67,6 +68,7 @@ class AbstractScreens {
    @Parcelize
    object OuterScreenReferencingAbstractScreenKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreen(
       private val innerScreen: TestAbstractScreen
    ) : Screen<OuterScreenReferencingAbstractScreenKey>() {
@@ -81,6 +83,7 @@ class AbstractScreens {
    abstract class TestAbstractScreen : Screen<ScreenKey>()
 
    @ContributesScreenBinding
+   @InjectNavigationScreen
    class TestAbstractScreenImpl @Inject constructor() : TestAbstractScreen() {
       @Composable
       override fun Content(key: ScreenKey) {
@@ -93,6 +96,7 @@ class AbstractScreens {
    @Parcelize
    object OuterScreenReferencingAbstractScreenWithServiceKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreenWithService(
       private val innerScreen: TestAbstractScreenWithService
    ) : Screen<OuterScreenReferencingAbstractScreenWithServiceKey>() {
@@ -108,6 +112,7 @@ class AbstractScreens {
 
    @ContributesScreenBinding
    @Suppress("unused")
+   @InjectNavigationScreen
    class TestAbstractScreenWithServiceImpl @Inject constructor(
       private val service: ServiceScopes.SharedService
    ) : TestAbstractScreenWithService() {
@@ -122,6 +127,7 @@ class AbstractScreens {
    @Parcelize
    object OuterScreenReferencingGenericScreenKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingGenericScreen(
       private val innerScreen: Screen<InnerScreenKey>
    ) : Screen<OuterScreenReferencingGenericScreenKey>() {
@@ -136,6 +142,7 @@ class AbstractScreens {
    @Parcelize
    object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingGenericScreenWithExplicitBoundType(
       private val innerScreen: Screen<InnerScreenKeyWithExplicitBoundType>
    ) : Screen<OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey>() {
@@ -149,6 +156,7 @@ class AbstractScreens {
 
    @Suppress("unused")
    @ContributesScreenBinding
+   @InjectNavigationScreen
    class TestAbstractScreenReferencingCustomKey @Inject constructor(
       private val service: ServiceScopes.SharedService
    ) : Screen<InnerScreenKey>() {
@@ -165,6 +173,7 @@ class AbstractScreens {
 
    @Suppress("unused")
    @ContributesScreenBinding(boundType = Screen::class)
+   @InjectNavigationScreen
    class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType @Inject constructor(
       private val service: ServiceScopes.SharedService
    ) : Screen<InnerScreenKeyWithExplicitBoundType>() {

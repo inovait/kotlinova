@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,18 +14,25 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.compiler
+package si.inova.kotlinova.navigation.di
 
-import java.io.File
+import com.zhuinden.simplestack.Backstack
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Provides
+import si.inova.kotlinova.navigation.navigator.Navigator
+import si.inova.kotlinova.navigation.navigator.SimpleStackNavigator
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
-/**
- * Utility for debugging, because println calls
- * are not forwarded to the gradle output.
- *
- * Do not use in production
- */
-@Suppress("unused")
-fun log(codeGenDir: File, text: String) {
-   codeGenDir.mkdirs()
-   File(codeGenDir, "anvil_genetator_log.txt").appendText("$text\n")
+@ContributesTo(BackstackScope::class)
+@Component
+interface NestedNavigationComponent {
+   @MainNavigation
+   @Provides
+   fun provideMainNavigator(
+      @MainNavigation
+      backstack: Backstack,
+      navigationContext: Lazy<NavigationContext>
+   ): Navigator {
+      return SimpleStackNavigator(backstack, navigationContext)
+   }
 }

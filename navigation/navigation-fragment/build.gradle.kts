@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -18,6 +18,7 @@ import util.publishLibrary
 
 plugins {
    androidLibraryModule
+   id("com.google.devtools.ksp")
 }
 
 publishLibrary(
@@ -38,12 +39,17 @@ android {
 }
 
 dependencies {
+   api(libs.kotlinInject.runtime)
+   api(libs.kotlinInject.anvil.runtime)
+
    implementation(projects.navigation)
 
    implementation(libs.androidx.fragment)
    implementation(libs.androidx.compose.ui)
 
-   anvil(projects.navigation.navigationCompiler)
+   ksp(libs.kotlinInject.compiler)
+   ksp(libs.kotlinInject.anvil.compiler)
+   ksp(projects.navigation.navigationCompiler)
 
    debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,25 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.di
+package si.inova.kotlinova.navigation.screens
 
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.multibindings.Multibinds
-import si.inova.kotlinova.navigation.services.ScopedService
+import software.amazon.lastmile.kotlin.inject.anvil.extend.ContributingAnnotation
 
-@ContributesTo(BackstackScope::class)
-@Module
-abstract class EmptyNavigationModule {
-   @Multibinds
-   abstract fun provideEmptyScreenRegistrationMultibinds():
-      Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenRegistration<*>>
-
-   @Multibinds
-   abstract fun provideEmptyScreenFactoryMultibinds():
-      Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenFactory<*>>
-
-   @Multibinds
-   abstract fun provideScopedServiceMultibinds():
-      Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScopedService>
-}
+@ContributingAnnotation
+@Target(AnnotationTarget.CLASS)
+annotation class InjectNavigationScreen

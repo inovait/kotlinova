@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,26 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.sample
+package si.inova.kotlinova.navigation.services
 
-import android.app.Application
-import com.deliveryhero.whetstone.app.ApplicationComponent
-import com.deliveryhero.whetstone.app.ApplicationScope
-import com.squareup.anvil.annotations.MergeComponent
-import dagger.BindsInstance
-import dagger.Component
-import si.inova.kotlinova.navigation.di.OuterNavigationScope
-import javax.inject.Singleton
+import software.amazon.lastmile.kotlin.inject.anvil.extend.ContributingAnnotation
 
-@Singleton
-@MergeComponent(ApplicationScope::class)
-@MergeComponent(OuterNavigationScope::class)
-interface NavigationSampleApplicationComponent : ApplicationComponent {
-   @Component.Factory
-   interface Factory {
-      fun create(
-         @BindsInstance
-         application: Application, // this is necessary for whetstone to set things up properly
-      ): NavigationSampleApplicationComponent
-   }
-}
+@ContributingAnnotation
+@Target(AnnotationTarget.CLASS)
+annotation class InjectScopedService

@@ -31,12 +31,13 @@ import androidx.lifecycle.withStarted
 import com.zhuinden.simplestack.ScopedServices
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import me.tatarka.inject.annotations.Inject
 import si.inova.kotlinova.navigation.fragment.util.requireActivity
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.InjectScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import java.lang.ref.WeakReference
-import javax.inject.Inject
 import kotlin.random.Random
 
 /**
@@ -121,6 +122,7 @@ abstract class FragmentScreen<K>(
    abstract fun createFragment(key: K, fragmentManager: FragmentManager): Fragment
 }
 
+@InjectScopedService
 class ScopeExitListener @Inject constructor() : ScopedServices.Registered, ScopedService {
    val fragments = HashMap<Class<ScreenKey>, WeakReference<Pair<FragmentManager, Fragment>>>()
 

@@ -40,7 +40,7 @@ dependencies {
 
    implementation(libs.androidGradleCacheFix)
    implementation(libs.android.agp)
-   implementation(libs.anvil)
+   implementation(libs.ksp)
    implementation(libs.detekt.plugin)
    implementation(libs.dokka)
    implementation(libs.kotlin.plugin)

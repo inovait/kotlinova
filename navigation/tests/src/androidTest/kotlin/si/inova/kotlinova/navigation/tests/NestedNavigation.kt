@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -36,6 +36,7 @@ import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.NestedBackstackScreen
 import si.inova.kotlinova.navigation.screens.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
@@ -115,6 +116,7 @@ class NestedNavigation {
          get() = listOf(ConditionalNavigationTest.TestCondition)
    }
 
+   @InjectNavigationScreen
    class NestedScreenGoingBack(
       @MainNavigation
       private val mainNavigator: Navigator
@@ -130,6 +132,7 @@ class NestedNavigation {
    @Parcelize
    data class ParentScreenWithSharedServiceKey(val number: Int = 333) : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class ParentScreenWithSharedService(
       private val service: ServiceScopes.SharedService,
       private val nestedScreen: NestedBackstackScreen
@@ -146,6 +149,7 @@ class NestedNavigation {
    @Parcelize
    object ChildScreenWithSharedServiceKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class ChildScreenWithSharedService(
       @Inherited
       private val service: ServiceScopes.SharedService

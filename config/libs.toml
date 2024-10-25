@@ -14,9 +14,7 @@ autoService = "1.1.1"
 coil = "2.7.0"
 dokka = "1.9.20"
 espresso = "3.6.1"
-anvil = "2.5.0-beta11"
 desugarJdkLibs = "2.1.2"
-dagger = "2.52"
 detekt = "1.23.7"
 dispatch = "1.0.0-beta10"
 # Do not update this until we update gradle
@@ -28,6 +26,10 @@ okhttp = "4.12.0"
 orgJson = "20240303"
 kotlin = "1.9.24"
 kotlin-coroutines = "1.8.1"
+kotlinInject = "0.7.2"
+kotlinInject-anvil = "0.0.5"
+kotlinPoet = "1.18.1"
+ksp = "1.9.24-1.0.20"
 kotest = "5.9.1"
 nexusPublish = "0.30.0"
 junit4 = "4.13.2"
@@ -63,11 +65,6 @@ androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", vers
 autoService-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoService" }
 autoService-compiler = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-anvil = { module = "com.squareup.anvil:gradle-plugin", version.ref = "anvil" }
-anvil-api = { module = "com.squareup.anvil:compiler-api", version.ref = "anvil" }
-anvil-utils = { module = "com.squareup.anvil:compiler-utils", version.ref = "anvil" }
-dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 desugarJdkLibs = { module = " com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 detekt-api = { module = "io.gitlab.arturbosch.detekt:detekt-api", version.ref = "detekt" }
 detekt-test = { module = "io.gitlab.arturbosch.detekt:detekt-test", version.ref = "detekt" }
@@ -82,6 +79,15 @@ googleCloud-protobufUtil = { module = "com.google.protobuf:protobuf-java-util", 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit5-api = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
+kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
+kotlinInject-anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "kotlinInject-anvil" }
+kotlinInject-anvil-runtime = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime", version.ref = "kotlinInject-anvil" }
+kotlinInject-anvil-annotations = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime-optional", version.ref = "kotlinInject-anvil" }
+kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
+kotlinPoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
+ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okhttp-mockWebServer = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp" }

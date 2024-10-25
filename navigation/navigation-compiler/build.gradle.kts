@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -27,11 +27,12 @@ publishLibrary(
    githubPath = "navigation-compiler"
 )
 
-
 dependencies {
-   api(libs.anvil.api)
-   implementation(libs.anvil.utils)
-   implementation(libs.dagger.runtime)
+   api(libs.ksp.api)
+   implementation(libs.kotlinInject.runtime)
+   implementation(libs.kotlinInject.anvil.runtime)
+   implementation(libs.kotlinPoet)
+   implementation(libs.kotlinPoet.ksp)
    compileOnly(libs.autoService.annotations)
    kapt(libs.autoService.compiler)
 }

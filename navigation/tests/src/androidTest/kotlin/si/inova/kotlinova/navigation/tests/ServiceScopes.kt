@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -30,16 +30,18 @@ import androidx.compose.ui.test.performClick
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
+import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.InjectScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import java.util.UUID
-import javax.inject.Inject
 
 class ServiceScopes {
    @get:Rule
@@ -77,6 +79,7 @@ class ServiceScopes {
    @Parcelize
    data class NotSharedServiceScreenKey(val id: UUID = UUID.randomUUID()) : ScreenKey()
 
+   @InjectNavigationScreen
    class NotSharedServiceScreen(sharedService: SharedService, navigator: Navigator) :
       CommonSharedServiceTestScreen<NotSharedServiceScreenKey>(sharedService, navigator) {
       override fun getNewScreen(): NotSharedServiceScreenKey {
@@ -91,6 +94,7 @@ class ServiceScopes {
       }
    }
 
+   @InjectNavigationScreen
    class SharedServiceScreen(sharedService: SharedService, navigator: Navigator) :
       CommonSharedServiceTestScreen<SharedServiceScreenKey>(sharedService, navigator) {
       override fun getNewScreen(): SharedServiceScreenKey {
@@ -126,6 +130,7 @@ class ServiceScopes {
       }
    }
 
+   @InjectScopedService
    class SharedService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val number by savedFlow(0)
    }

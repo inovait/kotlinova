@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -32,21 +31,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
+import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.InjectScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.services.SingleScreenViewModel
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
-import javax.inject.Inject
 
 private var lastReceivedKey: Any? = null
 
-@OptIn(ExperimentalTestApi::class)
 class ServicesTest {
    @get:Rule
    val rule = createComposeRule()
@@ -120,6 +120,7 @@ class ServicesTest {
    @Parcelize
    object ScreenWithBasicServiceKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class ScreenWithBasicService(
       private val service: BasicService
    ) : Screen<ScreenWithBasicServiceKey>() {
@@ -134,6 +135,7 @@ class ServicesTest {
       }
    }
 
+   @InjectScopedService
    class BasicService @Inject constructor() : ScopedService {
       val data = MutableStateFlow(0)
    }
@@ -141,6 +143,7 @@ class ServicesTest {
    @Parcelize
    object ScreenWithStateSavingServiceKey : NoArgsScreenKey()
 
+   @InjectNavigationScreen
    class ScreenWithStateSavingService(
       private val service: StateSavingService
    ) : Screen<ScreenWithStateSavingServiceKey>() {
@@ -155,6 +158,7 @@ class ServicesTest {
       }
    }
 
+   @InjectScopedService
    class StateSavingService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val data by savedFlow(0)
    }
@@ -162,6 +166,7 @@ class ServicesTest {
    @Parcelize
    data class ScreenWithSingleScreenViewModelKey(val text: String) : ScreenKey()
 
+   @InjectNavigationScreen
    class ScreenWithSingleScreenViewModel(
       private val service: SingleScreenViewModelService
    ) : Screen<ScreenWithSingleScreenViewModelKey>() {
@@ -170,6 +175,7 @@ class ServicesTest {
       }
    }
 
+   @InjectScopedService
    class SingleScreenViewModelService @Inject constructor(coroutineScope: CoroutineScope) :
       SingleScreenViewModel<ScreenWithSingleScreenViewModelKey>(coroutineScope) {
       override fun onServiceRegistered() {

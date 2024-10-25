@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -32,6 +32,7 @@ import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.instructions.navigateToSingle
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
@@ -143,6 +144,8 @@ class AdvancedNavigationTest {
 
    @Parcelize
    object AdvancedTestScreenAKey : NoArgsScreenKey()
+
+   @InjectNavigationScreen
    class AdvancedTestScreenA : Screen<AdvancedTestScreenAKey>() {
       @Composable
       override fun Content(key: AdvancedTestScreenAKey) {
@@ -151,6 +154,8 @@ class AdvancedNavigationTest {
 
    @Parcelize
    object AdvancedTestScreenBKey : NoArgsScreenKey()
+
+   @InjectNavigationScreen
    class AdvancedTestScreenB : Screen<AdvancedTestScreenBKey>() {
       @Composable
       override fun Content(key: AdvancedTestScreenBKey) {

@@ -14,29 +14,21 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.sample.tabs.subscreens
+package si.inova.kotlinova.navigation.sample.conditional
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
-import si.inova.kotlinova.navigation.screens.Screen
+import me.tatarka.inject.annotations.IntoMap
+import me.tatarka.inject.annotations.Provides
+import si.inova.kotlinova.navigation.conditions.ConditionalNavigationHandler
+import si.inova.kotlinova.navigation.conditions.NavigationCondition
+import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
-// Screen does not accept any arguments, we can just use ScreenKey. But doing this will only allow the screen to be used
-// as a composable inside another screens, you will not able to navigate to it directly.
-@InjectNavigationScreen
-class SubscreenB : Screen<ScreenKey>() {
-   @Composable
-   override fun Content(key: ScreenKey) {
-      Box(Modifier.background(Color.Green).padding(64.dp).fillMaxWidth()) {
-         Text("Screen B")
-      }
-   }
+@ContributesTo(OuterNavigationScope::class)
+interface ConditionComponent {
+   @Provides
+   @IntoMap
+   fun provideLoginConditionalNavigationHandler(
+      loginConditionalNavigationHandlerFactory: () -> LoginConditionalNavigationHandler
+   ): Pair<Class<out NavigationCondition>, () -> ConditionalNavigationHandler> =
+      LoginCondition::class.java to loginConditionalNavigationHandlerFactory
 }

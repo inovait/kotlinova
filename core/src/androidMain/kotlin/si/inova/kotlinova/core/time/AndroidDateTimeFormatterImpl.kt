@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,7 +23,6 @@ import si.inova.kotlinova.core.reporting.ErrorReporter
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import javax.inject.Inject
 
 /**
  * Provides Android-specific [DateTimeFormatter]s, such as a localized time formatter that respects the user's
@@ -31,7 +30,7 @@ import javax.inject.Inject
  *
  * Adapted from https://github.com/drewhamilton/AndroidDateTimeFormatters/blob/9dee359a916a6d6e30bfa83613638ece0c3eb688/javatime/src/main/java/dev/drewhamilton/androidtime/format/AndroidDateTimeFormatter.java
  */
-class AndroidDateTimeFormatterImpl @Inject constructor(
+class AndroidDateTimeFormatterImpl(
    private val context: Context,
    private val errorReporter: ErrorReporter
 ) : BaseAndroidDateTimeFormatter() {

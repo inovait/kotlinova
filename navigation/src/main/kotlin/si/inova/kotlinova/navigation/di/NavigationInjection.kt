@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,19 +20,17 @@ import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.GlobalServices
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.services.ScopedService
-import javax.inject.Provider
 
 interface NavigationInjection {
    fun screenRegistry(): ScreenRegistry
-   fun scopedServicesFactories(): Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards Provider<ScopedService>>
+   fun scopedServicesFactories(): Map<Class<out ScopedService>, () -> ScopedService>
    fun navigator(): Navigator
    fun navigationContext(): NavigationContext
 
    interface Factory {
       fun create(
          backstack: Backstack,
-         @MainNavigation
-         mainBackstack: Backstack
+         mainBackstackWrapper: MainBackstackWrapper
       ): NavigationInjection
    }
 

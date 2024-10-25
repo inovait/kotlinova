@@ -4,7 +4,7 @@ Direct gradle usage:
 
 ```kotlin
 implementation("si.inova.kotlinova:navigation:X.Y.Z")
-anvil("si.inova.kotlinova:navigation-compiler:X.Y.Z")
+ksp("si.inova.kotlinova:navigation-compiler:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
 testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
 detektPlugins("si.inova.kotlinova:navigation-detekt:X.Y.Z")
@@ -28,7 +28,7 @@ kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", ver
 
 ```kotlin
 implementation(libs.kotlinova.navigation)
-anvil(libs.kotlinova.navigation.compiler)
+ksp(libs.kotlinova.navigation.compiler)
 implementation(libs.kotlinova.navigation.fragment)
 test(libs.kotlinova.navigation.test)
 detektPlugins(libs.kotlinova.navigation.detekt)
@@ -39,7 +39,7 @@ Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to s
 # Features
 
 Kotlinova Navigation is yet another type safe parcelable-keys-based navigation library for Compose, based on the
-[Anvil](https://github.com/square/anvil) and [Simple Stack](https://github.com/Zhuinden/simple-stack).
+[Kotlin Inject Anvil](https://github.com/amzn/kotlin-inject-anvil/) and [Simple Stack](https://github.com/Zhuinden/simple-stack).
 
 See [sample](sample) project for more practical examples.
 
@@ -65,6 +65,7 @@ You can add detekt plugin to safeguard against accidental inclusion of enums (se
 Second, you create a Screen class that contains actual composable:
 
 ```kotlin
+@InjectNavigationScreen
 class MyScreen : Screen<MyScreenKey> {
    @Composable
    override fun Content(key: MyScreenKey) {
@@ -82,13 +83,14 @@ depends on, allowing for very flat module tree.
 ## Navigating to another screen
 
 Constructor of every screen behaves similarly to the `@Inject` constructor
-(but please do not add explicit `@Inject` keyword as it may mess up lifecycles - injection happens automatically).
+(but please do NOT add explicit `@Inject` keyword as it may mess up lifecycles - injection happens automatically).
 
 To navigate to another screen, you need to get access to the `si.inova.kotlinova.navigation.navigator.Navigator`. Since
 constructor is an injecting one, simply inject it to the screen. Then you can call `Navigator.navigateTo(anotherScreen)`
 to navigate:
 
 ```kotlin
+@InjectNavigationScreen
 class MyScreen(
    private val navigator: Navigator
 ) : Screen<MyScreenKey> {
@@ -132,10 +134,12 @@ navigation backstack and is kept alive until screen is removed from the backstac
 change restarts.
 
 To create a scoped service, simply create your class and have that class extend `ScopedService`.
-Class also needs to have an `@Inject` constructor, since it is created by the framework (of course, you can
+Class also needs to have an `@Inject` constructor and an `@InjectScopedService` top level annotation, since it is created by the
+framework (of course, you can
 use this constructor to inject any dependencies that the service needs):
 
 ```kotlin
+@InjectScopedService
 class MyService @Inject constructor() : ScopedService {
 
 }
@@ -144,6 +148,7 @@ class MyService @Inject constructor() : ScopedService {
 To use the service, simply add it to the constructor of your screen:
 
 ```kotlin
+@InjectNavigationScreen
 class MyScreen(
    private val myService: MyService
 ) : Screen<MyScreenKey> {
@@ -163,6 +168,7 @@ dispatcher.
 Passed coroutine scope will be cancelled automatically when service is destroyed.
 
 ```kotlin
+@InjectScopedService
 class MyService @Inject constructor(coroutineScope: CoroutineScope) : CoroutineScopedService(coroutineScope) {
    // You can use coroutineScope variable inside.
    // Scope will automatically get cancelled when service is destroyed.
@@ -183,6 +189,7 @@ Navigation library already includes a convenience implementation of `Bundleable`
 services that will survive process deaths, using `by saved` and `by savedFlow` syntax:
 
 ```kotlin
+@InjectScopedService
 class MySaveableService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
    // Contents of those two variables will be saved and restored across process kills
    val savedVariable by saved("Hello")
@@ -201,6 +208,7 @@ allow you to access `key` property, which will contain a key that was used to cr
 for example, to automatically load data on that screen, without the need for manual load calls.
 
 ```kotlin
+@InjectScopedService
 class MyScreenViewModel @Inject constructor(coroutineScope: CoroutineScope) : SingleScreenViewModel<MyScreenKey>(coroutineScope) {
    override fun onServiceRegistered() {
       // Key is available at this point
@@ -272,6 +280,7 @@ This allows easy composition of screens inside another screens.
 For example:
 
 ```kotlin
+@InjectNavigationScreen
 class TabScreen(
    private val firstTabSubscreen: FirstTabScreen,
    private val secondTabSubscreen: SecondTabScreen,
@@ -300,6 +309,7 @@ For example:
 ```kotlin
 data class FirstTabKey(...) : ScreenKey
 
+@InjectNavigationScreen
 class TabScreen(
    private val firstTabSubscreen: Screen<FirstTabKey>,
    ...
@@ -308,6 +318,7 @@ class TabScreen(
 }
 
 @ContributesScreenBinding
+@InjectNavigationScreen
 class FirstTabScreenImpl : Screen<FirstTabKey>() {
    @Composable
    override fun Content(key: FirstTabKey) {
@@ -394,13 +405,9 @@ Called method is an interception method and user will be navigate to whatever yo
 already met, you can just pass along `navigateToIfConditionMet`. Otherwise, you have to navigate to a screen that allows user to
 meet that condition (or an error screen if user cannot meet it).
 
-To register the handler with the navigation library, you must put `@ContributesMultibinding` and `@ClassKey` annotations on it.
-
 For example:
 
 ```kotlin
-@ClassKey(LoginCondition::class)
-@ContributesMultibinding(OuterNavigationScope::class)
 class LoginConditionalNavigationHandler @Inject constructor(
    // You can inject dependencies, such as login repository here
 ) : ConditionalNavigationHandler {
@@ -424,6 +431,20 @@ class LoginConditionalNavigationHandler @Inject constructor(
          OpenScreen(loginScreenKey)
       }
    }
+}
+```
+
+After that, you also need to register your handler with the Kotlin Inject. You can do this by creating a `Component`:
+
+```kotlin
+@ContributesTo(OuterNavigationScope::class)
+interface LoginConditionalNavigationComponent {
+   @Provides
+   @IntoMap
+   fun provideLoginConditionalNavigationHandler(
+      loginConditionalNavigationHandlerFactory: () -> LoginConditionalNavigationHandler
+   ): Pair<Class<out NavigationCondition>, () -> ConditionalNavigationHandler> =
+      LoginCondition::class.java to loginConditionalNavigationHandlerFactory
 }
 ```
 
@@ -490,6 +511,7 @@ Inside
 that screen, you implement `createFragment` method where you create a `Fragment` instance (and pass all arguments, if applicable):
 
 ```kotlin
+@InjectNavigationScreen
 class DemoFragmentScreen(scopeExitListener: ScopeExitListener) : FragmentScreen<MyFragmentScreenKey>(scopeExitListener) {
    override fun createFragment(key: MyFragmentScreenKey, fragmentManager: FragmentManager): Fragment {
       return ...
@@ -503,7 +525,8 @@ Navigation also has optional system to route deep links to the navigation screen
 
 System works by creating `DeepLinkHandler` classes. You can create as many of them as you want, in as many
 modules as you want (so you can logically group them with features in the same module). Use
-`@ContributesMultibinding(OuterNavigationScope::class)` to register them with Anvil to ensure they will be called.
+`@ContributesBinding(OuterNavigationScope::class, multibinding = true)` to register them with Kotlin Inject to ensure they will be
+called.
 
 Every `DeepLinkHandler` will receive `Uri`. You need to then parse that Uri. If it matches your screen,
 you have to return `NavigationInstruction` that opens your screen. Oherwise, return null. `startup` argument is true if your
@@ -512,7 +535,7 @@ app was started using this deep link.
 You can use `matchDeepLink` helper to make deep link parsing easier:
 
 ```kotlin
-@ContributesMultibinding(OuterNavigationScope::class)
+@ContributesBinding(OuterNavigationScope::class, multibinding = true)
 class MyScreenDeepLinkHandler @Inject constructor() : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return uri.matchDeepLink("myapp://screenA/{argument}") {
@@ -529,7 +552,7 @@ class MyScreenDeepLinkHandler @Inject constructor() : DeepLinkHandler {
 If your handler needs to handle multiple deep links, you can use `handleMultipledeepLinks`:
 
 ```kotlin
-@ContributesMultibinding(OuterNavigationScope::class)
+@ContributesBinding(OuterNavigationScope::class, multibinding = true)
 class MyDeepLinkHandler @Inject constructor() : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return handleMultipleDeepLinks(uri, startup) {
@@ -548,30 +571,40 @@ class MyDeepLinkHandler @Inject constructor() : DeepLinkHandler {
 
 To add the library to your app:
 
-1. Add navigation library as implementation dependency and navigation compiler as anvil dependency
+1. Add navigation library as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
 2. Create Key and Screen for your root screen
-3. Set up [Anvil](https://github.com/square/anvil) injection in your app (easiest way to do this is via
-   [Whetstone](https://github.com/deliveryhero/whetstone), with your own application component)
-4. Add `@MergeComponent(OuterNaviationScope::class)` to your application component:
+3. Set up [Kotlin Inject Anvil](https://github.com/amzn/kotlin-inject-anvil/) injection in your app
+4. Create a `NavigationSubcomponent` inside your app that merges `OuterNavigationScope` and provides a getter for
+   `NavigationInjection.Factory`:
 
 ```kotlin
-@MergeComponent(OuterNavigationScope::class)
-@...
-interface MyApplicationComponent : ApplicationComponent {
-   ...
+@ContributesSubcomponent(OuterNavigationScope::class)
+@SingleIn(OuterNavigationScope::class)
+interface NavigationSubComponent {
+   fun getNavigationInjectionFactory(): NavigationInjection.Factory
+   fun getMainDeepLinkHandler(): MainDeepLinkHandler
+   fun getNavigationContext(): NavigationContext
+
+   @Provides
+   fun provideNavigationStackSubcomponentFactory(): NavigationStackSubComponent.Factory = this as NavigationStackSubComponent.Factory
+
+   @ContributesSubcomponent.Factory(AppScope::class)
+   interface Factory {
+      fun createNavigationComponent(): NavigationSubComponent
+   }
 }
 ```
 
-5. In your main activity (or whatever activity you want to use navigation in), inject `NavigationInjection.Factory`:
+(Note that subcomponent needs an explicit `NavigationStackSubComponent.Factory` provides as a workaround for
+the https://github.com/amzn/kotlin-inject-anvil/issues/49).
+
+5. In your main activity (or whatever activity you want to use navigation in), create an instance of the navigation sub component
+   and get navigation injection factory:
 
 ```kotlin
-class MainActivity : Activity() {
-   @Inject
-   lateinit var navigationInjectionFactory: NavigationInjection.Factory
-
-   ...
-}
+val navigationComponent: NavigationSubComponent = ...
+val navigationInjectionFactory = navigationComponent.getNavigationInjectionFactory()
 ```
 
 6. Inside a composable inside main activity (for example, inside `setContent` lambda), call `RootNavigationContainer` and pass in
@@ -592,14 +625,18 @@ If you want to use deep link integration feature, you will need some extra setup
 
 1. Set your activity's `launchMode` to `singleTask` - this will ensure proper value of the `startup` parameter in the
    deep link handlers
-1. Inject `MainDeepLinkHandler` and `NavigationContext` to your activity:
+1. Expose `MainDeepLinkHandler` and `NavigationContext` from `NavigationSubComponent` to your activity:
 
 ```kotlin
-@Inject
-lateinit var mainDeepLinkHandler: MainDeepLinkHandler
+interface NavigationSubComponent {
+   ...
+   fun getMainDeepLinkHandler(): MainDeepLinkHandler
+   fun getNavigationContext(): NavigationContext
+   ...
+}
 
-@Inject
-lateinit var navigationContext: NavigationContext
+val mainDeepLinkHandler = navigationComponent.getMainDeepLinkHandler()
+val navigationContext = navigationComponent.getNavigationContext()
 ```
 
 2. Inside Activity's `onCreate` method, query deep link handlers for received deep link, if any. If `savedInstanceState` is not

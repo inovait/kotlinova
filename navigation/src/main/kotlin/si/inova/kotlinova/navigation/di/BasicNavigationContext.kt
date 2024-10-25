@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,9 +16,9 @@
 
 package si.inova.kotlinova.navigation.di
 
-import com.squareup.anvil.annotations.ContributesBinding
+import me.tatarka.inject.annotations.Inject
 import si.inova.kotlinova.navigation.conditions.MainConditionalNavigationHandler
-import javax.inject.Inject
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 @ContributesBinding(OuterNavigationScope::class)
 class BasicNavigationContext @Inject constructor(

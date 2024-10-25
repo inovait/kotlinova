@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,18 +17,18 @@
 package si.inova.kotlinova.navigation.di
 
 import com.zhuinden.simplestack.Backstack
+import me.tatarka.inject.annotations.Inject
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.ScopedService
-import javax.inject.Inject
 
 /**
  * Registry of all screen currently known by the navigation.
  */
 class ScreenRegistry @Inject constructor(
    private val backstack: Backstack,
-   private val staticRegistrations: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenRegistration<*>>,
-   private val screenFactories: Map<@JvmSuppressWildcards Class<*>, @JvmSuppressWildcards ScreenFactory<*>>,
+   private val staticRegistrations: Map<Class<out ScreenKey>, ScreenRegistration<*>>,
+   private val screenFactories: Map<Class<out Screen<out ScreenKey>>, ScreenFactory<*>>,
 ) {
    @Suppress("UNCHECKED_CAST")
    fun <T : ScreenKey> createScreen(key: T): Screen<T> {
@@ -44,8 +44,7 @@ class ScreenRegistry @Inject constructor(
    fun <T : ScreenKey> getRegistration(key: T): ScreenRegistration<T> {
       val reg = staticRegistrations[key.javaClass]
          ?: error(
-            "No screen registered for ${key.javaClass.name}. Did you include a module in your app that contains a screen " +
-               "for that key, and does that module have navigation anvil compiler?"
+            "No screen registered for ${key.javaClass.name}. Did you add an @InjectNavigationScreen to its screen?"
          )
 
       return reg as ScreenRegistration<T>

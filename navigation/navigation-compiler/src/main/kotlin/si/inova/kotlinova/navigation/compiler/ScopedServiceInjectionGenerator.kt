@@ -17,129 +17,114 @@
 package si.inova.kotlinova.navigation.compiler
 
 import com.google.auto.service.AutoService
-import com.squareup.anvil.annotations.ContributesTo
-import com.squareup.anvil.annotations.ExperimentalAnvilApi
-import com.squareup.anvil.compiler.api.AnvilContext
-import com.squareup.anvil.compiler.api.CodeGenerator
-import com.squareup.anvil.compiler.api.FileWithContent
-import com.squareup.anvil.compiler.api.createGeneratedFile
-import com.squareup.anvil.compiler.internal.buildFile
-import com.squareup.anvil.compiler.internal.reference.ClassReference
-import com.squareup.anvil.compiler.internal.reference.TypeReference
-import com.squareup.anvil.compiler.internal.reference.asClassName
-import com.squareup.anvil.compiler.internal.reference.classAndInnerClassReferences
-import com.squareup.anvil.compiler.internal.safePackageString
+import com.google.devtools.ksp.processing.CodeGenerator
+import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.LambdaTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.ClassKey
-import dagger.multibindings.IntoMap
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import java.io.File
+import com.squareup.kotlinpoet.WildcardTypeName
+import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.writeTo
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.IntoMap
+import me.tatarka.inject.annotations.Provides
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
-@OptIn(ExperimentalAnvilApi::class)
 @Suppress("unused")
-@AutoService(CodeGenerator::class)
-class ScopedServiceInjectionGenerator : CodeGenerator {
+class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
+   override fun process(resolver: Resolver): List<KSAnnotated> {
+      val services = resolver.getSymbolsWithAnnotation(ANNOTATION_INJECT_SCOPED_SERVICE.toString())
 
-   override fun generateCode(
-      codeGenDir: File,
-      module: ModuleDescriptor,
-      projectFiles: Collection<KtFile>
-   ): Collection<FileWithContent> {
-      return projectFiles.classAndInnerClassReferences(module).mapNotNull {
-         if (it.isAbstract() || !it.isScopedService()) {
-            return@mapNotNull null
+      val (validServices, invalidServices) = services.partition { it.validate() }
+
+      for (service in validServices) {
+         try {
+            generateScopedServiceComponent(codeGenerator, service as KSClassDeclaration)
+         } catch (e: Exception) {
+            throw IllegalStateException("Failed to generate injection for $service", e)
          }
+      }
 
-         generateScopedServiceModule(codeGenDir, it)
-      }.flatten().toList()
+      return invalidServices
    }
 
-   private fun generateScopedServiceModule(
-      codeGenDir: File,
-      clas: ClassReference.Psi
-   ): Collection<FileWithContent> {
-      val className = clas.asClassName()
-      val packageName = clas.packageFqName.safePackageString(
-         dotPrefix = false,
-         dotSuffix = false,
-      )
-      val outputFileName = className.simpleName + "Module"
+   private fun generateScopedServiceComponent(codeGenerator: CodeGenerator, service: KSClassDeclaration) {
+      val serviceClassName = service.toClassName()
+      val outputClassName = serviceClassName.simpleName + "Component"
 
       val contributesToAnnotation = AnnotationSpec.builder(ContributesTo::class)
          .addMember("%T::class", APPLICATION_SCOPE_ANNOTATION)
          .build()
 
       val backstackContributesToAnnotation = AnnotationSpec.builder(ContributesTo::class)
-         .addMember("%T::class", ACTIVITY_SCOPE_ANNOTATION)
+         .addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
          .build()
 
-      val classKeyAnnotation = AnnotationSpec.builder(ClassKey::class)
-         .addMember("%T::class", className)
-         .build()
+      val serviceMapKeyType = Class::class.asClassName().parameterizedBy(
+         WildcardTypeName.producerOf(
+            SCOPED_SERVICE_BASE_CLASS
+         )
+      )
+      val returnType =
+         Pair::class.asClassName().parameterizedBy(serviceMapKeyType, LambdaTypeName.get(returnType = SCOPED_SERVICE_BASE_CLASS))
 
-      val bindsServiceFunction = FunSpec.builder("bindConstructor")
-         .returns(SCOPED_SERVICE_BASE_CLASS)
-         .addParameter("service", className)
-         .addAnnotation(Binds::class)
+      val provideServiceFunction = FunSpec.builder("provide${service.simpleName.asString()}Constructor")
+         .returns(returnType)
+         .addParameter("serviceFactory", LambdaTypeName.get(returnType = serviceClassName))
+         .addAnnotation(Provides::class)
          .addAnnotation(IntoMap::class)
-         .addAnnotation(classKeyAnnotation)
-         .addModifiers(KModifier.ABSTRACT)
+         .addStatement(
+            "return %T(%T::class.java, serviceFactory)",
+            Pair::class.asClassName(),
+            serviceClassName
+         )
          .build()
 
-      val provideFromSimpleStackFunction = FunSpec.builder("provideFromSimpleStack")
-         .returns(className)
+      val provideFromSimpleStackFunction = FunSpec.builder("provide${service.simpleName.asString()}FromSimpleStack")
+         .returns(serviceClassName)
          .addParameter("backstack", SIMPLE_STACK_BACKSTACK_CLASS)
          .addAnnotation(Provides::class)
          .addAnnotation(FROM_BACKSTACK_QUALIFIER_ANNOTATION)
-         .addCode("return backstack.lookupService(%T::class.java.name)", className)
+         .addCode("return backstack.lookupService(%T::class.java.name)", serviceClassName)
          .build()
 
-      val fromBackstackProviderModule = TypeSpec.classBuilder(className.simpleName + "BackstackModule")
-         .addAnnotation(Module::class)
+      val fromBackstackProviderComponent = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "BackstackComponent")
+         .addAnnotation(Component::class)
          .addAnnotation(backstackContributesToAnnotation)
          .addFunction(provideFromSimpleStackFunction)
          .build()
 
-      val content = FileSpec.buildFile(
-         packageName = packageName,
-         fileName = outputFileName,
-         generatorComment = "Automatically generated file. DO NOT MODIFY!"
-      ) {
-         val moduleInterfaceSpec = TypeSpec.Companion.interfaceBuilder(outputFileName)
-            .addAnnotation(Module::class)
-            .addAnnotation(contributesToAnnotation)
-            .addFunction(bindsServiceFunction)
-            .build()
+      val globalProviderComponent = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "Component")
+         .addAnnotation(Component::class)
+         .addAnnotation(contributesToAnnotation)
+         .addFunction(provideServiceFunction)
+         .build()
 
-         addType(moduleInterfaceSpec)
-         addType(fromBackstackProviderModule)
+      val dependencies = listOfNotNull(service.containingFile)
+
+      FileSpec.builder(service.packageName.asString(), outputClassName).apply {
+         addType(fromBackstackProviderComponent)
+         addType(globalProviderComponent)
       }
-
-      return listOf(
-         createGeneratedFile(codeGenDir, packageName, outputFileName, content, clas.containingFileAsJavaFile)
-      )
+         .build()
+         .writeTo(codeGenerator, false, dependencies)
    }
-
-   override fun isApplicable(context: AnvilContext): Boolean = true
 }
 
-@OptIn(ExperimentalAnvilApi::class)
-fun TypeReference.isScopedService(): Boolean {
-   val classReference = this.asClassReference()
-
-   return classReference.asClassName() == SCOPED_SERVICE_BASE_CLASS ||
-      classReference.directSuperTypeReferences().any { it.isScopedService() }
-}
-
-@OptIn(ExperimentalAnvilApi::class)
-fun ClassReference.Psi.isScopedService(): Boolean {
-   return directSuperTypeReferences().any { it.isScopedService() }
+@AutoService(SymbolProcessorProvider::class)
+class ScopedServiceInjectionGeneratorProvider : SymbolProcessorProvider {
+   override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+      return ScopedServiceInjectionGenerator(environment.codeGenerator, environment.logger)
+   }
 }

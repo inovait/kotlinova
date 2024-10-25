@@ -22,6 +22,7 @@ import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.GlobalServices
 import com.zhuinden.simplestack.StateChanger
 import com.zhuinden.simplestack.navigator.rememberBackstack
+import si.inova.kotlinova.navigation.di.MainBackstackWrapper
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.services.InjectedScopedServices
@@ -69,7 +70,7 @@ fun NavigationInjection.Factory.rememberBackstack(
          }
       )
 
-      navigationInjection = create(backstack, overrideMainBackstack ?: backstack)
+      navigationInjection = create(backstack, MainBackstackWrapper(overrideMainBackstack ?: backstack))
 
       backstack
    })

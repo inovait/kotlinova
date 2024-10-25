@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,7 +23,6 @@ import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import javax.inject.Provider
 
 /**
  * Test fake for Navigator that performs operation on the local in-memory backstack.
@@ -43,7 +42,7 @@ class FakeNavigator(
 
    private val context = object : NavigationContext {
       override val mainConditionalNavigationHandler: ConditionalNavigationHandler = MainConditionalNavigationHandler(
-         conditionalNavigationHandlers.mapValues { Provider { it.value } }
+         conditionalNavigationHandlers.mapValues { { it.value } }
       )
    }
 }

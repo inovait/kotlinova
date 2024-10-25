@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -18,7 +18,7 @@ package si.inova.kotlinova.navigation.compiler
 
 import com.squareup.kotlinpoet.ClassName
 
-internal val ACTIVITY_SCOPE_ANNOTATION = ClassName(
+internal val BACKSTACK_SCOPE_ANNOTATION = ClassName(
    "si.inova.kotlinova.navigation.di",
    "BackstackScope"
 )
@@ -76,4 +76,11 @@ internal val ANNOTATION_INHERITED = ClassName(
 internal val ANNOTATION_CONTRIBUTES_SCREEN_BINDING = ClassName(
    "si.inova.kotlinova.navigation.di",
    "ContributesScreenBinding"
+)
+
+internal const val ANNOTATION_INJECT_NAVIGATION_SCREEN = "si.inova.kotlinova.navigation.screens.InjectNavigationScreen"
+
+internal val ANNOTATION_INJECT_SCOPED_SERVICE = ClassName(
+   "si.inova.kotlinova.navigation.services",
+   "InjectScopedService"
 )

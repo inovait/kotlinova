@@ -14,26 +14,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.sample.conditional
+package si.inova.kotlinova.navigation
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import me.tatarka.inject.annotations.Inject
+import me.tatarka.inject.annotations.Provides
+import si.inova.kotlinova.navigation.deeplink.MainDeepLinkHandler
+import si.inova.kotlinova.navigation.di.NavigationContext
+import si.inova.kotlinova.navigation.di.NavigationInjection
+import si.inova.kotlinova.navigation.di.NavigationStackSubComponent
+import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import software.amazon.lastmile.kotlin.inject.anvil.AppScope
+import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
 import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@SingleIn(AppScope::class)
-class LoginRepository @Inject constructor() {
-   private val loggedIn = MutableStateFlow(false)
-   fun isUserLoggedIn(): Boolean {
-      return loggedIn.value
-   }
+@ContributesSubcomponent(OuterNavigationScope::class)
+@SingleIn(OuterNavigationScope::class)
+interface NavigationSubComponent {
+   fun getNavigationInjectionFactory(): NavigationInjection.Factory
+   fun getMainDeepLinkHandler(): MainDeepLinkHandler
+   fun getNavigationContext(): NavigationContext
 
-   fun isUserLoggedInFlow(): Flow<Boolean> {
-      return loggedIn
-   }
+   @Provides
+   fun provideNavigationStackSubcomponentFactory(): NavigationStackSubComponent.Factory =
+      this as NavigationStackSubComponent.Factory
 
-   fun setUserLoggedIn(newValue: Boolean) {
-      loggedIn.value = newValue
+   @ContributesSubcomponent.Factory(AppScope::class)
+   interface Factory {
+      fun createNavigationComponent(): NavigationSubComponent
    }
 }
