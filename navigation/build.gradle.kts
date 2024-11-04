@@ -20,6 +20,7 @@ plugins {
    androidLibraryModule
    id("kotlin-parcelize")
    id("com.google.devtools.ksp")
+   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 publishLibrary(
@@ -30,13 +31,6 @@ publishLibrary(
 
 android {
    namespace = "si.inova.kotlinova.navigation"
-
-   buildFeatures {
-      compose = true
-   }
-   composeOptions {
-      kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-   }
 }
 
 dependencies {

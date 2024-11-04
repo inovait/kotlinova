@@ -23,6 +23,7 @@ plugins {
    kotlin("android")
    id("com.google.devtools.ksp")
    id("kotlin-parcelize")
+   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -33,13 +34,6 @@ android {
       versionCode = 1
       versionName = "1.0"
       targetSdk = 33
-   }
-
-   buildFeatures {
-      compose = true
-   }
-   composeOptions {
-      kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
    }
 }
 

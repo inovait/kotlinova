@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -31,8 +31,11 @@ kotlin {
       publishLibraryVariants("release")
    }
 
+   jvmToolchain {
+      languageVersion.set(JavaLanguageVersion.of(17))
+   }
+
    jvm {
-      jvmToolchain(17)
 
       testRuns["test"].executionTask.configure {
          useJUnitPlatform()
@@ -48,7 +51,9 @@ kotlin {
          }
       }
       val commonMain by getting
-      val jvmCommon by creating
+      val jvmCommon by creating {
+         dependsOn(commonMain)
+      }
       val jvmMain by getting {
          dependsOn(jvmCommon)
       }

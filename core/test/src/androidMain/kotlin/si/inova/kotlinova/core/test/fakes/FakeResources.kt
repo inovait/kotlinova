@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -148,6 +148,7 @@ class FakeResources : Resources(null, null, null) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
+   @Deprecated("Deprecated in Java")
    override fun getDrawableForDensity(id: Int, density: Int): Drawable? {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
@@ -197,6 +198,7 @@ class FakeResources : Resources(null, null, null) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
+   @Deprecated("Deprecated in Java")
    override fun getColorStateList(id: Int): ColorStateList {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
@@ -218,6 +220,7 @@ class FakeResources : Resources(null, null, null) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
+   @Deprecated("Deprecated in Java")
    override fun getColor(id: Int): Int {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
@@ -234,6 +237,7 @@ class FakeResources : Resources(null, null, null) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
+   @Deprecated("Deprecated in Java")
    override fun getMovie(id: Int): android.graphics.Movie {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
@@ -246,6 +250,7 @@ class FakeResources : Resources(null, null, null) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
+   @Deprecated("Deprecated in Java")
    override fun getDrawable(id: Int): Drawable {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
@@ -266,6 +271,7 @@ class FakeResources : Resources(null, null, null) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
 
+   @Deprecated("Deprecated in Java")
    override fun updateConfiguration(config: Configuration?, metrics: DisplayMetrics?) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }
