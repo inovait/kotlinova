@@ -44,6 +44,7 @@ kotlin {
          dependencies {
             api(libs.okhttp)
             api(libs.moshi)
+            api(libs.moshi.adapters)
             api(libs.retrofit)
 
             implementation(projects.core)
