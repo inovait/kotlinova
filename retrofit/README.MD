@@ -116,6 +116,28 @@ moshiBuilder.add(JavaTimeMoshiAdapter)
 Moshi adapter for converting java.time's `Instant`, `LocalTime`, `LocalDate`, `LocalDateTime` and `ZonedDateTime` to ISO String
 for JSON serialization.
 
+## Enum json fallback
+
+Annotation `@JsonFallback` for adding fallback value to enum.
+Enum class can be added via `Moshi.Builder` with extension function `addEnumAdapter`.
+
+```kotlin
+@JsonClass(generateAdapter = false)
+enum class Level {
+   @Json(name = "low")
+   LOW,
+
+   @Json(name = "medium")
+   MEDIUM,
+
+   @Json(name = "high")
+   HIGH,
+
+   @JsonFallback
+   OTHER;
+}
+```
+
 ## OKHttp Cache manager
 
 (Only on Android projects)
