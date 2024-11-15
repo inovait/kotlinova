@@ -28,7 +28,7 @@ jobs:
       - run: "v=$(cat version.txt);echo \"OLD_VERSION=$v\" > $GITHUB_ENV"
       - name: Check if there were any new fix or feature commits
         id: version-check
-        uses: inovait/actions-common/bump-version-since-last-build@v10
+        uses: inovait/actions-common/bump-version-since-last-build@v11
         with:
           version: '${{ env.OLD_VERSION }}'
       - run: "echo \"No feature or fix commits. Skipping build...\""
@@ -53,7 +53,7 @@ jobs:
         run: "./gradlew test jvmTest"
       - name: Generate Changelog
         id: changelog
-        uses: inovait/actions-common/changelog-since-last-build@v10
+        uses: inovait/actions-common/changelog-since-last-build@v11
         with:
           git_commit_url_prefix: 'https://github.com/inovait/kotlinova/commit/'
       - run: "old_changelog=$(cat CHANGELOG.MD); echo \"# ${{ env.VERSION }}\n\n${{ steps.changelog.outputs.changelog }}\n\n$old_changelog\" > CHANGELOG.MD"
