@@ -156,7 +156,7 @@ Class that automatically determines proper OkHttp cache size based on the
 
 ## Miscellaneous collections of utility methods
 
-* [Moshi](src/jvmMain/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
+* [Moshi](src/jvmCommon/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
 
 # Test utilities
 
