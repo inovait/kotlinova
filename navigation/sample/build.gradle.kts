@@ -29,6 +29,7 @@ buildscript {
    dependencies {
       classpath(libs.android.agp)
       classpath(libs.kotlin.plugin)
+      classpath(libs.kotlin.plugin.compose)
       classpath(libs.kotlinInject.compiler)
       classpath(libs.kotlinInject.anvil.compiler)
       classpath(libs.ksp)

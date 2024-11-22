@@ -24,7 +24,7 @@ plugins {
 
 android {
    namespace = "si.inova.kotlinova.navigation.sharedviewmodel"
-   compileSdk = 34
+   compileSdk = 35
 
    defaultConfig {
       minSdk = 24

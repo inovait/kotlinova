@@ -18,11 +18,12 @@ plugins {
    id("com.android.library")
    id("org.jetbrains.kotlin.android")
    id("kotlin-parcelize")
+   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
    namespace = "si.inova.kotlinova.navigation.keys"
-   compileSdk = 34
+   compileSdk = 35
 
    defaultConfig {
       minSdk = 24

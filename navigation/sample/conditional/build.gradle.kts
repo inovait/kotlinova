@@ -19,23 +19,16 @@ plugins {
    id("org.jetbrains.kotlin.android")
    id("com.google.devtools.ksp")
    id("kotlin-parcelize")
+   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
    namespace = "si.inova.kotlinova.navigation.conditional"
-   compileSdk = 34
+   compileSdk = 35
 
    defaultConfig {
       minSdk = 24
       targetSdk = 34
-   }
-
-   buildFeatures {
-      compose = true
-   }
-
-   composeOptions {
-      kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
    }
 
    compileOptions {

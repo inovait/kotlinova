@@ -22,12 +22,13 @@ plugins {
    id("com.android.application")
    id("org.jetbrains.kotlin.android")
    id("com.google.devtools.ksp")
+   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
    namespace = "si.inova.kotlinova.navigation.sample"
 
-   compileSdk = 34
+   compileSdk = 35
 
    defaultConfig {
       applicationId = "si.inova.kotlinova.navigation.sample"
@@ -35,14 +36,6 @@ android {
       targetSdk = 34
       versionCode = 1
       versionName = "1.0"
-   }
-
-   buildFeatures {
-      compose = true
-   }
-
-   composeOptions {
-      kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
    }
 
    compileOptions {
@@ -54,7 +47,7 @@ android {
       
    }
 
-   packagingOptions {
+   packaging {
       resources {
          excludes += "/META-INF/{AL2.0,LGPL2.1}"
       }
