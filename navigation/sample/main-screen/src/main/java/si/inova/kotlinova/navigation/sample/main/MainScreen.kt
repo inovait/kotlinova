@@ -34,6 +34,7 @@ import si.inova.kotlinova.navigation.sample.keys.DemoFragmentScreenKey
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
 import si.inova.kotlinova.navigation.sample.keys.NestedScreenKey
 import si.inova.kotlinova.navigation.sample.keys.RootConditionalNavigationScreenKey
+import si.inova.kotlinova.navigation.sample.keys.SharedTransitionListScreenKey
 import si.inova.kotlinova.navigation.sample.keys.SharedViewModelScreenKey
 import si.inova.kotlinova.navigation.sample.keys.SlideAnimationScreenKey
 import si.inova.kotlinova.navigation.sample.keys.TabScreenKey
@@ -61,6 +62,8 @@ class MainScreen(
                "   navigationdemo://nested\n" +
                "   navigationdemo://fragment/{argument}\n" +
                "   navigationdemo://postlogin\n" +
+               "   navigationdemo://colors\n" +
+               "   navigationdemo://colors/2\n" +
                "\nFor example: \n" +
                "   adb shell am start \"navigationdemo://slide/Hello\"",
             fontSize = 10.sp
@@ -105,5 +108,9 @@ fun NavigationButtons(navigator: Navigator) {
 
    Button(onClick = { navigator.navigateTo(SharedViewModelScreenKey()) }) {
       Text("Shared scoped services")
+   }
+
+   Button(onClick = { navigator.navigateTo(SharedTransitionListScreenKey) }) {
+      Text("Shared element transition")
    }
 }

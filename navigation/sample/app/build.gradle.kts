@@ -62,6 +62,7 @@ dependencies {
    implementation(projects.nested)
    implementation(projects.sharedViewmodel)
    implementation(projects.slideAnimation)
+   implementation(projects.sharedTransition)
    implementation(projects.tabs)
 
    implementation(libs.androidx.activity.compose)

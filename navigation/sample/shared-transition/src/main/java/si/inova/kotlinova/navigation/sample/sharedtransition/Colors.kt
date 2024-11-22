@@ -14,46 +14,27 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
+package si.inova.kotlinova.navigation.sample.sharedtransition
 
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
-   }
-}
+import androidx.compose.ui.graphics.Color
 
-dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
-   repositories {
-      google()
-      mavenLocal()
-      mavenCentral()
-      maven("https://jitpack.io")
-   }
-
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
-      }
-   }
-}
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "navigation-sample"
-
-include(":app")
-include(":conditional")
-include(":fragment")
-include(":keys")
-include(":main-screen")
-include(":nested")
-include(":slide-animation")
-include(":shared-viewmodel")
-include(":shared-transition")
-include(":tabs")
+val SHARED_TRANSITION_COLORS = listOf(
+   Color.LightGray,
+   Color.Magenta,
+   Color.Blue,
+   Color.Cyan,
+   Color.White,
+   Color.Green,
+   Color.LightGray,
+   Color.Red,
+   Color.Yellow,
+   Color.Magenta,
+   Color.Blue,
+   Color.Yellow,
+   Color.White,
+   Color.Cyan,
+   Color.Red,
+   Color.Magenta,
+   Color.LightGray,
+   Color.Green,
+)

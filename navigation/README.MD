@@ -508,6 +508,40 @@ abstract class MyScreenKey : ScreenKey() {
 }
 ```
 
+## Shared element transition
+
+Navigation library supports
+Compose's [Shared element transition](https://developer.android.com/develop/ui/compose/animation/shared-elements). To access both
+shared transition scope and animated visibility scope, you can use local compositions. Library already provides
+`LocalAnimatedVisiblityScope`, while you have to define `LocalSharedTransitionScope` yourself. For example:
+
+```kotlin
+val LocalSharedTransitionScope =
+   staticCompositionLocalOf<SharedTransitionScope> { error("LocalSharedTransitionScope should be provided") }
+```
+
+In MainActivity (or wherever your Compose root is):
+
+```kotlin
+SharedTransitionLayout {
+   CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+      navigationInjectionFactory.RootNavigationContainer { History.of(FirstScreenKey) }
+   }
+}
+```
+
+Then in your screens:
+
+```kotlin
+@Composable
+override fun Content(key: MyScreenKeyKey) = with(LocalSharedTransitionScope.current) {
+   Image(
+      Modifier
+         .sharedElement(rememberSharedContentState("..."), LocalAnimatedVisibilityScope.current)
+   )
+}
+```
+
 ## Navigating to fragments
 
 Navigation also has an optional `navigation-fragment` library that allows navigation to fragments instead of to 100% compose
@@ -611,7 +645,8 @@ interface NavigationSubComponent {
    fun getNavigationContext(): NavigationContext
 
    @Provides
-   fun provideNavigationStackSubcomponentFactory(): NavigationStackSubComponent.Factory = this as NavigationStackSubComponent.Factory
+   fun provideNavigationStackSubcomponentFactory(): NavigationStackSubComponent.Factory =
+      this as NavigationStackSubComponent.Factory
 
    @ContributesSubcomponent.Factory(AppScope::class)
    interface Factory {

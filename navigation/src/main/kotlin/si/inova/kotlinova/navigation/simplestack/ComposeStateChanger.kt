@@ -167,12 +167,13 @@ class ComposeStateChanger(
          contentKey = { it.newTopKey.contentKey() }
       ) { (_, newTopKey) ->
          val contentKey = newTopKey.contentKey()
-
-         saveableStateHolder.SaveableStateProvider(contentKey) {
-            viewModelStores.WithLocalViewModelStore(contentKey) {
-               LocalDestroyedLifecycle {
-                  screenWrapper(newTopKey) {
-                     ShowScreen(newTopKey)
+         CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
+            saveableStateHolder.SaveableStateProvider(contentKey) {
+               viewModelStores.WithLocalViewModelStore(contentKey) {
+                  LocalDestroyedLifecycle {
+                     screenWrapper(newTopKey) {
+                        ShowScreen(newTopKey)
+                     }
                   }
                }
             }

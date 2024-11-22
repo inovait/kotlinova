@@ -18,9 +18,13 @@ package si.inova.kotlinova.navigation.sample
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import com.zhuinden.simplestack.History
@@ -29,10 +33,12 @@ import si.inova.kotlinova.navigation.deeplink.HandleNewIntentDeepLinks
 import si.inova.kotlinova.navigation.deeplink.MainDeepLinkHandler
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.di.NavigationInjection
+import si.inova.kotlinova.navigation.sample.common.LocalSharedTransitionScope
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
 import si.inova.kotlinova.navigation.sample.ui.theme.NavigationSampleTheme
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 class MainActivity : FragmentActivity() {
    private lateinit var navigationInjectionFactory: NavigationInjection.Factory
    private lateinit var mainDeepLinkHandler: MainDeepLinkHandler
@@ -55,16 +61,20 @@ class MainActivity : FragmentActivity() {
 
       setContent {
          NavigationSampleTheme {
-            Surface(
-               modifier = Modifier.fillMaxSize(),
-               color = MaterialTheme.colorScheme.background
-            ) {
-               val backstack = navigationInjectionFactory.RootNavigationContainer {
-                  val initialBackstack = History.of(MainScreenKey)
-                  (deepLinkTarget?.performNavigation(initialBackstack, navigationContext)?.newBackstack ?: initialBackstack)
-               }
+            SharedTransitionLayout {
+               CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+                  Surface(
+                     modifier = Modifier.fillMaxSize(),
+                     color = MaterialTheme.colorScheme.background
+                  ) {
+                     val backstack = navigationInjectionFactory.RootNavigationContainer {
+                        val initialBackstack = History.of(MainScreenKey)
+                        (deepLinkTarget?.performNavigation(initialBackstack, navigationContext)?.newBackstack ?: initialBackstack)
+                     }
 
-               mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)
+                     mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)
+                  }
+               }
             }
          }
       }
