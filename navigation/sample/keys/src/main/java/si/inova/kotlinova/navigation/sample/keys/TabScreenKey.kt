@@ -17,11 +17,11 @@
 package si.inova.kotlinova.navigation.sample.keys
 
 import kotlinx.parcelize.Parcelize
-import si.inova.kotlinova.navigation.sample.keys.base.BaseSingleTopScreenKey
+import si.inova.kotlinova.navigation.sample.keys.base.BaseScreenKey
 
 // SingleTopKey will cause navigation to not actually navigate, but to only recompose the top screen with the new key.
 @Parcelize
-data class TabScreenKey(val selectedTab: SelectedTab = SelectedTab.A) : BaseSingleTopScreenKey() {
+data class TabScreenKey(val selectedTab: SelectedTab = SelectedTab.A) : BaseScreenKey() {
    enum class SelectedTab {
       A,
       B,
