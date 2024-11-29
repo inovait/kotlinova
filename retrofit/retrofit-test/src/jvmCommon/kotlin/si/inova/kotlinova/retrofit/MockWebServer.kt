@@ -22,8 +22,6 @@ import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.intellij.lang.annotations.Language
 import org.junit.runners.model.MultipleFailureException
-import si.inova.kotlinova.core.logging.LogPriority
-import si.inova.kotlinova.core.logging.logcat
 import java.net.HttpURLConnection
 
 /**
@@ -41,10 +39,13 @@ inline fun mockWebServer(
 inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
    try {
       block()
+   } catch (e: Throwable) {
+      deferredExceptions += e
    } finally {
       server.shutdown()
-      MultipleFailureException.assertEmpty(deferredExceptions)
    }
+
+   MultipleFailureException.assertEmpty(deferredExceptions)
 }
 
 class MockWebServerScope : Dispatcher() {
@@ -82,17 +83,17 @@ class MockWebServerScope : Dispatcher() {
          response
       }
    }
-}
 
-private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
-   val url = request.requestUrl?.encodedPath ?: "UNKNOWN URL"
+   private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
+      val url = request.requestUrl?.encodedPath ?: "UNKNOWN URL"
 
-   logcat("MockWebServer", LogPriority.ERROR) { "Response to $url not mocked" }
+      deferredExceptions += IllegalStateException("Response to $url not mocked")
 
-   return MockResponse().apply {
-      setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
-      addHeader("Content-Type", "text/plain")
-      setBody("Response to $url not mocked")
+      return MockResponse().apply {
+         setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+         addHeader("Content-Type", "text/plain")
+         setBody("Response to $url not mocked")
+      }
    }
 }
 
