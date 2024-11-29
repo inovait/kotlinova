@@ -179,6 +179,25 @@ fun `A MockWebServer test`() {
 }
 ```
 
+Or you can create a test scope separately :
+
+```kotlin
+val serverScope = MockWebServerScope()
+
+@Test
+fun `A MockWebServer test`() {
+   serverScope.runServer {
+      mockJsonResponse("/data") {
+         setJsonBody("""{"key": "value"}""")
+      }
+
+      val service: TestRetrofitService = createRetrofitService(this.baseUrl)
+
+      ...
+   }
+}
+```
+
 ## ServiceTestingHelper
 
 Utility that allows easy creation of fake retrofit services. For example:

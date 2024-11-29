@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -34,19 +34,26 @@ import java.net.HttpURLConnection
 inline fun mockWebServer(
    block: MockWebServerScope.() -> Unit
 ) {
-   val server = MockWebServer()
+   MockWebServerScope().runServer(block)
+}
 
-   val scope = MockWebServerScope(server, server.url("").toString())
-   server.dispatcher = scope
-
+inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
    try {
-      block(scope)
+      block()
    } finally {
       server.shutdown()
    }
 }
 
-class MockWebServerScope(val server: MockWebServer, val baseUrl: String) : Dispatcher() {
+class MockWebServerScope : Dispatcher() {
+   val server: MockWebServer = MockWebServer()
+   val baseUrl: String
+      get() = server.url("").toString()
+
+   init {
+      server.dispatcher = this
+   }
+
    private val responses = HashMap<String, MockResponse>()
    var defaultResponse: (RecordedRequest) -> MockResponse = ::defaultMissingResponseRequest
 
