@@ -21,6 +21,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.intellij.lang.annotations.Language
+import org.junit.runners.model.MultipleFailureException
 import si.inova.kotlinova.core.logging.LogPriority
 import si.inova.kotlinova.core.logging.logcat
 import java.net.HttpURLConnection
@@ -42,6 +43,7 @@ inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
       block()
    } finally {
       server.shutdown()
+      MultipleFailureException.assertEmpty(deferredExceptions)
    }
 }
 
@@ -49,6 +51,7 @@ class MockWebServerScope : Dispatcher() {
    val server: MockWebServer = MockWebServer()
    val baseUrl: String
       get() = server.url("").toString()
+   val deferredExceptions = ArrayList<Throwable>()
 
    init {
       server.dispatcher = this
@@ -58,7 +61,7 @@ class MockWebServerScope : Dispatcher() {
    var defaultResponse: (RecordedRequest) -> MockResponse = ::defaultMissingResponseRequest
 
    override fun dispatch(request: RecordedRequest): MockResponse {
-      return responses[request.path] ?: defaultResponse(request)
+      return responses[request.requestUrl?.encodedPath] ?: defaultResponse(request)
    }
 
    fun mockResponse(url: String, response: MockResponse) {
@@ -82,7 +85,7 @@ class MockWebServerScope : Dispatcher() {
 }
 
 private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
-   val url = request.path ?: "UNKNOWN URL"
+   val url = request.requestUrl?.encodedPath ?: "UNKNOWN URL"
 
    logcat("MockWebServer", LogPriority.ERROR) { "Response to $url not mocked" }
 
