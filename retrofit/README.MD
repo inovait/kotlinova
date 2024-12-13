@@ -116,6 +116,28 @@ moshiBuilder.add(JavaTimeMoshiAdapter)
 Moshi adapter for converting java.time's `Instant`, `LocalTime`, `LocalDate`, `LocalDateTime` and `ZonedDateTime` to ISO String
 for JSON serialization.
 
+## Enum json fallback
+
+Annotation `@JsonFallback` for adding fallback value to enum.
+Enum class can be added via `Moshi.Builder` with extension function `addEnumAdapter`.
+
+```kotlin
+@JsonClass(generateAdapter = false)
+enum class Level {
+   @Json(name = "low")
+   LOW,
+
+   @Json(name = "medium")
+   MEDIUM,
+
+   @Json(name = "high")
+   HIGH,
+
+   @JsonFallback
+   OTHER;
+}
+```
+
 ## OKHttp Cache manager
 
 (Only on Android projects)
@@ -134,7 +156,7 @@ Class that automatically determines proper OkHttp cache size based on the
 
 ## Miscellaneous collections of utility methods
 
-* [Moshi](src/jvmMain/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
+* [Moshi](src/jvmCommon/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
 
 # Test utilities
 
@@ -146,6 +168,25 @@ A builder that allows you to easily create OKHttp mock server and perform servic
 @Test
 fun `A MockWebServer test`() {
    mockWebServer {
+      mockJsonResponse("/data") {
+         setJsonBody("""{"key": "value"}""")
+      }
+
+      val service: TestRetrofitService = createRetrofitService(this.baseUrl)
+
+      ...
+   }
+}
+```
+
+Or you can create a test scope separately :
+
+```kotlin
+val serverScope = MockWebServerScope()
+
+@Test
+fun `A MockWebServer test`() {
+   serverScope.runServer {
       mockJsonResponse("/data") {
          setJsonBody("""{"key": "value"}""")
       }

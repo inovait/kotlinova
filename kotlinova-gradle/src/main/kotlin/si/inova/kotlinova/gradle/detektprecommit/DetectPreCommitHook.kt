@@ -29,14 +29,14 @@ internal fun Project.registerDetektPreCommitHook(extension: KotlinovaExtension) 
             detektTask.usesService(serviceProvider)
 
             if (project.hasProperty("precommit")) {
-               val projectDir = projectDir
-
                val fileCollection = files()
+
+               val originalSource = detektTask.source
 
                detektTask.setSource(
                   serviceProvider.flatMap { it.stagedGitFiles }.map { stagedFiles ->
                      val stagedFilesFromThisProject = stagedFiles
-                        .filter { it.startsWith(projectDir) }
+                        .filter { originalSource.contains(it) }
 
                      fileCollection.setFrom(*stagedFilesFromThisProject.toTypedArray())
 

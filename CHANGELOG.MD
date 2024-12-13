@@ -1,3 +1,13 @@
+# This is not updated anymore
+
+See https://github.com/inovait/kotlinova/releases for latest changes
+
+# 3.2.1
+
+### Bug Fixes
+
+* **gradle**: pre-commit hook including nested projects ([d2c6c918](https://github.com/inovait/kotlinova/commit/d2c6c918441bc6663c88f21bccb4e2dea0358672))
+
 # 3.2.0
 
 ### Features
