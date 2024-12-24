@@ -14,7 +14,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import util.commonAndroid
 
 /*
@@ -43,8 +45,11 @@ commonAndroid {
    compileSdk = 35
 
    compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_17
-      targetCompatibility = JavaVersion.VERSION_17
+      // Android still creates java tasks, even with 100% Kotlin.
+      // Ensure that target compatiblity is equal to kotlin's jvmToolchain
+      lateinit var javaVersion: JavaVersion
+      the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
+      targetCompatibility = javaVersion
 
       isCoreLibraryDesugaringEnabled = true
    }

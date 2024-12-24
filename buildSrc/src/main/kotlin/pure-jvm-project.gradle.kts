@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,10 +14,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
-import org.gradle.api.JavaVersion
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.kotlin.dsl.get
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -38,9 +37,9 @@ import org.gradle.kotlin.dsl.get
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("standard-config")
    id("java-library")
    id("org.jetbrains.kotlin.jvm")
+   id("standard-config")
 }
 
 publishing {
@@ -55,14 +54,13 @@ publishing {
    }
 }
 
-kotlin {
-   jvmToolchain(17)
-}
-
 java {
    withJavadocJar()
    withSourcesJar()
 
-   sourceCompatibility = JavaVersion.VERSION_17
-   targetCompatibility = JavaVersion.VERSION_17
+   // Ensure that target compatiblity is equal to kotlin's jvmToolchain
+   lateinit var javaVersion: JavaVersion
+   the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
+   sourceCompatibility = javaVersion
+   targetCompatibility = javaVersion
 }

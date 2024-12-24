@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2024 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,8 +21,8 @@ val libs = the<LibrariesForLibs>()
 
 plugins {
    id("com.android.library")
-   id("android-commons")
    kotlin("multiplatform")
+   id("android-commons")
    id("kotlin-parcelize")
 }
 
@@ -32,8 +32,6 @@ kotlin {
    }
 
    jvm {
-      jvmToolchain(17)
-
       testRuns["test"].executionTask.configure {
          useJUnitPlatform()
       }

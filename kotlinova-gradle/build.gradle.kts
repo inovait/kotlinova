@@ -20,6 +20,8 @@
 // https://youtrack.jetbrains.com/issue/KTIJ-19369
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+
 plugins {
    id("java-library")
    alias(libs.plugins.kotlin.jvm)
@@ -110,8 +112,11 @@ java {
    withJavadocJar()
    withSourcesJar()
 
-   sourceCompatibility = JavaVersion.VERSION_17
-   targetCompatibility = JavaVersion.VERSION_17
+   // Ensure that target compatiblity is equal to kotlin's jvmToolchain
+   lateinit var javaVersion: JavaVersion
+   the<KotlinProjectExtension>().jvmToolchain { javaVersion = JavaVersion.toVersion(this.languageVersion.get().asInt()) }
+   sourceCompatibility = javaVersion
+   targetCompatibility = javaVersion
 }
 
 gradlePlugin {
