@@ -20,7 +20,9 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
- * Animated visibility scope
+ * Animation scope used by kotlinova navigation to navigate between screens.
+ *
+ * You can pass it to the shared element transition modifiers to implement shared element transitions.
  */
 val LocalAnimatedVisibilityScope =
    staticCompositionLocalOf<AnimatedVisibilityScope> { error("Animated visibility scope not provided") }
