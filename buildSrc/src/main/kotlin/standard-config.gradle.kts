@@ -46,7 +46,7 @@ anvil {
 }
 
 configure<KotlinProjectExtension> {
-   jvmToolchain(17)
+   jvmToolchain(21)
 }
 
 group = "si.inova.kotlinova"

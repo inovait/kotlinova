@@ -35,7 +35,7 @@ group = "si.inova.kotlinova"
 version = File(rootDir, "../version.txt").readText().trim()
 
 kotlin {
-   jvmToolchain(17)
+   jvmToolchain(21)
 }
 
 publishing {
