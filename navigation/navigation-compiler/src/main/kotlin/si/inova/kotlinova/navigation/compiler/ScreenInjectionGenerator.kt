@@ -372,7 +372,7 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
             initialPassedKeyType
                ?: superReference.resolve().arguments.firstOrNull { it.type?.isScreenKey() == true }?.type
 
-         if (passedKeyType != null && superReference.resolve().toClassName() == SCREEN_BASE_CLASS) {
+         if (passedKeyType != null && (superReference.resolve().declaration as? KSClassDeclaration)?.toClassName() == SCREEN_BASE_CLASS) {
             return passedKeyType.toTypeName()
          } else {
             superReference.resolve().getScreenKeyIfItExists(passedKeyType)?.let { return it }

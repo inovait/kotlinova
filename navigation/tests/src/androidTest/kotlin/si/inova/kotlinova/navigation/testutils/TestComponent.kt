@@ -44,9 +44,6 @@ interface TestComponent : TestComponentMerged {
    fun navigationFactory(): NavigationInjection.Factory
 
    @Provides
-   fun provideNavigationStackSubcomponentFactory(): NavigationStackSubComponent.Factory = this
-
-   @Provides
    fun provideCoroutineScope() = CoroutineScope(Dispatchers.Unconfined + Job())
 }
 

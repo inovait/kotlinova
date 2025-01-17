@@ -632,8 +632,7 @@ To add the library to your app:
    (see the top of this README)
 2. Create Key and Screen for your root screen
 3. Set up [Kotlin Inject Anvil](https://github.com/amzn/kotlin-inject-anvil/) injection in your app
-4. Create a `NavigationSubcomponent` inside your app that merges `OuterNavigationScope` and provides a getter for
-   `NavigationInjection.Factory`:
+4. Create a `NavigationSubcomponent` inside your app that merges `OuterNavigationScope`:
 
 ```kotlin
 @ContributesSubcomponent(OuterNavigationScope::class)
@@ -643,19 +642,12 @@ interface NavigationSubComponent {
    fun getMainDeepLinkHandler(): MainDeepLinkHandler
    fun getNavigationContext(): NavigationContext
 
-   @Provides
-   fun provideNavigationStackSubcomponentFactory(): NavigationStackSubComponent.Factory =
-      this as NavigationStackSubComponent.Factory
-
    @ContributesSubcomponent.Factory(AppScope::class)
    interface Factory {
       fun createNavigationComponent(): NavigationSubComponent
    }
 }
 ```
-
-(Note that subcomponent needs an explicit `NavigationStackSubComponent.Factory` provides as a workaround for
-the https://github.com/amzn/kotlin-inject-anvil/issues/49).
 
 5. In your main activity (or whatever activity you want to use navigation in), create an instance of the navigation sub component
    and get navigation injection factory:
