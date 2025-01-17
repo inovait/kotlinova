@@ -8,9 +8,9 @@ androidx-fragment = "1.8.5"
 androidx-lifecycle = "2.8.7"
 desugarJdkLibs = "2.1.3"
 kotlin = "2.0.21"
-kotlinova = "4.0.0-alpha02"
+kotlinova = "4.0.0-alpha03"
 kotlinInject = "0.7.2"
-kotlinInject-anvil = "0.0.5"
+kotlinInject-anvil = "0.1.2"
 ksp = "2.0.21-1.0.28"
 
 [libraries]
