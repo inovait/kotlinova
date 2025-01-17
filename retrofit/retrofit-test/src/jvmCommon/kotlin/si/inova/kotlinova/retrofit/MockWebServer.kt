@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -59,21 +59,30 @@ class MockWebServerScope : Dispatcher() {
    }
 
    private val responses = HashMap<String, MockResponse>()
+   private val responsesWithFullUrl = HashMap<String, MockResponse>()
    var defaultResponse: (RecordedRequest) -> MockResponse = ::defaultMissingResponseRequest
 
    override fun dispatch(request: RecordedRequest): MockResponse {
-      return responses[request.requestUrl?.encodedPath] ?: defaultResponse(request)
+      return responsesWithFullUrl[request.path] ?: responses[request.requestUrl?.encodedPath] ?: defaultResponse(request)
    }
 
-   fun mockResponse(url: String, response: MockResponse) {
-      responses[url] = response
+   fun mockResponse(url: String, response: MockResponse, includeQueryParameters: Boolean = false) {
+      if (includeQueryParameters) {
+         responsesWithFullUrl[url] = response
+      } else {
+         responses[url] = response
+      }
    }
 
-   inline fun mockResponse(url: String, responseBuilder: MockResponse.() -> Unit) {
+   /**
+    * @param includeQueryParameters when *true*, you will also need to include query parameters in the *url* to be matched.
+    *                               Otherwise, it will only match by path.
+    */
+   inline fun mockResponse(url: String, includeQueryParameters: Boolean = false, responseBuilder: MockResponse.() -> Unit) {
       val response = MockResponse()
       responseBuilder(response)
 
-      mockResponse(url, response)
+      mockResponse(url, response, includeQueryParameters)
    }
 
    inline fun setDefaultResponse(crossinline responseBuilder: MockResponse.(RecordedRequest) -> Unit) {
@@ -85,7 +94,7 @@ class MockWebServerScope : Dispatcher() {
    }
 
    private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
-      val url = request.requestUrl?.encodedPath ?: "UNKNOWN URL"
+      val url = request.path ?: "UNKNOWN URL"
 
       deferredExceptions += IllegalStateException("Response to $url not mocked")
 
