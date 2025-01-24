@@ -21,7 +21,6 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.intellij.lang.annotations.Language
-import org.junit.runners.model.MultipleFailureException
 import java.net.HttpURLConnection
 
 /**
@@ -45,7 +44,16 @@ inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
       server.shutdown()
    }
 
-   MultipleFailureException.assertEmpty(deferredExceptions)
+   if (deferredExceptions.size == 1) {
+      throw deferredExceptions.first()
+   } else if (deferredExceptions.size > 1) {
+      for (exception in deferredExceptions) {
+         exception.printStackTrace()
+      }
+
+      val exceptionDescriptions = deferredExceptions.joinToString { "${it.javaClass.name}: ${it.message.orEmpty()}" }
+      throw AssertionError("Got multiple exceptions: $exceptionDescriptions")
+   }
 }
 
 class MockWebServerScope : Dispatcher() {
