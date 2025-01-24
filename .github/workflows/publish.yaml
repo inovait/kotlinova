@@ -19,7 +19,7 @@ jobs:
           ssh-key: ${{ secrets.RELEASE_SSH_KEY }}
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: temurin
           cache: gradle
       - name: Setup Android SDK
