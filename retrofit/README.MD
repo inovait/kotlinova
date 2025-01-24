@@ -156,7 +156,7 @@ Class that automatically determines proper OkHttp cache size based on the
 
 ## Miscellaneous collections of utility methods
 
-* [Moshi](src/jvmMain/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
+* [Moshi](src/jvmCommon/kotlin/si/inova/kotlinova/retrofit/moshi/Moshi.kt)
 
 # Test utilities
 
@@ -168,6 +168,25 @@ A builder that allows you to easily create OKHttp mock server and perform servic
 @Test
 fun `A MockWebServer test`() {
    mockWebServer {
+      mockJsonResponse("/data") {
+         setJsonBody("""{"key": "value"}""")
+      }
+
+      val service: TestRetrofitService = createRetrofitService(this.baseUrl)
+
+      ...
+   }
+}
+```
+
+Or you can create a test scope separately :
+
+```kotlin
+val serverScope = MockWebServerScope()
+
+@Test
+fun `A MockWebServer test`() {
+   serverScope.runServer {
       mockJsonResponse("/data") {
          setJsonBody("""{"key": "value"}""")
       }

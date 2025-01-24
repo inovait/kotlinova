@@ -98,7 +98,7 @@ private fun SarifSchema210.merge(other: SarifSchema210): SarifSchema210 {
    val mergedExternalProperties = (inlineExternalProperties.orEmpty() + other.inlineExternalProperties.orEmpty())
       .takeIf { it.isNotEmpty() }
 
-   val mergedProperties = properties.merge(other.properties)
+   val mergedProperties = properties?.merge(other.properties)
 
    val mergedRuns = runs.merge(other.runs)
 
@@ -113,10 +113,16 @@ private fun SarifSchema210.merge(other: SarifSchema210): SarifSchema210 {
 
 // Temporary copy from https://github.com/detekt/sarif4k/pull/87 until new version of sarif4k with that included is released
 
-private fun PropertyBag?.merge(other: PropertyBag?): PropertyBag? {
-   return (this?.tags.orEmpty() + other?.tags.orEmpty())
-      .takeIf { it.isNotEmpty() }
-      ?.let { PropertyBag(it) }
+private fun PropertyBag.merge(other: PropertyBag?): PropertyBag {
+   val aTags = this["tags"] as? Collection<*>
+   val bTags = (other?.get("tags") as? Collection<*>).orEmpty()
+   val tags = if (aTags != null) {
+      mapOf("tags" to (aTags + bTags).distinct())
+   } else {
+      emptyMap()
+   }
+
+   return PropertyBag(this + other.orEmpty() + tags)
 }
 
 private fun List<Run>.merge(other: List<Run>): List<Run> {

@@ -1,3 +1,7 @@
+# This is not updated anymore
+
+See https://github.com/inovait/kotlinova/releases for latest changes
+
 # 3.2.1
 
 ### Bug Fixes

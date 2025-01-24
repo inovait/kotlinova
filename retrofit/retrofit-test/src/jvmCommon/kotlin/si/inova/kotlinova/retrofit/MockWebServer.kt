@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,8 +21,6 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.intellij.lang.annotations.Language
-import si.inova.kotlinova.core.logging.LogPriority
-import si.inova.kotlinova.core.logging.logcat
 import java.net.HttpURLConnection
 
 /**
@@ -34,35 +32,65 @@ import java.net.HttpURLConnection
 inline fun mockWebServer(
    block: MockWebServerScope.() -> Unit
 ) {
-   val server = MockWebServer()
+   MockWebServerScope().runServer(block)
+}
 
-   val scope = MockWebServerScope(server, server.url("").toString())
-   server.dispatcher = scope
-
+inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
    try {
-      block(scope)
+      block()
+   } catch (e: Throwable) {
+      deferredExceptions += e
    } finally {
       server.shutdown()
    }
+
+   if (deferredExceptions.size == 1) {
+      throw deferredExceptions.first()
+   } else if (deferredExceptions.size > 1) {
+      for (exception in deferredExceptions) {
+         exception.printStackTrace()
+      }
+
+      val exceptionDescriptions = deferredExceptions.joinToString { "${it.javaClass.name}: ${it.message.orEmpty()}" }
+      throw AssertionError("Got multiple exceptions: $exceptionDescriptions")
+   }
 }
 
-class MockWebServerScope(val server: MockWebServer, val baseUrl: String) : Dispatcher() {
+class MockWebServerScope : Dispatcher() {
+   val server: MockWebServer = MockWebServer()
+   val baseUrl: String
+      get() = server.url("").toString()
+   val deferredExceptions = ArrayList<Throwable>()
+
+   init {
+      server.dispatcher = this
+   }
+
    private val responses = HashMap<String, MockResponse>()
+   private val responsesWithFullUrl = HashMap<String, MockResponse>()
    var defaultResponse: (RecordedRequest) -> MockResponse = ::defaultMissingResponseRequest
 
    override fun dispatch(request: RecordedRequest): MockResponse {
-      return responses[request.path] ?: defaultResponse(request)
+      return responsesWithFullUrl[request.path] ?: responses[request.requestUrl?.encodedPath] ?: defaultResponse(request)
    }
 
-   fun mockResponse(url: String, response: MockResponse) {
-      responses[url] = response
+   fun mockResponse(url: String, response: MockResponse, includeQueryParameters: Boolean = false) {
+      if (includeQueryParameters) {
+         responsesWithFullUrl[url] = response
+      } else {
+         responses[url] = response
+      }
    }
 
-   inline fun mockResponse(url: String, responseBuilder: MockResponse.() -> Unit) {
+   /**
+    * @param includeQueryParameters when *true*, you will also need to include query parameters in the *url* to be matched.
+    *                               Otherwise, it will only match by path.
+    */
+   inline fun mockResponse(url: String, includeQueryParameters: Boolean = false, responseBuilder: MockResponse.() -> Unit) {
       val response = MockResponse()
       responseBuilder(response)
 
-      mockResponse(url, response)
+      mockResponse(url, response, includeQueryParameters)
    }
 
    inline fun setDefaultResponse(crossinline responseBuilder: MockResponse.(RecordedRequest) -> Unit) {
@@ -72,17 +100,17 @@ class MockWebServerScope(val server: MockWebServer, val baseUrl: String) : Dispa
          response
       }
    }
-}
 
-private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
-   val url = request.path ?: "UNKNOWN URL"
+   private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
+      val url = request.path ?: "UNKNOWN URL"
 
-   logcat("MockWebServer", LogPriority.ERROR) { "Response to $url not mocked" }
+      deferredExceptions += IllegalStateException("Response to $url not mocked")
 
-   return MockResponse().apply {
-      setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
-      addHeader("Content-Type", "text/plain")
-      setBody("Response to $url not mocked")
+      return MockResponse().apply {
+         setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+         addHeader("Content-Type", "text/plain")
+         setBody("Response to $url not mocked")
+      }
    }
 }
 

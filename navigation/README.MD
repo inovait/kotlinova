@@ -174,7 +174,7 @@ class MyService @Inject constructor(coroutineScope: CoroutineScope) : CoroutineS
 Scoped services only survive activity configuration change, but they do not survive process kills, when Android system kills
 your app to reclaim memory.
 
-If your service keeps important data (such as entered form data, before user confirms the form), that data should also survive p
+If your service keeps important data (such as entered form data, before user confirms the form), that data should also survive
 process death. To do this, your service can
 implement [Bundleable](https://github.com/Zhuinden/simple-stack/blob/master/simple-stack/src/main/java/com/zhuinden/simplestack/Bundleable.java)
 .
@@ -185,8 +185,8 @@ services that will survive process deaths, using `by saved` and `by savedFlow` s
 ```kotlin
 class MySaveableService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
    // Contents of those two variables will be saved and restored across process kills
-   val savedVariable by saved("Hello")
-   val savedFlow by savedFlow("World")
+   var savedVariable by saved("defaultValue")
+   val savedFlow by savedFlow("defaultValue")
 
    override fun onServiceRegistered() {
       // Data is guaranteed to be restored at this point
@@ -432,7 +432,7 @@ for more information.
 
 ## Predictive back gesture
 
-Library supports predictive back out of the box. When is performing the back gesture, he/she is controlling the
+Library supports predictive back out of the box. When user is performing the back gesture, he/she is controlling the
 progress of the backward animation (see "Custom animations" above).
 
 To enable, you just opt-in in your Android Manifest:
@@ -452,9 +452,8 @@ in the animation declaration:
 abstract class MyScreenKey : ScreenKey() {
    override fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       val animation = when (scope.targetState.backSwipeEdge) {
-         BackEventCompat.EDGE_LEFT ->...
-            BackEventCompat.EDGE_RIGHT
-         ->...
+         BackEventCompat.EDGE_LEFT -> ...
+         BackEventCompat.EDGE_RIGHT-> ...
          else ->... // Not predictive back
       }
 

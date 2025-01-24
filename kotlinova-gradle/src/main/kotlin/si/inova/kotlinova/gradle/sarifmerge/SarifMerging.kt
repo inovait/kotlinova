@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.gradle.sarifmerge
 
-import com.android.build.gradle.internal.lint.AndroidLintTask
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.Project
 import si.inova.kotlinova.gradle.KotlinovaExtension
@@ -99,26 +98,4 @@ private fun Project.registerDetektSarifMerging() {
    }
 }
 
-private fun Project.registerAndroidLintSarifMerging() {
-   // Artifact/configuration only works when the task succeeds. Using it normally would mean that merging would fail if
-   // any of the lint tasks fail, which completely defeats the purpose. That's why lint artifact actually depends on another
-   // task that always succeeds which is marked as a finalizer for the lint task.
-   val finalLint = tasks.register("finalLint")
-
-   tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
-      val variant = lintTask.variantName
-      val lintSarifFile = lintTask.project.layout.buildDirectory.file(
-         "reports/lint-results-$variant.sarif"
-      )
-
-      artifacts {
-         it.add(CONFIGURATION_SARIF_REPORT, lintSarifFile) { artifact ->
-            artifact.builtBy(finalLint)
-         }
-      }
-
-      lintTask.finalizedBy(finalLint)
-   }
-}
-
-private const val CONFIGURATION_SARIF_REPORT = "sarifReport"
+internal const val CONFIGURATION_SARIF_REPORT = "sarifReport"
