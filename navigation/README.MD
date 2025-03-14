@@ -497,8 +497,9 @@ in the animation declaration:
 abstract class MyScreenKey : ScreenKey() {
    override fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
       val animation = when (scope.targetState.backSwipeEdge) {
-         BackEventCompat.EDGE_LEFT -> ...
-         BackEventCompat.EDGE_RIGHT-> ...
+         BackEventCompat.EDGE_LEFT ->...
+            BackEventCompat.EDGE_RIGHT
+         ->...
          else ->... // Not predictive back
       }
 
@@ -626,13 +627,19 @@ class MyDeepLinkHandler @Inject constructor() : DeepLinkHandler {
 
 # Setup
 
+(Note: these steps assume you have kotlin inject already set up in your project. If not, you can
+read [Setting up Kotlin inject in your Android app
+](../docs/kotlin-inject-setup.md) crash course).
+
 To add the library to your app:
 
 1. Add navigation library as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
-2. Create Key and Screen for your root screen
-3. Set up [Kotlin Inject Anvil](https://github.com/amzn/kotlin-inject-anvil/) injection in your app
-4. Create a `NavigationSubcomponent` inside your app that merges `OuterNavigationScope`:
+2. Make sure you have [Jitpack](https://jitpack.io/) repository added to your project, as some sub-dependencies
+   need it
+3. Create Key and Screen for your root screen
+4. Set up [Kotlin Inject Anvil](https://github.com/amzn/kotlin-inject-anvil/) injection in your app
+5. Create a `NavigationSubcomponent` inside your app that merges `OuterNavigationScope`:
 
 ```kotlin
 @ContributesSubcomponent(OuterNavigationScope::class)
@@ -649,7 +656,7 @@ interface NavigationSubComponent {
 }
 ```
 
-5. In your main activity (or whatever activity you want to use navigation in), create an instance of the navigation sub component
+6. In your main activity (or whatever activity you want to use navigation in), create an instance of the navigation sub component
    and get navigation injection factory:
 
 ```kotlin
@@ -657,7 +664,7 @@ val navigationComponent: NavigationSubComponent = ...
 val navigationInjectionFactory = navigationComponent.getNavigationInjectionFactory()
 ```
 
-6. Inside a composable inside main activity (for example, inside `setContent` lambda), call `RootNavigationContainer` and pass in
+7. Inside a composable inside main activity (for example, inside `setContent` lambda), call `RootNavigationContainer` and pass in
    your initial
    backstack, usually just `History.of` with your root screen:
 
@@ -667,7 +674,7 @@ setContent {
 }
 ```
 
-7. That's it. When you run your app, it should display the first screen.
+8. That's it. When you run your app, it should display the first screen.
 
 ## Deep links
 
@@ -730,6 +737,6 @@ Navigation also contains detekt plugin to safeguard against some common mistakes
 
 ```yaml
 kotlinovanavigation:
-   NavigationKeyNoEnums:
-      active: true
+  NavigationKeyNoEnums:
+    active: true
 ```
