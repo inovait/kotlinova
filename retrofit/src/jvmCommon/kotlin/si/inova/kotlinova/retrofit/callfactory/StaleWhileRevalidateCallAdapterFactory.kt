@@ -24,7 +24,11 @@ import kotlinx.coroutines.flow.channelFlow
 import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.internal.cache.CacheStrategy
-import retrofit2.*
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.parseResponse
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
