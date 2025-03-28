@@ -36,8 +36,8 @@ val libs = the<LibrariesForLibs>()
 
 plugins {
    id("com.android.library")
-   id("android-commons")
    kotlin("android")
+   id("android-commons")
    id("kotlin-parcelize")
 }
 
@@ -55,10 +55,6 @@ android {
          it.useJUnitPlatform()
       }
    }
-}
-
-kotlin {
-   jvmToolchain(17)
 }
 
 // We cannot reuse empty-javadoc.jar over different projects, because that breaks Gradle's project isolation.

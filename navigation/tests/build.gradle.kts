@@ -19,8 +19,8 @@
 
 plugins {
    id("com.android.application")
-   androidCommon
    kotlin("android")
+   androidCommon
    id("com.google.devtools.ksp")
    id("kotlin-parcelize")
    id("org.jetbrains.kotlin.plugin.compose")
@@ -35,10 +35,6 @@ android {
       versionName = "1.0"
       targetSdk = 33
    }
-}
-
-kotlin {
-   jvmToolchain(17)
 }
 
 dependencies {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,16 +20,16 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
-import coil.ComponentRegistry
-import coil.ImageLoader
-import coil.decode.DataSource
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
-import coil.request.DefaultRequestOptions
-import coil.request.Disposable
-import coil.request.ImageRequest
-import coil.request.ImageResult
-import coil.request.SuccessResult
+import coil3.ComponentRegistry
+import coil3.ImageLoader
+import coil3.asImage
+import coil3.decode.DataSource
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
+import coil3.request.Disposable
+import coil3.request.ImageRequest
+import coil3.request.ImageResult
+import coil3.request.SuccessResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 
@@ -48,9 +48,9 @@ class FakeCoilLoader(
 
    override val components: ComponentRegistry
       get() = throw UnsupportedOperationException("Not supported in FakeCoilLoader")
-   override val defaults: DefaultRequestOptions
-      get() = DefaultRequestOptions(
-         placeholder = generateNextColorDrawable()
+   override val defaults: ImageRequest.Defaults
+      get() = ImageRequest.Defaults(
+         placeholderFactory = { generateNextColorDrawable().asImage(false) }
       )
    override val diskCache: DiskCache
       get() = throw UnsupportedOperationException("Not supported in FakeCoilLoader")
@@ -75,7 +75,7 @@ class FakeCoilLoader(
    }
 
    private fun executeInternal(request: ImageRequest): ImageResult {
-      return SuccessResult(generateNextColorDrawable(), request, DataSource.NETWORK)
+      return SuccessResult(generateNextColorDrawable().asImage(false), request, DataSource.NETWORK)
    }
 
    private fun generateNextColorDrawable(): Drawable {

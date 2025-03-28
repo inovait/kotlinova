@@ -6,9 +6,6 @@ on:
       - master
 jobs:
   build-app:
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: true
     runs-on: "ubuntu-latest"
     env:
       BUILD_NUMBER: ${{ github.run_number }}
@@ -91,7 +88,7 @@ jobs:
           password: ${{ secrets.SONATYPE_PASSWORD }}
           staging_repository_id: ${{ steps.create_staging_repository.outputs.repository_id }}
       - name: 'Add changelog and version'
-        run: 'git add version.txt CHANGELOG.MD'
+        run: 'git add version.txt'
       - run: 'git config --global user.email "ci@inova.si"'
       - run: 'git config --global user.name "Build Bot"'
       - name: 'Commit changelog and version'

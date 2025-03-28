@@ -9,7 +9,7 @@ androidx-fragment = "1.8.6"
 androidx-lifecycle = "2.8.7"
 androidx-test-espresso = "3.6.1"
 autoService = "1.1.1"
-coil = "2.7.0"
+coil = "3.0.0"
 dokka = "1.9.20"
 espresso = "3.6.1"
 desugarJdkLibs = "2.1.5"
@@ -30,6 +30,7 @@ kotest = "5.9.1"
 nexusPublish = "0.30.0"
 junit4 = "4.13.2"
 junit5 = "5.12.0"
+junit5-launcher = "1.12.1"
 moshi = "1.15.2"
 retrofit = "2.11.0"
 sarif4k = "0.6.0"
@@ -60,7 +61,7 @@ androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 autoService-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoService" }
 autoService-compiler = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 desugarJdkLibs = { module = " com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 detekt-api = { module = "io.gitlab.arturbosch.detekt:detekt-api", version.ref = "detekt" }
 detekt-test = { module = "io.gitlab.arturbosch.detekt:detekt-test", version.ref = "detekt" }
@@ -75,6 +76,7 @@ googleCloud-protobufUtil = { module = "com.google.protobuf:protobuf-java-util", 
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit5-api = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+junit5-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit5-launcher" }
 kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
 kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
 kotlinInject-anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "kotlinInject-anvil" }
