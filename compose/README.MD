@@ -24,7 +24,8 @@ kotlinova-androidTest = { module = "si.inova.kotlinova:compose-android-test", ve
 implementation(libs.kotlinova.compose)
 ```
 
-Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
+Replace `X.Y.Z` with latest version. Check out [releases](https://github.com/inovait/kotlinova/releases) to see what is the latest
+version.
 
 # Features
 
