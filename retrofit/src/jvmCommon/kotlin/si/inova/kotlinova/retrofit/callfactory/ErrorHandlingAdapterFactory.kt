@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,11 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.Request
 import okio.Timeout
-import retrofit2.Call
-import retrofit2.CallAdapter
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
+import retrofit2.*
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
@@ -42,10 +38,16 @@ import java.lang.reflect.Type
  *   @param coroutineScope A coroutine scope that all calls will be started on this scope. Ideally, it
  *          should have default dispatcher as a dispatcher to ensure first call initializes OkHttp on the background thread.
  *   @param errorHandler Error handler that parses the error responses
+ *   @param exceptionInterceptor A callback that is called for all problems with talking to the server,
+ *                               before regular exception handling happens.
+ *                               Use it to convert your custom IOExceptions, thrown inside interceptors,
+ *                               into CauseException that can then be consumed upstream. This is not called when a full response
+ *                               is received. Use [errorHandler] for that.
  */
 class ErrorHandlingAdapterFactory(
    private val coroutineScope: CoroutineScope,
-   private val errorHandler: ErrorHandler? = null
+   private val errorHandler: ErrorHandler? = null,
+   private val exceptionInterceptor: (Throwable) -> CauseException? = { null }
 ) : CallAdapter.Factory() {
    override fun get(
       returnType: Type,
@@ -75,7 +77,7 @@ class ErrorHandlingAdapterFactory(
          coroutineScope.launch {
             proxy.enqueue(object : Callback<T> {
                override fun onFailure(call: Call<T>, t: Throwable) {
-                  callback.onFailure(call, t.transformRetrofitException(request().url.toString()))
+                  callback.onFailure(call, exceptionInterceptor(t) ?: t.transformRetrofitException(request().url.toString()))
                }
 
                override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -93,7 +95,12 @@ class ErrorHandlingAdapterFactory(
       override fun cloneImpl(): Call<T> = ResultCall(proxy.clone())
 
       override fun executeImpl(): Response<T> {
-         val response = proxy.execute()
+         val response = try {
+            proxy.execute()
+         } catch (e: Exception) {
+            throw exceptionInterceptor(e) ?: e.transformRetrofitException(request().url.toString())
+         }
+
          if (!response.isSuccessful) {
             throw errorHandler?.generateExceptionFromErrorBody(response, response.createParentException())
                ?: response.createParentException()

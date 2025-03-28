@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -39,6 +39,7 @@ import si.inova.kotlinova.retrofit.SyntheticHeaders
 import si.inova.kotlinova.retrofit.mockWebServer
 import si.inova.kotlinova.retrofit.setJsonBody
 import java.io.File
+import java.io.IOException
 
 class SuspendCallAdapterFactoryTest {
    private lateinit var tempCache: Cache
@@ -286,6 +287,37 @@ class SuspendCallAdapterFactoryTest {
       }
    }
 
+   @Test
+   internal fun `Transform network errors using exceptionInterceptor`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(
+            this@runTest,
+            okHttpSetup = {
+               addInterceptor {
+                  throw TestIOException()
+               }
+            },
+            exceptionInterceptor = {
+               if (it is TestIOException) {
+                  TestErrorResponseException(
+                     cause = it.cause
+                  )
+               } else {
+                  null
+               }
+            }
+         )
+
+         mockResponse("/data") {
+            socketPolicy = SocketPolicy.NO_RESPONSE
+         }
+
+         shouldThrow<TestErrorResponseException> {
+            service.getEnumResult()
+         }
+      }
+   }
+
    private interface TestRetrofitService {
       @GET("/data")
       suspend fun getEnumResult(
@@ -306,4 +338,5 @@ class SuspendCallAdapterFactoryTest {
    }
 
    private class TestErrorResponseException(message: String? = null, cause: Throwable? = null) : CauseException(message, cause)
+   private class TestIOException(message: String? = null, cause: Throwable? = null) : IOException(message, cause)
 }

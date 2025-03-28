@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -24,11 +24,7 @@ import kotlinx.coroutines.flow.channelFlow
 import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.internal.cache.CacheStrategy
-import retrofit2.Call
-import retrofit2.CallAdapter
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.parseResponse
+import retrofit2.*
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
@@ -59,10 +55,19 @@ import kotlin.coroutines.cancellation.CancellationException
  *   with [CauseException] from that handler
  *
  * Output will not reflect any cache read fails, but they will be reported to the passed [errorReporter].
+ *
+ *   @param errorHandler Error handler that parses the error responses
+ *   @param errorReporter an error reporter class that will receive all cache parsinge errors.
+ *   @param exceptionInterceptor A callback that is called for all problems with talking to the server,
+ *                               before regular exception handling happens.
+ *                               Use it to convert your custom IOExceptions, thrown inside interceptors,
+ *                               into CauseException that can then be consumed upstream. This is not called when a full response
+ *                               is received. Use [errorHandler] for that.
  */
 class StaleWhileRevalidateCallAdapterFactory(
    private val errorHandler: ErrorHandler?,
    private val errorReporter: ErrorReporter = ErrorReporter {},
+   private val exceptionInterceptor: (Throwable) -> CauseException? = { null }
 ) : CallAdapter.Factory() {
    override fun get(returnType: Type, annotations: Array<out Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
       if (returnType !is ParameterizedType) {
@@ -156,7 +161,11 @@ class StaleWhileRevalidateCallAdapterFactory(
 
             parseResultFromCacheResponse(parsedResponse, networkRequest, originalCall)
          } catch (e: Exception) {
-            handleCacheError(networkRequest, e.transformRetrofitException(originalCall.request().url.toString()), originalCall)
+            handleCacheError(
+               networkRequest,
+               exceptionInterceptor(e) ?: e.transformRetrofitException(originalCall.request().url.toString()),
+               originalCall
+            )
             networkRequest to null
          }
       }
@@ -178,7 +187,12 @@ class StaleWhileRevalidateCallAdapterFactory(
          } catch (e: CancellationException) {
             throw e
          } catch (e: Exception) {
-            send(Outcome.Error(e.transformRetrofitException(networkRequest.url.toString()), dataFromCache))
+            send(
+               Outcome.Error(
+                  exceptionInterceptor(e) ?: e.transformRetrofitException(networkRequest.url.toString()),
+                  dataFromCache
+               )
+            )
          }
       }
 
