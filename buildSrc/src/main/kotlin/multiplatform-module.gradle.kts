@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -37,7 +37,6 @@ kotlin {
       }
    }
 
-   @Suppress("UNUSED_VARIABLE")
    sourceSets {
       all {
          languageSettings {
@@ -57,6 +56,7 @@ kotlin {
             implementation(libs.kotest.assertions)
             implementation(libs.junit5.api)
             runtimeOnly(libs.junit5.engine)
+            runtimeOnly(libs.junit5.launcher)
          }
       }
       val androidMain by getting {
