@@ -25,7 +25,8 @@ implementation(libs.kotlinova.retrofit)
 testImplementation(libs.kotlinova.retrofit.test)
 ```
 
-Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
+Replace `X.Y.Z` with latest version. Check out [releases](https://github.com/inovait/kotlinova/releases) to see what is the latest
+version.
 
 # Features
 

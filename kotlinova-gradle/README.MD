@@ -22,7 +22,8 @@ kotlinova-gradle = { module = "si.inova.kotlinova:gradle", version.ref = "kotlin
 classpath(libs.kotlinova.gradle)
 ```
 
-Replace `X.Y.Z` with latest version. Check out [changelog](../CHANGELOG.MD) to see what is the latest version.
+Replace `X.Y.Z` with latest version. Check out [releases](https://github.com/inovait/kotlinova/releases) to see what is the latest
+version.
 
 # Features
 

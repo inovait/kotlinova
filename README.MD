@@ -19,8 +19,8 @@ An opinionated set of common utility classes for Kotlin projects, primarily base
 This library uses [Semantic Versioning](https://semver.org/). Version number is updated automatically whenever new release is
 built.
 
-When updating, it is recommended that you check out [changelog](CHANGELOG.MD) first to see the changes, especially if there was
-major version change.
+When updating, it is recommended that you check out [releases](https://github.com/inovait/kotlinova/releases) first to see the
+changes, especially if there was major version change.
 
 ## Contributing
 
