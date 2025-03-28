@@ -11,7 +11,7 @@ androidx-fragment = "1.8.6"
 androidx-lifecycle = "2.8.7"
 androidx-test-espresso = "3.6.1"
 autoService = "1.1.1"
-coil = "2.7.0"
+coil = "3.0.0"
 dokka = "1.9.20"
 espresso = "3.6.1"
 anvil = "2.5.0-beta11"
@@ -64,7 +64,7 @@ androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 autoService-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoService" }
 autoService-compiler = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 anvil = { module = "com.squareup.anvil:gradle-plugin", version.ref = "anvil" }
 anvil-api = { module = "com.squareup.anvil:compiler-api", version.ref = "anvil" }
 anvil-utils = { module = "com.squareup.anvil:compiler-utils", version.ref = "anvil" }
