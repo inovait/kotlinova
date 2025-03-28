@@ -6,9 +6,6 @@ on:
       - master
 jobs:
   build-app:
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-      cancel-in-progress: true
     runs-on: "ubuntu-latest"
     env:
       BUILD_NUMBER: ${{ github.run_number }}
