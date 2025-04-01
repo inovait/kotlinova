@@ -1,5 +1,5 @@
 [versions]
-androidGradlePlugin = "8.8.2"
+androidGradlePlugin = "8.9.1"
 androidGradleCacheFix = "3.0.1"
 androidx-activity = "1.10.1"
 # See https://developer.android.com/jetpack/androidx/releases/compose-kotlin
@@ -16,7 +16,7 @@ dokka = "1.9.20"
 espresso = "3.6.1"
 anvil = "2.5.0-beta11"
 desugarJdkLibs = "2.1.5"
-dagger = "2.52"
+dagger = "2.54"
 detekt = "1.23.8"
 dispatch = "1.0.0-beta10"
 # Do not update this until we update gradle
@@ -40,6 +40,7 @@ sarif4k = "0.6.0"
 simpleStack = "2.9.0"
 tomlj = "1.1.1"
 turbine = "1.2.0"
+# Do not update until we can update to Kotlin 2.X
 versionsChecker = "0.51.0"
 
 [libraries]
