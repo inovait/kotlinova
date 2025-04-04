@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,6 +21,11 @@ import androidx.compose.ui.test.IdlingResource
 /**
  * Convert espresso idling resource to compose idling resource.
  */
+@Deprecated(
+   "Idling resources are an old anti-pattern. " +
+      "Use waitUntil instead. " +
+      "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
+)
 fun androidx.test.espresso.IdlingResource.asComposeIdlingResource(busyMessage: (() -> String)? = null): IdlingResource {
    return object : IdlingResource {
       override val isIdleNow: Boolean
