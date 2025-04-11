@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -36,14 +36,13 @@ kotlin {
          dependencies {
             implementation(libs.androidx.core)
             implementation(libs.dagger.runtime)
-
-            compileOnly(libs.androidx.compose.runtime)
          }
       }
       val commonMain by getting {
          dependencies {
             implementation(libs.kotlin.coroutines)
             implementation(libs.dispatch)
+            compileOnly(libs.androidx.compose.runtime)
          }
       }
       val jvmTest by getting {
