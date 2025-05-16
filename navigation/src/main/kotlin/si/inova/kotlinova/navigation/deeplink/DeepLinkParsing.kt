@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -18,6 +18,7 @@ package si.inova.kotlinova.navigation.deeplink
 
 import android.net.Uri
 import androidx.collection.ArrayMap
+import androidx.core.net.toUri
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -48,7 +49,7 @@ inline fun Uri.matchDeepLink(
  */
 @PublishedApi
 internal class NavDeepLink constructor(
-   val uriPattern: String?,
+   val uriPattern: String,
 ) {
    // path
    private val pathArgs = mutableListOf<String>()
@@ -59,7 +60,7 @@ internal class NavDeepLink constructor(
 
    // query
    private val isParameterizedQuery by lazy {
-      uriPattern != null && Uri.parse(uriPattern).query != null
+      uriPattern.toUri().query != null
    }
    private val queryArgsMap by lazy(LazyThreadSafetyMode.NONE) { parseQuery() }
    private var isSingleQueryParamValueOnly = false
@@ -188,8 +189,6 @@ internal class NavDeepLink constructor(
    }
 
    private fun parsePath() {
-      if (uriPattern == null) return
-
       val uriRegex = StringBuilder("^")
       // append scheme pattern
       if (!SCHEME_PATTERN.matcher(uriPattern).find()) {
@@ -213,13 +212,13 @@ internal class NavDeepLink constructor(
    private fun parseQuery(): MutableMap<String, ParamQuery> {
       val paramArgMap = mutableMapOf<String, ParamQuery>()
       if (!isParameterizedQuery) return paramArgMap
-      val uri = Uri.parse(uriPattern)
+      val uri = uriPattern.toUri()
 
       for (paramName in uri.queryParameterNames) {
          val argRegex = StringBuilder()
          val queryParams = uri.getQueryParameters(paramName)
          require(queryParams.size <= 1) {
-            "Query parameter $paramName must only be present once in ${uriPattern ?: ""}. " +
+            "Query parameter $paramName must only be present once in $uriPattern. " +
                "To support repeated query parameters, use an array type for your " +
                "argument and the pattern provided in your URI will be used to " +
                "parse each query parameter instance."
@@ -257,10 +256,10 @@ internal class NavDeepLink constructor(
    }
 
    private fun parseFragment(): Pair<MutableList<String>, String>? {
-      if (uriPattern == null || Uri.parse(uriPattern).fragment == null) return null
+      if (uriPattern.toUri().fragment == null) return null
 
       val fragArgs = mutableListOf<String>()
-      val fragment = Uri.parse(uriPattern).fragment
+      val fragment = uriPattern.toUri().fragment
       val fragRegex = StringBuilder()
       buildRegex(requireNotNull(fragment), fragArgs, fragRegex)
       return fragArgs to fragRegex.toString()
