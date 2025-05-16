@@ -68,6 +68,15 @@ val copyJavadocTask = tasks.register<Copy>("copyJavadoc") {
    into(dummyJavadocFolder)
 }
 
+afterEvaluate {
+   tasks.withType<Sign>().configureEach {
+      dependsOn(copyJavadocTask)
+   }
+   tasks.withType<AbstractPublishToMaven>().configureEach {
+      dependsOn(copyJavadocTask)
+   }
+}
+
 publishing {
    publications {
       register<MavenPublication>("release") {
