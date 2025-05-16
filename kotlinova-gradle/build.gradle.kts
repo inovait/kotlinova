@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,6 +20,9 @@
 // https://youtrack.jetbrains.com/issue/KTIJ-19369
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinJvm
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
@@ -27,8 +30,9 @@ plugins {
    alias(libs.plugins.kotlin.jvm)
    id("java-gradle-plugin")
    signing
-   id("maven-publish")
+   alias(libs.plugins.mavenPublish)
    alias(libs.plugins.detekt)
+   alias(libs.plugins.dokka)
 }
 
 group = "si.inova.kotlinova"
@@ -38,80 +42,58 @@ kotlin {
    jvmToolchain(21)
 }
 
-publishing {
+mavenPublishing {
    val userFriendlyName = "Kotlinova Gradle"
    val description = "Utilities for Gradle projects"
    val githubPath = "kotlinova-gradle"
 
-   publications {
-      create<MavenPublication>("pluginMaven") {
-         groupId = project.group.toString()
-         artifactId = "gradle"
-         version = project.version.toString()
+   publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+   signAllPublications()
 
-         from(components["java"])
+   coordinates(
+      groupId = project.group.toString(),
+      artifactId = "gradle",
+      version = project.version.toString(),
+   )
 
-         pom {
-            name.set(userFriendlyName)
-            this.description.set(description)
-            val projectGitUrl = "https://github.com/inovait/kotlinova"
-            url.set("$projectGitUrl/tree/master/$githubPath")
-            inceptionYear.set("2023")
-            licenses {
-               license {
-                  name.set("MIT")
-                  url.set("https://opensource.org/licenses/MIT")
-               }
-            }
-            issueManagement {
-               system.set("GitHub")
-               url.set("$projectGitUrl/issues")
-            }
-            scm {
-               connection.set("scm:git:$projectGitUrl")
-               developerConnection.set("scm:git:$projectGitUrl")
-               url.set(projectGitUrl)
-            }
-            developers {
-               developer {
-                  name.set("Inova IT")
-                  url.set("https://inova.si/")
-               }
-            }
+   configure(
+      KotlinJvm(
+         javadocJar = JavadocJar.Dokka("dokkaJavadoc"),
+         sourcesJar = true,
+      )
+   )
+
+   pom {
+      name.set(userFriendlyName)
+      this.description.set(description)
+      val projectGitUrl = "https://github.com/inovait/kotlinova"
+      url.set("$projectGitUrl/tree/master/$githubPath")
+      inceptionYear.set("2023")
+      licenses {
+         license {
+            name.set("MIT")
+            url.set("https://opensource.org/licenses/MIT")
          }
       }
-   }
-}
-
-if (properties.containsKey("ossrhUsername")) {
-   signing {
-      sign(publishing.publications)
-   }
-
-   // Workaround for the https://github.com/gradle/gradle/issues/26091
-   tasks.withType<AbstractPublishToMaven>().configureEach {
-      val signingTasks = tasks.withType<Sign>()
-      mustRunAfter(signingTasks)
-   }
-
-   publishing {
-      repositories {
-         maven {
-            val repositoryId = property("ossrhRepId") ?: error("Missing property: ossrhRepId")
-            setUrl("https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/")
-            credentials {
-               username = property("ossrhUsername") as String
-               password = property("ossrhPassword") as String
-            }
+      issueManagement {
+         system.set("GitHub")
+         url.set("$projectGitUrl/issues")
+      }
+      scm {
+         connection.set("scm:git:$projectGitUrl")
+         developerConnection.set("scm:git:$projectGitUrl")
+         url.set(projectGitUrl)
+      }
+      developers {
+         developer {
+            name.set("Inova IT")
+            url.set("https://inova.si/")
          }
       }
    }
 }
 
 java {
-   withJavadocJar()
-   withSourcesJar()
-
    // Ensure that target compatiblity is equal to kotlin's jvmToolchain
    lateinit var javaVersion: JavaVersion
    the<KotlinProjectExtension>().jvmToolchain { javaVersion = JavaVersion.toVersion(this.languageVersion.get().asInt()) }
