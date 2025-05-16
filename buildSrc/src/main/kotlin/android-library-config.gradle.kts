@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,6 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import org.gradle.accessors.dm.LibrariesForLibs
 
 /*
@@ -42,19 +43,21 @@ plugins {
 }
 
 android {
-   publishing {
-      singleVariant("release") {
-         // Disable javadoc generation until https://github.com/Kotlin/dokka/issues/2956 is resolved
-         // withJavadocJar()
-         withSourcesJar()
-      }
-   }
-
    testOptions {
       unitTests.all {
          it.useJUnitPlatform()
       }
    }
+}
+
+mavenPublishing {
+   configure(
+      AndroidSingleVariantLibrary(
+         variant = "release",
+         sourcesJar = true,
+         publishJavadocJar = false
+      )
+   )
 }
 
 // We cannot reuse empty-javadoc.jar over different projects, because that breaks Gradle's project isolation.
@@ -65,26 +68,9 @@ val copyJavadocTask = tasks.register<Copy>("copyJavadoc") {
    into(dummyJavadocFolder)
 }
 
-afterEvaluate {
-   tasks.withType<Sign>().configureEach {
-      dependsOn(copyJavadocTask)
-   }
-   tasks.withType<AbstractPublishToMaven>().configureEach {
-      dependsOn(copyJavadocTask)
-   }
-}
-
 publishing {
    publications {
       register<MavenPublication>("release") {
-         groupId = project.group.toString()
-         artifactId = project.name
-         version = project.version.toString()
-
-         afterEvaluate {
-            from(components["release"])
-         }
-
          // Add empty javadoc until https://github.com/Kotlin/dokka/issues/2956 is resolved
          artifact("$dummyJavadocFolder/empty-javadoc.jar") {
             classifier = "javadoc"

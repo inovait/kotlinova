@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -15,6 +15,8 @@
  */
 
 import com.android.build.gradle.tasks.asJavaVersion
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinJvm
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
@@ -42,22 +44,16 @@ plugins {
    id("standard-config")
 }
 
-publishing {
-   publications {
-      create<MavenPublication>("maven") {
-         groupId = project.group.toString()
-         artifactId = project.name
-         version = project.version.toString()
-
-         from(components["java"])
-      }
-   }
+mavenPublishing {
+   configure(
+      KotlinJvm(
+         javadocJar = JavadocJar.Dokka("dokkaJavadoc"),
+         sourcesJar = true,
+      )
+   )
 }
 
 java {
-   withJavadocJar()
-   withSourcesJar()
-
    // Ensure that target compatiblity is equal to kotlin's jvmToolchain
    lateinit var javaVersion: JavaVersion
    the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }

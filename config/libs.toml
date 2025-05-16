@@ -30,10 +30,10 @@ kotlin = "1.9.24"
 # Do not update until we can update to Kotlin 2.10
 kotlin-coroutines = "1.9.0"
 kotest = "5.9.1"
-nexusPublish = "0.30.0"
 junit4 = "4.13.2"
 junit5 = "5.12.1"
 junit5-launcher = "1.12.1"
+mavenPublish = "0.32.0"
 moshi = "1.15.2"
 retrofit = "2.11.0"
 sarif4k = "0.6.0"
@@ -95,6 +95,7 @@ kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref =
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+mavenPublish = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "mavenPublish" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
 sarif4k = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "sarif4k" }
@@ -105,6 +106,7 @@ versionsCheckerPlugin = { module = "com.github.ben-manes:gradle-versions-plugin"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-nexusPublish = { id = "io.codearte.nexus-staging", version.ref = "nexusPublish" }
+mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versionsChecker" }
