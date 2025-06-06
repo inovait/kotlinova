@@ -44,7 +44,9 @@ kotlin {
          }
       }
       val commonMain by getting
-      val jvmCommon by creating
+      val jvmCommon by creating {
+         dependsOn(commonMain)
+      }
       val jvmMain by getting {
          dependsOn(jvmCommon)
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,6 +23,7 @@ plugins {
    androidCommon
    id("kotlin-kapt")
    id("kotlin-parcelize")
+   id("org.jetbrains.kotlin.plugin.compose")
 }
 
 anvil {
@@ -38,13 +39,6 @@ android {
       versionCode = 1
       versionName = "1.0"
       targetSdk = 33
-   }
-
-   buildFeatures {
-      compose = true
-   }
-   composeOptions {
-      kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
    }
 }
 

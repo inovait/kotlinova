@@ -44,6 +44,7 @@ dependencies {
    implementation(libs.detekt.plugin)
    implementation(libs.dokka)
    implementation(libs.kotlin.plugin)
+   implementation(libs.kotlin.plugin.compose)
    implementation(libs.mavenPublish)
    implementation(libs.versionsCheckerPlugin)
    implementation("si.inova.kotlinova:kotlinova-gradle")
