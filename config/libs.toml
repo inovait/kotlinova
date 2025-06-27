@@ -37,6 +37,7 @@ simpleStack = "2.9.0"
 tomlj = "1.1.1"
 turbine = "1.2.0"
 versionsChecker = "0.51.0"
+versionCatalogUpdate = "0.8.5"
 
 [libraries]
 androidGradleCacheFix = { module = "org.gradle.android.cache-fix:org.gradle.android.cache-fix.gradle.plugin", version.ref = "androidGradleCacheFix" }
@@ -108,3 +109,4 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 nexusPublish = { id = "io.codearte.nexus-staging", version.ref = "nexusPublish" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versionsChecker" }
+versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
