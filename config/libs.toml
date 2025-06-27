@@ -38,6 +38,7 @@ sarif4k = "0.6.0"
 simpleStack = "2.9.0"
 tomlj = "1.1.1"
 turbine = "1.2.0"
+versionCatalogUpdate = "0.8.5"
 # Do not update until we can update to Kotlin 2.X
 versionsChecker = "0.52.0"
 
@@ -108,3 +109,4 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versionsChecker" }
+versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
