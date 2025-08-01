@@ -17,7 +17,6 @@
 package util
 
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import com.vanniktech.maven.publish.SonatypeHost
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
@@ -28,7 +27,7 @@ fun Project.publishLibrary(
    artifactName: String = project.name
 ) {
    configure<MavenPublishBaseExtension> {
-      publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+      publishToMavenCentral()
       signAllPublications()
 
       coordinates(

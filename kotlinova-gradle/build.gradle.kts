@@ -17,12 +17,8 @@
 // We cannot use common buildSrc in this project, since buildSrc depends on this project.
 // So we use copied configuration from there
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-@file:Suppress("DSL_SCOPE_VIOLATION")
-
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
-import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
@@ -47,7 +43,7 @@ mavenPublishing {
    val description = "Utilities for Gradle projects"
    val githubPath = "kotlinova-gradle"
 
-   publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+   publishToMavenCentral()
    signAllPublications()
 
    coordinates(
