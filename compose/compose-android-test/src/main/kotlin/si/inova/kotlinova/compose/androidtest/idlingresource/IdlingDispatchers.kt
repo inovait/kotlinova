@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -24,6 +24,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 /**
  * Register all passed dispatchers as an idling resource for this test.
  */
+@Deprecated(
+   "Idling resources are an old anti-pattern. " +
+      "Use waitUntil instead. " +
+      "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
+)
 fun ComposeTestRule.registerIdlingDispatchers(vararg dispatchers: CoroutineDispatcher) {
    for (dispatcher in dispatchers) {
       val espressoIdlingResource = when (dispatcher) {
@@ -47,6 +52,12 @@ fun ComposeTestRule.registerIdlingDispatchers(vararg dispatchers: CoroutineDispa
 /**
  * Register all dispatchers provided by this dispatcher provider as an idling resource for this test.
  */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated(
+   "Idling resources are an old anti-pattern. " +
+      "Use waitUntil instead. " +
+      "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
+)
 fun ComposeTestRule.registerIdlingDispatchers(dispatcherProvider: DispatcherProvider) {
    with(dispatcherProvider) {
       registerIdlingDispatchers(

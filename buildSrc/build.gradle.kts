@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,16 +14,16 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// https://youtrack.jetbrains.com/issue/KTIJ-19369
-// AGP 7.4.0 has a bug where it marks most things as incubating
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
-
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
    `kotlin-dsl`
    alias(libs.plugins.detekt)
    alias(libs.plugins.versions)
+   // We must specify JVM plugin explicitly here to avoid version conflicts
+   // It produces "Unsupported Kotlin plugin version" but it lets us compile
+   // See https://slack-chats.kotlinlang.org/t/29177439/when-updating-kotlin-to-2-2-0-i-m-getting-https-github-com-t
+   alias(libs.plugins.kotlin.jvm)
 }
 
 repositories {
@@ -45,6 +45,7 @@ dependencies {
    implementation(libs.dokka)
    implementation(libs.kotlin.plugin)
    implementation(libs.kotlin.plugin.compose)
+   implementation(libs.mavenPublish)
    implementation(libs.versionsCheckerPlugin)
    implementation("si.inova.kotlinova:kotlinova-gradle")
 

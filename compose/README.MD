@@ -98,9 +98,24 @@ val formattedTime = LocalDateFormatter.current.ofLocalizedDateTime(FormatStyle.F
 You can pass `FakeAndroidDateTimeFormatter` to the compose formatter's constructor to get predictable date formatting
 in Compose previews and tests.
 
+## Showing Coil images in the preview
+
+### Substitute AsyncImagePreviewHandler
+
+You can use `ColorCyclingAsyncImagePreviewHandler` to display placeholders instead of images
+in settings where you can't actually load images (for example in compose previews).
+
+```kotlin
+CompositionLocalProvider(LocalAsyncImagePreviewHandler provides ColorCyclingAsyncImagePreviewHandler()) {
+   // This will display a static color placeholder instead of attempting to load an actual image
+   AsyncImage("http://image.com")
+}
+```
+
 ## Fake Coil Loader
 
-You can use `FakeCoilLoader` to display placeholders instead of images
+`LocalAsyncImagePreviewHandler` is still experimental at the moment. To only use stable code,
+you can use `FakeCoilLoader` instead to display placeholders instead of images
 in settings where you can't actually load images (for example in compose previews).
 
 ```kotlin

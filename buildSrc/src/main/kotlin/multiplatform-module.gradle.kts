@@ -14,8 +14,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.gradle.accessors.dm.LibrariesForLibs
-import org.jetbrains.dokka.gradle.DokkaTask
 
 val libs = the<LibrariesForLibs>()
 
@@ -27,9 +28,7 @@ plugins {
 }
 
 kotlin {
-   androidTarget {
-      publishLibraryVariants("release")
-   }
+   androidTarget()
 
    jvm {
       testRuns["test"].executionTask.configure {
@@ -67,15 +66,12 @@ kotlin {
    }
 }
 
-val javadocJar: TaskProvider<Jar> = tasks.register("javadocJar", Jar::class.java) {
-   val dokkaJavadocTask = tasks.getByName("dokkaJavadoc", DokkaTask::class)
-   dependsOn(dokkaJavadocTask)
-   archiveClassifier.set("javadoc")
-   from(dokkaJavadocTask.outputDirectory)
-}
-
-publishing {
-   publications.withType<MavenPublication> {
-      artifact(javadocJar)
-   }
+mavenPublishing {
+   configure(
+      KotlinMultiplatform(
+         javadocJar = JavadocJar.Dokka("dokkaJavadoc"),
+         sourcesJar = true,
+         androidVariantsToPublish = listOf("release")
+      )
+   )
 }

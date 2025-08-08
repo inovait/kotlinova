@@ -30,7 +30,6 @@ import kotlinx.coroutines.Job
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import si.inova.kotlinova.navigation.di.NavigationInjection
-import si.inova.kotlinova.navigation.di.NavigationStackSubComponent
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
