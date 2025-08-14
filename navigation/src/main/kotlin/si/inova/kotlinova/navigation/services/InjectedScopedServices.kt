@@ -41,7 +41,7 @@ class InjectedScopedServices : ScopedServices {
          val serviceFactory = scopedServicesFactories[key]
             ?: error(
                "Scoped service ${key.qualifiedName ?: "NO_NAME"} is missing from the injection. " +
-                  "Did you add @InjectScopedService annotation to it?"
+                  "Did you add @ContributesScopedService annotation to it?"
             )
          val service = serviceFactory()
 

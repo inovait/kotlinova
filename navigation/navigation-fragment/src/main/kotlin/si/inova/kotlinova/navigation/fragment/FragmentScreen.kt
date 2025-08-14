@@ -35,7 +35,7 @@ import kotlinx.coroutines.async
 import si.inova.kotlinova.navigation.fragment.util.requireActivity
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
-import si.inova.kotlinova.navigation.services.InjectScopedService
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import java.lang.ref.WeakReference
 import kotlin.random.Random
@@ -122,7 +122,7 @@ abstract class FragmentScreen<K>(
    abstract fun createFragment(key: K, fragmentManager: FragmentManager): Fragment
 }
 
-@InjectScopedService
+@ContributesScopedService
 @Inject
 class ScopeExitListener : ScopedServices.Registered, ScopedService {
    val fragments = HashMap<Class<ScreenKey>, WeakReference<Pair<FragmentManager, Fragment>>>()

@@ -136,11 +136,11 @@ change restarts.
 
 To create a scoped service, simply create your class and have that class extend `ScopedService`.
 Class also needs to have an `@Inject` constructor/top level annotation and
-an `@InjectScopedService` top level annotation, since it is created by the framework (of course, you can
+an `@ContributesScopedService` top level annotation, since it is created by the framework (of course, you can
 use this constructor to inject any dependencies that the service needs):
 
 ```kotlin
-@InjectScopedService
+@ContributesScopedService
 @Inject
 class MyService : ScopedService {
 
@@ -170,7 +170,7 @@ dispatcher.
 Passed coroutine scope will be cancelled automatically when service is destroyed.
 
 ```kotlin
-@InjectScopedService
+@ContributesScopedService
 @Inject
 class MyService(coroutineScope: CoroutineScope) : CoroutineScopedService(coroutineScope) {
    // You can use coroutineScope variable inside.
@@ -192,7 +192,7 @@ Navigation library already includes a convenience implementation of `Bundleable`
 services that will survive process deaths, using `by saved` and `by savedFlow` syntax:
 
 ```kotlin
-@InjectScopedService
+@ContributesScopedService
 @Inject
 class MySaveableService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
    // Contents of those two variables will be saved and restored across process kills
@@ -212,7 +212,7 @@ allow you to access `key` property, which will contain a key that was used to cr
 for example, to automatically load data on that screen, without the need for manual load calls.
 
 ```kotlin
-@InjectScopedService
+@ContributesScopedService
 @Inject
 class MyScreenViewModel(coroutineScope: CoroutineScope) : SingleScreenViewModel<MyScreenKey>(coroutineScope) {
    override fun onServiceRegistered() {
@@ -257,7 +257,7 @@ You can use `ContributesBinding` annotation to inject a service interface into a
 injection:
 
 ```kotlin
-@InjectScopedService
+@ContributesScopedService
 @contributesBinding(BackstackScope::class)
 @Inject
 class MyServiceImpl() : MyService {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -82,5 +82,5 @@ internal const val ANNOTATION_INJECT_NAVIGATION_SCREEN = "si.inova.kotlinova.nav
 
 internal val ANNOTATION_INJECT_SCOPED_SERVICE = ClassName(
    "si.inova.kotlinova.navigation.services",
-   "InjectScopedService"
+   "ContributesScopedService"
 )

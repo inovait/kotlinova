@@ -40,7 +40,7 @@ import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
-import si.inova.kotlinova.navigation.services.InjectScopedService
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.services.SingleScreenViewModel
@@ -146,7 +146,7 @@ class ServicesTest {
       }
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @Inject
    class BasicService : ScopedService {
       val data = MutableStateFlow(0)
@@ -170,7 +170,7 @@ class ServicesTest {
       }
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @Inject
    class StateSavingService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val data by savedFlow(0)
@@ -188,7 +188,7 @@ class ServicesTest {
       }
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @Inject
    class SingleScreenViewModelService(coroutineScope: CoroutineScope) :
       SingleScreenViewModel<ScreenWithSingleScreenViewModelKey>(coroutineScope) {
@@ -215,7 +215,7 @@ class ServicesTest {
       }
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @ContributesBinding(BackstackScope::class)
    @Inject
    class BasicServiceWithInterfaceImpl : BasicServiceWithInterface {

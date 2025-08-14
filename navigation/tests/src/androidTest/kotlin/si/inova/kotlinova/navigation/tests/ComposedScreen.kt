@@ -30,7 +30,7 @@ import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
-import si.inova.kotlinova.navigation.services.InjectScopedService
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
@@ -71,13 +71,13 @@ class ComposedScreen {
       }
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @Inject
    class OuterScreenService : ScopedService {
       val number = 10
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @Inject
    class InnerScreenService : ScopedService {
       val number = 20

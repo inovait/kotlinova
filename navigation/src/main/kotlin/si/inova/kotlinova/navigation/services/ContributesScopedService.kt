@@ -17,4 +17,4 @@
 package si.inova.kotlinova.navigation.services
 
 @Target(AnnotationTarget.CLASS)
-annotation class InjectScopedService
+annotation class ContributesScopedService

@@ -38,7 +38,7 @@ import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
-import si.inova.kotlinova.navigation.services.InjectScopedService
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import java.util.UUID
@@ -130,7 +130,7 @@ class ServiceScopes {
       }
    }
 
-   @InjectScopedService
+   @ContributesScopedService
    @Inject
    class SharedService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val number by savedFlow(0)
