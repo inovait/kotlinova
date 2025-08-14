@@ -28,6 +28,7 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.binding
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -128,6 +129,15 @@ class ServicesTest {
       rule.onNodeWithText("Number: 1").assertIsDisplayed()
    }
 
+   @Test
+   internal fun allowScreensInjectInterfacesAndMultipleParentsOfScopedServices() {
+      rule.insertTestNavigation(ScreenWithBasicServiceWithInterfaceKey)
+
+      rule.onNodeWithText("Number: 0").assertIsDisplayed()
+      rule.onNodeWithText("Increase").performClick()
+      rule.onNodeWithText("Number: 1").assertIsDisplayed()
+   }
+
    @Parcelize
    object ScreenWithBasicServiceKey : NoArgsScreenKey()
 
@@ -215,6 +225,24 @@ class ServicesTest {
       }
    }
 
+   @Parcelize
+   object ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey : NoArgsScreenKey()
+
+   @InjectNavigationScreen
+   class ScreenWithBasicServiceWithInterfaceAndMultipleParents(
+      private val service: BasicServiceWithInterfaceAndMultipleParents
+   ) : Screen<ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey>() {
+      @Composable
+      override fun Content(key: ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey) {
+         Column {
+            Text("Number: ${service.data.collectAsStateWithLifecycle().value}")
+            Button(onClick = { service.data.update { it + 1 } }) {
+               Text("Increase")
+            }
+         }
+      }
+   }
+
    @ContributesScopedService
    @ContributesBinding(BackstackScope::class)
    @Inject
@@ -222,7 +250,20 @@ class ServicesTest {
       override val data = MutableStateFlow(0)
    }
 
+   @ContributesScopedService(BasicServiceWithInterfaceAndMultipleParents::class)
+   @ContributesBinding(BackstackScope::class, binding<BasicServiceWithInterfaceAndMultipleParents>())
+   @Inject
+   class BasicServiceWithInterfaceAndMultipleParentsImpl : DummyParent, BasicServiceWithInterfaceAndMultipleParents {
+      override val data = MutableStateFlow(0)
+   }
+
    interface BasicServiceWithInterface : ScopedService {
       val data: MutableStateFlow<Int>
    }
+
+   interface BasicServiceWithInterfaceAndMultipleParents : ScopedService {
+      val data: MutableStateFlow<Int>
+   }
+
+   interface DummyParent
 }

@@ -79,13 +79,19 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
       val contributesBindingAnnotation =
          service.annotations.firstOrNull { it.annotationType.toTypeName() == ContributesBinding::class.asClassName() }
 
+      val contributesScopedServiceAnnotation =
+         service.annotations.first { it.annotationType.toTypeName() == ANNOTATION_INJECT_SCOPED_SERVICE }
+
       val fromBackstackProviderProviders = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "BackstackProviders")
          .addAnnotation(backstackContributesToAnnotation)
          .addFunction(provideFromSimpleStackFunction)
          .addFunction(provideServiceFunction)
          .apply {
             if (contributesBindingAnnotation != null) {
-               val boundType = boundType(service, contributesBindingAnnotation).toClassName()
+               // We cannot read the target class from the ContributesBinding annotation, because the type there
+               // is solely determined by the type of the generic annotation and KSP does not support generic annotations
+               // So we are forced to use another annotation for that
+               val boundType = boundType(service, contributesScopedServiceAnnotation).toClassName()
                addFunction(createBindsServiceFunction(serviceClassName, boundType))
                addFunction(createProvideFromSimpleStackFunction(serviceClassName, boundType))
             }
@@ -173,7 +179,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
             val message = "The bound type could not be determined for " +
                "${clazz.simpleName.asString()}. There are multiple super types: " +
                superTypes.joinToString { it.declaration.simpleName.asString() } +
-               "."
+               ". You need to determine the bound type explicitly in the @ContributesScopedService annotation."
             logger.error(message, clazz)
             throw IllegalArgumentException(message)
          }

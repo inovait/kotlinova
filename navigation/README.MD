@@ -276,6 +276,28 @@ class MyScreen(
 }
 ```
 
+If your service has multiple parents, you have to specify which interface to bind to in the `ContributesScopedService` annotation:
+
+```kotlin
+@ContributesScopedService(MyService::class)
+@contributesBinding(BackstackScope::class, binding<MyService>())
+@Inject
+class MyServiceImpl() : MyService, AnotherInterface {
+   ...
+}
+
+interface MyService : ScopedService {
+   ...
+}
+
+@InjectNavigationScreen
+class MyScreen(
+   private val myService: MyService
+) : Screen<MyScreenKey> {
+   ...
+}
+```
+
 ## Custom animations
 
 To customize animations, you can override `forwardAnimation` and `backwardAnimation` methods of the screen's key.

@@ -16,5 +16,13 @@
 
 package si.inova.kotlinova.navigation.services
 
+import kotlin.reflect.KClass
+
 @Target(AnnotationTarget.CLASS)
-annotation class ContributesScopedService
+annotation class ContributesScopedService(
+   /**
+    * If target has multiple parent types and user wants to bind them to the interface (via @ContributesBinding),
+    * target parent also has to be defined here
+    */
+   val boundType: KClass<*> = Unit::class
+)
