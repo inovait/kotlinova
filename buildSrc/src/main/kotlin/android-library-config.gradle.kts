@@ -77,12 +77,14 @@ afterEvaluate {
    }
 }
 
-publishing {
-   publications {
-      register<MavenPublication>("release") {
-         // Add empty javadoc until https://github.com/Kotlin/dokka/issues/2956 is resolved
-         artifact("$dummyJavadocFolder/empty-javadoc.jar") {
-            classifier = "javadoc"
+afterEvaluate {
+   publishing {
+      publications {
+         getByName<MavenPublication>("maven") {
+            // Add empty javadoc until https://github.com/Kotlin/dokka/issues/2956 is resolved
+            artifact("$dummyJavadocFolder/empty-javadoc.jar") {
+               classifier = "javadoc"
+            }
          }
       }
    }
