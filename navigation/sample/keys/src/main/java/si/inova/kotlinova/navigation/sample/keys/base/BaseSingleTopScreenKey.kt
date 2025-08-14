@@ -19,14 +19,12 @@ package si.inova.kotlinova.navigation.sample.keys.base
 import androidx.activity.BackEventCompat
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.ui.graphics.TransformOrigin
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 import si.inova.kotlinova.navigation.simplestack.StateChangeResult
 

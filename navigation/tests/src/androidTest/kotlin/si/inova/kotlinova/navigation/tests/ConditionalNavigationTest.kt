@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,11 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import dev.zacsweers.metro.ClassKey
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
 import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.parcelize.Parcelize
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.IntoMap
-import me.tatarka.inject.annotations.Provides
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.conditions.ConditionalNavigationHandler
@@ -41,7 +42,6 @@ import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
 
 class ConditionalNavigationTest {
    @get:Rule
@@ -123,12 +123,12 @@ class ConditionalNavigationTest {
       }
    }
 
-   @Component
    @ContributesTo(OuterNavigationScope::class)
-   interface ConditionTestComponent {
+   interface ConditionTestProviders {
       @Provides
       @IntoMap
-      fun provideTestCondition(): Pair<Class<out NavigationCondition>, () -> ConditionalNavigationHandler> =
-         Pair(TestCondition::class.java, { TestConditionHandler })
+      @ClassKey(TestCondition::class)
+      fun provideTestCondition(): ConditionalNavigationHandler =
+         TestConditionHandler
    }
 }

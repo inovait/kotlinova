@@ -13,28 +13,13 @@
  *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+package si.inova.kotlinova.navigation.sample
 
-package si.inova.kotlinova.navigation
+import android.app.Activity
+import dev.zacsweers.metro.MapKey
+import kotlin.reflect.KClass
 
-import me.tatarka.inject.annotations.Provides
-import si.inova.kotlinova.navigation.deeplink.MainDeepLinkHandler
-import si.inova.kotlinova.navigation.di.NavigationContext
-import si.inova.kotlinova.navigation.di.NavigationInjection
-import si.inova.kotlinova.navigation.di.NavigationStackSubComponent
-import si.inova.kotlinova.navigation.di.OuterNavigationScope
-import software.amazon.lastmile.kotlin.inject.anvil.AppScope
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesSubcomponent
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
-
-@ContributesSubcomponent(OuterNavigationScope::class)
-@SingleIn(OuterNavigationScope::class)
-interface NavigationSubComponent {
-   fun getNavigationInjectionFactory(): NavigationInjection.Factory
-   fun getMainDeepLinkHandler(): MainDeepLinkHandler
-   fun getNavigationContext(): NavigationContext
-
-   @ContributesSubcomponent.Factory(AppScope::class)
-   interface Factory {
-      fun createNavigationComponent(): NavigationSubComponent
-   }
-}
+/** A [MapKey] annotation for binding Activities in a multibinding map. */
+@MapKey
+@Target(AnnotationTarget.CLASS)
+annotation class ActivityKey(val value: KClass<out Activity>)

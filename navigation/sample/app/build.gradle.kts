@@ -19,6 +19,7 @@ plugins {
    id("org.jetbrains.kotlin.android")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
+   alias(libs.plugins.metro)
 }
 
 android {
@@ -50,6 +51,10 @@ android {
    }
 }
 
+metro {
+   enableScopedInjectClassHints = true
+}
+
 kotlin {
    jvmToolchain(21)
 }
@@ -74,12 +79,7 @@ dependencies {
    implementation(libs.androidx.fragment)
    implementation(libs.androidx.core)
    implementation(libs.kotlinova.navigation)
-   implementation(libs.kotlinInject.runtime)
-   implementation(libs.kotlinInject.anvil.annotations)
-   implementation(libs.kotlinInject.anvil.runtime)
 
-   ksp(libs.kotlinInject.compiler)
-   ksp(libs.kotlinInject.anvil.compiler)
    ksp(libs.kotlinova.navigation.compiler)
 
    debugImplementation(libs.androidx.compose.ui.test.manifest)

@@ -21,11 +21,12 @@ plugins {
    id("kotlin-parcelize")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
+   alias(libs.plugins.metro)
 }
 
 publishLibrary(
    userFriendlyName = "Navigation",
-   description = "Anvil-based navigation system",
+   description = "Metro-based navigation system",
    githubPath = "navigation"
 )
 
@@ -33,10 +34,12 @@ android {
    namespace = "si.inova.kotlinova.navigation"
 }
 
+metro {
+   enableScopedInjectClassHints = true
+}
+
 dependencies {
    api(libs.simpleStack)
-   api(libs.kotlinInject.runtime) // This needs to be API to ensure generated files compile
-   api(libs.kotlinInject.anvil.runtime) // This needs to be API to ensure generated files compile
    api(libs.androidx.activity.compose)
 
    implementation(projects.kotlinova.core)
@@ -50,10 +53,7 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.viewModel.compose)
-   implementation(libs.kotlinInject.anvil.annotations)
 
-   ksp(libs.kotlinInject.compiler)
-   ksp(libs.kotlinInject.anvil.compiler)
    ksp(projects.navigation.navigationCompiler)
 
    debugImplementation(libs.androidx.compose.ui.tooling)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -18,12 +18,14 @@ package si.inova.kotlinova.navigation.services
 
 import com.zhuinden.simplestack.ScopedServices
 import com.zhuinden.simplestack.ServiceBinder
+import dev.zacsweers.metro.Provider
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.di.ScreenRegistry
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import kotlin.reflect.KClass
 
 class InjectedScopedServices : ScopedServices {
-   lateinit var scopedServicesFactories: Map<Class<out ScopedService>, () -> ScopedService>
+   lateinit var scopedServicesFactories: Map<KClass<*>, Provider<ScopedService>>
    lateinit var screenRegistry: ScreenRegistry
 
    override fun bindServices(serviceBinder: ServiceBinder) {
@@ -38,16 +40,16 @@ class InjectedScopedServices : ScopedServices {
       for (key in serviceKeys) {
          val serviceFactory = scopedServicesFactories[key]
             ?: error(
-               "Scoped service ${key.name} is missing from the injection. " +
+               "Scoped service ${key.qualifiedName ?: "NO_NAME"} is missing from the injection. " +
                   "Did you add @InjectScopedService annotation to it?"
             )
          val service = serviceFactory()
 
          if (service is SingleScreenViewModel<*>) {
             @Suppress("UNCHECKED_CAST")
-            (service as SingleScreenViewModel<ScreenKey>).key = serviceBinder.getKey() as ScreenKey
+            (service as SingleScreenViewModel<ScreenKey>).key = serviceBinder.getKey()
          }
-         serviceBinder.addService(key.name, service)
+         serviceBinder.addService(key.java.name, service)
       }
    }
 }

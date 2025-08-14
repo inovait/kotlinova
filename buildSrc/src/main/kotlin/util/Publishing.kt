@@ -28,7 +28,9 @@ fun Project.publishLibrary(
 ) {
    configure<MavenPublishBaseExtension> {
       publishToMavenCentral()
-      signAllPublications()
+      if (properties.containsKey("signing.password")) {
+         signAllPublications()
+      }
 
       coordinates(
          groupId = project.group.toString(),

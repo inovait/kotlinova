@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,17 +16,20 @@
 
 package si.inova.kotlinova.navigation.conditions
 
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
+import kotlin.reflect.KClass
 
-class MainConditionalNavigationHandler @Inject constructor(
-   private val handlers: Map<Class<out NavigationCondition>, () -> ConditionalNavigationHandler>
+@Inject
+class MainConditionalNavigationHandler(
+   private val handlers: Map<KClass<*>, Provider<ConditionalNavigationHandler>>
 ) : ConditionalNavigationHandler {
    override fun getNavigationRedirect(
       condition: NavigationCondition,
       navigateToIfConditionMet: NavigationInstruction
    ): NavigationInstruction? {
-      val handler = handlers[condition.javaClass]?.invoke()
+      val handler = handlers[condition.javaClass.kotlin]?.invoke()
          ?: error(
             "Failed to find condition handler for condition ${condition.javaClass.name}. " +
                "Did you add it to a Component with a @IntoMap @Provides function?"

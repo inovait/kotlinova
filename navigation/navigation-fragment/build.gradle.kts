@@ -20,6 +20,7 @@ plugins {
    androidLibraryModule
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
+   alias(libs.plugins.metro)
 }
 
 publishLibrary(
@@ -33,16 +34,11 @@ android {
 }
 
 dependencies {
-   api(libs.kotlinInject.runtime)
-   api(libs.kotlinInject.anvil.runtime)
-
    implementation(projects.navigation)
 
    implementation(libs.androidx.fragment)
    implementation(libs.androidx.compose.ui)
 
-   ksp(libs.kotlinInject.compiler)
-   ksp(libs.kotlinInject.anvil.compiler)
    ksp(projects.navigation.navigationCompiler)
 
    debugImplementation(libs.androidx.compose.ui.tooling)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -22,8 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import dev.zacsweers.metro.Inject
 import kotlinx.parcelize.Parcelize
-import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
@@ -72,12 +72,14 @@ class ComposedScreen {
    }
 
    @InjectScopedService
-   class OuterScreenService @Inject constructor() : ScopedService {
+   @Inject
+   class OuterScreenService : ScopedService {
       val number = 10
    }
 
    @InjectScopedService
-   class InnerScreenService @Inject constructor() : ScopedService {
+   @Inject
+   class InnerScreenService : ScopedService {
       val number = 20
    }
 }

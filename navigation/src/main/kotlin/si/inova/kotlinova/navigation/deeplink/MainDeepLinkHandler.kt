@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -24,7 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.util.Consumer
 import com.zhuinden.simplestack.Backstack
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
@@ -32,7 +32,8 @@ import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
 /**
  * Deep link handler that aggregates all deep link handlers contributed via `@ContributesMultibinding`.
  */
-class MainDeepLinkHandler @Inject constructor(
+@Inject
+class MainDeepLinkHandler(
    private val injectedHandlers: Set<DeepLinkHandler>
 ) : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {

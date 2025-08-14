@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -24,30 +24,29 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import com.zhuinden.simplestack.Backstack
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.createGraph
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.Provides
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
-import software.amazon.lastmile.kotlin.inject.anvil.MergeComponent
-import software.amazon.lastmile.kotlin.inject.anvil.SingleIn
 
-@MergeComponent(OuterNavigationScope::class)
-@Component
+@DependencyGraph(OuterNavigationScope::class, isExtendable = true)
 @SingleIn(OuterNavigationScope::class)
-interface TestComponent : TestComponentMerged {
+interface TestGraph {
    fun navigationFactory(): NavigationInjection.Factory
 
    @Provides
-   fun provideCoroutineScope() = CoroutineScope(Dispatchers.Unconfined + Job())
+   fun provideCoroutineScope(): CoroutineScope = CoroutineScope(Dispatchers.Unconfined + Job())
 }
 
 fun ComposeContentTestRule.insertTestNavigation(vararg initialHistory: ScreenKey): Backstack {
-   val navigation = TestComponent::class.create().navigationFactory()
+   val navigation = createGraph<TestGraph>().navigationFactory()
    lateinit var backstack: Backstack
 
    setContent {
@@ -62,7 +61,7 @@ fun ComposeContentTestRule.insertTestNavigation(vararg initialHistory: ScreenKey
 }
 
 fun StateRestorationTester.insertTestNavigation(composeTestRule: ComposeTestRule, vararg initialHistory: ScreenKey): Backstack {
-   val navigation = TestComponent::class.create().navigationFactory()
+   val navigation = createGraph<TestGraph>().navigationFactory()
    lateinit var backstack: Backstack
 
    setContent {

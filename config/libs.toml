@@ -26,10 +26,9 @@ junit5-launcher = "1.13.4"
 kotest = "5.9.1"
 kotlin = "2.2.0"
 kotlin-coroutines = "1.10.2"
-kotlinInject = "0.7.2"
-kotlinInject-anvil = "0.1.2"
 kotlinPoet = "2.1.0"
 ksp = "2.2.0-2.0.2"
+metro = "0.5.5"
 mavenPublish = "0.34.0"
 moshi = "1.15.2"
 okhttp = "5.1.0"
@@ -84,11 +83,6 @@ kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", 
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-plugin-compose = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
-kotlinInject-anvil-annotations = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime-optional", version.ref = "kotlinInject-anvil" }
-kotlinInject-anvil-compiler = { module = "software.amazon.lastmile.kotlin.inject.anvil:compiler", version.ref = "kotlinInject-anvil" }
-kotlinInject-anvil-runtime = { module = "software.amazon.lastmile.kotlin.inject.anvil:runtime", version.ref = "kotlinInject-anvil" }
-kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
-kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
 kotlinPoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinPoet" }
 kotlinPoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
 ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
@@ -112,5 +106,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versionsChecker" }

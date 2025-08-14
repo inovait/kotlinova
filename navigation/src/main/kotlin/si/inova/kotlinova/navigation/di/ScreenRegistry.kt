@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,32 +17,34 @@
 package si.inova.kotlinova.navigation.di
 
 import com.zhuinden.simplestack.Backstack
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.ScopedService
+import kotlin.reflect.KClass
 
 /**
  * Registry of all screen currently known by the navigation.
  */
-class ScreenRegistry @Inject constructor(
+@Inject
+class ScreenRegistry(
    private val backstack: Backstack,
-   private val staticRegistrations: Map<Class<out ScreenKey>, ScreenRegistration<*>>,
-   private val screenFactories: Map<Class<out Screen<out ScreenKey>>, ScreenFactory<*>>,
+   private val staticRegistrations: Map<KClass<*>, ScreenRegistration<*>>,
+   private val screenFactories: Map<KClass<*>, ScreenFactory<*>>,
 ) {
    @Suppress("UNCHECKED_CAST")
    fun <T : ScreenKey> createScreen(key: T): Screen<T> {
       val registration = getRegistration(key)
 
       val factory = screenFactories[registration.mainScreenClass]
-         ?: error("Missing screen factory for the ${registration.mainScreenClass.name}")
+         ?: error("Missing screen factory for the ${registration.mainScreenClass.qualifiedName ?: "NO_NAME"}")
 
       return factory.create(key.scopeTag, backstack) as Screen<T>
    }
 
    @Suppress("UNCHECKED_CAST")
    fun <T : ScreenKey> getRegistration(key: T): ScreenRegistration<T> {
-      val reg = staticRegistrations[key.javaClass]
+      val reg = staticRegistrations[key.javaClass.kotlin]
          ?: error(
             "No screen registered for ${key.javaClass.name}. Did you add an @InjectNavigationScreen to its screen?"
          )
@@ -50,7 +52,7 @@ class ScreenRegistry @Inject constructor(
       return reg as ScreenRegistration<T>
    }
 
-   fun getRequiredScopedServices(key: ScreenKey): List<Class<out ScopedService>> {
+   fun getRequiredScopedServices(key: ScreenKey): List<KClass<out ScopedService>> {
       val registration = getRegistration(key)
 
       val factory = screenFactories[registration.mainScreenClass]
@@ -60,9 +62,9 @@ class ScreenRegistry @Inject constructor(
    }
 }
 
-class ScreenRegistration<T : ScreenKey>(val mainScreenClass: Class<out Screen<T>>)
+class ScreenRegistration<T : ScreenKey>(val mainScreenClass: KClass<out Screen<T>>)
 class ScreenFactory<T : Screen<*>>(
-   val requiredScopedServices: List<Class<out ScopedService>>,
+   val requiredScopedServices: List<KClass<out ScopedService>>,
    val composedScreenFactories: List<ScreenFactory<*>>,
    private val factory: (String, Backstack) -> T
 ) {
@@ -71,6 +73,6 @@ class ScreenFactory<T : Screen<*>>(
    }
 }
 
-private fun ScreenFactory<*>.getAllRequiredScopedServices(): List<Class<out ScopedService>> {
+private fun ScreenFactory<*>.getAllRequiredScopedServices(): List<KClass<out ScopedService>> {
    return requiredScopedServices + composedScreenFactories.flatMap { it.getAllRequiredScopedServices() }
 }

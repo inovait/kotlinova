@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,7 @@
 package si.inova.kotlinova.navigation.di
 
 /**
- * Singleton anvil scope that contains all dependencies required to create navigation system. Attach it to a component in your app
+ * Singleton Metro scope that contains all dependencies required to create navigation system. Attach it to a component in your app
  * to start using navigation
  */
 class OuterNavigationScope private constructor()

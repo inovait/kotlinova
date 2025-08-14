@@ -17,28 +17,20 @@
 package si.inova.kotlinova.navigation.di
 
 import com.zhuinden.simplestack.Backstack
-import com.zhuinden.simplestack.GlobalServices
-import dev.zacsweers.metro.Provider
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 import si.inova.kotlinova.navigation.navigator.Navigator
-import si.inova.kotlinova.navigation.services.ScopedService
-import kotlin.reflect.KClass
+import si.inova.kotlinova.navigation.navigator.SimpleStackNavigator
 
-interface NavigationInjection {
-   fun screenRegistry(): ScreenRegistry
-   fun scopedServicesFactories(): Map<KClass<*>, Provider<ScopedService>>
-   fun navigator(): Navigator
-   fun navigationContext(): NavigationContext
-
-   interface Factory {
-      fun create(
-         backstack: Backstack,
-         mainBackstackWrapper: MainBackstackWrapper
-      ): NavigationInjection
-   }
-
-   companion object {
-      fun fromBackstack(backstack: Backstack): NavigationInjection {
-         return backstack.getService(GlobalServices.SCOPE_TAG, NavigationInjection::class.java.name)
-      }
+@ContributesTo(BackstackScope::class)
+interface NestedNavigationProviders {
+   @MainNavigation
+   @Provides
+   fun provideMainNavigator(
+      @MainNavigation
+      backstack: Backstack,
+      navigationContext: Lazy<NavigationContext>
+   ): Navigator {
+      return SimpleStackNavigator(backstack, navigationContext)
    }
 }

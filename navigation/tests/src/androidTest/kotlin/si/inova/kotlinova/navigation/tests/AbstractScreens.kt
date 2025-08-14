@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -22,8 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import dev.zacsweers.metro.Inject
 import kotlinx.parcelize.Parcelize
-import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.ContributesScreenBinding
@@ -84,7 +84,8 @@ class AbstractScreens {
 
    @ContributesScreenBinding
    @InjectNavigationScreen
-   class TestAbstractScreenImpl @Inject constructor() : TestAbstractScreen() {
+   @Inject
+   class TestAbstractScreenImpl : TestAbstractScreen() {
       @Composable
       override fun Content(key: ScreenKey) {
          Column {
@@ -113,7 +114,8 @@ class AbstractScreens {
    @ContributesScreenBinding
    @Suppress("unused")
    @InjectNavigationScreen
-   class TestAbstractScreenWithServiceImpl @Inject constructor(
+   @Inject
+   class TestAbstractScreenWithServiceImpl(
       private val service: ServiceScopes.SharedService
    ) : TestAbstractScreenWithService() {
       @Composable
@@ -157,7 +159,8 @@ class AbstractScreens {
    @Suppress("unused")
    @ContributesScreenBinding
    @InjectNavigationScreen
-   class TestAbstractScreenReferencingCustomKey @Inject constructor(
+   @Inject
+   class TestAbstractScreenReferencingCustomKey(
       private val service: ServiceScopes.SharedService
    ) : Screen<InnerScreenKey>() {
       @Composable
@@ -174,7 +177,8 @@ class AbstractScreens {
    @Suppress("unused")
    @ContributesScreenBinding(boundType = Screen::class)
    @InjectNavigationScreen
-   class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType @Inject constructor(
+   @Inject
+   class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType(
       private val service: ServiceScopes.SharedService
    ) : Screen<InnerScreenKeyWithExplicitBoundType>() {
       @Composable

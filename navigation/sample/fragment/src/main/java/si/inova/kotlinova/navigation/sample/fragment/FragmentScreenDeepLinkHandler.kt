@@ -1,8 +1,8 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
- * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
  *  is furnished to do so, subject to the following conditions:
  *
@@ -10,14 +10,15 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 package si.inova.kotlinova.navigation.sample.fragment
 
 import android.net.Uri
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.Inject
 import si.inova.kotlinova.navigation.deeplink.DeepLinkHandler
 import si.inova.kotlinova.navigation.deeplink.matchDeepLink
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
@@ -26,10 +27,10 @@ import si.inova.kotlinova.navigation.instructions.OpenScreenOrMoveToTop
 import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
 import si.inova.kotlinova.navigation.sample.keys.DemoFragmentScreenKey
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
-@ContributesBinding(OuterNavigationScope::class, multibinding = true)
-class FragmentScreenDeepLinkHandler @Inject constructor() : DeepLinkHandler {
+@ContributesIntoSet(OuterNavigationScope::class)
+@Inject
+class FragmentScreenDeepLinkHandler : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return uri.matchDeepLink("navigationdemo://fragment/{argument}") {
          val argument = it.getValue("argument").toIntOrNull() ?: return null

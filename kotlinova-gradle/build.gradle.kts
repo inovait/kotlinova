@@ -44,7 +44,9 @@ mavenPublishing {
    val githubPath = "kotlinova-gradle"
 
    publishToMavenCentral()
-   signAllPublications()
+   if (properties.containsKey("signing.password")) {
+      signAllPublications()
+   }
 
    coordinates(
       groupId = project.group.toString(),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.navigation.test
 
+import dev.zacsweers.metro.Provider
 import si.inova.kotlinova.navigation.conditions.ConditionalNavigationHandler
 import si.inova.kotlinova.navigation.conditions.MainConditionalNavigationHandler
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
@@ -23,6 +24,7 @@ import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import kotlin.reflect.KClass
 
 /**
  * Test fake for Navigator that performs operation on the local in-memory backstack.
@@ -32,7 +34,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  */
 class FakeNavigator(
    vararg initialBackstack: ScreenKey,
-   private val conditionalNavigationHandlers: Map<Class<NavigationCondition>, ConditionalNavigationHandler> = emptyMap()
+   private val conditionalNavigationHandlers: Map<KClass<NavigationCondition>, ConditionalNavigationHandler> = emptyMap()
 ) : Navigator {
    var backstack: List<ScreenKey> = initialBackstack.toList()
 
@@ -42,7 +44,7 @@ class FakeNavigator(
 
    private val context = object : NavigationContext {
       override val mainConditionalNavigationHandler: ConditionalNavigationHandler = MainConditionalNavigationHandler(
-         conditionalNavigationHandlers.mapValues { { it.value } }
+         conditionalNavigationHandlers.mapValues { Provider { it.value } }
       )
    }
 }

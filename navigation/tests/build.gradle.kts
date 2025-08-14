@@ -24,6 +24,7 @@ plugins {
    id("com.google.devtools.ksp")
    id("kotlin-parcelize")
    id("org.jetbrains.kotlin.plugin.compose")
+   alias(libs.plugins.metro)
 }
 
 android {
@@ -53,10 +54,7 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.viewModel.compose)
-   implementation(libs.kotlinInject.anvil.annotations)
 
-   kspAndroidTest(libs.kotlinInject.compiler)
-   kspAndroidTest(libs.kotlinInject.anvil.compiler)
    kspAndroidTest(projects.navigation.navigationCompiler)
 
    androidTestImplementation(libs.junit4)

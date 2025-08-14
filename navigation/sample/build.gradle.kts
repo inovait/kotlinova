@@ -27,8 +27,6 @@ buildscript {
       classpath(libs.android.agp)
       classpath(libs.kotlin.plugin)
       classpath(libs.kotlin.plugin.compose)
-      classpath(libs.kotlinInject.compiler)
-      classpath(libs.kotlinInject.anvil.compiler)
       classpath(libs.ksp)
    }
 }
@@ -43,12 +41,6 @@ subprojects {
 
       dependencies {
          add("coreLibraryDesugaring", libs.desugarJdkLibs)
-      }
-   }
-
-   configurations.all {
-      resolutionStrategy {
-         force("com.squareup.anvil:annotations-optional:2.5.0-beta09")
       }
    }
 }

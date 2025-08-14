@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -33,19 +33,18 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.LambdaTypeName
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.IntoMap
-import me.tatarka.inject.annotations.Provides
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesTo
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ClassKey
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
 import kotlin.reflect.KClass
 
 @Suppress("unused")
@@ -57,7 +56,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
 
       for (service in validServices) {
          try {
-            generateScopedServiceComponent(codeGenerator, service as KSClassDeclaration)
+            generateScopedServiceProviders(codeGenerator, service as KSClassDeclaration)
          } catch (e: Exception) {
             throw IllegalStateException("Failed to generate injection for $service", e)
          }
@@ -66,76 +65,57 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
       return invalidServices
    }
 
-   private fun generateScopedServiceComponent(codeGenerator: CodeGenerator, service: KSClassDeclaration) {
+   private fun generateScopedServiceProviders(codeGenerator: CodeGenerator, service: KSClassDeclaration) {
       val serviceClassName = service.toClassName()
-      val outputClassName = serviceClassName.simpleName + "Component"
-
-      val contributesToAnnotation = AnnotationSpec.builder(ContributesTo::class)
-         .addMember("%T::class", APPLICATION_SCOPE_ANNOTATION)
-         .build()
+      val outputClassName = serviceClassName.simpleName + "Providers"
 
       val backstackContributesToAnnotation = AnnotationSpec.builder(ContributesTo::class)
          .addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
          .build()
 
-      val provideServiceFunction = createProvideServiceFunction(serviceClassName, serviceClassName)
+      val provideServiceFunction = createBindsServiceFunction(serviceClassName, serviceClassName)
       val provideFromSimpleStackFunction = createProvideFromSimpleStackFunction(serviceClassName, serviceClassName)
 
       val contributesBindingAnnotation =
          service.annotations.firstOrNull { it.annotationType.toTypeName() == ContributesBinding::class.asClassName() }
 
-      val fromBackstackProviderComponent = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "BackstackComponent")
-         .addAnnotation(Component::class)
+      val fromBackstackProviderProviders = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "BackstackProviders")
          .addAnnotation(backstackContributesToAnnotation)
          .addFunction(provideFromSimpleStackFunction)
+         .addFunction(provideServiceFunction)
          .apply {
             if (contributesBindingAnnotation != null) {
                val boundType = boundType(service, contributesBindingAnnotation).toClassName()
-               addFunction(createProvideServiceFunction(serviceClassName, boundType))
+               addFunction(createBindsServiceFunction(serviceClassName, boundType))
                addFunction(createProvideFromSimpleStackFunction(serviceClassName, boundType))
             }
          }
          .build()
 
-      val globalProviderComponent = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "Component")
-         .addAnnotation(Component::class)
-         .addAnnotation(contributesToAnnotation)
-         .addFunction(provideServiceFunction)
-         .build()
-
       val dependencies = listOfNotNull(service.containingFile)
 
       FileSpec.builder(service.packageName.asString(), outputClassName).apply {
-         addType(fromBackstackProviderComponent)
-         addType(globalProviderComponent)
+         addType(fromBackstackProviderProviders)
       }
          .build()
          .writeTo(codeGenerator, false, dependencies)
    }
 
-   private fun createProvideServiceFunction(
+   private fun createBindsServiceFunction(
       serviceClassName: ClassName,
       targetClassName: ClassName
    ): FunSpec {
-      val serviceMapKeyType = Class::class.asClassName().parameterizedBy(
-         WildcardTypeName.producerOf(
-            SCOPED_SERVICE_BASE_CLASS
-         )
-      )
-
-      val returnType =
-         Pair::class.asClassName().parameterizedBy(serviceMapKeyType, LambdaTypeName.get(returnType = SCOPED_SERVICE_BASE_CLASS))
-
-      return FunSpec.builder("provide${targetClassName.simpleName}Constructor")
-         .returns(returnType)
-         .addParameter("serviceFactory", LambdaTypeName.get(returnType = serviceClassName))
-         .addAnnotation(Provides::class)
+      return FunSpec.builder("bind${targetClassName.simpleName}Constructor")
+         .returns(SCOPED_SERVICE_BASE_CLASS)
+         .addParameter("service", targetClassName)
+         .addAnnotation(Binds::class)
          .addAnnotation(IntoMap::class)
-         .addStatement(
-            "return %T(%T::class.java, serviceFactory)",
-            Pair::class.asClassName(),
-            targetClassName
+         .addAnnotation(
+            AnnotationSpec.builder(ClassKey::class)
+               .addMember("%T::class", targetClassName)
+               .build()
          )
+         .addModifiers(KModifier.ABSTRACT)
          .build()
    }
 

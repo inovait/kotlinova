@@ -37,10 +37,10 @@ jobs:
         run: "./gradlew --parallel assemble :kotlinova-gradle:jar"
       - name: Compile Unit Tests
         # We cannot run instrumented tests on CI, but at least we can compile them to ensure
-        # that anvil build passes.
+        # that DI build passes.
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
       - name: 'Save GPG key'

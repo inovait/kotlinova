@@ -13,6 +13,7 @@
 /.idea/kotlinc.xml
 /.idea/compiler.xml
 /.idea/.name
+/.kotlin
 .DS_Store
 /build
 /captures
@@ -24,6 +25,7 @@ merge.sarif
 /.idea/appInsightsSettings.xml
 /.idea/deploymentTargetSelector.xml
 /.idea/git_toolbox_blame.xml
+/.idea/AndroidProjectSystem.xml
 /navigation/sample/.idea/appInsightsSettings.xml
 /navigation/sample/.idea/deploymentTargetSelector.xml
 /navigation/sample/.idea/other.xml

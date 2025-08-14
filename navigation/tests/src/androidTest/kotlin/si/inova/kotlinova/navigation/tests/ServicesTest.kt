@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -26,12 +26,13 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
-import me.tatarka.inject.annotations.Inject
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.BackstackScope
@@ -45,7 +46,6 @@ import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.services.SingleScreenViewModel
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
-import software.amazon.lastmile.kotlin.inject.anvil.ContributesBinding
 
 private var lastReceivedKey: Any? = null
 
@@ -147,7 +147,8 @@ class ServicesTest {
    }
 
    @InjectScopedService
-   class BasicService @Inject constructor() : ScopedService {
+   @Inject
+   class BasicService : ScopedService {
       val data = MutableStateFlow(0)
    }
 
@@ -170,7 +171,8 @@ class ServicesTest {
    }
 
    @InjectScopedService
-   class StateSavingService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
+   @Inject
+   class StateSavingService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val data by savedFlow(0)
    }
 
@@ -187,7 +189,8 @@ class ServicesTest {
    }
 
    @InjectScopedService
-   class SingleScreenViewModelService @Inject constructor(coroutineScope: CoroutineScope) :
+   @Inject
+   class SingleScreenViewModelService(coroutineScope: CoroutineScope) :
       SingleScreenViewModel<ScreenWithSingleScreenViewModelKey>(coroutineScope) {
       override fun onServiceRegistered() {
          lastReceivedKey = key
@@ -214,7 +217,8 @@ class ServicesTest {
 
    @InjectScopedService
    @ContributesBinding(BackstackScope::class)
-   class BasicServiceWithInterfaceImpl @Inject constructor() : BasicServiceWithInterface {
+   @Inject
+   class BasicServiceWithInterfaceImpl : BasicServiceWithInterface {
       override val data = MutableStateFlow(0)
    }
 
