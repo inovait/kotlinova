@@ -43,7 +43,7 @@ mavenPublishing {
    val description = "Utilities for Gradle projects"
    val githubPath = "kotlinova-gradle"
 
-   publishToMavenCentral()
+   publishToMavenCentral(automaticRelease = true)
    if (properties.containsKey("signing.password")) {
       signAllPublications()
    }

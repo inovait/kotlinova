@@ -27,7 +27,7 @@ fun Project.publishLibrary(
    artifactName: String = project.name
 ) {
    configure<MavenPublishBaseExtension> {
-      publishToMavenCentral()
+      publishToMavenCentral(automaticRelease = true)
       if (properties.containsKey("signing.password")) {
          signAllPublications()
       }

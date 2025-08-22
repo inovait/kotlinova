@@ -53,13 +53,15 @@ jobs:
                 -Psigning.secretKeyRingFile=$(pwd)/signing_key.gpg
                 -Psigning.password=''${{ secrets.GPG_SIGNING_PASSPHRASE }}''
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
-      - name: 'Release staging repository'
-        run: './gradlew releaseRepository
-                --no-configuration-cache
-                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
-                -PmavenCentralUsername=''${{ secrets.OSSRH_USERNAME }}''
-                -PmavenCentralPassword=''${{ secrets.OSSRH_PASSWORD }}'''
-      - name: 'Create tag'
+      # Releasing the repository is done automatically for now,
+      # until https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1130 is solved
+      #      - name: 'Release staging repository'
+      #        run: './gradlew releaseRepository
+      #                --no-configuration-cache
+      #                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
+      #                -PmavenCentralUsername=''${{ secrets.OSSRH_USERNAME }}''
+      #                -PmavenCentralPassword=''${{ secrets.OSSRH_PASSWORD }}'''
+      - name: 'Create tag'releaseRepository
         run: 'git tag ${{ env.VERSION }}'
       - name: 'Push tag'
         run: 'git push origin ${{ env.VERSION }}'
