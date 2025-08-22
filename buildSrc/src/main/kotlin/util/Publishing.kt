@@ -27,8 +27,10 @@ fun Project.publishLibrary(
    artifactName: String = project.name
 ) {
    configure<MavenPublishBaseExtension> {
-      publishToMavenCentral()
-      signAllPublications()
+      publishToMavenCentral(automaticRelease = true)
+      if (properties.containsKey("signing.password")) {
+         signAllPublications()
+      }
 
       coordinates(
          groupId = project.group.toString(),
