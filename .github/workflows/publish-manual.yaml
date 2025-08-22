@@ -61,7 +61,7 @@ jobs:
       #                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
       #                -PmavenCentralUsername=''${{ secrets.OSSRH_USERNAME }}''
       #                -PmavenCentralPassword=''${{ secrets.OSSRH_PASSWORD }}'''
-      - name: 'Create tag'releaseRepository
+      - name: 'Create tag'
         run: 'git tag ${{ env.VERSION }}'
       - name: 'Push tag'
         run: 'git push origin ${{ env.VERSION }}'
