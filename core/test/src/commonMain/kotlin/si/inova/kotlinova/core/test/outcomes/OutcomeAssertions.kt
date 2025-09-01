@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,7 +19,7 @@ package si.inova.kotlinova.core.test.outcomes
 import io.kotest.assertions.Actual
 import io.kotest.assertions.Expected
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.intellijFormatError
+import io.kotest.assertions.intellijFormattedComparison
 import io.kotest.assertions.print.Printed
 import io.kotest.assertions.withClue
 import io.kotest.matchers.Matcher
@@ -122,7 +122,7 @@ fun <T> Outcome<T>.shouldBeErrorWith(
                      if (it != exceptionMessage) {
                         val expected = Expected(Printed(exceptionMessage))
                         val actual = Actual(Printed(it ?: "null"))
-                        throw AssertionError("Exception's message: ${intellijFormatError(expected, actual)}", exception)
+                        throw AssertionError("Exception's message: ${intellijFormattedComparison(expected, actual)}", exception)
                      }
                   }
             }
@@ -133,7 +133,7 @@ fun <T> Outcome<T>.shouldBeErrorWith(
                      if (exception.javaClass != exceptionType) {
                         val expected = Expected(Printed(exceptionType.name))
                         val actual = Actual(Printed(it.name))
-                        throw AssertionError("Exception type: ${intellijFormatError(expected, actual)}", exception)
+                        throw AssertionError("Exception type: ${intellijFormattedComparison(expected, actual)}", exception)
                      }
                   }
             }
