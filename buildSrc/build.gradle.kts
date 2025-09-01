@@ -20,6 +20,11 @@ plugins {
    `kotlin-dsl`
    alias(libs.plugins.detekt)
    alias(libs.plugins.versions)
+
+   // We must specify JVM plugin explicitly here to avoid version conflicts
+   // It produces "Unsupported Kotlin plugin version" but it lets us compile
+   // See https://slack-chats.kotlinlang.org/t/29177439/when-updating-kotlin-to-2-2-0-i-m-getting-https-github-com-t
+   alias(libs.plugins.kotlin.jvm)
 }
 
 repositories {
