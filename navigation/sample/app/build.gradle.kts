@@ -25,7 +25,7 @@ plugins {
 android {
    namespace = "si.inova.kotlinova.navigation.sample"
 
-   compileSdk = 35
+   compileSdk = 36
 
    defaultConfig {
       applicationId = "si.inova.kotlinova.navigation.sample"

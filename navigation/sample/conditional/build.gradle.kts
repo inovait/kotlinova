@@ -25,7 +25,7 @@ plugins {
 
 android {
    namespace = "si.inova.kotlinova.navigation.conditional"
-   compileSdk = 35
+   compileSdk = 36
 
    defaultConfig {
       minSdk = 24

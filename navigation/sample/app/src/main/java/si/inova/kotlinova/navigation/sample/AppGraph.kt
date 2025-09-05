@@ -30,7 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import kotlin.reflect.KClass
 
-@DependencyGraph(AppScope::class, isExtendable = true, additionalScopes = [OuterNavigationScope::class])
+@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
 @SingleIn(AppScope::class)
 interface AppGraph {
    /**

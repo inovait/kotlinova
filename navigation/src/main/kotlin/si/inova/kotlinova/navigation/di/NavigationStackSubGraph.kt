@@ -18,8 +18,8 @@ package si.inova.kotlinova.navigation.di
 
 import com.zhuinden.simplestack.Backstack
 import dev.zacsweers.metro.ContributesBinding
-import dev.zacsweers.metro.ContributesGraphExtension
 import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Multibinds
 import dev.zacsweers.metro.Provides
@@ -27,13 +27,14 @@ import si.inova.kotlinova.navigation.conditions.NavigationCondition
 import si.inova.kotlinova.navigation.deeplink.DeepLinkHandler
 import kotlin.reflect.KClass
 
-@ContributesGraphExtension(BackstackScope::class)
+@GraphExtension(BackstackScope::class)
 interface NavigationStackSubGraph : NavigationInjection {
    @MainNavigation
    @Provides
    fun provideMainBackstack(mainBackstackWrapper: MainBackstackWrapper): Backstack = mainBackstackWrapper.backstack
 
-   @ContributesGraphExtension.Factory(OuterNavigationScope::class)
+   @GraphExtension.Factory
+   @ContributesTo(OuterNavigationScope::class)
    interface Factory {
       fun create(
          @Provides

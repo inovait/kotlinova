@@ -36,7 +36,7 @@ import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
 
-@DependencyGraph(OuterNavigationScope::class, isExtendable = true)
+@DependencyGraph(OuterNavigationScope::class)
 @SingleIn(OuterNavigationScope::class)
 interface TestGraph {
    fun navigationFactory(): NavigationInjection.Factory

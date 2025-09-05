@@ -17,7 +17,7 @@
 package si.inova.kotlinova.navigation.di
 
 /**
- * Singleton Metro scope that contains all dependencies required to create navigation system. Attach it to a component in your app
+ * Singleton Metro scope that contains all dependencies required to create a navigation system. Attach it to a graph in your app
  * to start using navigation
  */
 class OuterNavigationScope private constructor()

@@ -666,10 +666,10 @@ To add the library to your app:
 2. Make sure you have [Jitpack](https://jitpack.io/) repository added to your project, as some sub-dependencies
    need it
 3. Create Key and Screen for your root screen
-4. Mark your main `AppGraph` as extendable and add a `OuterNavigationScope` to its scopes via `additionalScopes` parameter:
+4. Add a `OuterNavigationScope` to your main graph's scopes via `additionalScopes` parameter:
 
 ```kotlin
-@DependencyGraph(AppScope::class, isExtendable = true, additionalScopes = [OuterNavigationScope::class])
+@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
 @SingleIn(AppScope::class)
 interface AppGraph {
    ...
