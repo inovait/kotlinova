@@ -23,19 +23,19 @@ import io.github.detekt.sarif4k.merge
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
 /**
  * A gradle task that merges sarif reports into one.
  *
  * Based on https://github.com/detekt/detekt/blob/ace6e4e5de07532416e89abf811ba37e0ea2b565/detekt-gradle-plugin/src/main/kotlin/io/gitlab/arturbosch/detekt/report/ReportMergeTask.kt
  */
-@CacheableTask
+@DisableCachingByDefault(because = "IO Bound task")
 abstract class SarifMergeTask : DefaultTask() {
    @get:InputFiles
    @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -46,41 +46,43 @@ abstract class SarifMergeTask : DefaultTask() {
 
    @TaskAction
    fun merge() {
-      val sarifFiles =
-         input.files.filter { it.exists() }.map { SarifSerializer.fromJson(it.readText()) }
-      if (sarifFiles.isEmpty()) {
+      val inputFiles = input.files.filter { it.exists() }
+
+      if (inputFiles.isEmpty()) {
          output.get().asFile.delete()
+      } else if (inputFiles.size == 1) {
+         inputFiles.first().copyTo(output.get().asFile, overwrite = true)
+      } else {
+         val sarifFiles = inputFiles.map { SarifSerializer.fromJson(it.readText()) }
 
-         return
-      }
+         val merged = sarifFiles.reduce { a, b -> a.merge(b) }
 
-      val merged = sarifFiles.reduce { a, b -> a.merge(b) }
-
-      val fixedSeverity = merged.copy(
-         runs = merged.runs.map { run ->
-            // Workaround for the https://github.com/security-alert/security-alert/issues/50
-            run.copy(
-               tool = run.tool.copy(
-                  driver = run.tool.driver.copy(
-                     rules = run.tool.driver.rules?.map { rule ->
-                        if (rule.defaultConfiguration?.level == null) {
-                           rule.copy(
-                              defaultConfiguration = ReportingConfiguration(level = Level.Warning)
-                           )
-                        } else {
-                           rule
+         val fixedSeverity = merged.copy(
+            runs = merged.runs.map { run ->
+               // Workaround for the https://github.com/security-alert/security-alert/issues/50
+               run.copy(
+                  tool = run.tool.copy(
+                     driver = run.tool.driver.copy(
+                        rules = run.tool.driver.rules?.map { rule ->
+                           if (rule.defaultConfiguration?.level == null) {
+                              rule.copy(
+                                 defaultConfiguration = ReportingConfiguration(level = Level.Warning)
+                              )
+                           } else {
+                              rule
+                           }
                         }
-                     }
+                     )
                   )
                )
-            )
-         }.sortedByDescending {
-            // Display runs with fewer errors last
-            // Workaround for https://github.com/security-alert/security-alert/issues/74
-            it.results?.size ?: 0
-         }
-      )
+            }.sortedByDescending {
+               // Display runs with fewer errors last
+               // Workaround for https://github.com/security-alert/security-alert/issues/74
+               it.results?.size ?: 0
+            }
+         )
 
-      output.get().asFile.writeText(SarifSerializer.toJson(fixedSeverity))
+         output.get().asFile.writeText(SarifSerializer.toJson(fixedSeverity))
+      }
    }
 }
