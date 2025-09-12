@@ -26,8 +26,8 @@ internal fun Project.registerAndroidLintSarifMerging(
    sarifFiles: ConfigurableFileCollection
 ) {
    tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
-      if (lintTask.name.contains("Baseline")) {
-         // Baseline tasks do not expose sarif files
+      if (lintTask.name.contains("Baseline") || lintTask.name.startsWith("lintVital")) {
+         // Baseline tasks and vital lint tasks do not expose sarif files
          return@configureEach
       }
 
