@@ -53,6 +53,10 @@ mavenPublishing {
    )
 }
 
+tasks.test {
+   useJUnitPlatform()
+}
+
 java {
    // Ensure that target compatiblity is equal to kotlin's jvmToolchain
    lateinit var javaVersion: JavaVersion
