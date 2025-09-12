@@ -18,25 +18,23 @@ package si.inova.kotlinova.gradle.sarifmerge
 
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.TaskProvider
 
-internal fun Project.registerAndroidLintSarifMerging() {
-   // Artifact/configuration only works when the task succeeds. Using it normally would mean that merging would fail if
-   // any of the lint tasks fail, which completely defeats the purpose. That's why lint artifact actually depends on another
-   // task that always succeeds which is marked as a finalizer for the lint task.
-   val finalLint = tasks.register("finalLint")
-
+internal fun Project.registerAndroidLintSarifMerging(
+   localSarifMergeTask: TaskProvider<SarifMergeTask>,
+   sarifFiles: ConfigurableFileCollection
+) {
    tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
-      val variant = lintTask.variantName
-      val lintSarifFile = lintTask.project.layout.buildDirectory.file(
-         "reports/lint-results-$variant.sarif"
-      )
-
-      artifacts {
-         it.add(CONFIGURATION_SARIF_REPORT, lintSarifFile) { artifact ->
-            artifact.builtBy(finalLint)
-         }
+      if (lintTask.name.contains("Baseline") || lintTask.name.startsWith("lintVital")) {
+         // Baseline tasks and vital lint tasks do not expose sarif files
+         return@configureEach
       }
 
-      lintTask.finalizedBy(finalLint)
+      sarifFiles.from(
+         lintTask.sarifReportOutputFile.orElse { error("task ${lintTask.path} did not expose a sarif file") }
+      )
+
+      lintTask.finalizedBy(localSarifMergeTask)
    }
 }

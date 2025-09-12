@@ -8,3 +8,7 @@
 /appInsightsSettings.xml
 /deploymentTargetSelector.xml
 /other.xml
+/inspectionProfiles/Project_Default.xml
+/ktlint-plugin.xml
+/runConfigurations.xml
+/AndroidProjectSystem.xml

@@ -18,13 +18,28 @@ package si.inova.kotlinova.gradle.sarifmerge
 
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.Project
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.VerificationType
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.TaskProvider
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import java.io.File
 
 internal fun Project.createTopLevelMergeTask() {
-   rootProject.tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
-      task.outputs.cacheIf("IO bound task") { false }
+   val aggregationConfiguration = project.configurations.dependencyScope("sarifReportAggregation")
+   val resultsConfiguration = project.configurations.resolvable("sarifReportResults") { cofiguration ->
+      cofiguration.extendsFrom(aggregationConfiguration.get())
 
+      cofiguration.attributes {
+         it.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category::class.java, Category.VERIFICATION))
+         it.attribute(
+            VerificationType.VERIFICATION_TYPE_ATTRIBUTE,
+            objects.named(VerificationType::class.java, VERIFICATION_TYPE_SARIF)
+         )
+      }
+   }
+
+   rootProject.tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
       task.output.set(File(rootProject.rootDir, "merge.sarif"))
 
       task.doFirst {
@@ -35,19 +50,23 @@ internal fun Project.createTopLevelMergeTask() {
          task.input.from(File(rootDir, "buildSrc/build/reports/detekt/detekt.sarif"))
       }
 
-      task.input.from(configurations.getByName(CONFIGURATION_SARIF_REPORT).incoming.artifactView {
-         it.isLenient = true
-      }.files)
+      task.input.from(
+         resultsConfiguration.map { config ->
+            config.incoming
+               .artifactView {
+                  it.isLenient = true
+               }
+               .files.also { println("got files ${it.files.toSet()}") }
+         }
+      )
    }
 
-   @Suppress("UnstableApiUsage")
-   subprojects {
+   subprojects.forEach {
       dependencies.add(
-         CONFIGURATION_SARIF_REPORT,
+         "sarifReportAggregation",
          dependencies.project(
             mapOf(
                "path" to it.isolated.path,
-               "configuration" to CONFIGURATION_SARIF_REPORT
             )
          )
       )
@@ -55,31 +74,54 @@ internal fun Project.createTopLevelMergeTask() {
 }
 
 internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
-   project.configurations.create(CONFIGURATION_SARIF_REPORT)
-
    if (this@registerSarifMerging == rootProject) {
       createTopLevelMergeTask()
-   }
+   } else {
+      // Configuration/artifacts + configureEach do not mix.
+      // Tasks that have Android variants (such as detektDebug, lintRelease etc.) sometimes
+      // get configured after artifacts are already read and thus frozen in place.
+      // That's why we cannot expose sarif files directly from the detekt/lint tasks, we must create a middleman task
+      // that does not need variant resolving and that tasks then merges all local sarif files into a single one
+      // that can get consumed by the root project
 
-   extension.tomlVersionBump.apply {
-      afterEvaluate { _ ->
-         if (extension.mergeDetektSarif.getOrElse(false)) {
-            registerDetektSarifMerging()
+      val sarifFiles = project.objects.fileCollection()
+
+      val localSarifMergeTask = tasks.register("reportMerge", SarifMergeTask::class.java) { task ->
+         task.output.set(project.layout.buildDirectory.file("merge.sarif"))
+         task.input.from(sarifFiles)
+      }
+
+      val dataElementsVariant = project.configurations.consumable("sarifReportElements") { configuration ->
+         configuration.attributes {
+            it.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category::class.java, Category.VERIFICATION))
+            it.attribute(
+               VerificationType.VERIFICATION_TYPE_ATTRIBUTE,
+               objects.named(VerificationType::class.java, VERIFICATION_TYPE_SARIF)
+            )
          }
-         if (extension.mergeAndroidLintSarif.getOrElse(false)) {
-            registerAndroidLintSarifMerging()
+      }
+
+      dataElementsVariant.configure { configuration ->
+         configuration.outgoing.artifact(localSarifMergeTask.map { it.output })
+      }
+
+      extension.tomlVersionBump.apply {
+         afterEvaluate { _ ->
+            if (extension.mergeDetektSarif.getOrElse(false)) {
+               registerDetektSarifMerging(localSarifMergeTask, sarifFiles)
+            }
+            if (extension.mergeAndroidLintSarif.getOrElse(false)) {
+               registerAndroidLintSarifMerging(localSarifMergeTask, sarifFiles)
+            }
          }
       }
    }
 }
 
-private fun Project.registerDetektSarifMerging() {
-   // Artifact/configuration only works when the task succeeds. Using it normally would mean that merging would fail if
-   // any of the detekt tasks fail, which completely defeats the purpose. That's why detekt artifact actually depends on another
-   // task that always succeeds which is marked as a finalizer for the detekt task.
-
-   val finalDetekt = tasks.register("finalDetekt")
-
+private fun Project.registerDetektSarifMerging(
+   localSarifMergeTask: TaskProvider<SarifMergeTask>,
+   sarifFiles: ConfigurableFileCollection
+) {
    tasks.withType(Detekt::class.java).configureEach { detektTask ->
       // We need to set basePath to ensure sarif files have relative path in them
       detektTask.basePath = this.rootDir.absolutePath
@@ -88,14 +130,12 @@ private fun Project.registerDetektSarifMerging() {
          it.sarif.required.set(true)
       }
 
-      artifacts {
-         it.add(CONFIGURATION_SARIF_REPORT, detektTask.sarifReportFile) { artifact ->
-            artifact.builtBy(finalDetekt)
-         }
-      }
+      sarifFiles.from(
+         detektTask.sarifReportFile.orElse { error("task ${detektTask.path} did not expose a sarif file") }
+      )
 
-      detektTask.finalizedBy(finalDetekt)
+      detektTask.finalizedBy(localSarifMergeTask)
    }
 }
 
-internal const val CONFIGURATION_SARIF_REPORT = "sarifReport"
+private const val VERIFICATION_TYPE_SARIF = "lint_results_sarif"

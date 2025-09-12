@@ -22,7 +22,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@7c5672355aaa8fde5f97a91aa9a99616d1ace6bc
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@55e685c48d84285a5b0418cd094606e199cca3b6
+        uses: gradle/actions/wrapper-validation@ac638b010cf58a27ee6c972d7336334ccaf61c96
       - run: "v=$(cat version.txt);echo \"OLD_VERSION=$v\" > $GITHUB_ENV"
       - name: Check if there were any new fix or feature commits
         id: version-check
@@ -56,41 +56,26 @@ jobs:
           git_commit_url_prefix: 'https://github.com/inovait/kotlinova/commit/'
       - name: 'Save GPG key'
         run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
-      - id: create_staging_repository
-        name: "Create nexus staging repository"
-        uses: nexus-actions/create-nexus-staging-repo@v1.2
-        with:
-          # The username you use to connect to Sonatype's Jira
-          username: ${{ secrets.OSSRH_USERNAME }}
-          password: ${{ secrets.OSSRH_PASSWORD }}
-          # Your staging profile ID. You can get it at https://oss.sonatype.org/#stagingProfiles;$staginProfileId
-          staging_profile_id: ${{ secrets.OSSRH_STAGING_PROFILE_ID }}
-          # a description to identify your repository in the UI
-          description: Created by Automatic Github flow
       - name: 'Publish'
-        run: './gradlew publish :kotlinova-gradle:publish
-                -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
-                -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}''
-                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
+        run: './gradlew publishAllPublicationsToMavenCentralRepository :kotlinova-gradle:publishAllPublicationsToMavenCentralRepository
+                --no-configuration-cache
+                -PmavenCentralUsername=''${{ secrets.MAVEN_CENTRAL_USERNAME }}''
+                -PmavenCentralPassword=''${{ secrets.MAVEN_CENTRAL_PASSWORD }}''
                 -Psigning.secretKeyRingFile=$(pwd)/signing_key.gpg
                 -Psigning.password=''${{ secrets.GPG_SIGNING_PASSPHRASE }}''
                 -Psigning.keyId=${{ secrets.GPG_SIGNING_ID }}'
-      - name: 'Release staging repository'
-        run: './gradlew closeAndReleaseRepository
-                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
-                -PossrhUsername=''${{ secrets.OSSRH_USERNAME }}''
-                -PossrhPassword=''${{ secrets.OSSRH_PASSWORD }}'''
-      - name: Discard nexus staging repository
-        if: ${{ failure() && steps.create_staging_repository.outputs.repository_id != null }}
-        uses: nexus-actions/drop-nexus-staging-repo@v1
-        with:
-          username: ${{ secrets.SONATYPE_USERNAME }}
-          password: ${{ secrets.SONATYPE_PASSWORD }}
-          staging_repository_id: ${{ steps.create_staging_repository.outputs.repository_id }}
+      # Releasing the repository is done automatically for now,
+      # until https://github.com/vanniktech/gradle-maven-publish-plugin/issues/1130 is solved
+      #      - name: 'Release staging repository'
+      #        run: './gradlew releaseRepository
+      #                --no-configuration-cache
+      #                -PossrhRepId=''${{ steps.create_staging_repository.outputs.repository_id }}''
+      #                -PmavenCentralUsername=''${{ secrets.OSSRH_USERNAME }}''
+      #                -PmavenCentralPassword=''${{ secrets.OSSRH_PASSWORD }}'''
       - name: 'Add changelog and version'
         run: 'git add version.txt'
-      - run: 'git config --global user.email "ci@inova.si"'
-      - run: 'git config --global user.name "Build Bot"'
+      - run: 'git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"'
+      - run: 'git config --global user.name "github-actions[bot]"'
       - name: 'Commit changelog and version'
         run: 'git commit -m "chore: release ${{ env.VERSION }}"'
       - name: 'Push changelog and version'

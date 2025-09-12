@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -33,6 +33,11 @@ import kotlin.coroutines.CoroutineContext
  * You can add resources manually via [registerResource] call or inject [RegisteringCoroutineResourceManager] into your app
  * as a replacement for [CoroutineResourceManager] to automatically register all resources in the app.
  */
+@Deprecated(
+   "Idling resources are an old anti-pattern. " +
+      "Use waitUntil instead. " +
+      "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
+)
 object LoadingCountingIdlingResource : IdlingResource {
    private val flows = Collections.newSetFromMap<MutableStateFlow<*>>(WeakHashMap())
 
@@ -50,6 +55,11 @@ object LoadingCountingIdlingResource : IdlingResource {
    }
 }
 
+@Deprecated(
+   "Idling resources are an old anti-pattern. " +
+      "Use waitUntil instead. " +
+      "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
+)
 class RegisteringCoroutineResourceManager(scope: CoroutineScope, reportService: ErrorReporter) :
    CoroutineResourceManager(scope, reportService) {
    override fun <T> launchResourceControlTask(
@@ -59,7 +69,7 @@ class RegisteringCoroutineResourceManager(scope: CoroutineScope, reportService: 
       keepDataOnExceptions: Boolean,
       block: suspend ResourceControlBlock<T>.() -> Unit
    ) {
-      LoadingCountingIdlingResource.registerResource(resource)
+      registerResource(resource)
       super.launchResourceControlTask(resource, currentValue, context, keepDataOnExceptions, block)
    }
 }

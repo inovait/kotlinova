@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,12 +16,9 @@
 
 package util
 
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import org.gradle.api.Project
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.withType
-import org.gradle.plugins.signing.Sign
+import org.gradle.kotlin.dsl.configure
 
 fun Project.publishLibrary(
    userFriendlyName: String,
@@ -29,83 +26,44 @@ fun Project.publishLibrary(
    githubPath: String,
    artifactName: String = project.name
 ) {
-   setProjectMetadata(userFriendlyName, description, githubPath)
-   configureForMavenCentral()
-   forceArtifactName(artifactName)
-}
+   configure<MavenPublishBaseExtension> {
+      publishToMavenCentral(automaticRelease = true)
+      if (properties.containsKey("signing.password")) {
+         signAllPublications()
+      }
 
-private fun Project.setProjectMetadata(
-   userFriendlyName: String,
-   description: String,
-   githubPath: String
-) {
-   extensions.configure<org.gradle.api.publish.PublishingExtension>("publishing") {
-      publications.withType<MavenPublication> {
-         pom {
-            name.set(userFriendlyName)
-            this.description.set(description)
-            val projectGitUrl = "https://github.com/inovait/kotlinova"
-            url.set("$projectGitUrl/tree/master/$githubPath")
-            inceptionYear.set("2023")
-            licenses {
-               license {
-                  name.set("MIT")
-                  url.set("https://opensource.org/licenses/MIT")
-               }
-            }
-            issueManagement {
-               system.set("GitHub")
-               url.set("$projectGitUrl/issues")
-            }
-            scm {
-               connection.set("scm:git:$projectGitUrl")
-               developerConnection.set("scm:git:$projectGitUrl")
-               url.set(projectGitUrl)
-            }
-            developers {
-               developer {
-                  name.set("Inova IT")
-                  url.set("https://inova.si/")
-               }
+      coordinates(
+         groupId = project.group.toString(),
+         artifactId = artifactName,
+         version = project.version.toString(),
+      )
+
+      pom {
+         name.set(userFriendlyName)
+         this.description.set(description)
+         val projectGitUrl = "https://github.com/inovait/kotlinova"
+         url.set("$projectGitUrl/tree/master/$githubPath")
+         inceptionYear.set("2023")
+         licenses {
+            license {
+               name.set("MIT")
+               url.set("https://opensource.org/licenses/MIT")
             }
          }
-      }
-   }
-}
-
-private fun Project.configureForMavenCentral() {
-   if (properties.containsKey("ossrhUsername")) {
-      extensions.configure<org.gradle.plugins.signing.SigningExtension>("signing") {
-         sign(extensions.getByName<org.gradle.api.publish.PublishingExtension>("publishing").publications)
-      }
-
-      // Workaround for the https://github.com/gradle/gradle/issues/26091
-      tasks.withType<AbstractPublishToMaven>().configureEach {
-         val signingTasks = tasks.withType<Sign>()
-         mustRunAfter(signingTasks)
-      }
-
-      extensions.configure<org.gradle.api.publish.PublishingExtension>("publishing") {
-         repositories {
-            maven {
-               val repositoryId =
-                  property("ossrhRepId") ?: error("Missing property: ossrhRepId")
-               setUrl("https://oss.sonatype.org/service/local/staging/deployByRepositoryId/$repositoryId/")
-               credentials {
-                  username = property("ossrhUsername") as String
-                  password = property("ossrhPassword") as String
-               }
-            }
+         issueManagement {
+            system.set("GitHub")
+            url.set("$projectGitUrl/issues")
          }
-      }
-   }
-}
-
-private fun Project.forceArtifactName(artifactName: String) {
-   afterEvaluate {
-      extensions.configure<org.gradle.api.publish.PublishingExtension>("publishing") {
-         publications.withType<MavenPublication> {
-            artifactId = artifactId.replace(project.name, artifactName)
+         scm {
+            connection.set("scm:git:$projectGitUrl")
+            developerConnection.set("scm:git:$projectGitUrl")
+            url.set(projectGitUrl)
+         }
+         developers {
+            developer {
+               name.set("Inova IT")
+               url.set("https://inova.si/")
+            }
          }
       }
    }

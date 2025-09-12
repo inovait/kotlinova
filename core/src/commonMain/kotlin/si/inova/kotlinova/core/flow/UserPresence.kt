@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -60,7 +60,12 @@ fun <T> Flow<T>.onlyFlowWhenUserPresent(onStartWithUserNotPresent: suspend FlowC
 }
 
 fun UserPresenceProvider(sharedFlow: MutableSharedFlow<*>): UserPresenceProvider {
-   return UserPresenceProvider { sharedFlow.hasActiveSubscribersFlow() }
+   @Suppress("ObjectLiteralToLambda") // Can't due to https://github.com/Kotlin/kotlinx.coroutines/issues/4512
+   return object : UserPresenceProvider {
+      override fun isUserPresentFlow(): Flow<Boolean> {
+         return sharedFlow.hasActiveSubscribersFlow()
+      }
+   }
 }
 
 fun interface UserPresenceProvider : CoroutineContext.Element {
