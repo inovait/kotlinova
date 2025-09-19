@@ -181,6 +181,11 @@ class StaleWhileRevalidateCallAdapterFactory(
       ) {
          try {
             val networkResponse = retrofit.callFactory().newCall(networkRequest).enqueueAndAwait()
+            if (networkResponse.code == HttpURLConnection.HTTP_NOT_MODIFIED && dataFromCache != null) {
+               // Data has not been modified from the cached version, so just return the cached version
+               return send(Outcome.Success(dataFromCache))
+            }
+
             val parsedResponse = call.parseResponse(networkResponse)
 
             val result = catchIntoOutcome {

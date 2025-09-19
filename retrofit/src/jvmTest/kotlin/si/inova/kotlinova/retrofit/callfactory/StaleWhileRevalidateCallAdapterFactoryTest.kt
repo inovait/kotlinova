@@ -314,6 +314,31 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
       }
    }
 
+   @Test
+   internal fun `Properly respond when server 304 to cache response`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/data") {
+            setHeader("ETag", "a")
+            setJsonBody("\"FIRST\"")
+         }
+
+         service.getEnumResult().collect()
+
+         mockResponse("/data") {
+            setHeader("ETag", "a")
+            setResponseCode(304)
+         }
+
+         service.getEnumResult().test {
+            awaitItem().shouldBeProgressWith(FakeEnumResult.FIRST)
+            awaitItem().shouldBeSuccessWithData(FakeEnumResult.FIRST)
+            awaitComplete()
+         }
+      }
+   }
+
    private interface TestRetrofitService {
       @GET("/data")
       fun getEnumResult(
