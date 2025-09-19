@@ -18,6 +18,7 @@ package si.inova.kotlinova.navigation.di
 
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Multibinds
+import si.inova.kotlinova.navigation.conditions.ConditionalNavigationHandler
 import si.inova.kotlinova.navigation.services.ScopedService
 import kotlin.reflect.KClass
 
@@ -31,4 +32,7 @@ interface EmptyNavigationProviders {
 
    @Multibinds(allowEmpty = true)
    val scopedService: Map<KClass<*>, ScopedService>
+
+   @Multibinds(allowEmpty = true)
+   val conditionalNavigationHandlers: Map<KClass<*>, ConditionalNavigationHandler>
 }
