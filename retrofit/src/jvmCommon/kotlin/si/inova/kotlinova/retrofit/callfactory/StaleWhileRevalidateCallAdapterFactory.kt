@@ -164,6 +164,8 @@ class StaleWhileRevalidateCallAdapterFactory(
             val parsedResponse = originalCall.parseResponse(cacheResponse)
 
             parseResultFromCacheResponse(parsedResponse, networkRequest, originalCall)
+         } catch (e: CancellationException) {
+            throw e
          } catch (e: Exception) {
             handleCacheError(
                networkRequest,
