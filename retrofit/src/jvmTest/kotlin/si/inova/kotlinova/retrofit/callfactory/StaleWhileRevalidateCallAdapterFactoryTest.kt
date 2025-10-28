@@ -339,6 +339,55 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
       }
    }
 
+   @Test
+   internal fun `Return cached version as the data of the Failure, when network request fails`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/data") {
+            setHeader("ETag", "a")
+            setJsonBody("\"FIRST\"")
+         }
+
+         service.getEnumResult().collect()
+
+         mockResponse("/data") {
+            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+         }
+
+         service.getEnumResult().test {
+            awaitItem() // Ignore first loading
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java, expectedData = FakeEnumResult.FIRST)
+            awaitComplete()
+         }
+      }
+   }
+
+   @Test
+   internal fun `Return cached version as the data of the Failure, when parsing fails`() = runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/data") {
+            setHeader("ETag", "a")
+            setJsonBody("\"FIRST\"")
+         }
+
+         service.getEnumResult().collect()
+
+         mockResponse("/data") {
+            setJsonBody("{")
+         }
+
+         service.getEnumResult().test {
+            awaitItem() // Ignore first loading
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java, expectedData = FakeEnumResult.FIRST)
+            awaitComplete()
+         }
+      }
+   }
+
+
    private interface TestRetrofitService {
       @GET("/data")
       fun getEnumResult(
