@@ -190,9 +190,7 @@ class StaleWhileRevalidateCallAdapterFactory(
 
             val parsedResponse = call.parseResponse(networkResponse)
 
-            val result = catchIntoOutcome {
-               Outcome.Success(parsedResponse.bodyOrThrow(errorHandler))
-            }
+            val result = Outcome.Success(parsedResponse.bodyOrThrow(errorHandler))
 
             send(result)
          } catch (e: CancellationException) {
