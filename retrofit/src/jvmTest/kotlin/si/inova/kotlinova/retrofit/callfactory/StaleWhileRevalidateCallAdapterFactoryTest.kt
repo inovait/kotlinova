@@ -386,8 +386,6 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
       }
    }
-
-
    private interface TestRetrofitService {
       @GET("/data")
       fun getEnumResult(
