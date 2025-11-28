@@ -108,16 +108,7 @@ class MyScreen(
 
 If the screen does not require any arguments, you can just create it as an `object` instead of `data class`.
 However, this will force you to manually implement `hashCode`, `equals` and `toString`.
-To avoid that, you can either:
-
-a) Have your object extend `NoArgsScreenKey`:
-
-```kotlin
-@Parcelize
-object MyScreenKey : NoArgsScreenKey()
-```
-
-b) Enable and use [data objects](https://kotlinlang.org/docs/object-declarations.html#data-objects):
+To avoid that, you can just use `data object`:
 
 ```kotlin
 @Parcelize

@@ -37,7 +37,6 @@ import kotlinx.parcelize.Parcelize
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.BackstackScope
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
@@ -139,7 +138,7 @@ class ServicesTest {
    }
 
    @Parcelize
-   object ScreenWithBasicServiceKey : NoArgsScreenKey()
+   data object ScreenWithBasicServiceKey : ScreenKey()
 
    @InjectNavigationScreen
    class ScreenWithBasicService(
@@ -163,7 +162,7 @@ class ServicesTest {
    }
 
    @Parcelize
-   object ScreenWithStateSavingServiceKey : NoArgsScreenKey()
+   data object ScreenWithStateSavingServiceKey : ScreenKey()
 
    @InjectNavigationScreen
    class ScreenWithStateSavingService(
@@ -208,7 +207,7 @@ class ServicesTest {
    }
 
    @Parcelize
-   object ScreenWithBasicServiceWithInterfaceKey : NoArgsScreenKey()
+   data object ScreenWithBasicServiceWithInterfaceKey : ScreenKey()
 
    @InjectNavigationScreen
    class ScreenWithBasicServiceWithInterface(
@@ -226,7 +225,7 @@ class ServicesTest {
    }
 
    @Parcelize
-   object ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey : NoArgsScreenKey()
+   data object ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey : ScreenKey()
 
    @InjectNavigationScreen
    class ScreenWithBasicServiceWithInterfaceAndMultipleParents(

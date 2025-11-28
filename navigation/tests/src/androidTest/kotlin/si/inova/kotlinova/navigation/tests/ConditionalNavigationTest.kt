@@ -36,7 +36,6 @@ import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.instructions.OpenScreen
 import si.inova.kotlinova.navigation.instructions.navigateTo
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
@@ -99,7 +98,7 @@ class ConditionalNavigationTest {
    }
 
    @Parcelize
-   object TargetScreenKey : NoArgsScreenKey() {
+   data object TargetScreenKey : ScreenKey() {
       override val navigationConditions: List<NavigationCondition>
          get() = listOf(TestCondition)
    }

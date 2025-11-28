@@ -27,7 +27,6 @@ import kotlinx.parcelize.Parcelize
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.ContributesScreenBinding
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
@@ -66,7 +65,7 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object OuterScreenReferencingAbstractScreenKey : NoArgsScreenKey()
+   data object OuterScreenReferencingAbstractScreenKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreen(
@@ -95,7 +94,7 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object OuterScreenReferencingAbstractScreenWithServiceKey : NoArgsScreenKey()
+   data object OuterScreenReferencingAbstractScreenWithServiceKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreenWithService(
@@ -127,7 +126,7 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object OuterScreenReferencingGenericScreenKey : NoArgsScreenKey()
+   data object OuterScreenReferencingGenericScreenKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreenReferencingGenericScreen(
@@ -142,7 +141,7 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : NoArgsScreenKey()
+   data object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreenReferencingGenericScreenWithExplicitBoundType(
@@ -172,7 +171,7 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object InnerScreenKey : NoArgsScreenKey()
+   data object InnerScreenKey : ScreenKey()
 
    @Suppress("unused")
    @ContributesScreenBinding(boundType = Screen::class)
@@ -190,5 +189,5 @@ class AbstractScreens {
    }
 
    @Parcelize
-   object InnerScreenKeyWithExplicitBoundType : NoArgsScreenKey()
+   data object InnerScreenKeyWithExplicitBoundType : ScreenKey()
 }

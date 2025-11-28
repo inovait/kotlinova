@@ -26,7 +26,6 @@ import dev.zacsweers.metro.Inject
 import kotlinx.parcelize.Parcelize
 import org.junit.Rule
 import org.junit.Test
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
@@ -47,7 +46,7 @@ class ComposedScreen {
    }
 
    @Parcelize
-   object OuterScreenKey : NoArgsScreenKey()
+   data object OuterScreenKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreen(
