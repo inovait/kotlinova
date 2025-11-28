@@ -169,8 +169,8 @@ A builder that allows you to easily create OKHttp mock server and perform servic
 @Test
 fun `A MockWebServer test`() {
    mockWebServer {
-      mockJsonResponse("/data") {
-         setJsonBody("""{"key": "value"}""")
+      mockResponse("/data") {
+         createJsonMockResponse("""{"key": "value"}""")
       }
 
       val service: TestRetrofitService = createRetrofitService(this.baseUrl)
@@ -188,8 +188,8 @@ val serverScope = MockWebServerScope()
 @Test
 fun `A MockWebServer test`() {
    serverScope.runServer {
-      mockJsonResponse("/data") {
-         setJsonBody("""{"key": "value"}""")
+      mockResponse("/data", ) {
+         createJsonMockResponse("""{"key": "value"}""")
       }
 
       val service: TestRetrofitService = createRetrofitService(this.baseUrl)

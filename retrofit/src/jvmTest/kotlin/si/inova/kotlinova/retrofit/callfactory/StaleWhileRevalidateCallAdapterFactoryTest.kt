@@ -24,8 +24,10 @@ import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.runTest
+import mockwebserver3.MockResponse
+import mockwebserver3.SocketEffect
 import okhttp3.Cache
-import okhttp3.mockwebserver.SocketPolicy
+import okhttp3.Headers.Companion.headersOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -40,8 +42,8 @@ import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeSuccessWithData
 import si.inova.kotlinova.retrofit.SyntheticHeaders
+import si.inova.kotlinova.retrofit.createJsonMockResponse
 import si.inova.kotlinova.retrofit.mockWebServer
-import si.inova.kotlinova.retrofit.setJsonBody
 import java.io.File
 import java.io.IOException
 
@@ -62,7 +64,9 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.NO_RESPONSE
+            MockResponse.Builder()
+               .onRequestStart(SocketEffect.Stall)
+               .build()
          }
 
          service.getEnumResult().test {
@@ -78,7 +82,9 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
          }
 
          service.getEnumResult().test {
@@ -94,7 +100,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("{")
+            createJsonMockResponse("{")
          }
 
          service.getEnumResult().test {
@@ -110,7 +116,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("\"THIRD\"")
+            createJsonMockResponse("\"THIRD\"")
          }
 
          service.getEnumResult().test {
@@ -126,7 +132,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("\"THIRD\"")
+            createJsonMockResponse("\"THIRD\"")
          }
 
          service.getEnumResult().test {
@@ -152,8 +158,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             })
 
          mockResponse("/data") {
-            setStatus("HTTP/1.1 404 NOT FOUND")
-            setJsonBody("\"TEST ERROR MESSAGE\"")
+            createJsonMockResponse("\"TEST ERROR MESSAGE\"", code = 404)
          }
 
          service.getEnumResult().test {
@@ -175,7 +180,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"")
          }
 
          service.getEnumResult().test {
@@ -191,14 +196,13 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult().test {
@@ -215,9 +219,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult().collect()
@@ -237,15 +239,13 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult(force = true).test {
@@ -262,15 +262,13 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult(force = true).test {
@@ -279,8 +277,8 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             awaitComplete()
          }
 
-         server.takeRequest().getHeader(SyntheticHeaders.HEADER_FORCE_REFRESH).shouldBeNull()
-         server.takeRequest().getHeader(SyntheticHeaders.HEADER_FORCE_REFRESH).shouldBeNull()
+         server.takeRequest().headers[SyntheticHeaders.HEADER_FORCE_REFRESH].shouldBeNull()
+         server.takeRequest().headers[SyntheticHeaders.HEADER_FORCE_REFRESH].shouldBeNull()
       }
    }
 
@@ -304,7 +302,9 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          )
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
          }
 
          service.getEnumResult().test {
@@ -320,15 +320,13 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setResponseCode(304)
+            MockResponse(headers = headersOf("ETag", "a"), code = 304)
          }
 
          service.getEnumResult().test {
@@ -345,14 +343,15 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
          }
 
          service.getEnumResult().test {
@@ -369,14 +368,13 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("{")
+            createJsonMockResponse("{")
          }
 
          service.getEnumResult().test {

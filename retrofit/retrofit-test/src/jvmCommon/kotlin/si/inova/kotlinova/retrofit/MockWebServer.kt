@@ -16,10 +16,12 @@
 
 package si.inova.kotlinova.retrofit
 
-import okhttp3.mockwebserver.Dispatcher
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import okhttp3.mockwebserver.RecordedRequest
+import mockwebserver3.Dispatcher
+import mockwebserver3.MockResponse
+import mockwebserver3.MockWebServer
+import mockwebserver3.RecordedRequest
+import okhttp3.Headers
+import okhttp3.Headers.Companion.headersOf
 import org.intellij.lang.annotations.Language
 import java.net.HttpURLConnection
 
@@ -41,7 +43,7 @@ inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
    } catch (e: Throwable) {
       deferredExceptions += e
    } finally {
-      server.shutdown()
+      server.close()
    }
 
    if (deferredExceptions.size == 1) {
@@ -63,6 +65,7 @@ class MockWebServerScope : Dispatcher() {
    val deferredExceptions = ArrayList<Throwable>()
 
    init {
+      server.start()
       server.dispatcher = this
    }
 
@@ -71,7 +74,7 @@ class MockWebServerScope : Dispatcher() {
    var defaultResponse: (RecordedRequest) -> MockResponse = ::defaultMissingResponseRequest
 
    override fun dispatch(request: RecordedRequest): MockResponse {
-      return responsesWithFullUrl[request.path] ?: responses[request.requestUrl?.encodedPath] ?: defaultResponse(request)
+      return responsesWithFullUrl[request.target] ?: responses[request.url.encodedPath] ?: defaultResponse(request)
    }
 
    fun mockResponse(url: String, response: MockResponse, includeQueryParameters: Boolean = false) {
@@ -86,9 +89,8 @@ class MockWebServerScope : Dispatcher() {
     * @param includeQueryParameters when *true*, you will also need to include query parameters in the *url* to be matched.
     *                               Otherwise, it will only match by path.
     */
-   inline fun mockResponse(url: String, includeQueryParameters: Boolean = false, responseBuilder: MockResponse.() -> Unit) {
-      val response = MockResponse()
-      responseBuilder(response)
+   inline fun mockResponse(url: String, includeQueryParameters: Boolean = false, responseBuilder: () -> MockResponse) {
+      val response = responseBuilder()
 
       mockResponse(url, response, includeQueryParameters)
    }
@@ -102,30 +104,42 @@ class MockWebServerScope : Dispatcher() {
    }
 
    private fun defaultMissingResponseRequest(request: RecordedRequest): MockResponse {
-      val url = request.path ?: "UNKNOWN URL"
+      val url = request.target
 
       deferredExceptions += IllegalStateException("Response to $url not mocked")
 
-      return MockResponse().apply {
-         setResponseCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
-         addHeader("Content-Type", "text/plain")
-         setBody("Response to $url not mocked")
-      }
+      return MockResponse(
+         HttpURLConnection.HTTP_INTERNAL_ERROR,
+         headersOf(
+            "Content-Type", "text/plain"
+         ),
+         body = "Response to $url not mocked"
+      )
    }
 }
 
-fun MockResponse.setJsonBody(
+fun createJsonMockResponse(
    @Language("JSON")
-   body: String
-) {
-   addHeader("Content-Type", "application/json")
-   setBody(body)
+   body: String,
+   code: Int = HttpURLConnection.HTTP_OK,
+   headers: Headers = headersOf(),
+): MockResponse {
+   return MockResponse(
+      code,
+      headers.newBuilder().add("Content-Type", "application/json").build(),
+      body
+   )
 }
 
-fun MockResponse.setJsonBodyFromResource(fileName: String) {
-   val resource = MockWebServerScope::class.java.classLoader!!.getResourceAsStream(fileName)
+fun createJsonMockResponseFromResource(
+   fileName: String,
+   code: Int = HttpURLConnection.HTTP_OK,
+   headers: Headers = headersOf(),
+   classLoader: ClassLoader = MockWebServerScope::class.java.classLoader,
+): MockResponse {
+   val resource = classLoader.getResourceAsStream(fileName)
       ?: error("Resource $fileName does not exist")
 
    val body = resource.bufferedReader().use { it.readText() }
-   setJsonBody(body)
+   return createJsonMockResponse(body, code, headers)
 }
