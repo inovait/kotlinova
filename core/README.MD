@@ -70,11 +70,6 @@ collected when user is present
 loading does not get interrupted if user briefly leaves the app, but you can add aforementioned `onlyFlowWhenUserPresent` to the
 flows that must stop being collected if user leaves the app, for example flows that collect GPS location.
 
-## Logging
-
-Library includes a copy of the square's [Logcat](https://github.com/square/logcat) library,
-but in a multiplatform format. This allows pure JVM projects to include this as a dependency and also logging using this library.
-
 ## Reporting
 
 There is an [`ErrorReporter`](src/commonMain/kotlin/si/inova/kotlinova/core/reporting/ErrorReporter.kt) interface.  

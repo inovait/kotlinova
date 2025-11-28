@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,12 +16,19 @@
 
 package si.inova.kotlinova.core.logging
 
+import si.inova.kotlinova.core.logging.LogcatLogger.Companion.install
+import si.inova.kotlinova.core.logging.LogcatLogger.Companion.uninstall
+
 /**
  * Logger that [logcat] delegates to. Call [install] to install a new logger, the default is a
  * no-op logger. Calling [uninstall] falls back to the default no-op logger.
  *
  * Adapted from https://github.com/square/logcat/blob/f877f806e8dce98a3abbc2ca80e6447b38cd8f42/logcat/src/main/java/logcat/LogcatLogger.kt
  */
+@Deprecated(
+   "Upstream logcat now supports KMP. Use that instead",
+   replaceWith = ReplaceWith("LogcatLogger", "logcat.LogcatLogger")
+)
 interface LogcatLogger {
 
    /**
