@@ -36,14 +36,14 @@ kotlin {
          dependencies {
             implementation(libs.androidx.core)
 
-            compileOnly(libs.androidx.compose.runtime)
+            compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }
       val commonMain by getting {
          dependencies {
             implementation(libs.kotlin.coroutines)
             implementation(libs.dispatch)
-            compileOnly(libs.androidx.compose.runtime)
+            compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }
       val jvmTest by getting {
