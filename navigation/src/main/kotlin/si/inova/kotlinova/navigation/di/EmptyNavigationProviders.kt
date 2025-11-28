@@ -32,7 +32,10 @@ interface EmptyNavigationProviders {
 
    @Multibinds(allowEmpty = true)
    val scopedService: Map<KClass<*>, ScopedService>
+}
 
+@ContributesTo(OuterNavigationScope::class)
+interface EmptyOuterNavigationProviders {
    @Multibinds(allowEmpty = true)
    val conditionalNavigationHandlers: Map<KClass<*>, ConditionalNavigationHandler>
 }
