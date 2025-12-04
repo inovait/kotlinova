@@ -21,7 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 
