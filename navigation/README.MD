@@ -6,6 +6,7 @@ Direct gradle usage:
 implementation("si.inova.kotlinova:navigation:X.Y.Z")
 ksp("si.inova.kotlinova:navigation-compiler:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
+implementation("si.inova.kotlinova:navigation-navigation3:X.Y.Z")
 testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
 detektPlugins("si.inova.kotlinova:navigation-detekt:X.Y.Z")
 ```
@@ -23,6 +24,7 @@ kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref =
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
 kotlinova-navigation-detekt = { module = "si.inova.kotlinova:navigation-detekt", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
+kotlinova-navigation-navigation3 = { module = "si.inova.kotlinova:navigation-navigation3", version.ref = "kotlinova" }
 kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", version.ref = "kotlinova" }
 ```
 
@@ -30,6 +32,7 @@ kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", ver
 implementation(libs.kotlinova.navigation)
 ksp(libs.kotlinova.navigation.compiler)
 implementation(libs.kotlinova.navigation.fragment)
+implementation(libs.kotlinova.navigation.navigation3)
 test(libs.kotlinova.navigation.test)
 detektPlugins(libs.kotlinova.navigation.detekt)
 ```
@@ -39,8 +42,12 @@ version.
 
 # Features
 
-Kotlinova Navigation is yet another type safe parcelable-keys-based navigation library for Compose, based on the
+Kotlinova Navigation is yet another type safe parcelable-keys-based navigation backend that handles creation/injection of
+the screens its scoped dependencies and management of the backstack. It's based on the
 [Metro](https://zacsweers.github.io/metro/index.html) and [Simple Stack](https://github.com/Zhuinden/simple-stack).
+
+Library is frontend ("display") agnostic, but [Navigation3](https://developer.android.com/guide/navigation/navigation-3)
+integraiton is provided.
 
 See [sample](sample) project for more practical examples.
 
@@ -429,6 +436,15 @@ for example.
 Nested screens can also use parent's scoped services by putting the service into the constructor (like usual), and annotating it
 with `@Inherited`.
 
+Note: For the nested screen to work, you need to provide ViewModel store decorator to the root `NavDisplay`:
+
+```kotlin
+entryDecorators = listOf(
+   rememberSaveableStateHolderNavEntryDecorator(),
+   rememberViewModelStoreNavEntryDecorator()
+)
+```
+
 ## Conditional navigation
 
 Library has a conditional navigation system, where any screen can define a condition that has to be resolved, before
@@ -508,13 +524,16 @@ To enable, you just opt-in in your Android Manifest:
 See [Android documentation](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture#opt-predictive) for
 more info.
 
-You can customize the back animation based on which side user swipes from by accessing `scope.targetState.backSwipeEdge` property
+You can customize the back animation based on which side user swipes from by accessing `backSwipeEdge` argument
 in the animation declaration:
 
 ```kotlin
 abstract class MyScreenKey : ScreenKey() {
-   override fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
-      val animation = when (scope.targetState.backSwipeEdge) {
+   override fun backAnimation(
+      scope: AnimatedContentTransitionScope<*>,
+      backSwipeEdge: @BackEventCompat.SwipeEdge Int?
+   ): ContentTransform {
+      val animation = when (backSwipeEdge) {
          BackEventCompat.EDGE_LEFT ->...
             BackEventCompat.EDGE_RIGHT
          ->...
@@ -530,8 +549,8 @@ abstract class MyScreenKey : ScreenKey() {
 
 Navigation library supports
 Compose's [Shared element transition](https://developer.android.com/develop/ui/compose/animation/shared-elements). To access both
-shared transition scope and animated visibility scope, you can use local compositions. Library already provides
-`LocalAnimatedVisiblityScope`, while you have to define `LocalSharedTransitionScope` yourself. For example:
+shared transition scope and animated visibility scope, you can use local compositions. If using Navigation 3, you can use
+already provided`LocalNavAnimatedContentScope`, while you have to define a `LocalSharedTransitionScope` yourself. For example:
 
 ```kotlin
 val LocalSharedTransitionScope =
@@ -543,7 +562,7 @@ In MainActivity (or wherever your Compose root is):
 ```kotlin
 SharedTransitionLayout {
    CompositionLocalProvider(LocalSharedTransitionScope provides this) {
-      navigationInjectionFactory.RootNavigationContainer { History.of(FirstScreenKey) }
+      navigationInjectionFactory.NavDisplay { History.of(FirstScreenKey) }
    }
 }
 ```
@@ -555,7 +574,7 @@ Then in your screens:
 override fun Content(key: MyScreenKeyKey) = with(LocalSharedTransitionScope.current) {
    Image(
       Modifier
-         .sharedElement(rememberSharedContentState("..."), LocalAnimatedVisibilityScope.current)
+         .sharedElement(rememberSharedContentState("..."), LocalNavAnimatedContentScope.current)
    )
 }
 ```
@@ -652,7 +671,7 @@ see the [Metro sample android app](https://github.com/ZacSweers/metro/tree/main/
 
 To add the library to your app:
 
-1. Add navigation library as implementation dependency and navigation compiler as ksp dependency
+1. Add navigation, navigation3 libraries as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
 2. Make sure you have [Jitpack](https://jitpack.io/) repository added to your project, as some sub-dependencies
    need it
@@ -679,13 +698,12 @@ class MainActivity(
 }
 ```
 
-7. Inside a composable inside main activity (for example, inside `setContent` lambda), call `RootNavigationContainer` and pass in
-   your initial
-   backstack, usually just `History.of` with your root screen:
+7. Inside a composable inside main activity (for example, inside `setContent` lambda), call `NavDisplay` and pass in
+   your initial backstack, usually just `History.of` with your root screen:
 
 ```kotlin
 setContent {
-   navigationInjectionFactory.RootNavigationContainer { History.of(FirstScreenKey) }
+   navigationInjectionFactory.NavDisplay(initialHistory = { History.of(FirstScreenKey) })
 }
 ```
 
@@ -722,25 +740,27 @@ val deepLinkTarget = if (savedInstanceState == null) {
 }
 ```
 
-3. When you call `RootNavigationContainer`, navigate to the deep link instead of to the default screen, if applicable:
+3. When you call `NavDisplay`, navigate to the deep link instead of to the default screen, if applicable:
 
 ```kotlin
-navigationInjectionFactory.RootNavigationContainer {
-   val initialBackstack = History.of(FirstScreenKey)
+navigationInjectionFactory.NavDisplay(
+   initialHistory = {
+      val initialBackstack = History.of(FirstScreenKey)
 
-   if (deepLinkTarget != null) {
-      deepLinkTarget.performNavigation(initialBackstack, navigationContext).newBackstack
-   } else {
-      initialBackstack
+      if (deepLinkTarget != null) {
+         deepLinkTarget.performNavigation(initialBackstack, navigationContext).newBackstack
+      } else {
+         initialBackstack
+      }
    }
-}
+)
 ```
 
-4. Get `backstack` from the `RootNavigationContainer` and then call `handleNewIntentDeepLinks`. This method will
+4. Get `backstack` from the `NavDisplay` and then call `handleNewIntentDeepLinks`. This method will
    automatically handle all deep links that arrive while the app is open.
 
 ```kotlin
-val backstack = navigationInjectionFactory.RootNavigationContainer { ... }
+val backstack = navigationInjectionFactory.NavDisplay(...)
 mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)
 ```
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, 
@@ -23,20 +23,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import si.inova.kotlinova.navigation.navigation3.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.sample.keys.NestedScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
-import si.inova.kotlinova.navigation.screens.NestedBackstackScreen
-import si.inova.kotlinova.navigation.screens.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 
 @InjectNavigationScreen
 class NestedScreen(
-   private val nestedContainer: NestedBackstackScreen
+   private val nestedContainer: RecursiveNestedBackstackScreen,
 ) : Screen<NestedScreenKey>() {
    @Composable
    override fun Content(key: NestedScreenKey) {
-      Box(Modifier.padding(8.dp).border(1.dp, Color.Black).padding(8.dp)) {
-         nestedContainer.Content(NestedNavigationScreenKey(listOf(NestedRootScreenKey), interceptBackButton = true))
+      Box(
+         Modifier
+            .padding(8.dp)
+            .border(1.dp, Color.Black)
+            .padding(8.dp)
+      ) {
+         nestedContainer.Content(NestedNavigationScreenKey(listOf(NestedRootScreenKey)))
       }
    }
 }

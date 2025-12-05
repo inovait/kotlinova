@@ -34,11 +34,11 @@ import si.inova.kotlinova.navigation.conditions.NavigationCondition
 import si.inova.kotlinova.navigation.di.MainNavigation
 import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.navigator.Navigator
+import si.inova.kotlinova.navigation.sample.nested.NestedBackstackScreen
+import si.inova.kotlinova.navigation.sample.nested.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
-import si.inova.kotlinova.navigation.screens.NestedBackstackScreen
-import si.inova.kotlinova.navigation.screens.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.Inherited
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation

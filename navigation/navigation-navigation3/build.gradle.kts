@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,15 +14,33 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.simplestack
+import util.publishLibrary
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.runtime.staticCompositionLocalOf
+plugins {
+   androidLibraryModule
+   id("com.google.devtools.ksp")
+   id("org.jetbrains.kotlin.plugin.compose")
+   alias(libs.plugins.metro)
+}
 
-/**
- * Animation scope used by kotlinova navigation to navigate between screens.
- *
- * You can pass it to the shared element transition modifiers to implement shared element transitions.
- */
-val LocalAnimatedVisibilityScope =
-   staticCompositionLocalOf<AnimatedVisibilityScope> { error("Animated visibility scope not provided") }
+publishLibrary(
+   userFriendlyName = "Navigation Navigation3",
+   description = "Module that enables integration of the Kotlinova Navigation with the Google's Navigation3 library",
+   githubPath = "navigation"
+)
+
+android {
+   namespace = "si.inova.kotlinova.navigation.navigation3"
+}
+
+dependencies {
+   api(projects.navigation)
+   api(libs.androidx.navigation3)
+   api(libs.androidx.navigation3.ui)
+
+   implementation(libs.androidx.compose.ui)
+
+   ksp(projects.navigation.navigationCompiler)
+
+   debugImplementation(libs.androidx.compose.ui.tooling)
+}

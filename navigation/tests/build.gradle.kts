@@ -41,6 +41,7 @@ android {
 dependencies {
    androidTestImplementation(projects.kotlinova.navigation)
    androidTestImplementation(projects.kotlinova.navigation.navigationFragment)
+   androidTestImplementation(projects.kotlinova.navigation.navigationNavigation3)
 
    implementation(libs.androidx.core)
    implementation(libs.androidx.activity.compose)
@@ -53,6 +54,7 @@ dependencies {
    implementation(libs.androidx.compose.ui.util)
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
+   implementation(libs.androidx.lifecycle.navigation3)
    implementation(libs.androidx.lifecycle.viewModel.compose)
 
    kspAndroidTest(projects.navigation.navigationCompiler)

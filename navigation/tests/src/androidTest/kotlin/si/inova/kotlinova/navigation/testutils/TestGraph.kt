@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import com.zhuinden.simplestack.Backstack
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
@@ -33,8 +35,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import si.inova.kotlinova.navigation.navigation3.NavDisplay
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
 
 @DependencyGraph(OuterNavigationScope::class)
 @SingleIn(OuterNavigationScope::class)
@@ -51,7 +53,13 @@ fun ComposeContentTestRule.insertTestNavigation(vararg initialHistory: ScreenKey
 
    setContent {
       Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-         backstack = navigation.RootNavigationContainer { initialHistory.toList() }
+         backstack = navigation.NavDisplay(
+            initialHistory = { initialHistory.toList() },
+            entryDecorators = listOf(
+               rememberSaveableStateHolderNavEntryDecorator(),
+               rememberViewModelStoreNavEntryDecorator()
+            )
+         )
       }
    }
 
@@ -66,7 +74,13 @@ fun StateRestorationTester.insertTestNavigation(composeTestRule: ComposeTestRule
 
    setContent {
       Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-         backstack = navigation.RootNavigationContainer { initialHistory.toList() }
+         backstack = navigation.NavDisplay(
+            initialHistory = { initialHistory.toList() },
+            entryDecorators = listOf(
+               rememberSaveableStateHolderNavEntryDecorator(),
+               rememberViewModelStoreNavEntryDecorator()
+            )
+         )
       }
    }
 

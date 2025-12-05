@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,20 +14,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.screens
+package si.inova.kotlinova.navigation.navigation3
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import com.zhuinden.simplestack.AsyncStateChanger
 import com.zhuinden.simplestack.Backstack
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 import si.inova.kotlinova.navigation.di.MainNavigation
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
+import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.CurrentScopeTag
-import si.inova.kotlinova.navigation.simplestack.BackstackProvider
-import si.inova.kotlinova.navigation.simplestack.ComposeStateChanger
 import si.inova.kotlinova.navigation.simplestack.LocalBackstack
 import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 
@@ -35,7 +33,7 @@ import si.inova.kotlinova.navigation.simplestack.rememberBackstack
  *
  */
 @InjectNavigationScreen
-class NestedBackstackScreen(
+open class NestedBackstackScreen(
    private val navigationStackComponentFactory: NavigationInjection.Factory,
    @MainNavigation
    private val mainBackstack: Backstack,
@@ -44,14 +42,12 @@ class NestedBackstackScreen(
 ) : Screen<NestedNavigationScreenKey>() {
    @Composable
    override fun Content(key: NestedNavigationScreenKey) {
-      val coroutineScope = rememberCoroutineScope()
-      val composeStateChanger = remember { ComposeStateChanger(coroutineScope, key.interceptBackButton) }
-      val asyncStateChanger = remember(composeStateChanger) { AsyncStateChanger(composeStateChanger) }
+      val entryProvider = remember { Navigation3EntryProvider() }
 
       val parentBackstack = LocalBackstack.current
 
-      val backstack = navigationStackComponentFactory.rememberBackstack(
-         asyncStateChanger,
+      navigationStackComponentFactory.rememberBackstack(
+         entryProvider,
          id = key.id,
          initialHistory = { key.initialHistory },
          overrideMainBackstack = mainBackstack,
@@ -59,9 +55,14 @@ class NestedBackstackScreen(
          parentBackstackScope = scope
       )
 
-      BackstackProvider(backstack) {
-         composeStateChanger.Content()
-      }
+      NavDisplay(entryProvider)
+   }
+
+   @Composable
+   protected open fun NavDisplay(
+      navigation3EntryProvider: Navigation3EntryProvider
+   ) {
+      navigation3EntryProvider.NavDisplay()
    }
 }
 
@@ -69,5 +70,4 @@ class NestedBackstackScreen(
 data class NestedNavigationScreenKey(
    val initialHistory: List<ScreenKey>,
    val id: String = "SINGLE",
-   val interceptBackButton: Boolean = true
 ) : ScreenKey()

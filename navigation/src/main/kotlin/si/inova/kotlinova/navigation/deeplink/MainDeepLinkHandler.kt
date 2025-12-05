@@ -27,7 +27,6 @@ import com.zhuinden.simplestack.Backstack
 import dev.zacsweers.metro.Inject
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
-import si.inova.kotlinova.navigation.simplestack.RootNavigationContainer
 
 /**
  * Deep link handler that aggregates all deep link handlers contributed via `@ContributesMultibinding`.
@@ -46,7 +45,7 @@ class MainDeepLinkHandler(
  * be routed to the [Activity.onNewIntent]).
  *
  * @param activity Activity that receives the links
- * @param backstack backstack that you receive from [RootNavigationContainer]
+ * @param backstack Simple Stack Backstack
  */
 @Composable
 fun MainDeepLinkHandler.HandleNewIntentDeepLinks(activity: ComponentActivity, backstack: Backstack) {

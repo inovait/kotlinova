@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.navigation.screenkeys
 
 import android.os.Parcelable
+import androidx.activity.BackEventCompat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
@@ -27,9 +28,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import com.zhuinden.simplestack.ScopeKey
-import com.zhuinden.simplestack.StateChange
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
-import si.inova.kotlinova.navigation.simplestack.StateChangeResult
 
 abstract class ScreenKey : Parcelable, ScopeKey {
    open val navigationConditions: List<NavigationCondition>
@@ -46,24 +45,20 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * See [Compose documentation](https://developer.android.com/jetpack/compose/animation#animatedcontent)
     * for syntax and examples.
     */
-   open fun forwardAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
-      return if (scope.targetState.direction == StateChange.REPLACE) {
-         fadeIn() togetherWith fadeOut()
-      } else {
-         // Rough match of the FragmentTransaction.TRANSITION_OPEN
+   open fun forwardAnimation(scope: AnimatedContentTransitionScope<*>): ContentTransform {
+      // Rough match of the FragmentTransaction.TRANSITION_OPEN
 
-         val enter = scaleIn(
-            tween(durationMillis = 150),
-            initialScale = 0.90f
-         ) + fadeIn(tween(durationMillis = 150))
+      val enter = scaleIn(
+         tween(durationMillis = 150),
+         initialScale = 0.90f
+      ) + fadeIn(tween(durationMillis = 150))
 
-         val exit = scaleOut(
-            tween(durationMillis = 150),
-            targetScale = 1.10f,
-         ) + fadeOut(tween(delayMillis = 100, durationMillis = 50))
+      val exit = scaleOut(
+         tween(durationMillis = 150),
+         targetScale = 1.10f,
+      ) + fadeOut(tween(delayMillis = 100, durationMillis = 50))
 
-         enter togetherWith exit
-      }
+      return enter togetherWith exit
    }
 
    /**
@@ -72,8 +67,15 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * This translates to [AnimatedContent]'s transitionSpec.
     * See [Compose documentation](https://developer.android.com/jetpack/compose/animation#animatedcontent)
     * for syntax and examples.
+    *
+    * @param backSwipeEdge If this transition was caused by the predictive back,
+    *  this property is non-null and signals from which edge did user swipe to go back
+    *
     */
-   open fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
+   open fun backAnimation(
+      scope: AnimatedContentTransitionScope<*>,
+      backSwipeEdge: @BackEventCompat.SwipeEdge Int?
+   ): ContentTransform {
       // Rough match of the FragmentTransaction.TRANSITION_CLOSE
 
       val enter = scaleIn(

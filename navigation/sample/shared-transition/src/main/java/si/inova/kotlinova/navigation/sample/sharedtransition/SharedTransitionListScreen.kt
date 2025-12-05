@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, 
@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.sample.common.LocalSharedTransitionScope
@@ -35,7 +36,6 @@ import si.inova.kotlinova.navigation.sample.keys.SharedTransitionDetailsScreenKe
 import si.inova.kotlinova.navigation.sample.keys.SharedTransitionListScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
-import si.inova.kotlinova.navigation.simplestack.LocalAnimatedVisibilityScope
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @InjectNavigationScreen
@@ -46,7 +46,7 @@ class SharedTransitionListScreen(private val navigator: Navigator) : Screen<Shar
          itemsIndexed(SHARED_TRANSITION_COLORS) { index, color ->
             Box(
                Modifier
-                  .sharedElement(rememberSharedContentState("color-${index}"), LocalAnimatedVisibilityScope.current)
+                  .sharedElement(rememberSharedContentState("color-${index}"), LocalNavAnimatedContentScope.current)
                   .size(150.dp)
                   .background(color)
                   .clickable {
