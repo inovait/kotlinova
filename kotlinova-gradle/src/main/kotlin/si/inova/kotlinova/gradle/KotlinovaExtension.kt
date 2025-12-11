@@ -24,6 +24,7 @@ import si.inova.kotlinova.gradle.versionbump.TomlVersionBumpExtension
 abstract class KotlinovaExtension(objects: ObjectFactory) {
    internal val tomlVersionBump: TomlVersionBumpExtension = objects.newInstance<TomlVersionBumpExtension>()
 
+   @Deprecated("Feature is deprecated and will not be updated anymore. Use version-catalog-update-plugin instead.")
    fun KotlinovaExtension.tomlVersionBump(block: TomlVersionBumpExtension.() -> Unit) {
       block(tomlVersionBump)
    }
