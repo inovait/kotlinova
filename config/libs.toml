@@ -35,7 +35,6 @@ simpleStack = "2.9.0"
 tomlj = "1.1.1"
 turbine = "1.2.1"
 versionCatalogUpdate = "1.0.1"
-versionsChecker = "0.53.0"
 
 [libraries]
 android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
@@ -97,7 +96,6 @@ sarif4k = { module = "io.github.detekt.sarif4k:sarif4k", version.ref = "sarif4k"
 simpleStack = { module = "com.github.Zhuinden:simple-stack", version.ref = "simpleStack" }
 tomlj = { module = "org.tomlj:tomlj", version.ref = "tomlj" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-versionsCheckerPlugin = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "versionsChecker" }
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -105,4 +103,3 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
-versions = { id = "com.github.ben-manes.versions", version.ref = "versionsChecker" }
