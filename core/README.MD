@@ -90,19 +90,6 @@ needs current time. It supports regular raw `currentTimeMillis` and java.time cl
 There is also `AndroidTimeProvider` variant that also provides android-specific times
 (from [SystemClock](https://developer.android.com/reference/android/os/SystemClock))
 
-### Date formatter
-
-[`AndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatter.kt) is an update of the
-[`AndroidDateTimeFormatters`](https://github.com/drewhamilton/AndroidDateTimeFormatters) library.
-
-Class allows easy formatting of the java.time date containers, such as `LocalDateTime`,
-with respect to user's locale and time display settings.
-
-There are two implementations: concrete
-[`AndroidDateTimeFormatterImpl`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatterImpl.kt) and
-[`FakeAndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/FakeAndroidDateTimeFormatter.kt) for tests
-and compose previews.
-
 ## Coroutine Resource Manager
 
 [`CoroutineResourceManager`](src/commonMain/kotlin/si/inova/kotlinova/core/outcome/CoroutineResourceManager.kt) is a controller
@@ -174,6 +161,19 @@ debouncer.executeDebouncing {
 * [Locale metric system check](src/jvmCommon/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
 
 # Android-specific utilities
+
+### Date formatter
+
+[`AndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatter.kt) is an update of the
+[`AndroidDateTimeFormatters`](https://github.com/drewhamilton/AndroidDateTimeFormatters) library.
+
+Class allows easy formatting of the java.time date containers, such as `LocalDateTime`,
+with respect to user's locale and time display settings.
+
+There are two implementations: concrete
+[`AndroidDateTimeFormatterImpl`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatterImpl.kt) and
+[`FakeAndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/FakeAndroidDateTimeFormatter.kt) for tests
+and compose previews.
 
 ## LocalizedText
 
