@@ -141,29 +141,6 @@ LazyColumn {
 
 # Instrumented test utils
 
-## Idling Resources
-
-### FixedIdlingDispatcher
-
-A copy of
-the [Dispatch's IdlingDispatcher](https://github.com/RBusarow/Dispatch/blob/main/dispatch-android-espresso/src/main/java/dispatch/android/espresso/IdlingDispatcher.kt)
-with [Dispatch#619](https://github.com/RBusarow/Dispatch/pull/619) fix applied.
-
-### Easier idling dispatcher registration
-
-```kotlin
-composeTestRule.registerIdlingDispatchers(DefaultDispatcherProvider.get())
-```
-
-### LoadingCountingIdlingResource
-
-This idling resource serves as an universal idling resource, keeping busy state until any flow in your app
-is still in Outcome.Progress state.
-
-1. Update your DI to inject `RegisteringCoroutineResourceManager` in place of regular `CoroutineResourceManager` everywhere
-   in your app in instrumented tests
-2. `composeTestRule.registerIdlingResource(LoadingCountingIdlingResource)`
-
 ## VirtualTime
 
 You can use `composeTestRule.virtualTimeProvider()` to get `AndroidTimeProvider` that is in sync with virtual time managed
