@@ -94,8 +94,8 @@ kotlinova {
 
 To use, add `-Pprecommit=true` flag to your pre-commit hook. For example:
 
-```kotlin
-./gradlew - Pprecommit = true detekt
+```bash
+./gradlew -Pprecommit=true detekt
 ```
 
 # Android benchmark result upload to Google Cloud metrics
