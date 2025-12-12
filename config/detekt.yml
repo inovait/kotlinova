@@ -47,9 +47,9 @@ output-reports:
 comments:
   active: true
   AbsentOrWrongFileLicense:
-    active: false
-    licenseTemplateFile: 'license.template'
-    licenseTemplateIsRegex: false
+    active: true
+    licenseTemplateFile: 'license_template.txt'
+    licenseTemplateIsRegex: true
   CommentOverPrivateFunction:
     active: false
   CommentOverPrivateProperty:
