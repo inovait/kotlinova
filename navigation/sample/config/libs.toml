@@ -9,7 +9,7 @@ androidx-lifecycle = "2.10.0"
 androidx-navigation3 = "1.0.0"
 desugarJdkLibs = "2.1.5"
 kotlin = "2.2.21"
-kotlinova = "4.0.0-alpha09"
+kotlinova = "4.0.0-alpha10"
 ksp = "2.3.3"
 metro = "0.7.7"
 
@@ -33,6 +33,7 @@ androidx-compose-material3 = { module = "androidx.compose.material3:material3", 
 desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-plugin-compose = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlinova-compose = { module = "si.inova.kotlinova:compose", version.ref = "kotlinova" }
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }

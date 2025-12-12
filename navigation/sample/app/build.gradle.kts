@@ -81,6 +81,7 @@ dependencies {
    implementation(libs.androidx.navigation3.ui)
    implementation(libs.androidx.fragment)
    implementation(libs.androidx.core)
+   implementation(libs.kotlinova.compose)
    implementation(libs.kotlinova.navigation)
    implementation(libs.kotlinova.navigation.navigation3)
 

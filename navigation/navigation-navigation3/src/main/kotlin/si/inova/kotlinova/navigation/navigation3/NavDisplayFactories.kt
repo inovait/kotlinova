@@ -40,13 +40,14 @@ import si.inova.kotlinova.navigation.simplestack.BackstackProvider
 fun NavigationInjection.Factory.NavDisplay(
    initialHistory: () -> List<ScreenKey>,
    modifier: Modifier = Modifier,
+   generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() },
    contentAlignment: Alignment = Alignment.TopStart,
    entryDecorators: List<NavEntryDecorator<ScreenKey>> =
       listOf(rememberSaveableStateHolderNavEntryDecorator()),
    sceneStrategy: SceneStrategy<ScreenKey> = SinglePaneSceneStrategy(),
    sizeTransform: SizeTransform? = null,
 ): Backstack {
-   val entryProvider = rememberNavigation3EntryProvider(initialHistory)
+   val entryProvider = rememberNavigation3EntryProvider(initialHistory, generateExtraNavEntryMetadata)
 
    entryProvider.NavDisplay(
       modifier,

@@ -25,15 +25,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import com.zhuinden.simplestack.History
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
+import si.inova.kotlinova.compose.result.LocalResultPassingStore
+import si.inova.kotlinova.compose.result.ResultPassingStore
 import si.inova.kotlinova.navigation.deeplink.HandleNewIntentDeepLinks
 import si.inova.kotlinova.navigation.deeplink.MainDeepLinkHandler
 import si.inova.kotlinova.navigation.di.NavigationContext
@@ -65,7 +70,11 @@ class MainActivity(
       setContent {
          NavigationSampleTheme {
             SharedTransitionLayout {
-               CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+               val resultPassingStore = rememberSaveable { ResultPassingStore() }
+               CompositionLocalProvider(
+                  LocalSharedTransitionScope provides this,
+                  LocalResultPassingStore provides resultPassingStore
+               ) {
                   Surface(
                      modifier = Modifier.fillMaxSize(),
                      color = MaterialTheme.colorScheme.background
@@ -79,7 +88,8 @@ class MainActivity(
                         entryDecorators = listOf(
                            rememberSaveableStateHolderNavEntryDecorator(),
                            rememberViewModelStoreNavEntryDecorator()
-                        )
+                        ),
+                        sceneStrategy = remember { DialogSceneStrategy() }
                      )
 
                      mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)

@@ -14,40 +14,18 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-plugins {
-   id("com.android.library")
-   id("org.jetbrains.kotlin.android")
-   id("kotlin-parcelize")
-   id("org.jetbrains.kotlin.plugin.compose")
-   alias(libs.plugins.metro)
-}
+package si.inova.kotlinova.navigation.sample.keys
 
-android {
-   namespace = "si.inova.kotlinova.navigation.keys"
-   compileSdk = 36
+import androidx.compose.ui.window.DialogProperties
+import kotlinx.parcelize.Parcelize
+import si.inova.kotlinova.compose.result.ResultKey
+import si.inova.kotlinova.navigation.screenkeys.DialogKey
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
-   defaultConfig {
-      minSdk = 24
-      targetSdk = 34
-   }
-
-   compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_21
-      targetCompatibility = JavaVersion.VERSION_21
-   }
-
-   kotlinOptions {
-
-   }
-}
-
-kotlin {
-   jvmToolchain(21)
-}
-
-dependencies {
-   implementation(libs.androidx.compose.animation)
-   implementation(libs.kotlinova.compose)
-   implementation(libs.kotlinova.navigation)
-   api(libs.kotlinova.navigation.fragment)
+@Parcelize
+data class DemoDialogScreenKey(
+   val resultKey: ResultKey<String>
+) : ScreenKey(), DialogKey {
+   override val dialogProperties: DialogProperties
+      get() = DialogProperties()
 }

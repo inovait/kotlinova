@@ -20,11 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.scene.DialogSceneStrategy
 import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.StateChange
 import com.zhuinden.simplestack.StateChanger
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.di.ScreenRegistry
+import si.inova.kotlinova.navigation.screenkeys.DialogKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 import si.inova.kotlinova.navigation.screens.Screen
@@ -33,7 +35,9 @@ import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 /**
  * Provider for the [backstackEntries] that can be supplied directly to the NavDisplay
  */
-class Navigation3EntryProvider : StateChanger {
+class Navigation3EntryProvider(
+   private val generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() }
+) : StateChanger {
    lateinit var simpleStackBackstack: Backstack
       private set
 
@@ -50,7 +54,15 @@ class Navigation3EntryProvider : StateChanger {
       return NavEntry(
          key,
          contentKey = if (key is SingleTopKey) key.javaClass.name else key,
-         metadata = mapOf(METADATA_KEY to key, METADATA_SCREEN to screen),
+         metadata = buildMap {
+            put(METADATA_KEY, key)
+            put(METADATA_SCREEN, screen)
+            if (key is DialogKey) {
+               putAll(DialogSceneStrategy.dialog(key.dialogProperties))
+            }
+
+            putAll(generateExtraNavEntryMetadata(key))
+         }
       ) {
          screen.Content(key)
       }
@@ -100,8 +112,9 @@ class Navigation3EntryProvider : StateChanger {
 @Composable
 fun NavigationInjection.Factory.rememberNavigation3EntryProvider(
    initialHistory: () -> List<ScreenKey>,
+   generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() }
 ): Navigation3EntryProvider {
-   val entryProvider = remember { Navigation3EntryProvider() }
+   val entryProvider = remember { Navigation3EntryProvider(generateExtraNavEntryMetadata) }
 
    rememberBackstack(entryProvider) { initialHistory() }
 

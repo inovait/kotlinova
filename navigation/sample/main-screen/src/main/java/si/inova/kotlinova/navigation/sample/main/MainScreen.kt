@@ -1,8 +1,8 @@
 /*
  * Copyright 2025 INOVA IT d.o.o.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, 
  * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
  *  is furnished to do so, subject to the following conditions:
  *
@@ -10,7 +10,7 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
- *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
@@ -18,18 +18,27 @@ package si.inova.kotlinova.navigation.sample.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.StateFlow
+import si.inova.kotlinova.compose.result.registerResultReceiver
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
+import si.inova.kotlinova.navigation.sample.keys.DemoDialogScreenKey
 import si.inova.kotlinova.navigation.sample.keys.DemoFragmentScreenKey
 import si.inova.kotlinova.navigation.sample.keys.MainScreenKey
 import si.inova.kotlinova.navigation.sample.keys.NestedScreenKey
@@ -112,5 +121,19 @@ fun NavigationButtons(navigator: Navigator) {
 
    Button(onClick = { navigator.navigateTo(SharedTransitionListScreenKey) }) {
       Text("Shared element transition")
+   }
+
+   Row(verticalAlignment = Alignment.CenterVertically) {
+      var dialogResult by remember { mutableStateOf<String?>(null) }
+      val resultKey = registerResultReceiver<String> {
+         dialogResult = it
+      }
+
+      Button(onClick = { navigator.navigateTo(DemoDialogScreenKey(resultKey)) }) {
+         Text("Dialog")
+      }
+      if (dialogResult != null) {
+         Text("Result from Dialog: $dialogResult", modifier = Modifier.padding(start = 8.dp))
+      }
    }
 }

@@ -579,6 +579,28 @@ override fun Content(key: MyScreenKeyKey) = with(LocalSharedTransitionScope.curr
 }
 ```
 
+## Dialogs
+
+A screen can also appear as a dialog.
+
+To do that, the key of the screen needs to implement `DialogKey`:
+
+```kotlin
+abstract class MyDialogKey : ScreenKey(), DialogKey {
+   ...
+}
+```
+
+Then, when you create your `NavDisplay`, be sure to add a `DialogScreneStrategy`:
+
+```kotlin
+navigationInjectionFactory.NavDisplay(
+   sceneStrategy = remember { DialogSceneStrategy() },
+   ...
+)
+
+```
+
 ## Navigating to fragments
 
 Navigation also has an optional `navigation-fragment` library that allows navigation to fragments instead of to 100% compose
