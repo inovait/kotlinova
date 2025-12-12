@@ -15,7 +15,8 @@ dagger = "2.57.2"
 desugarJdkLibs = "2.1.5"
 detekt = "1.23.8"
 dispatch = "1.0.0-beta10"
-dokka = "2.1.0"
+# Do not update until we migrate to Dokka 2
+dokka = "1.9.20"
 googleCloud-monitoring = "3.81.0"
 # Do not update, new version not compatible with the AGP https://issuetracker.google.com/issues/371158364
 googleCloud-protobufUtil = "4.33.0"
