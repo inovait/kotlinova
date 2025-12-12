@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,7 +14,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.accessors.dm.LibrariesForLibs
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import util.commonAndroid
@@ -23,7 +22,6 @@ import util.isAndroidProject
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("com.github.ben-manes.versions")
    id("io.gitlab.arturbosch.detekt")
    id("kotlinova")
 }
@@ -46,21 +44,6 @@ configure<KotlinovaExtension> {
    if (isAndroidProject()) {
       mergeAndroidLintSarif = true
    }
-}
-
-tasks.withType<DependencyUpdatesTask> {
-   gradleReleaseChannel = "current"
-
-   rejectVersionIf {
-      candidate.version.contains("alpha", ignoreCase = true) ||
-         candidate.version.contains("beta", ignoreCase = true) ||
-         candidate.version.contains("RC", ignoreCase = true) ||
-         candidate.version.contains("M", ignoreCase = true) ||
-         candidate.version.contains("eap", ignoreCase = true)
-   }
-
-   reportfileName = "versions"
-   outputFormatter = "json"
 }
 
 detekt {

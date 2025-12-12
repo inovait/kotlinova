@@ -14,12 +14,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-
 plugins {
    `kotlin-dsl`
    alias(libs.plugins.detekt)
-   alias(libs.plugins.versions)
 
    // We must specify JVM plugin explicitly here to avoid version conflicts
    // It produces "Unsupported Kotlin plugin version" but it lets us compile
@@ -47,28 +44,12 @@ dependencies {
    implementation(libs.kotlin.plugin)
    implementation(libs.kotlin.plugin.compose)
    implementation(libs.mavenPublish)
-   implementation(libs.versionsCheckerPlugin)
    implementation("si.inova.kotlinova:kotlinova-gradle")
 
    // Workaround to have libs accessible (from https://github.com/gradle/gradle/issues/15383)
    compileOnly(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 
    detektPlugins(libs.detekt.formatting)
-}
-
-tasks.withType<DependencyUpdatesTask> {
-   gradleReleaseChannel = "current"
-
-   rejectVersionIf {
-      candidate.version.contains("alpha", ignoreCase = true) ||
-         candidate.version.contains("beta", ignoreCase = true) ||
-         candidate.version.contains("RC", ignoreCase = true) ||
-         candidate.version.contains("M", ignoreCase = true) ||
-         candidate.version.contains("eap", ignoreCase = true)
-   }
-
-   reportfileName = "versions"
-   outputFormatter = "json"
 }
 
 tasks.register("pre-commit-hook", Copy::class) {

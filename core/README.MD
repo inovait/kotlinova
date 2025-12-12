@@ -70,11 +70,6 @@ collected when user is present
 loading does not get interrupted if user briefly leaves the app, but you can add aforementioned `onlyFlowWhenUserPresent` to the
 flows that must stop being collected if user leaves the app, for example flows that collect GPS location.
 
-## Logging
-
-Library includes a copy of the square's [Logcat](https://github.com/square/logcat) library,
-but in a multiplatform format. This allows pure JVM projects to include this as a dependency and also logging using this library.
-
 ## Reporting
 
 There is an [`ErrorReporter`](src/commonMain/kotlin/si/inova/kotlinova/core/reporting/ErrorReporter.kt) interface.  
@@ -94,19 +89,6 @@ needs current time. It supports regular raw `currentTimeMillis` and java.time cl
 
 There is also `AndroidTimeProvider` variant that also provides android-specific times
 (from [SystemClock](https://developer.android.com/reference/android/os/SystemClock))
-
-### Date formatter
-
-[`AndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatter.kt) is an update of the
-[`AndroidDateTimeFormatters`](https://github.com/drewhamilton/AndroidDateTimeFormatters) library.
-
-Class allows easy formatting of the java.time date containers, such as `LocalDateTime`,
-with respect to user's locale and time display settings.
-
-There are two implementations: concrete
-[`AndroidDateTimeFormatterImpl`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatterImpl.kt) and
-[`FakeAndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/FakeAndroidDateTimeFormatter.kt) for tests
-and compose previews.
 
 ## Coroutine Resource Manager
 
@@ -179,6 +161,19 @@ debouncer.executeDebouncing {
 * [Locale metric system check](src/jvmCommon/kotlin/si/inova/kotlinova/core/locale/MeasurementSystems.kt)
 
 # Android-specific utilities
+
+### Date formatter
+
+[`AndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatter.kt) is an update of the
+[`AndroidDateTimeFormatters`](https://github.com/drewhamilton/AndroidDateTimeFormatters) library.
+
+Class allows easy formatting of the java.time date containers, such as `LocalDateTime`,
+with respect to user's locale and time display settings.
+
+There are two implementations: concrete
+[`AndroidDateTimeFormatterImpl`](src/androidMain/kotlin/si/inova/kotlinova/core/time/AndroidDateTimeFormatterImpl.kt) and
+[`FakeAndroidDateTimeFormatter`](src/androidMain/kotlin/si/inova/kotlinova/core/time/FakeAndroidDateTimeFormatter.kt) for tests
+and compose previews.
 
 ## LocalizedText
 

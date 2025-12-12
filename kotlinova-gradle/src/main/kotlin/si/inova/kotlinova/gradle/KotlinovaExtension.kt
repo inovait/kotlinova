@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2025 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -25,6 +25,7 @@ import javax.inject.Inject
 abstract class KotlinovaExtension @Inject constructor(objects: ObjectFactory) {
    internal val tomlVersionBump: TomlVersionBumpExtension = objects.newInstance<TomlVersionBumpExtension>()
 
+   @Deprecated("Feature is deprecated and will not be updated anymore. Use version-catalog-update-plugin instead.")
    fun KotlinovaExtension.tomlVersionBump(block: TomlVersionBumpExtension.() -> Unit) {
       block(tomlVersionBump)
    }

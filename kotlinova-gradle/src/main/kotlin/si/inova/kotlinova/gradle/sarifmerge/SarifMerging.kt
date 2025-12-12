@@ -56,7 +56,7 @@ internal fun Project.createTopLevelMergeTask() {
                .artifactView {
                   it.isLenient = true
                }
-               .files.also { println("got files ${it.files.toSet()}") }
+               .files
          }
       )
    }

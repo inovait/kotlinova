@@ -28,6 +28,7 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import si.inova.kotlinova.core.outcome.CauseException
+import si.inova.kotlinova.core.outcome.LoadingStyle
 import si.inova.kotlinova.core.outcome.Outcome
 
 infix fun <T> Outcome<T>.shouldBeSuccessWithData(expectedData: T) {
@@ -66,7 +67,8 @@ infix fun <T> Outcome<T>.shouldBeProgressWithData(expectedData: T?) {
 
 fun <T> Outcome<T>.shouldBeProgressWith(
    expectedData: T? = data,
-   expectedProgress: Float? = null
+   expectedProgress: Float? = null,
+   expectedStyle: LoadingStyle? = null
 ) {
    assertSoftly {
       this should beInstanceOfOutcome<Outcome.Progress<T>>()
@@ -85,6 +87,16 @@ fun <T> Outcome<T>.shouldBeProgressWith(
                      .let {
                         withClue("Outcome's progress does not match") {
                            it.shouldBe(expectedProgress)
+                        }
+                     }
+               }
+            }
+            .apply {
+               if (expectedStyle != null) {
+                  style
+                     .let {
+                        withClue("Outcome's style does not match") {
+                           it.shouldBe(expectedStyle)
                         }
                      }
                }
