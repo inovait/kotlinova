@@ -57,6 +57,7 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.Provides
+import si.inova.kotlinova.navigation.compiler.util.fail
 
 @Suppress("unused")
 class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private val logger: KSPLogger) : SymbolProcessor {
@@ -94,14 +95,15 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
       clas: KSClassDeclaration,
    ) {
       if (clas.isAbstract()) {
-         error("@InjectNavigationScreen is not supported for abstract screens")
+         logger.error("@InjectNavigationScreen is not supported for abstract screens", clas)
+         return
       }
 
       val screenClass = clas.toClassName()
       val type = clas.asStarProjectedType()
       val outputClassName = screenClass.simpleName + "Providers"
       val screenKeyType =
-         type.getScreenKeyIfItExists() ?: error("Class $clas annotated with @InjectNavigationScreen does not extend Screen")
+         type.getScreenKeyIfItExists() ?: logger.fail("Class annotated with @InjectNavigationScreen does not extend Screen", clas)
 
       val constructorParameters = clas.primaryConstructor?.parameters ?: emptyList()
 
@@ -204,7 +206,7 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
             ?.takeIf { it != ksTypeUnit }
             ?.toTypeName()
             ?: clas.getFirstScreenParent()
-            ?: error("Invalid @ContributesScreenBinding annotation: $clas does not extend Screen")
+            ?: logger.fail("Class annotated with @ContributesScreenBinding does not extend Screen", clas)
 
          if (boundType is ParameterizedTypeName &&
             boundType.rawType == SCREEN_BASE_CLASS &&
