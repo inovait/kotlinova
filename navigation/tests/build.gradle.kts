@@ -60,6 +60,8 @@ dependencies {
    implementation(libs.androidx.lifecycle.viewModel.compose)
 
    kaptAndroidTest(libs.dagger.compiler)
+   kaptAndroidTest(libs.kotlin.metadata) // Workaround for the https://github.com/google/dagger/issues/5001
+
    anvilAndroidTest(projects.navigation.navigationCompiler)
 
    androidTestImplementation(libs.junit4)

@@ -86,6 +86,7 @@ dependencies {
 
    anvil(libs.whetstone.compiler)
    kapt(libs.dagger.compiler)
+   kapt(libs.kotlin.metadata) // Workaround for the https://github.com/google/dagger/issues/5001
 
    debugImplementation(libs.androidx.compose.ui.test.manifest)
    debugImplementation(libs.androidx.compose.ui.tooling)
