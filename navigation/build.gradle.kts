@@ -34,10 +34,6 @@ android {
    namespace = "si.inova.kotlinova.navigation"
 }
 
-metro {
-   enableScopedInjectClassHints = true
-}
-
 dependencies {
    api(libs.simpleStack)
    api(libs.androidx.activity.compose)

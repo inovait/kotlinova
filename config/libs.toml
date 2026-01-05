@@ -1,9 +1,9 @@
 [versions]
 androidGradleCacheFix = "3.0.3"
-androidGradlePlugin = "8.12.0"
-androidx-activity = "1.12.0"
+androidGradlePlugin = "8.13.2"
+androidx-activity = "1.12.2"
 androidx-compose-material3 = "1.4.0"
-androidx-compose-runtime = "1.9.5"
+androidx-compose-runtime = "1.10.0"
 androidx-core = "1.17.0"
 androidx-fragment = "1.8.9"
 androidx-lifecycle = "2.10.0"
@@ -19,25 +19,25 @@ dokka = "1.9.20"
 # Do not update this until we update gradle
 # there is a version conflict with a gradle-supplied grpc, resulting in
 # AbstractManagedChannelImplBuilder error
-googleCloud-monitoring = "3.79.0"
+googleCloud-monitoring = "3.82.0"
 # Do not update, new version not compatible with the AGP https://issuetracker.google.com/issues/371158364
 googleCloud-protobufUtil = "4.33.0"
 junit4 = "4.13.2"
 junit5 = "6.0.1"
 junit5-launcher = "6.0.1"
-kotest = "6.0.5"
-kotlin = "2.2.21"
+kotest = "6.0.7"
+kotlin = "2.3.0"
 kotlin-coroutines = "1.10.2"
 kotlinPoet = "2.2.0"
-ksp = "2.3.2"
-metro = "0.7.7"
+ksp = "2.3.4"
 mavenPublish = "0.35.0"
+metro = "0.9.3"
 moshi = "1.15.2"
 okhttp = "5.3.2"
-orgJson = "20250517"
+orgJson = "20251224"
 retrofit = "3.0.0"
 sarif4k = "0.6.0"
-simpleStack = "2.9.0"
+simpleStack = "2.9.1"
 tomlj = "1.1.1"
 turbine = "1.2.1"
 versionCatalogUpdate = "1.0.1"
@@ -58,13 +58,13 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose-runtime" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose-runtime" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
-androidx-navigation3 = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation3" }
-androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
+androidx-navigation3 = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 autoService-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoService" }
 autoService-compiler = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }

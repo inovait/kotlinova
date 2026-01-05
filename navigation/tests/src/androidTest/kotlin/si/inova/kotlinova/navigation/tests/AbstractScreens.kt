@@ -67,6 +67,9 @@ class AbstractScreens {
    @Parcelize
    data object OuterScreenReferencingAbstractScreenKey : ScreenKey()
 
+   @Parcelize
+   data object AbstractScreenKey : ScreenKey()
+
    @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreen(
       private val innerScreen: TestAbstractScreen
@@ -74,19 +77,19 @@ class AbstractScreens {
       @Composable
       override fun Content(key: OuterScreenReferencingAbstractScreenKey) {
          Column {
-            innerScreen.Content(key)
+            innerScreen.Content(AbstractScreenKey)
          }
       }
    }
 
-   abstract class TestAbstractScreen : Screen<ScreenKey>()
+   abstract class TestAbstractScreen : Screen<AbstractScreenKey>()
 
    @ContributesScreenBinding
    @InjectNavigationScreen
    @Inject
    class TestAbstractScreenImpl : TestAbstractScreen() {
       @Composable
-      override fun Content(key: ScreenKey) {
+      override fun Content(key: AbstractScreenKey) {
          Column {
             Text("Hello from Inner Screen")
          }

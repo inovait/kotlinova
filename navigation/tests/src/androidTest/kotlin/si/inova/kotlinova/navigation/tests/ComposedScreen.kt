@@ -47,6 +47,8 @@ class ComposedScreen {
 
    @Parcelize
    data object OuterScreenKey : ScreenKey()
+   @Parcelize
+   data object InnerScreenKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreen(
@@ -57,15 +59,15 @@ class ComposedScreen {
       override fun Content(key: OuterScreenKey) {
          Column {
             Text("Outer screen: ${outerScreenService.number}")
-            innerScreen.Content(key)
+            innerScreen.Content(InnerScreenKey)
          }
       }
    }
 
    @InjectNavigationScreen
-   class InnerScreen(private val innerScreenService: InnerScreenService) : Screen<ScreenKey>() {
+   class InnerScreen(private val innerScreenService: InnerScreenService) : Screen<InnerScreenKey>() {
       @Composable
-      override fun Content(key: ScreenKey) {
+      override fun Content(key: InnerScreenKey) {
          Text("Inner screen: ${innerScreenService.number}")
       }
    }
