@@ -14,8 +14,7 @@ coil = "3.3.0"
 desugarJdkLibs = "2.1.5"
 detekt = "1.23.8"
 dispatch = "1.0.0-beta10"
-# Do not update until Dokka gradle plugin is not experimental anymore
-dokka = "1.9.20"
+dokka = "2.1.0"
 # Do not update this until we update gradle
 # there is a version conflict with a gradle-supplied grpc, resulting in
 # AbstractManagedChannelImplBuilder error
@@ -108,6 +107,7 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
