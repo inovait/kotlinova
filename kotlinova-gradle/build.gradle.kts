@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -29,6 +29,7 @@ plugins {
    alias(libs.plugins.mavenPublish)
    alias(libs.plugins.detekt)
    alias(libs.plugins.dokka)
+   alias(libs.plugins.dokka.javadoc)
 }
 
 group = "si.inova.kotlinova"
@@ -56,7 +57,7 @@ mavenPublishing {
 
    configure(
       KotlinJvm(
-         javadocJar = JavadocJar.Dokka("dokkaJavadoc"),
+         javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationJavadoc"),
          sourcesJar = true,
       )
    )
