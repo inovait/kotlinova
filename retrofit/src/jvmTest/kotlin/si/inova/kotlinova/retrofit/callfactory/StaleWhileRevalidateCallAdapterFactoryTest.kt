@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -38,6 +38,7 @@ import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.Outcome
+import si.inova.kotlinova.core.test.TestScopeWithDispatcherProvider
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeSuccessWithData
@@ -48,6 +49,8 @@ import java.io.File
 import java.io.IOException
 
 internal class StaleWhileRevalidateCallAdapterFactoryTest {
+   private val scope = TestScopeWithDispatcherProvider()
+
    private lateinit var tempCache: Cache
 
    @BeforeEach
@@ -59,7 +62,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Throw NoNetworkException if request timeouts`() = runTest {
+   internal fun `Throw NoNetworkException if request timeouts`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
@@ -77,7 +80,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Throw NoNetworkException if request fails to download`() = runTest {
+   internal fun `Throw NoNetworkException if request fails to download`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
@@ -95,7 +98,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Throw DataParsingException if json parsing fails`() = runTest {
+   internal fun `Throw DataParsingException if json parsing fails`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
@@ -111,7 +114,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Throw DataParsingException if json parsing has wrong fields`() = runTest {
+   internal fun `Throw DataParsingException if json parsing has wrong fields`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
@@ -127,7 +130,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Include URL in the json parsing exceptions`() = runTest {
+   internal fun `Include URL in the json parsing exceptions`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
@@ -149,7 +152,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Parse error with error handler`() = runTest {
+   internal fun `Parse error with error handler`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService =
             createRetrofitService(this@runTest, errorHandler = { response: Response<*>, cause: Exception ->
@@ -175,7 +178,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Just return single success when there is no cache`() = runTest {
+   internal fun `Just return single success when there is no cache`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -191,7 +194,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Return cached version as Progress, followed by real request as Success`() = runTest {
+   internal fun `Return cached version as Progress, followed by real request as Success`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -214,7 +217,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Return cache as success if cached version is still fresh`() = runTest {
+   internal fun `Return cache as success if cached version is still fresh`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -234,7 +237,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Ignore cache freshness when synthetic force refresh header is set`() = runTest {
+   internal fun `Ignore cache freshness when synthetic force refresh header is set`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -257,7 +260,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Remove synthetic force refresh header when set`() = runTest {
+   internal fun `Remove synthetic force refresh header when set`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -283,7 +286,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Transform network errors using exceptionInterceptor`() = runTest {
+   internal fun `Transform network errors using exceptionInterceptor`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(
             this@runTest,
@@ -315,7 +318,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Properly respond when server 304 to cache response`() = runTest {
+   internal fun `Properly respond when server 304 to cache response`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -338,7 +341,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Return cached version as the data of the Failure, when network request fails`() = runTest {
+   internal fun `Return cached version as the data of the Failure, when network request fails`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
@@ -363,7 +366,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Return cached version as the data of the Failure, when parsing fails`() = runTest {
+   internal fun `Return cached version as the data of the Failure, when parsing fails`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
