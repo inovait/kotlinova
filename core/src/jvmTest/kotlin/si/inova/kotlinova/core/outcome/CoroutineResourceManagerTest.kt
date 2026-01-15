@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -308,6 +308,28 @@ internal class CoroutineResourceManagerTest {
    }
 
    @Test
+   internal fun `launchResourceControlTask should keep catch and report unknown errors inside block`() = scope.runTest {
+      val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
+
+      val error = StackOverflowError()
+
+      manager.launchResourceControlTask(resource) {
+         throw error
+      }
+
+      runCurrent()
+
+      val value = resource.value
+      value.shouldBeInstanceOf<Outcome.Error<*>>()
+         .exception.let {
+            it.shouldBeInstanceOf<UnknownCauseException>()
+            it.cause shouldBeSameInstanceAs error
+         }
+
+      reportedErrors.shouldHaveSize(1).first() shouldBeSameInstanceAs error
+   }
+
+   @Test
    internal fun `launchResourceControlTask should report exceptions inside flows`() = scope.runTest {
       val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
 
@@ -416,5 +438,16 @@ internal class CoroutineResourceManagerTest {
       runCurrent()
 
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
+   }
+
+   @Test
+   internal fun `launchWithExceptionReporting report errors that occur inside block`() = scope.runTest {
+      manager.launchWithExceptionReporting {
+         throw StackOverflowError()
+      }
+
+      runCurrent()
+
+      reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<StackOverflowError>()
    }
 }

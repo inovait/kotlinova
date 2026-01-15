@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -69,7 +69,7 @@ open class CoroutineResourceManager(
          block(ResourceControlBlock(resource, this))
       } catch (e: CancellationException) {
          throw e
-      } catch (e: Exception) {
+      } catch (e: Throwable) {
          val exception = if (e is CauseException) {
             e
          } else {
@@ -82,8 +82,8 @@ open class CoroutineResourceManager(
       }
    }
 
-   private fun interceptException(exception: Exception) {
-      reportService.report(exception)
+   private fun interceptException(throwable: Throwable) {
+      reportService.report(throwable)
    }
 
    inner class ResourceControlBlock<T>(
@@ -158,7 +158,7 @@ open class CoroutineResourceManager(
             block()
          } catch (e: CancellationException) {
             throw e
-         } catch (e: Exception) {
+         } catch (e: Throwable) {
             reportService.report(e)
          }
       }
