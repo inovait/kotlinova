@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,11 +16,15 @@
 
 package si.inova.kotlinova.navigation.navigation3
 
+import androidx.compose.animation.EnterExitState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.StateChange
 import com.zhuinden.simplestack.StateChanger
@@ -43,9 +47,17 @@ class Navigation3EntryProvider(
 
    private lateinit var screenRegistry: ScreenRegistry
    private var initialized: Boolean = false
+   private var completionCallback: StateChanger.Callback? = null
 
    private val _backstackEntries = mutableStateListOf<NavEntry<ScreenKey>>()
    val backstackEntries: List<NavEntry<ScreenKey>> get() = _backstackEntries
+
+   val completionListenerDecorator = NavEntryDecorator<ScreenKey>(decorate = {
+      key(it) {
+         TrackAnimationCompletion()
+      }
+      it.Content()
+   })
 
    private fun createNavEntry(
       key: ScreenKey,
@@ -105,7 +117,23 @@ class Navigation3EntryProvider(
          }
       }
 
-      completionCallback.stateChangeComplete()
+      if (stateChange.isTopNewKeyEqualToPrevious) {
+         // If the top key does not change, then the animation might not play
+         // Complete immediately just in case
+         completionCallback.stateChangeComplete()
+      } else {
+         this.completionCallback = completionCallback
+      }
+   }
+
+   @Composable
+   private fun TrackAnimationCompletion() {
+      val transition = LocalNavAnimatedContentScope.current.transition
+
+      if (transition.targetState == EnterExitState.Visible && transition.currentState == EnterExitState.Visible) {
+         completionCallback?.stateChangeComplete()
+         completionCallback = null
+      }
    }
 }
 
