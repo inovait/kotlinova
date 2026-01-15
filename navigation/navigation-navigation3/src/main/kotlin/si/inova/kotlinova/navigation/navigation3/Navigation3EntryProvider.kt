@@ -18,6 +18,7 @@ package si.inova.kotlinova.navigation.navigation3
 
 import androidx.compose.animation.EnterExitState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -131,8 +132,10 @@ class Navigation3EntryProvider(
       val transition = LocalNavAnimatedContentScope.current.transition
 
       if (transition.targetState == EnterExitState.Visible && transition.currentState == EnterExitState.Visible) {
-         completionCallback?.stateChangeComplete()
-         completionCallback = null
+         SideEffect {
+            completionCallback?.stateChangeComplete()
+            completionCallback = null
+         }
       }
    }
 }
