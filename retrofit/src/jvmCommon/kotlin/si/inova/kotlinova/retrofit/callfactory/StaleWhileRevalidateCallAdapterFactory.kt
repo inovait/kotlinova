@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.retrofit.callfactory
 
 import dispatch.core.withDefault
+import dispatch.core.withIO
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
@@ -121,7 +122,11 @@ class StaleWhileRevalidateCallAdapterFactory(
                .removeHeader(SyntheticHeaders.HEADER_FORCE_REFRESH)
                .build()
 
-            val rawCacheResponse = retrofit.callFactory().newCall(cacheRequest).enqueueAndAwait()
+            // Use execute instead of dispatch to skip dispatcher and concurrent request limits.
+            // Those shouldn't be an issue, since we are loading from disk
+            val rawCacheResponse = withIO {
+               retrofit.callFactory().newCall(cacheRequest).execute()
+            }
 
             if (rawCacheResponse.code == HttpURLConnection.HTTP_GATEWAY_TIMEOUT) {
                // OkHttp returns gateway timeout when there is no cache or cache is not valid
