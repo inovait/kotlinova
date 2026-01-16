@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -101,7 +101,7 @@ class AbstractScreens {
 
    @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreenWithService(
-      private val innerScreen: TestAbstractScreenWithService
+      private val innerScreen: TestAbstractScreenWithService<ScreenKey>
    ) : Screen<OuterScreenReferencingAbstractScreenWithServiceKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingAbstractScreenWithServiceKey) {
@@ -111,7 +111,7 @@ class AbstractScreens {
       }
    }
 
-   abstract class TestAbstractScreenWithService : Screen<ScreenKey>()
+   abstract class TestAbstractScreenWithService<K : ScreenKey> : Screen<K>()
 
    @ContributesScreenBinding
    @Suppress("unused")
@@ -119,7 +119,7 @@ class AbstractScreens {
    @Inject
    class TestAbstractScreenWithServiceImpl(
       private val service: ServiceScopes.SharedService
-   ) : TestAbstractScreenWithService() {
+   ) : TestAbstractScreenWithService<ScreenKey>() {
       @Composable
       override fun Content(key: ScreenKey) {
          Column {
