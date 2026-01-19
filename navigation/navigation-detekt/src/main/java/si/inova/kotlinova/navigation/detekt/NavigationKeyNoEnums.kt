@@ -16,58 +16,51 @@
 
 package si.inova.kotlinova.navigation.detekt
 
-import io.gitlab.arturbosch.detekt.api.CodeSmell
-import io.gitlab.arturbosch.detekt.api.Config
-import io.gitlab.arturbosch.detekt.api.Debt
-import io.gitlab.arturbosch.detekt.api.Entity
-import io.gitlab.arturbosch.detekt.api.Issue
-import io.gitlab.arturbosch.detekt.api.Rule
-import io.gitlab.arturbosch.detekt.api.Severity
-import io.gitlab.arturbosch.detekt.rules.fqNameOrNull
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import dev.detekt.api.Config
+import dev.detekt.api.Entity
+import dev.detekt.api.Finding
+import dev.detekt.api.RequiresAnalysisApi
+import dev.detekt.api.Rule
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
-import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 
-class NavigationKeyNoEnums(config: Config) : Rule(config) {
-   override val issue: Issue = Issue(
-      javaClass.simpleName,
-      Severity.Defect,
-      "Navigation keys should not contain any enums due to hashcode non-determinism. " +
-         "See https://github.com/Zhuinden/simple-stack-compose-integration/issues/29.",
-      Debt.FIVE_MINS
-   )
-
+class NavigationKeyNoEnums(config: Config) : Rule(
+   config, "Navigation keys should not contain any enums due to hashcode non-determinism. " +
+      "See https://github.com/Zhuinden/simple-stack-compose-integration/issues/29."
+), RequiresAnalysisApi {
    override fun visitClass(klass: KtClass) {
       if (!klass.isData()) {
          return
       }
 
-      val resolvedClass = bindingContext[BindingContext.CLASS, klass] ?: return
+      analyze(klass) {
+         val screenKey = findClass(SCREEN_KEY_CLASS) ?: return
 
-      val parents = resolvedClass.getAllSuperclassesWithoutAny()
-      if (parents.all { it.fqNameOrNull()?.toString() != SCREEN_KEY_CLASS }) {
-         return
+         val classSymbol = klass.classSymbol ?: return
+         if (classSymbol.isSubClassOf(screenKey)) {
+            processParameters(klass, classSymbol, listOfNotNull(classSymbol.name?.toString()))
+         }
       }
-
-      processParameters(klass, resolvedClass, listOf(resolvedClass.name.toString()))
    }
 
-   private fun processParameters(
+   private fun KaSession.processParameters(
       originalScreenClass: KtClass,
-      resolvedClass: ClassDescriptor,
+      resolvedClass: KaClassSymbol,
       parentTree: List<String>
    ) {
-      val parameters = resolvedClass.unsubstitutedPrimaryConstructor?.valueParameters ?: emptyList()
+      val primaryConstructor = resolvedClass.memberScope.constructors.firstOrNull { it.isPrimary == true } ?: return
+
+      val parameters = primaryConstructor.valueParameters
       for (parameter in parameters) {
-         val parameterType = parameter.type
-         val immediateSuperType = parameterType.getImmediateSuperclassNotAny()?.fqNameOrNull()?.toString()
-         if (immediateSuperType == "kotlin.Enum" || immediateSuperType == "java.lang.Enum") {
+         val directSupertypes = parameter.returnType.directSupertypes.mapNotNull { it.expandedSymbol?.classId?.asSingleFqName()?.asString() }
+         if (directSupertypes.any { it == "kotlin.Enum" || it == "java.lang.Enum" }) {
             report(
-               CodeSmell(
-                  issue,
+               Finding(
                   Entity.from(originalScreenClass),
                   "Screen key ${parentTree.joinToString(" -> ")} has " +
                      "Enum parameter '${parameter.name}'.",
@@ -77,7 +70,7 @@ class NavigationKeyNoEnums(config: Config) : Rule(config) {
             continue
          }
 
-         val typeClass = parameterType.constructor.declarationDescriptor as? ClassDescriptor
+         val typeClass = parameter.returnType.expandedSymbol as? KaNamedClassSymbol
          if (typeClass?.isData == true) {
             processParameters(
                originalScreenClass,
@@ -89,4 +82,4 @@ class NavigationKeyNoEnums(config: Config) : Rule(config) {
    }
 }
 
-private const val SCREEN_KEY_CLASS = "si.inova.kotlinova.navigation.screenkeys.ScreenKey"
+private val SCREEN_KEY_CLASS = ClassId.topLevel(FqName("si.inova.kotlinova.navigation.screenkeys.ScreenKey"))

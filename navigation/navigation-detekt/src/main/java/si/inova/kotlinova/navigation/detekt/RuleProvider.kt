@@ -16,18 +16,17 @@
 
 package si.inova.kotlinova.navigation.detekt
 
-import io.gitlab.arturbosch.detekt.api.Config
-import io.gitlab.arturbosch.detekt.api.RuleSet
-import io.gitlab.arturbosch.detekt.api.RuleSetProvider
+import dev.detekt.api.Config
+import dev.detekt.api.RuleSet
+import dev.detekt.api.RuleSetProvider
 
 class RuleProvider : RuleSetProvider {
-   override val ruleSetId: String
-      get() = "kotlinovanavigation"
+   override val ruleSetId = RuleSet.Id("kotlinovanavigation")
 
-   override fun instance(config: Config): RuleSet = RuleSet(
+   override fun instance(): RuleSet = RuleSet(
       ruleSetId,
       listOf(
-         NavigationKeyNoEnums(config),
+         ::NavigationKeyNoEnums,
       )
    )
 }
