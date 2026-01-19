@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
  */
 class FakeNavigator(
    vararg initialBackstack: ScreenKey,
-   private val conditionalNavigationHandlers: Map<KClass<NavigationCondition>, ConditionalNavigationHandler> = emptyMap()
+   private val conditionalNavigationHandlers: Map<KClass<NavigationCondition>, ConditionalNavigationHandler> = emptyMap(),
 ) : Navigator {
    var backstack: List<ScreenKey> = initialBackstack.toList()
 

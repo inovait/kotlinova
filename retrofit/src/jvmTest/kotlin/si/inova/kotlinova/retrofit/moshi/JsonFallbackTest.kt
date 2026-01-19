@@ -64,5 +64,5 @@ private enum class FakeLevel {
 
    @Json(name = "other")
    @JsonFallback
-   OTHER
+   OTHER,
 }

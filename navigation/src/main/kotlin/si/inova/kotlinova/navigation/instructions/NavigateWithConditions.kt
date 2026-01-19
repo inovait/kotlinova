@@ -32,7 +32,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 class NavigateWithConditions(
    val target: NavigationInstruction,
    vararg val conditions: NavigationCondition,
-   val conditionScreenWrapper: (NavigationInstruction) -> NavigationInstruction = { it }
+   val conditionScreenWrapper: (NavigationInstruction) -> NavigationInstruction = { it },
 ) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       for (condition in conditions) {

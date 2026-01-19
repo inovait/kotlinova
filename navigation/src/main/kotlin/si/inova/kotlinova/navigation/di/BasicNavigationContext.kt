@@ -23,5 +23,5 @@ import si.inova.kotlinova.navigation.conditions.MainConditionalNavigationHandler
 @ContributesBinding(OuterNavigationScope::class)
 @Inject
 class BasicNavigationContext(
-   override val mainConditionalNavigationHandler: MainConditionalNavigationHandler
+   override val mainConditionalNavigationHandler: MainConditionalNavigationHandler,
 ) : NavigationContext

@@ -56,7 +56,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    @BeforeEach
    internal fun setUp(
       @TempDir
-      cacheDirectory: File
+      cacheDirectory: File,
    ) {
       tempCache = Cache(cacheDirectory, 100_000)
    }
@@ -387,17 +387,18 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
       }
    }
+
    private interface TestRetrofitService {
       @GET("/data")
       fun getEnumResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
-         force: Boolean = false
+         force: Boolean = false,
       ): Flow<Outcome<FakeEnumResult>>
    }
 
    private enum class FakeEnumResult {
       FIRST,
-      SECOND
+      SECOND,
    }
 
    private class TestErrorResponseException(message: String? = null, cause: Throwable? = null) : CauseException(message, cause)

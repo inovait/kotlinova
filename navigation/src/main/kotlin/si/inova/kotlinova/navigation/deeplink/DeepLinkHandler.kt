@@ -85,7 +85,7 @@ class MultiDeepLinkHandler : DeepLinkHandler {
 fun DeepLinkHandler.handleMultipleDeepLinks(
    uri: Uri,
    startup: Boolean,
-   block: MultiDeepLinkHandler.() -> Unit
+   block: MultiDeepLinkHandler.() -> Unit,
 ): NavigationInstruction? {
    val multiDeepLinkHandler = MultiDeepLinkHandler()
    block(multiDeepLinkHandler)

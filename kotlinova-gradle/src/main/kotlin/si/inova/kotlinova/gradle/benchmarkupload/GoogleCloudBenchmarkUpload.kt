@@ -62,7 +62,7 @@ abstract class GoogleCloudBenchmarkUpload : DefaultTask() {
             for ((metricName, metricValues) in metrics) {
                val metricKey = metricMap.getting(metricName).orNull ?: error("Metric '$metricName' not provided in metricMap")
 
-               for (value in metricValues as JsonObject) {
+               for (value in (metricValues as JsonObject?).orEmpty()) {
                   if (value.key == "runs") {
                      continue
                   }
@@ -71,7 +71,7 @@ abstract class GoogleCloudBenchmarkUpload : DefaultTask() {
                      .setEndTime(Timestamps.fromMillis(System.currentTimeMillis()))
                      .build()
                   val typedValue = TypedValue.newBuilder()
-                     .setDoubleValue((value.value as Number).toDouble()).build()
+                     .setDoubleValue((value.value!! as Number).toDouble()).build()
                   val point: Point =
                      Point.newBuilder().setInterval(interval).setValue(typedValue)
                         .build()
@@ -134,14 +134,14 @@ private fun camelToSnake(str: String): String {
 
 @Suppress("UNCHECKED_CAST")
 private fun JsonObject.obj(key: String): JsonObject {
-   return getValue(key) as JsonObject
+   return getValue(key)!! as JsonObject
 }
 
 @Suppress("UNCHECKED_CAST")
 private fun <T> JsonObject.list(key: String): List<T> {
-   return getValue(key) as List<T>
+   return getValue(key)!! as List<T>
 }
 
 private fun JsonObject.str(key: String): String {
-   return getValue(key) as String
+   return getValue(key)!! as String
 }

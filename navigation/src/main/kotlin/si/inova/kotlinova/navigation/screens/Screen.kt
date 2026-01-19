@@ -19,6 +19,7 @@ package si.inova.kotlinova.navigation.screens
 import androidx.compose.runtime.Composable
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
+@Suppress("AbstractClassCanBeInterface") // Cannot change now as it would break backwards compatibility
 abstract class Screen<T : ScreenKey> {
    @Composable
    abstract fun Content(key: T)

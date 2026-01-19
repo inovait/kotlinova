@@ -23,6 +23,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 /**
  * Execute multiple navigation instructions sequentially
+ * @param instructions a list of instructions to navigate to
  * @param overrideDirection The direction of the [StateChange]:
  *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
  *   When not provided, direction of the last performed
@@ -31,7 +32,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 @Parcelize
 class MultiNavigationInstructions(
    vararg val instructions: NavigationInstruction,
-   val overrideDirection: Int? = null
+   val overrideDirection: Int? = null,
 ) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       var lastDirection = StateChange.REPLACE

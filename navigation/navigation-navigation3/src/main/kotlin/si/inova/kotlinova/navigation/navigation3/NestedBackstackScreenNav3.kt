@@ -38,7 +38,7 @@ open class NestedBackstackScreen(
    @MainNavigation
    private val mainBackstack: Backstack,
    @CurrentScopeTag
-   val scope: String
+   val scope: String,
 ) : Screen<NestedNavigationScreenKey>() {
    @Composable
    override fun Content(key: NestedNavigationScreenKey) {
@@ -60,7 +60,7 @@ open class NestedBackstackScreen(
 
    @Composable
    protected open fun NavDisplay(
-      navigation3EntryProvider: Navigation3EntryProvider
+      navigation3EntryProvider: Navigation3EntryProvider,
    ) {
       navigation3EntryProvider.NavDisplay()
    }

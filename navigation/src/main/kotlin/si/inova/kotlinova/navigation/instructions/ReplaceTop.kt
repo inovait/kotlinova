@@ -25,6 +25,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 /**
  * Remove the top of the backstack and replace it with the provided instructions
  *
+ * @param with The navigation instruction to execute after removing the top screen.
  * @param direction Optional animation direction of the [StateChange]:
  *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
  *   Defaults to [StateChange.REPLACE].
@@ -39,6 +40,7 @@ class ReplaceTop(val with: NavigationInstruction, private val direction: Int = S
 /**
  * Replace the top of the backstack with the provided screen
  *
+ * @param screen The screen to replace current screen with
  * @param direction Optional animation direction of the [StateChange]:
  *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
  *   Defaults to [StateChange.REPLACE].

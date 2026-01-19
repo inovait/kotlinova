@@ -17,7 +17,6 @@
 package si.inova.kotlinova.navigation.simplestack
 
 import androidx.compose.runtime.Composable
-import com.zhuinden.simplestack.BackHandlingModel
 import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.GlobalServices
 import com.zhuinden.simplestack.StateChanger
@@ -51,7 +50,7 @@ fun NavigationInjection.Factory.rememberBackstack(
    overrideMainBackstack: Backstack? = null,
    parentBackstack: Backstack? = null,
    parentBackstackScope: String? = null,
-   initialHistory: () -> List<ScreenKey>
+   initialHistory: () -> List<ScreenKey>,
 ): Backstack {
    return rememberBackstack(stateChanger, id, init = {
       val scopedServices = InjectedScopedServices()

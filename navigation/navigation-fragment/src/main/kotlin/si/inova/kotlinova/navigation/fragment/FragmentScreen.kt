@@ -44,7 +44,7 @@ import kotlin.random.Random
  * A navigation screen that displays a fragment
  */
 abstract class FragmentScreen<K>(
-   private val scopeExitListener: ScopeExitListener
+   private val scopeExitListener: ScopeExitListener,
 ) : Screen<K>() where K : FragmentScreenKey, K : ScreenKey {
    @OptIn(ExperimentalCoroutinesApi::class)
    @Composable

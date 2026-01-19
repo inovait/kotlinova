@@ -23,11 +23,11 @@ import kotlin.reflect.KClass
 
 @Inject
 class MainConditionalNavigationHandler(
-   private val handlers: Map<KClass<*>, Provider<ConditionalNavigationHandler>>
+   private val handlers: Map<KClass<*>, Provider<ConditionalNavigationHandler>>,
 ) : ConditionalNavigationHandler {
    override fun getNavigationRedirect(
       condition: NavigationCondition,
-      navigateToIfConditionMet: NavigationInstruction
+      navigateToIfConditionMet: NavigationInstruction,
    ): NavigationInstruction? {
       val handler = handlers[condition.javaClass.kotlin]?.invoke()
          ?: error(

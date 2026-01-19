@@ -73,7 +73,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
          .addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
          .build()
 
-      val provideServiceFunction = createBindsServiceFunction(serviceClassName, serviceClassName)
+      val provideServiceFunction = createBindsServiceFunction(serviceClassName)
       val provideFromSimpleStackFunction = createProvideFromSimpleStackFunction(serviceClassName, serviceClassName)
 
       val contributesBindingAnnotation =
@@ -92,7 +92,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
                // is solely determined by the type of the generic annotation and KSP does not support generic annotations
                // So we are forced to use another annotation for that
                val boundType = boundType(service, contributesScopedServiceAnnotation).toClassName()
-               addFunction(createBindsServiceFunction(serviceClassName, boundType))
+               addFunction(createBindsServiceFunction(boundType))
                addFunction(createProvideFromSimpleStackFunction(serviceClassName, boundType))
             }
          }
@@ -108,8 +108,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
    }
 
    private fun createBindsServiceFunction(
-      serviceClassName: ClassName,
-      targetClassName: ClassName
+      targetClassName: ClassName,
    ): FunSpec {
       return FunSpec.builder("bind${targetClassName.simpleName}Constructor")
          .returns(SCOPED_SERVICE_BASE_CLASS)
@@ -127,7 +126,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
 
    private fun createProvideFromSimpleStackFunction(
       serviceClassName: ClassName,
-      targetClassName: ClassName
+      targetClassName: ClassName,
    ) = FunSpec.builder("provide${targetClassName.simpleName}FromSimpleStack")
       .returns(targetClassName)
       .addParameter("backstack", SIMPLE_STACK_BACKSTACK_CLASS)

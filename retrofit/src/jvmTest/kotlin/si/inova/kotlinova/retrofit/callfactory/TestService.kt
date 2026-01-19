@@ -36,7 +36,7 @@ inline fun <reified T> MockWebServerScope.createRetrofitService(
    cache: Cache? = null,
    errorHandler: ErrorHandler? = null,
    okHttpSetup: OkHttpClient.Builder.() -> Unit = {},
-   noinline exceptionInterceptor: (Throwable) -> CauseException? = { null }
+   noinline exceptionInterceptor: (Throwable) -> CauseException? = { null },
 ): T {
    val client = OkHttpClient.Builder()
       .addInterceptor(BypassCacheInterceptor())

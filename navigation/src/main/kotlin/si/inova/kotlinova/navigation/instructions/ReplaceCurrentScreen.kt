@@ -24,6 +24,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 /**
  * Replace current top screen ont he backstack with the provided screen.
  *
+ * @param screen The screen to replace current screen with
  * @param direction The direction of the [StateChange]: [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
  */
 @Parcelize

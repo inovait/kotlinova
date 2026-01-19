@@ -41,7 +41,7 @@ import si.inova.kotlinova.navigation.simplestack.rememberBackstack
  * Provider for the [backstackEntries] that can be supplied directly to the NavDisplay
  */
 class Navigation3EntryProvider(
-   private val generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() }
+   private val generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() },
 ) : StateChanger {
    lateinit var simpleStackBackstack: Backstack
       private set
@@ -62,7 +62,7 @@ class Navigation3EntryProvider(
 
    private fun createNavEntry(
       key: ScreenKey,
-      screen: Screen<ScreenKey> = screenRegistry.createScreen(key)
+      screen: Screen<ScreenKey> = screenRegistry.createScreen(key),
    ): NavEntry<ScreenKey> {
       return NavEntry(
          key,
@@ -95,7 +95,7 @@ class Navigation3EntryProvider(
 
    override fun handleStateChange(
       stateChange: StateChange,
-      completionCallback: StateChanger.Callback
+      completionCallback: StateChanger.Callback,
    ) {
       initIfNeeded(stateChange.backstack)
 
@@ -143,7 +143,7 @@ class Navigation3EntryProvider(
 @Composable
 fun NavigationInjection.Factory.rememberNavigation3EntryProvider(
    initialHistory: () -> List<ScreenKey>,
-   generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() }
+   generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() },
 ): Navigation3EntryProvider {
    val entryProvider = remember { Navigation3EntryProvider(generateExtraNavEntryMetadata) }
 

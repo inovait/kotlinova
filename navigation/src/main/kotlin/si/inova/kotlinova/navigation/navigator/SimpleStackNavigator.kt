@@ -27,7 +27,7 @@ import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 @Inject
 class SimpleStackNavigator(
    private val backstack: Backstack,
-   private val navigationContext: Lazy<NavigationContext>
+   private val navigationContext: Lazy<NavigationContext>,
 ) : Navigator {
    override fun navigate(navigationInstruction: NavigationInstruction) {
       if (backstack.isStateChangePending) {

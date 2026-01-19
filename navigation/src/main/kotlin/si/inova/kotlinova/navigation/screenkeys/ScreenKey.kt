@@ -44,6 +44,8 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * This translates to [AnimatedContent]'s transitionSpec.
     * See [Compose documentation](https://developer.android.com/jetpack/compose/animation#animatedcontent)
     * for syntax and examples.
+    *
+    * @param scope animated scope for getting the animation details
     */
    open fun forwardAnimation(scope: AnimatedContentTransitionScope<*>): ContentTransform {
       // Rough match of the FragmentTransaction.TRANSITION_OPEN
@@ -68,13 +70,14 @@ abstract class ScreenKey : Parcelable, ScopeKey {
     * See [Compose documentation](https://developer.android.com/jetpack/compose/animation#animatedcontent)
     * for syntax and examples.
     *
+    * @param scope animated scope for getting the animation details
     * @param backSwipeEdge If this transition was caused by the predictive back,
     *  this property is non-null and signals from which edge did user swipe to go back
     *
     */
    open fun backAnimation(
       scope: AnimatedContentTransitionScope<*>,
-      backSwipeEdge: @BackEventCompat.SwipeEdge Int?
+      backSwipeEdge: @BackEventCompat.SwipeEdge Int?,
    ): ContentTransform {
       // Rough match of the FragmentTransaction.TRANSITION_CLOSE
 

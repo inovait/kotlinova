@@ -29,10 +29,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
 
-class NavigationKeyNoEnums(config: Config) : Rule(
-   config, "Navigation keys should not contain any enums due to hashcode non-determinism. " +
-      "See https://github.com/Zhuinden/simple-stack-compose-integration/issues/29."
-), RequiresAnalysisApi {
+class NavigationKeyNoEnums(config: Config) :
+   Rule(
+      config,
+      "Navigation keys should not contain any enums due to hashcode non-determinism. " +
+         "See https://github.com/Zhuinden/simple-stack-compose-integration/issues/29.",
+   ),
+   RequiresAnalysisApi {
    override fun visitClass(klass: KtClass) {
       if (!klass.isData()) {
          return
@@ -51,13 +54,15 @@ class NavigationKeyNoEnums(config: Config) : Rule(
    private fun KaSession.processParameters(
       originalScreenClass: KtClass,
       resolvedClass: KaClassSymbol,
-      parentTree: List<String>
+      parentTree: List<String>,
    ) {
-      val primaryConstructor = resolvedClass.memberScope.constructors.firstOrNull { it.isPrimary == true } ?: return
+      val primaryConstructor = resolvedClass.memberScope.constructors.firstOrNull { it.isPrimary } ?: return
 
       val parameters = primaryConstructor.valueParameters
       for (parameter in parameters) {
-         val directSupertypes = parameter.returnType.directSupertypes.mapNotNull { it.expandedSymbol?.classId?.asSingleFqName()?.asString() }
+         val directSupertypes = parameter.returnType.directSupertypes.mapNotNull {
+            it.expandedSymbol?.classId?.asSingleFqName()?.asString()
+         }
          if (directSupertypes.any { it == "kotlin.Enum" || it == "java.lang.Enum" }) {
             report(
                Finding(

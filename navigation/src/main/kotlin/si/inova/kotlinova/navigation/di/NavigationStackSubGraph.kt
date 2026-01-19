@@ -40,12 +40,12 @@ interface NavigationStackSubGraph : NavigationInjection {
          @Provides
          backstack: Backstack,
          @Provides
-         mainBackstackWrapper: MainBackstackWrapper
+         mainBackstackWrapper: MainBackstackWrapper,
       ): NavigationStackSubGraph
    }
 }
 
-class MainBackstackWrapper(val backstack: Backstack)
+data class MainBackstackWrapper(val backstack: Backstack)
 
 @ContributesTo(OuterNavigationScope::class)
 interface NavigationStackProviders {

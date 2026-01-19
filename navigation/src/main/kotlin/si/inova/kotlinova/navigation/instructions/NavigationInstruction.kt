@@ -30,6 +30,6 @@ abstract class NavigationInstruction : Parcelable {
     */
    data class NavigationResult(
       val newBackstack: List<ScreenKey>,
-      val direction: Int
+      val direction: Int,
    )
 }

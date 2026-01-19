@@ -33,7 +33,7 @@ import java.util.regex.Pattern
  */
 inline fun Uri.matchDeepLink(
    vararg patterns: String,
-   mapper: (Map<String, String>) -> NavigationInstruction?
+   mapper: (Map<String, String>) -> NavigationInstruction?,
 ): NavigationInstruction? {
    val arguments = patterns.asSequence().mapNotNull {
       NavDeepLink(it).getMatchingArguments(this)
@@ -48,7 +48,7 @@ inline fun Uri.matchDeepLink(
  * Copied and adapted from https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-common/src/main/java/androidx/navigation/NavDeepLink.kt
  */
 @PublishedApi
-internal class NavDeepLink constructor(
+internal class NavDeepLink(
    val uriPattern: String,
 ) {
    // path
@@ -109,7 +109,7 @@ internal class NavDeepLink constructor(
     */
    @Suppress("NullableCollection")
    fun getMatchingArguments(
-      deepLink: Uri
+      deepLink: Uri,
    ): Map<String, String>? {
       // first check overall uri pattern for quick return if general pattern does not match
       val matcher = pathPattern?.matcher(deepLink.toString()) ?: return null

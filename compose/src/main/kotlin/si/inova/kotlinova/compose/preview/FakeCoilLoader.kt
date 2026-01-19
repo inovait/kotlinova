@@ -41,7 +41,15 @@ import kotlinx.coroutines.Deferred
  * @param colors sequence of [ColorInt] colors to display.
  */
 class FakeCoilLoader(
-   private val colors: List<Int> = listOf(Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.CYAN, Color.YELLOW, Color.MAGENTA)
+   private val colors: List<Int> = listOf(
+      Color.RED,
+      Color.GREEN,
+      Color.BLUE,
+      Color.GRAY,
+      Color.CYAN,
+      Color.YELLOW,
+      Color.MAGENTA,
+   ),
 ) : ImageLoader {
    @ColorInt
    private var currentColor = 0

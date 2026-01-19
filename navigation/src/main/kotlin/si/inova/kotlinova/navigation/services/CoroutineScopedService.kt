@@ -29,7 +29,7 @@ import kotlinx.coroutines.cancel
  */
 abstract class CoroutineScopedService(
    @Suppress("MemberVisibilityCanBePrivate")
-   val coroutineScope: CoroutineScope
+   val coroutineScope: CoroutineScope,
 ) : ScopedService,
    ScopedServices.Registered {
 

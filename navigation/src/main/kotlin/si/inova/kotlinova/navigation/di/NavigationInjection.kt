@@ -32,7 +32,7 @@ interface NavigationInjection {
    interface Factory {
       fun create(
          backstack: Backstack,
-         mainBackstackWrapper: MainBackstackWrapper
+         mainBackstackWrapper: MainBackstackWrapper,
       ): NavigationInjection
    }
 

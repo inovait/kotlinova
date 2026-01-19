@@ -51,7 +51,7 @@ object LoadingCountingIdlingResource : IdlingResource {
       }
 
    override fun getDiagnosticMessageIfBusy(): String {
-      return "Resources ${flows.filter { it.value is Outcome.Progress<*> }.map { it.value }.toList()} are busy"
+      return "Resources ${flows.asSequence().filter { it.value is Outcome.Progress<*> }.map { it.value }.toList()} are busy"
    }
 }
 
@@ -67,7 +67,7 @@ class RegisteringCoroutineResourceManager(scope: CoroutineScope, reportService: 
       currentValue: T?,
       context: CoroutineContext,
       keepDataOnExceptions: Boolean,
-      block: suspend ResourceControlBlock<T>.() -> Unit
+      block: suspend ResourceControlBlock<T>.() -> Unit,
    ) {
       registerResource(resource)
       super.launchResourceControlTask(resource, currentValue, context, keepDataOnExceptions, block)

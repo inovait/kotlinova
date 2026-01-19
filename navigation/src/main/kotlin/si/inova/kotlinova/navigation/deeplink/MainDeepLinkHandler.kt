@@ -33,7 +33,7 @@ import si.inova.kotlinova.navigation.instructions.NavigationInstruction
  */
 @Inject
 class MainDeepLinkHandler(
-   private val injectedHandlers: Set<DeepLinkHandler>
+   private val injectedHandlers: Set<DeepLinkHandler>,
 ) : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return injectedHandlers.asSequence().mapNotNull { it.handleDeepLink(uri, startup) }.firstOrNull()

@@ -94,7 +94,7 @@ class ComposeAndroidDateTimeFormatter(private val androidDateTimeFormatter: Andr
     */
    @Composable
    fun ofLocalizedDateTime(
-      dateStyle: FormatStyle
+      dateStyle: FormatStyle,
    ): DateTimeFormatter {
       LocalConfiguration.current // Reload this when configuration changes
 

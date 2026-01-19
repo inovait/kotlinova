@@ -37,7 +37,15 @@ import coil3.size.pxOrElse
  */
 @OptIn(ExperimentalCoilApi::class)
 class ColorCyclingAsyncImagePreviewHandler(
-   private val colors: List<Int> = listOf(Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.CYAN, Color.YELLOW, Color.MAGENTA)
+   private val colors: List<Int> = listOf(
+      Color.RED,
+      Color.GREEN,
+      Color.BLUE,
+      Color.GRAY,
+      Color.CYAN,
+      Color.YELLOW,
+      Color.MAGENTA,
+   ),
 ) : AsyncImagePreviewHandler {
    @ColorInt
    private var currentColor = 0

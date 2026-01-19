@@ -26,6 +26,6 @@ interface ConditionalNavigationHandler {
     */
    fun getNavigationRedirect(
       condition: NavigationCondition,
-      navigateToIfConditionMet: NavigationInstruction
+      navigateToIfConditionMet: NavigationInstruction,
    ): NavigationInstruction?
 }

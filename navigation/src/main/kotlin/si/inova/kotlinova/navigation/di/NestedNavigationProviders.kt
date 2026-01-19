@@ -29,7 +29,7 @@ interface NestedNavigationProviders {
    fun provideMainNavigator(
       @MainNavigation
       backstack: Backstack,
-      navigationContext: Lazy<NavigationContext>
+      navigationContext: Lazy<NavigationContext>,
    ): Navigator {
       return SimpleStackNavigator(backstack, navigationContext)
    }

@@ -48,7 +48,7 @@ class SuspendCallAdapterFactoryTest {
    @BeforeEach
    internal fun setUp(
       @TempDir
-      cacheDirectory: File
+      cacheDirectory: File,
    ) {
       tempCache = Cache(cacheDirectory, 100_000)
    }
@@ -324,19 +324,19 @@ class SuspendCallAdapterFactoryTest {
       @GET("/data")
       suspend fun getEnumResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
-         force: Boolean = false
+         force: Boolean = false,
       ): FakeEnumResult
 
       @GET("/dataBlank")
       suspend fun getUnitResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
-         force: Boolean = false
+         force: Boolean = false,
       )
    }
 
    private enum class FakeEnumResult {
       FIRST,
-      SECOND
+      SECOND,
    }
 
    private class TestErrorResponseException(message: String? = null, cause: Throwable? = null) : CauseException(message, cause)

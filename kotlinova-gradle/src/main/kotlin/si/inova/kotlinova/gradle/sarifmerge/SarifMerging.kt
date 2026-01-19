@@ -120,7 +120,7 @@ internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
 
 private fun Project.registerDetektSarifMerging(
    localSarifMergeTask: TaskProvider<SarifMergeTask>,
-   sarifFiles: ConfigurableFileCollection
+   sarifFiles: ConfigurableFileCollection,
 ) {
    tasks.withType(Detekt::class.java).configureEach { detektTask ->
       // We need to set basePath to ensure sarif files have relative path in them

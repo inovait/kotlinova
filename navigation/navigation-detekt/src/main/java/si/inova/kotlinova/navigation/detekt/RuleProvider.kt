@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.detekt
 
-import dev.detekt.api.Config
 import dev.detekt.api.RuleSet
 import dev.detekt.api.RuleSetProvider
 

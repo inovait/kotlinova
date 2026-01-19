@@ -34,7 +34,7 @@ fun ComposeTestRule.virtualTimeProvider(
    currentLocalTime: () -> LocalTime = { LocalTime.MIN },
    currentLocalDateTime: () -> LocalDateTime = { LocalDateTime.of(currentLocalDate(), currentLocalTime()) },
    currentTimezone: () -> ZoneId = { ZoneId.of("UTC") },
-   currentZonedDateTime: (() -> ZonedDateTime)? = null
+   currentZonedDateTime: (() -> ZonedDateTime)? = null,
 ): AndroidTimeProvider {
    return FakeAndroidTimeProvider(
       currentLocalDate,

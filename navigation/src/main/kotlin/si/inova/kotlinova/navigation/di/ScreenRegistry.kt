@@ -62,11 +62,11 @@ class ScreenRegistry(
    }
 }
 
-class ScreenRegistration<T : ScreenKey>(val mainScreenClass: KClass<out Screen<T>>)
+data class ScreenRegistration<T : ScreenKey>(val mainScreenClass: KClass<out Screen<T>>)
 class ScreenFactory<T : Screen<*>>(
    val requiredScopedServices: List<KClass<out ScopedService>>,
    val composedScreenFactories: List<ScreenFactory<*>>,
-   private val factory: (String, Backstack) -> T
+   private val factory: (String, Backstack) -> T,
 ) {
    fun create(scope: String, backstack: Backstack): T {
       return factory(scope, backstack)

@@ -40,7 +40,7 @@ import kotlin.reflect.KProperty
  * @param [coroutineScope] See documentation for [CoroutineScopedService]
  */
 abstract class SaveableScopedService(
-   coroutineScope: CoroutineScope
+   coroutineScope: CoroutineScope,
 ) : CoroutineScopedService(coroutineScope), Bundleable {
    protected var bundle = StateBundle()
 
@@ -95,7 +95,7 @@ abstract class SaveableScopedService(
    }
 
    private class StateSavedProperty<T : Any>(
-      private val defaultValue: () -> T
+      private val defaultValue: () -> T,
    ) : ReadWriteProperty<SaveableScopedService, T> {
       var value: T? = null
       var initialized = false
@@ -104,7 +104,7 @@ abstract class SaveableScopedService(
       override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): T {
          if (!initialized) {
             if (thisRef.bundle.containsKey(property.name)) {
-               value = thisRef.bundle.get(property.name) as T
+               value = thisRef.bundle.get(property.name)!! as T
             } else {
                val default = defaultValue()
                value = default
@@ -114,7 +114,7 @@ abstract class SaveableScopedService(
             initialized = true
          }
 
-         return value as T
+         return value!!
       }
 
       override fun setValue(thisRef: SaveableScopedService, property: KProperty<*>, value: T) {
@@ -127,14 +127,14 @@ abstract class SaveableScopedService(
       private fun save(
          value: T,
          thisRef: SaveableScopedService,
-         property: KProperty<*>
+         property: KProperty<*>,
       ) {
          thisRef.bundle[property.name] = value
       }
    }
 
    private class StateSavedFlowProperty<T : Any>(
-      private val defaultValue: () -> T
+      private val defaultValue: () -> T,
    ) : ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       var flow: MutableStateFlow<T>? = null
 
@@ -146,7 +146,7 @@ abstract class SaveableScopedService(
 
          @Suppress("UNCHECKED_CAST")
          val initialValue = if (thisRef.bundle.containsKey(property.name)) {
-            thisRef.bundle.get(property.name) as T
+            thisRef.bundle.get(property.name)!! as T
          } else {
             defaultValue()
          }
@@ -160,7 +160,7 @@ abstract class SaveableScopedService(
 
       private fun StateFlow<T>.startObserving(
          thisRef: SaveableScopedService,
-         property: KProperty<*>
+         property: KProperty<*>,
       ) {
          thisRef.coroutineScope.launch {
             collect { value ->
