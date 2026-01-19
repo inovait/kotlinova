@@ -31,14 +31,16 @@ import org.gradle.api.Project
  * android {} block that can be used without applying specific android plugin
  */
 fun Project.commonAndroid(
-   block: Action<InternalTestedExtension<
-      BuildFeatures,
-      BuildType,
-      DefaultConfig,
-      ProductFlavor,
-      AndroidResources,
-      Installation
-      >>
+   block: Action<
+      InternalTestedExtension<
+         BuildFeatures,
+         BuildType,
+         DefaultConfig,
+         ProductFlavor,
+         AndroidResources,
+         Installation,
+         >
+      >,
 ) {
    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("android", block)
 }

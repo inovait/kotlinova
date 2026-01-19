@@ -24,7 +24,7 @@ fun Project.publishLibrary(
    userFriendlyName: String,
    description: String,
    githubPath: String,
-   artifactName: String = project.name
+   artifactName: String = project.name,
 ) {
    configure<MavenPublishBaseExtension> {
       publishToMavenCentral(automaticRelease = true)

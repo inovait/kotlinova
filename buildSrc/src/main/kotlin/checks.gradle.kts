@@ -14,6 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import dev.detekt.gradle.Detekt
 import org.gradle.accessors.dm.LibrariesForLibs
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import util.commonAndroid
@@ -22,7 +23,7 @@ import util.isAndroidProject
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("io.gitlab.arturbosch.detekt")
+   id("dev.detekt")
    id("kotlinova")
 }
 
@@ -50,6 +51,14 @@ detekt {
    config.from(files("$rootDir/config/detekt.yml"))
 }
 
+tasks.withType<Detekt>().configureEach {
+   val buildDir = project.layout.buildDirectory.asFile.get().absolutePath
+   // Exclude all generated files
+   exclude {
+      it.file.absolutePath.contains(buildDir)
+   }
+}
+
 dependencies {
-   detektPlugins(libs.detekt.formatting)
+   detektPlugins(libs.detekt.ktlint)
 }

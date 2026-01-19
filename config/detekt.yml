@@ -1,34 +1,11 @@
-build:
-  maxIssues: 0
-  excludeCorrectable: false
-  weights:
-  # complexity: 2
-  # LongParameterList: 1
-  # style: 1
-  # comments: 1
-
 config:
   validation: true
-  warningsAsErrors: false
-  # when writing own rules with new properties, exclude the property path e.g.: 'my_rule_set,.*>.*>[my_property]'
-  excludes: ''
-
+  warningsAsErrors: true
+  checkExhaustiveness: true
 processors:
   active: true
   exclude:
     - 'DetektProgressListener'
-  # - 'KtFileCountProcessor'
-  # - 'PackageCountProcessor'
-  # - 'ClassCountProcessor'
-  # - 'FunctionCountProcessor'
-  # - 'PropertyCountProcessor'
-  # - 'ProjectComplexityProcessor'
-  # - 'ProjectCognitiveComplexityProcessor'
-  # - 'ProjectLLOCProcessor'
-  # - 'ProjectCLOCProcessor'
-  # - 'ProjectLOCProcessor'
-  # - 'ProjectSLOCProcessor'
-  # - 'LicenseHeaderLoaderExtension'
 
 console-reports:
   active: true
@@ -39,10 +16,6 @@ console-reports:
     #  - 'FindingsReport'
     - 'FileBasedFindingsReport'
     - 'LiteFindingsReport'
-
-output-reports:
-  active: true
-  exclude: [ ]
 
 comments:
   active: true
@@ -59,6 +32,8 @@ comments:
   EndOfSentenceFormat:
     active: false
     endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
+  KDocReferencesNonPublicProperty:
+    active: true
   UndocumentedPublicClass:
     active: false
     excludes: &testFolders
@@ -72,29 +47,39 @@ comments:
     searchInInnerClass: true
     searchInInnerObject: true
     searchInInnerInterface: true
+    searchInProtectedClass: false
   UndocumentedPublicFunction:
     active: false
     excludes: *testFolders
+    searchProtectedFunction: false
   UndocumentedPublicProperty:
     active: false
     excludes: *testFolders
+    searchProtectedProperty: false
   OutdatedDocumentation:
-    active: false # Disabled until https://github.com/detekt/detekt/issues/4365 is resolved
+    active: true
     matchTypeParameters: false
+    matchDeclarationsOrder: true
+    allowParamOnConstructorProperties: true
 
 complexity:
   active: true
+  CognitiveComplexMethod:
+    active: true
+    allowedComplexity: 15
+    ignoreAnnotated: [ 'Composable' ] # Many false positives on Compose, since it detects nested composables (which are common) as Complex
   ComplexCondition:
     active: true
-    threshold: 4
+    allowedConditions: 4
   ComplexInterface:
     active: true
-    threshold: 10
+    allowedDefinitions: 10
     includeStaticDeclarations: false
     includePrivateDeclarations: false
+    ignoreOverloaded: true
   CyclomaticComplexMethod:
     active: true
-    threshold: 15
+    allowedComplexity: 15
     ignoreSingleWhenExpression: false
     ignoreSimpleWhenEntries: true
     ignoreNestingFunctions: false
@@ -113,46 +98,60 @@ complexity:
     ignoredLabels: [ ]
   LargeClass:
     active: true
-    threshold: 600
+    allowedLines: 600
     # Tests often intentionally include large classes with many test methods. We can disable this check for tests
     excludes: *testFolders
   LongMethod:
     active: true
-    threshold: 60
+    allowedLines: 60
+    ignoreAnnotated:
+      # Sometimes we are forced to have long compose methods, when listing long screens etc. Complexity checks should catch
+      # Most egregious
+      - Composable
   LongParameterList:
     active: true
-    functionThreshold: 6
-    constructorThreshold: 7
+    allowedFunctionParameters: 6
+    allowedConstructorParameters: 7
     ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotated: [ 'Inject', 'Provides', 'AssistedInject', 'Delete', 'Insert', 'Query', 'RawQuery', 'Update', 'Transaction', 'Composable' ]
   MethodOverloading:
     active: false
-    threshold: 6
+    allowedOverloads: 6
   NamedArguments:
     active: false
-    threshold: 3
+    allowedArguments: 3
+    ignoreArgumentsMatchingNames: false
   NestedBlockDepth:
     active: false
-    threshold: 4
+    allowedDepth: 4
     ignoreAnnotated: [ 'Composable' ]
+  NestedScopeFunctions:
+    active: true
+    allowedDepth: 2
+    functions:
+      - 'kotlin.apply'
+      - 'kotlin.run'
+      - 'kotlin.with'
+      - 'kotlin.let'
+      - 'kotlin.also'
   ReplaceSafeCallChainWithRun:
     active: false
   StringLiteralDuplication:
     active: false
     excludes: *testFolders
-    threshold: 3
+    allowedDuplications: 3
     ignoreAnnotation: true
-    excludeStringsWithLessThan5Characters: true
+    allowedWithLengthLessThan: true
     ignoreStringsRegex: '$^'
   TooManyFunctions:
     active: true
     excludes: *testFolders
-    thresholdInFiles: 15
-    thresholdInClasses: 15
-    thresholdInInterfaces: 15
-    thresholdInObjects: 15
-    thresholdInEnums: 15
+    allowedFunctionsPerFile: 15
+    allowedFunctionsPerClass: 15
+    allowedFunctionsPerInterface: 15
+    allowedFunctionsPerObject: 15
+    allowedFunctionsPerEnum: 15
     ignoreDeprecated: true # We cannot remove those for backwards compatibility, so they must stay and be ignored
     ignorePrivate: false
     ignoreOverridden: true # We are forced to override those
@@ -164,12 +163,24 @@ coroutines:
   InjectDispatcher:
     active: true
     excludes: *testFolders
+    dispatcherNames:
+      - 'IO'
+      - 'Default'
+      - 'Unconfined'
   RedundantSuspendModifier:
-    active: false
+    active: true
   SleepInsteadOfDelay:
-    active: false
+    active: true
+  SuspendFunSwallowedCancellation:
+    active: true
+  SuspendFunWithCoroutineScopeReceiver:
+    active: true
   SuspendFunWithFlowReturnType:
-    active: false
+    active: true
+  SuspendFunInFinallySection:
+    active: true
+  CoroutineLaunchedInTestWithoutRunTest:
+    active: true
 
 empty-blocks:
   active: true
@@ -195,7 +206,7 @@ empty-blocks:
     active: true
   EmptyInitBlock:
     active: true
-  EmptyKtFile:
+  EmptyKotlinFile:
     active: true
   EmptySecondaryConstructor:
     active: true
@@ -208,6 +219,8 @@ empty-blocks:
 
 exceptions:
   active: true
+  ErrorUsageWithThrowable:
+    active: true
   ExceptionRaisedInUnexpectedLocation:
     active: true
     methodNames:
@@ -278,7 +291,7 @@ exceptions:
       - 'RuntimeException'
       - 'Throwable'
 
-formatting:
+ktlint:
   active: true
   android: true
   autoCorrect: false
@@ -293,21 +306,73 @@ formatting:
     autoCorrect: false
     indentSize: 3
     maxLineLength: 130
+  BlockCommentInitialStarAlignment:
+    active: true
+    autoCorrect: false
   ChainWrapping:
     active: true
     autoCorrect: false
+    indentSize: 3
+  ClassName:
+    active: false
   CommentSpacing:
+    active: true
+    autoCorrect: false
+  CommentWrapping:
+    active: false
+    autoCorrect: false
+    indentSize: 3
+  ContextReceiverMapping:
+    active: true
+    autoCorrect: false
+    maxLineLength: 130
+    indentSize: 3
+  DiscouragedCommentLocation:
     active: true
     autoCorrect: false
   EnumEntryNameCase:
     active: true
     autoCorrect: false
+  EnumWrapping:
+    active: false
+    autoCorrect: false
+    indentSize: 3
   Filename:
     active: true
   FinalNewline:
     active: true
     autoCorrect: false
     insertFinalNewLine: true
+  FunKeywordSpacing:
+    active: true
+    autoCorrect: false
+  FunctionName:
+    active: false
+  FunctionReturnTypeSpacing:
+    active: true
+    autoCorrect: false
+    maxLineLength: 130
+  FunctionSignature:
+    active: false
+    autoCorrect: false
+    forceMultilineWhenParameterCountGreaterOrEqualThan: 2147483647
+    functionBodyExpressionWrapping: 'default'
+    maxLineLength: 130
+    indentSize: 3
+  FunctionStartOfBodySpacing:
+    active: true
+    autoCorrect: false
+  FunctionTypeReferenceSpacing:
+    active: true
+    autoCorrect: false
+  IfElseBracing:
+    active: false
+    autoCorrect: false
+    indentSize: 3
+  IfElseWrapping:
+    active: false
+    autoCorrect: false
+    indentSize: 3
   ImportOrdering:
     active: false
     autoCorrect: false
@@ -316,25 +381,49 @@ formatting:
     active: true
     autoCorrect: false
     indentSize: 3
+  KdocWrapping:
+    active: true
+    autoCorrect: false
+    indentSize: 3
   MaximumLineLength:
     active: false
     maxLineLength: 130
     ignoreBackTickedIdentifier: false
+  ModifierListSpacing:
+    active: true
+    autoCorrect: false
   ModifierOrdering:
     active: true
     autoCorrect: false
   MultiLineIfElse:
     active: true
     autoCorrect: false
+    indentSize: 3
+  MultilineExpressionWrapping:
+    active: false
+    autoCorrect: false
+    indentSize: 3
   NoBlankLineBeforeRbrace:
     active: true
+    autoCorrect: false
+  NoBlankLineInList:
+    active: false
+    autoCorrect: false
+  NoBlankLinesInChainedMethodCalls:
+    active: false
     autoCorrect: false
   NoConsecutiveBlankLines:
     active: true
     autoCorrect: false
+  NoConsecutiveComments:
+    active: false
   NoEmptyClassBody:
-    active: true
+    active: false
     autoCorrect: false
+  NoEmptyFirstLineInClassBody:
+    active: false
+    autoCorrect: false
+    indentSize: 3
   NoEmptyFirstLineInMethodBlock:
     active: true
     autoCorrect: false
@@ -350,6 +439,10 @@ formatting:
   NoSemicolons:
     active: true
     autoCorrect: false
+  NoSingleLineBlockComment:
+    active: false
+    autoCorrect: false
+    indentSize: 3
   NoTrailingSpaces:
     active: true
     autoCorrect: false
@@ -357,16 +450,35 @@ formatting:
     active: true
     autoCorrect: false
   NoUnusedImports:
-    active: true
+    active: false
     autoCorrect: false
   NoWildcardImports:
     active: true
+  NullableTypeSpacing:
+    active: true
+    autoCorrect: false
   PackageName:
+    active: true
+    autoCorrect: false
+  ParameterListSpacing:
     active: true
     autoCorrect: false
   ParameterListWrapping:
     active: true
     autoCorrect: false
+    maxLineLength: 130
+    indentSize: 3
+  ParameterWrapping:
+    active: true
+    autoCorrect: false
+    indentSize: 3
+    maxLineLength: 130
+  PropertyName:
+    active: false
+  PropertyWrapping:
+    active: true
+    autoCorrect: false
+    indentSize: 3
     maxLineLength: 130
   SpacingAroundAngleBrackets:
     active: true
@@ -407,9 +519,44 @@ formatting:
   SpacingBetweenDeclarationsWithComments:
     active: true
     autoCorrect: false
+  SpacingBetweenFunctionNameAndOpeningParenthesis:
+    active: true
+    autoCorrect: false
   StringTemplate:
     active: true
     autoCorrect: false
+  StringTemplateIndent:
+    active: true
+    autoCorrect: false
+    indentSize: 3
+  TrailingCommaOnCallSite:
+    active: false
+    autoCorrect: false
+    useTrailingCommaOnCallSite: true
+  TrailingCommaOnDeclarationSite:
+    active: true
+    autoCorrect: false
+    useTrailingCommaOnDeclarationSite: true
+  TryCatchFinallySpacing:
+    active: true
+    autoCorrect: false
+    indentSize: 3
+  TypeArgumentListSpacing:
+    active: true
+    autoCorrect: false
+    indentSize: 3
+  TypeParameterListSpacing:
+    active: true
+    autoCorrect: false
+    indentSize: 3
+  UnnecessaryParenthesesBeforeTrailingLambda:
+    active: false
+    autoCorrect: false
+  Wrapping:
+    active: true
+    autoCorrect: false
+    indentSize: 3
+    maxLineLength: 130
 
 naming:
   active: true
@@ -432,11 +579,11 @@ naming:
     active: false
     excludes: *testFolders
     forbiddenName: [ ]
-  FunctionMaxLength:
+  FunctionNameMaxLength:
     active: false
     excludes: *testFolders
     maximumFunctionNameLength: 30
-  FunctionMinLength:
+  FunctionNameMinLength:
     active: false
     excludes: *testFolders
     minimumFunctionNameLength: 3
@@ -454,6 +601,10 @@ naming:
     active: true
     excludes: [ '**/*.kts' ]
     rootPackage: ''
+    requireRootInDeclaration: false
+  LambdaParameterNaming:
+    active: false
+    parameterPattern: '[a-z][A-Za-z0-9]*|_'
   MatchingDeclarationName:
     active: false
     mustBeFirst: true
@@ -496,13 +647,19 @@ performance:
   active: true
   ArrayPrimitive:
     active: true
+  CouldBeSequence:
+    active: true
   ForEachOnRange:
     active: true
     excludes: *testFolders
   SpreadOperator:
     active: false
     excludes: *testFolders
+  UnnecessaryPartOfBinaryExpression:
+    active: true
   UnnecessaryTemporaryInstantiation:
+    active: true
+  UnnecessaryTypeCasting:
     active: true
 
 potential-bugs:
@@ -511,6 +668,8 @@ potential-bugs:
     active: false
     forbiddenTypePatterns:
       - 'kotlin.String'
+  CastNullableToNonNullableType:
+    active: true
   CastToNullableType:
     active: false
   Deprecation:
@@ -519,6 +678,18 @@ potential-bugs:
     active: true
   DoubleMutabilityForCollection:
     active: true
+    mutableTypes:
+      - 'kotlin.collections.MutableList'
+      - 'kotlin.collections.MutableMap'
+      - 'kotlin.collections.MutableSet'
+      - 'java.util.ArrayList'
+      - 'java.util.LinkedHashSet'
+      - 'java.util.HashSet'
+      - 'java.util.LinkedHashMap'
+      - 'java.util.HashMap'
+  ElseCaseInsteadOfExhaustiveWhen:
+    active: false
+    ignoredSubjectTypes: [ ]
   EqualsAlwaysReturnsTrueOrFalse:
     active: true
   EqualsWithHashCodeExist:
@@ -530,18 +701,28 @@ potential-bugs:
   HasPlatformType:
     active: false
   IgnoredReturnValue:
-    active: false
+    active: true
     restrictToConfig: true
     returnValueAnnotations:
+      - 'CheckResult'
       - '*.CheckResult'
+      - 'CheckReturnValue'
       - '*.CheckReturnValue'
     ignoreReturnValueAnnotations:
+      - 'CanIgnoreReturnValue'
       - '*.CanIgnoreReturnValue'
+    returnValueTypes:
+      - 'kotlin.sequences.Sequence'
+      - 'kotlinx.coroutines.flow.*Flow'
+      - 'java.util.stream.*Stream'
+    ignoreFunctionCall: [ ]
   ImplicitDefaultLocale:
     active: true
   ImplicitUnitReturnType:
     active: false
     allowExplicitReturnType: true
+    ignoreAnnotated:
+      - Test
   InvalidRange:
     active: true
   IteratorHasNextCallsNextMethod:
@@ -557,10 +738,16 @@ potential-bugs:
   MissingPackageDeclaration:
     active: true
     excludes: [ '**/*.kts' ]
+  NullCheckOnMutableProperty:
+    active: false
   NullableToStringCall:
     active: true
+  PropertyUsedBeforeDeclaration:
+    active: false
   UnconditionalJumpStatementInLoop:
     active: false
+  UnnecessaryNotNullCheck:
+    active: true
   UnnecessaryNotNullOperator:
     active: true
   UnnecessarySafeCall:
@@ -568,36 +755,74 @@ potential-bugs:
   UnreachableCatchBlock:
     active: true
   UnreachableCode:
-    # Disabled until https://github.com/detekt/detekt/issues/5186 is resolved
-    active: false
+    active: true
   UnsafeCallOnNullableType:
     active: true
     excludes: *testFolders
   UnsafeCast:
     active: true
   UnusedUnaryOperator:
-    active: false
+    active: true
   UselessPostfixExpression:
-    active: false
+    active: true
   WrongEqualsTypeParameter:
     active: true
+  CharArrayToStringCall:
+    active: false
+  MissingSuperCall:
+    active: true
+    mustInvokeSuperAnnotations:
+      - 'androidx.annotation.CallSuper'
+      - 'javax.annotation.OverridingMethodsMustInvokeSuper'
+  MissingUseCall:
+    active: true
+    excludes: *testFolders
+  UnnamedParameterUse:
+    active: false
 
 style:
   active: true
+  AlsoCouldBeApply:
+    active: false
   BracesOnIfStatements:
     active: true
+    singleLine: consistent
+    multiLine: 'always'
+  BracesOnWhenStatements:
+    active: false
+    singleLine: consistent
+    multiLine: 'always'
+  CanBeNonNullable:
+    active: true
+  CascadingCallWrapping:
+    active: false
+    includeElvis: true
   ClassOrdering:
     active: false
   CollapsibleIfStatements:
     active: true
   DataClassContainsFunctions:
     active: true
-    conversionFunctionPrefix: [ 'to' ]
+    conversionFunctionPrefix:
+      - 'to'
+    allowOperators: false
   DataClassShouldBeImmutable:
     active: true
   DestructuringDeclarationWithTooManyEntries:
-    active: false
+    active: true
     maxDestructuringEntries: 3
+  DoubleNegativeExpression:
+    active: true
+  DoubleNegativeLambda:
+    active: true
+    negativeFunctions:
+      - reason: 'Use `takeIf` instead.'
+        value: 'takeUnless'
+      - reason: 'Use `all` instead.'
+        value: 'none'
+    negativeFunctionNameParts:
+      - 'not'
+      - 'non'
   EqualsNullCall:
     active: true
   EqualsOnSignatureLine:
@@ -605,34 +830,70 @@ style:
   ExplicitCollectionElementAccessMethod:
     active: false
   ExplicitItLambdaParameter:
-    active: false
+    active: true
+  ExplicitItLambdaMultipleParameters:
+    active: true
   ExpressionBodySyntax:
     active: false
     includeLineWrapping: false
+  ForbiddenAnnotation:
+    active: true
+    annotations:
+      - reason: 'it is a java annotation. Use `Suppress` instead.'
+        value: 'java.lang.SuppressWarnings'
+      - reason: 'it is a java annotation. Use `kotlin.Deprecated` instead.'
+        value: 'java.lang.Deprecated'
+      - reason: 'it is a java annotation. Use `kotlin.annotation.MustBeDocumented` instead.'
+        value: 'java.lang.annotation.Documented'
+      - reason: 'it is a java annotation. Use `kotlin.annotation.Target` instead.'
+        value: 'java.lang.annotation.Target'
+      - reason: 'it is a java annotation. Use `kotlin.annotation.Retention` instead.'
+        value: 'java.lang.annotation.Retention'
+      - reason: 'it is a java annotation. Use `kotlin.annotation.Repeatable` instead.'
+        value: 'java.lang.annotation.Repeatable'
+      - reason: 'Kotlin does not support @Inherited annotation, see https://youtrack.jetbrains.com/issue/KT-22265'
+        value: 'java.lang.annotation.Inherited'
   ForbiddenComment:
     active: true
     comments:
-      - 'STOPSHIP:'
+      - reason: 'Forbidden FIXME todo marker in comment, please fix the problem.'
+        value: 'FIXME:'
+      - reason: 'Forbidden STOPSHIP todo marker in comment, please address the problem before shipping the code.'
+        value: 'STOPSHIP:'
+      - reason: 'Forbidden TODO todo marker in comment, please do the changes.'
+        value: 'TODO:'
     allowedPatterns: ''
   ForbiddenImport:
     active: false
     imports: [ ]
     forbiddenPatterns: ''
   ForbiddenMethodCall:
-    active: false
+    active: true
     methods:
       - value: 'kotlin.io.print'
         reason: "Use logcat for logging"
       - value: 'kotlin.io.println'
         reason: "Use logcat for logging"
-  ForbiddenVoid:
+      - value: 'kotlinx.coroutines.flow.emptyFlow'
+        reason: "Not emitting anything from a flow usually results in an UI getting stuck"
+  ForbiddenNamedParam:
     active: false
-    ignoreOverridden: false
-    ignoreUsageInGenerics: false
+    methods: []
+  ForbiddenOptIn:
+    active: false
+    markerClasses: []
+  ForbiddenSuppress:
+    active: false
+    rules: [ ]
+  ForbiddenVoid:
+    active: true
+    ignoreOverridden: true
+    ignoreUsageInGenerics: true
   FunctionOnlyReturningConstant:
     active: true
     ignoreOverridableFunction: true
     ignoreActualFunction: true
+    excludedFunctions: [ ]
     ignoreAnnotated:
       - "Provides"
   LoopWithTooManyJumpStatements:
@@ -665,41 +926,54 @@ style:
     ignoreExtensionFunctions: true
     ignoreAnnotated:
       - 'Preview'
+      - 'Test'
   MandatoryBracesLoops:
     active: true
+  MaxChainedCallsOnSameLine:
+    active: false
+    maxChainedCalls: 5
   MaxLineLength:
     active: true
     maxLineLength: 130
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
-  MayBeConst:
+    excludeRawStrings: true
+  MayBeConstant:
     active: true
   ModifierOrder:
     active: true
   MultilineLambdaItParameter:
     active: false
+  MultilineRawStringIndentation:
+    active: true
+    indentSize: 3
+    trimmingMethods:
+      - 'trimIndent'
+      - 'trimMargin'
   NestedClassesVisibility:
     active: true
   NewLineAtEndOfFile:
     active: true
   NoTabs:
     active: false
+  NullableBooleanCheck:
+    active: true
   ObjectLiteralToLambda:
-    active: false
+    active: true
   OptionalAbstractKeyword:
     active: true
   OptionalUnit:
     active: false
-  PreferToOverPairSyntax:
-    active: false
   ProtectedMemberInFinalClass:
+    active: true
+  RedundantConstructorKeyword:
     active: true
   RedundantExplicitType:
     active: false
   RedundantHigherOrderMapUsage:
     active: true
-  RedundantVisibilityModifierRule:
+  RedundantVisibilityModifier:
     active: false
   ReturnCount:
     active: false # This rule prevents us from using guard clauses after mapping data in the method
@@ -712,69 +986,111 @@ style:
     active: true
   SerialVersionUIDInSerializableClass:
     active: true
-  SpacingBetweenPackageAndImports:
+  SpacingAfterPackageDeclaration:
     active: false
+  StringShouldBeRawString:
+    active: true
+    maxEscapedCharacterCount: 6
+    ignoredCharacters: [ ]
   ThrowsCount:
     active: true
     max: 3
     excludeGuardClauses: true
   TrailingWhitespace:
     active: false
+  TrimMultilineRawString:
+    active: false
+    trimmingMethods:
+      - 'trimIndent'
+      - 'trimMargin'
   UnderscoresInNumericLiterals:
     active: true
-  UnnecessaryAbstractClass:
-    active: false # Disabled until https://github.com/detekt/detekt/issues/5778 is resolved
+    acceptableLength: 5
+    allowNonStandardGrouping: false
+  AbstractClassCanBeConcreteClass:
+    active: false # As a library, we have lots of abstract classes that are only implemented outside
     ignoreAnnotated: [ 'Module', 'Component' ]
+  AbstractClassCanBeInterface:
+    active: true
   UnnecessaryAnnotationUseSiteTarget:
     active: false
+  UnnecessaryAny:
+    active: true
   UnnecessaryApply:
+    active: true
+  UnnecessaryBackticks:
+    active: true
+  UnnecessaryBracesAroundTrailingLambda:
     active: false
   UnnecessaryFilter:
     active: true
   UnnecessaryInheritance:
     active: true
+  UnnecessaryInnerClass:
+    active: true
   UnnecessaryLet:
-    active: false # Disabled due to https://github.com/detekt/detekt/issues/5701
+    active: true
   UnnecessaryParentheses:
     active: false # This rule can make precedence of operators confusing since we are prevented from inserting clarifying parentheses
-  UntilInsteadOfRangeTo:
+    allowForUnclearPrecedence: false
+  RangeUntilInsteadOfRangeTo:
     active: false
-  UnusedImports:
-    active: false
+  UnusedImport:
+    active: true
+  UnusedParameter:
+    active: true
+    allowedNames: 'ignored|expected'
   UnusedPrivateClass:
     active: true
-  UnusedPrivateMember:
+  UnusedPrivateFunction:
     active: true
     allowedNames: '(_|ignored|expected|serialVersionUID)'
-    ignoreAnnotated: [ 'Preview' ]
+    ignoreAnnotated: [ 'Preview', 'FullScreenPreviews' ]
+  UnusedPrivateProperty:
+    active: true
+    allowedNames: '_|ignored|expected|serialVersionUID'
+  UnusedVariable:
+    active: true
+    aliases: ['UNUSED_VARIABLE', 'unused']
+    allowedNames: 'ignored|_'
+  UnnecessaryReversed:
+    active: true
+  UseAnyOrNoneInsteadOfFind:
+    active: true
   UseArrayLiteralsInAnnotations:
     active: false
   UseCheckNotNull:
-    active: false
+    active: true
   UseCheckOrError:
     active: true
   UseDataClass:
-    active: false
-    allowVars: false
+    active: true
+    allowVars: true
   UseEmptyCounterpart:
     active: true
   UseIfEmptyOrIfBlank:
     active: true
   UseIfInsteadOfWhen:
-    active: false
+    active: true
+    ignoreWhenContainingVariableDeclaration: false
   UseIsNullOrEmpty:
-    active: false
+    active: true
+  UseLet:
+    active: false # Annoying with else if, https://github.com/detekt/detekt/issues/7134
   UseOrEmpty:
-    active: false
+    active: true
   UseRequire:
     active: true
   UseRequireNotNull:
-    active: false
+    active: true
+  UseSumOfInsteadOfFlatMapSize:
+    active: true
   UselessCallOnNotNull:
     active: true
   UtilityClassWithPublicConstructor:
     active: true
   VarCouldBeVal:
     active: true
+    ignoreLateinitVar: false
   WildcardImport:
     active: true
