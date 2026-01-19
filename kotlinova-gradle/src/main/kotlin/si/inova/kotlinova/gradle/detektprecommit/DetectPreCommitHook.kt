@@ -16,7 +16,7 @@
 
 package si.inova.kotlinova.gradle.detektprecommit
 
-import io.gitlab.arturbosch.detekt.Detekt
+import dev.detekt.gradle.Detekt
 import org.gradle.api.Project
 import si.inova.kotlinova.gradle.KotlinovaExtension
 

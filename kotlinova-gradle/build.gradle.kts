@@ -128,5 +128,5 @@ dependencies {
    compileOnly(libs.detekt.plugin)
    compileOnly(libs.android.agp)
 
-   detektPlugins(libs.detekt.formatting)
+   detektPlugins(libs.detekt.ktlint)
 }
