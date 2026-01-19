@@ -24,7 +24,6 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.string.shouldContain
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.jupiter.api.Test
 
 @KotlinCoreEnvironmentTest
@@ -33,9 +32,9 @@ class NavigationKeyNoEnumsTest(val env: KotlinEnvironmentContainer) {
 
    @Language("kotlin")
    val screenKey = """
-        package si.inova.kotlinova.navigation.screenkeys
-
-        abstract class ScreenKey
+      package si.inova.kotlinova.navigation.screenkeys
+      
+      abstract class ScreenKey
    """.trimIndent()
 
    @Test
@@ -43,8 +42,8 @@ class NavigationKeyNoEnumsTest(val env: KotlinEnvironmentContainer) {
       @Language("kotlin")
       val code = """
          $screenKey 
-        enum class Enum {A, N}
-        data class Test(val enum: Enum)
+         enum class Enum {A, N}
+         data class Test(val enum: Enum)
       """.trimIndent()
 
       val findings = subject.lintWithContext(env, code)
@@ -56,8 +55,8 @@ class NavigationKeyNoEnumsTest(val env: KotlinEnvironmentContainer) {
    fun `Allow Screen data classes without Enums`() {
       @Language("kotlin")
       val code = """
-        $screenKey
-        data class Test(val res: String): ScreenKey()
+         $screenKey
+         data class Test(val res: String): ScreenKey()
       """.trimIndent()
 
       val findings = subject.lintWithContext(env, code)
@@ -69,10 +68,10 @@ class NavigationKeyNoEnumsTest(val env: KotlinEnvironmentContainer) {
    fun `Warn about enum inside data class key`() {
       @Language("kotlin")
       val code = """
-        $screenKey
-
-        enum class Enum {A, N}
-        data class Test(val enum: Enum): ScreenKey()
+         $screenKey
+         
+         enum class Enum {A, N}
+         data class Test(val enum: Enum): ScreenKey()
       """.trimIndent()
 
       val finding = subject.lintWithContext(env, code)
@@ -87,11 +86,11 @@ class NavigationKeyNoEnumsTest(val env: KotlinEnvironmentContainer) {
    fun `Warn about enum when extending screen in subclass`() {
       @Language("kotlin")
       val code = """
-        $screenKey
-
-        enum class Enum {A, N}
-        abstract class TestB(open val enum: Enum): ScreenKey()
-        data class TestA(override val enum: Enum): TestB(enum)
+         $screenKey
+         
+         enum class Enum {A, N}
+         abstract class TestB(open val enum: Enum): ScreenKey()
+         data class TestA(override val enum: Enum): TestB(enum)
       """.trimIndent()
 
       val finding = subject.lintWithContext(env, code)
@@ -106,11 +105,11 @@ class NavigationKeyNoEnumsTest(val env: KotlinEnvironmentContainer) {
    fun `Warn about enum inside nested data class key`() {
       @Language("kotlin")
       val code = """
-        $screenKey
-
-        enum class Enum() {A, N}
-        data class TestB(val enum: Enum)
-        data class TestA(val b: TestB): ScreenKey()
+         $screenKey
+         
+         enum class Enum() {A, N}
+         data class TestB(val enum: Enum)
+         data class TestA(val b: TestB): ScreenKey()
       """.trimIndent()
 
       val finding = subject.lintWithContext(env, code)

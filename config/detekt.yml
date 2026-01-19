@@ -526,7 +526,7 @@ ktlint:
     active: true
     autoCorrect: false
   StringTemplateIndent:
-    active: true
+    active: false
     autoCorrect: false
     indentSize: 3
   TrailingCommaOnCallSite:
