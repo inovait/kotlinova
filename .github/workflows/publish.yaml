@@ -46,7 +46,7 @@ jobs:
         # that DI build passes.
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt detektTest detektMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
       - name: Generate Changelog
