@@ -47,13 +47,14 @@ class ComposedScreen {
 
    @Parcelize
    data object OuterScreenKey : ScreenKey()
+
    @Parcelize
    data object InnerScreenKey : ScreenKey()
 
    @InjectNavigationScreen
    class OuterScreen(
       private val outerScreenService: OuterScreenService,
-      private val innerScreen: InnerScreen
+      private val innerScreen: InnerScreen,
    ) : Screen<OuterScreenKey>() {
       @Composable
       override fun Content(key: OuterScreenKey) {

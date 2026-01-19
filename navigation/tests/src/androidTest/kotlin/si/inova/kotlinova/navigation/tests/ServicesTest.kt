@@ -142,7 +142,7 @@ class ServicesTest {
 
    @InjectNavigationScreen
    class ScreenWithBasicService(
-      private val service: BasicService
+      private val service: BasicService,
    ) : Screen<ScreenWithBasicServiceKey>() {
       @Composable
       override fun Content(key: ScreenWithBasicServiceKey) {
@@ -166,7 +166,7 @@ class ServicesTest {
 
    @InjectNavigationScreen
    class ScreenWithStateSavingService(
-      private val service: StateSavingService
+      private val service: StateSavingService,
    ) : Screen<ScreenWithStateSavingServiceKey>() {
       @Composable
       override fun Content(key: ScreenWithStateSavingServiceKey) {
@@ -190,7 +190,7 @@ class ServicesTest {
 
    @InjectNavigationScreen
    class ScreenWithSingleScreenViewModel(
-      private val service: SingleScreenViewModelService
+      private val service: SingleScreenViewModelService,
    ) : Screen<ScreenWithSingleScreenViewModelKey>() {
       @Composable
       override fun Content(key: ScreenWithSingleScreenViewModelKey) {
@@ -211,7 +211,7 @@ class ServicesTest {
 
    @InjectNavigationScreen
    class ScreenWithBasicServiceWithInterface(
-      private val service: BasicServiceWithInterface
+      private val service: BasicServiceWithInterface,
    ) : Screen<ScreenWithBasicServiceWithInterfaceKey>() {
       @Composable
       override fun Content(key: ScreenWithBasicServiceWithInterfaceKey) {
@@ -229,7 +229,7 @@ class ServicesTest {
 
    @InjectNavigationScreen
    class ScreenWithBasicServiceWithInterfaceAndMultipleParents(
-      private val service: BasicServiceWithInterfaceAndMultipleParents
+      private val service: BasicServiceWithInterfaceAndMultipleParents,
    ) : Screen<ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey>() {
       @Composable
       override fun Content(key: ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey) {

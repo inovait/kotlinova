@@ -119,7 +119,7 @@ class NestedNavigation {
    @InjectNavigationScreen
    class NestedScreenGoingBack(
       @MainNavigation
-      private val mainNavigator: Navigator
+      private val mainNavigator: Navigator,
    ) : Screen<NestedScreenGoingBackKey>() {
       @Composable
       override fun Content(key: NestedScreenGoingBackKey) {
@@ -135,7 +135,7 @@ class NestedNavigation {
    @InjectNavigationScreen
    class ParentScreenWithSharedService(
       private val service: ServiceScopes.SharedService,
-      private val nestedScreen: NestedBackstackScreen
+      private val nestedScreen: NestedBackstackScreen,
    ) : Screen<ParentScreenWithSharedServiceKey>() {
       @SuppressLint("StateFlowValueCalledInComposition")
       @Composable
@@ -152,7 +152,7 @@ class NestedNavigation {
    @InjectNavigationScreen
    class ChildScreenWithSharedService(
       @Inherited
-      private val service: ServiceScopes.SharedService
+      private val service: ServiceScopes.SharedService,
    ) : Screen<ChildScreenWithSharedServiceKey>() {
       @Composable
       override fun Content(key: ChildScreenWithSharedServiceKey) {

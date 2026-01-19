@@ -104,7 +104,7 @@ class ServiceScopes {
 
    abstract class CommonSharedServiceTestScreen<K : ScreenKey>(
       private val sharedService: SharedService,
-      private val navigator: Navigator
+      private val navigator: Navigator,
    ) : Screen<K>() {
       abstract fun getNewScreen(): K
 
