@@ -72,7 +72,7 @@ class AbstractScreens {
 
    @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreen(
-      private val innerScreen: TestAbstractScreen
+      private val innerScreen: TestAbstractScreen,
    ) : Screen<OuterScreenReferencingAbstractScreenKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingAbstractScreenKey) {
@@ -101,7 +101,7 @@ class AbstractScreens {
 
    @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreenWithService(
-      private val innerScreen: TestAbstractScreenWithService<ScreenKey>
+      private val innerScreen: TestAbstractScreenWithService<ScreenKey>,
    ) : Screen<OuterScreenReferencingAbstractScreenWithServiceKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingAbstractScreenWithServiceKey) {
@@ -118,7 +118,8 @@ class AbstractScreens {
    @InjectNavigationScreen
    @Inject
    class TestAbstractScreenWithServiceImpl(
-      private val service: ServiceScopes.SharedService
+      @Suppress("UnusedPrivateProperty") // Needed for DI
+      service: ServiceScopes.SharedService,
    ) : TestAbstractScreenWithService<ScreenKey>() {
       @Composable
       override fun Content(key: ScreenKey) {
@@ -133,7 +134,7 @@ class AbstractScreens {
 
    @InjectNavigationScreen
    class OuterScreenReferencingGenericScreen(
-      private val innerScreen: Screen<InnerScreenKey>
+      private val innerScreen: Screen<InnerScreenKey>,
    ) : Screen<OuterScreenReferencingGenericScreenKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingGenericScreenKey) {
@@ -148,7 +149,7 @@ class AbstractScreens {
 
    @InjectNavigationScreen
    class OuterScreenReferencingGenericScreenWithExplicitBoundType(
-      private val innerScreen: Screen<InnerScreenKeyWithExplicitBoundType>
+      private val innerScreen: Screen<InnerScreenKeyWithExplicitBoundType>,
    ) : Screen<OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey) {
@@ -163,7 +164,8 @@ class AbstractScreens {
    @InjectNavigationScreen
    @Inject
    class TestAbstractScreenReferencingCustomKey(
-      private val service: ServiceScopes.SharedService
+      @Suppress("UnusedPrivateProperty") // Needed for DI
+      private val service: ServiceScopes.SharedService,
    ) : Screen<InnerScreenKey>() {
       @Composable
       override fun Content(key: InnerScreenKey) {
@@ -181,7 +183,8 @@ class AbstractScreens {
    @InjectNavigationScreen
    @Inject
    class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType(
-      private val service: ServiceScopes.SharedService
+      @Suppress("UnusedPrivateProperty") // Needed for DI
+      service: ServiceScopes.SharedService,
    ) : Screen<InnerScreenKeyWithExplicitBoundType>() {
       @Composable
       override fun Content(key: InnerScreenKeyWithExplicitBoundType) {

@@ -87,7 +87,7 @@ class ConditionalNavigationTest {
 
       override fun getNavigationRedirect(
          condition: NavigationCondition,
-         navigateToIfConditionMet: NavigationInstruction
+         navigateToIfConditionMet: NavigationInstruction,
       ): NavigationInstruction {
          return if (meetsCondition) {
             navigateToIfConditionMet

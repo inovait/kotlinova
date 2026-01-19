@@ -267,7 +267,7 @@ class FragmentScreenTest {
    @InjectNavigationScreen
    class ScreenThatContainsTwoFragments(
       private val testFragmentScreen: TestFragmentScreen,
-      private val testFragmentScreen2: TestFragmentScreen2
+      private val testFragmentScreen2: TestFragmentScreen2,
    ) : Screen<ScreenThatContainsTwoFragmentsKey>() {
       @Composable
       override fun Content(key: ScreenThatContainsTwoFragmentsKey) {

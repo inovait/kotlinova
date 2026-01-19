@@ -68,7 +68,7 @@ class BasicNavigationTest {
 
    @InjectNavigationScreen
    class TestScreenA(
-      private val navigator: Navigator
+      private val navigator: Navigator,
    ) : Screen<TestScreenAKey>() {
       @Composable
       override fun Content(key: TestScreenAKey) {
@@ -86,7 +86,7 @@ class BasicNavigationTest {
 
    @InjectNavigationScreen
    class TestScreenB(
-      private val navigator: Navigator
+      private val navigator: Navigator,
    ) : Screen<TestScreenBKey>() {
       @Composable
       override fun Content(key: TestScreenBKey) {
