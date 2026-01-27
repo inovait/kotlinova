@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.navigation.simplestack
 
 import androidx.compose.runtime.Composable
+import com.zhuinden.simplestack.BackHandlingModel
 import com.zhuinden.simplestack.Backstack
 import com.zhuinden.simplestack.GlobalServices
 import com.zhuinden.simplestack.StateChanger
@@ -39,9 +40,6 @@ import si.inova.kotlinova.navigation.services.InjectedScopedServices
  *
  * Note that backstack created with this method
  * uses [BackHandlingModel.AHEAD_OF_TIME] back handling model.
- */
-/**
- *
  */
 @Composable
 fun NavigationInjection.Factory.rememberBackstack(
