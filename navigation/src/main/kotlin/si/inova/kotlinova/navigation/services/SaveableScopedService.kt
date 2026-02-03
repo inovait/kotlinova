@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,12 +16,14 @@
 
 package si.inova.kotlinova.navigation.services
 
+import android.os.Parcelable
 import com.zhuinden.simplestack.Bundleable
 import com.zhuinden.statebundle.StateBundle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.util.set
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -49,7 +51,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T : Any> saved(
+   fun <T> saved(
       defaultValue: () -> T,
    ): ReadWriteProperty<SaveableScopedService, T> {
       return StateSavedProperty(defaultValue)
@@ -60,7 +62,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T : Any> savedFlow(
+   fun <T> savedFlow(
       defaultValue: () -> T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       return StateSavedFlowProperty(defaultValue)
@@ -71,7 +73,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T : Any> saved(
+   fun <T> saved(
       defaultValue: T,
    ): ReadWriteProperty<SaveableScopedService, T> = saved { defaultValue }
 
@@ -80,7 +82,7 @@ abstract class SaveableScopedService(
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
     */
-   fun <T : Any> savedFlow(
+   fun <T> savedFlow(
       defaultValue: T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow { defaultValue }
 
@@ -94,7 +96,7 @@ abstract class SaveableScopedService(
       }
    }
 
-   private class StateSavedProperty<T : Any>(
+   private class StateSavedProperty<T>(
       private val defaultValue: () -> T,
    ) : ReadWriteProperty<SaveableScopedService, T> {
       var value: T? = null
@@ -104,7 +106,12 @@ abstract class SaveableScopedService(
       override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): T {
          if (!initialized) {
             if (thisRef.bundle.containsKey(property.name)) {
-               value = thisRef.bundle.get(property.name)!! as T
+               val savedValue = thisRef.bundle.get(property.name)!! as T
+               value = if (savedValue == NullValue) {
+                  null
+               } else {
+                  savedValue
+               }
             } else {
                val default = defaultValue()
                value = default
@@ -114,7 +121,7 @@ abstract class SaveableScopedService(
             initialized = true
          }
 
-         return value!!
+         return value as T
       }
 
       override fun setValue(thisRef: SaveableScopedService, property: KProperty<*>, value: T) {
@@ -129,11 +136,11 @@ abstract class SaveableScopedService(
          thisRef: SaveableScopedService,
          property: KProperty<*>,
       ) {
-         thisRef.bundle[property.name] = value
+         thisRef.bundle[property.name] = if (value == null) NullValue else value
       }
    }
 
-   private class StateSavedFlowProperty<T : Any>(
+   private class StateSavedFlowProperty<T>(
       private val defaultValue: () -> T,
    ) : ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       var flow: MutableStateFlow<T>? = null
@@ -146,12 +153,17 @@ abstract class SaveableScopedService(
 
          @Suppress("UNCHECKED_CAST")
          val initialValue = if (thisRef.bundle.containsKey(property.name)) {
-            thisRef.bundle.get(property.name)!! as T
+            val savedValue = thisRef.bundle.get(property.name) as T
+            if (savedValue == NullValue) {
+               null as T
+            } else {
+               savedValue
+            }
          } else {
             defaultValue()
          }
 
-         val newFlow = MutableStateFlow(initialValue)
+         val newFlow = MutableStateFlow<T>(initialValue)
          newFlow.startObserving(thisRef, property)
 
          this.flow = newFlow
@@ -164,9 +176,12 @@ abstract class SaveableScopedService(
       ) {
          thisRef.coroutineScope.launch {
             collect { value ->
-               thisRef.bundle[property.name] = value
+               thisRef.bundle[property.name] = if (value == null) NullValue else value
             }
          }
       }
    }
 }
+
+@Parcelize
+private data object NullValue : Parcelable
