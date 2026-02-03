@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,7 @@
 package si.inova.kotlinova.compose.androidtest.idlingresource
 
 import androidx.compose.ui.test.IdlingResource
-
+import androidx.test.espresso.IdlingResource as EspressoIdlingResource
 /**
  * Convert espresso idling resource to compose idling resource.
  */
@@ -26,7 +26,7 @@ import androidx.compose.ui.test.IdlingResource
       "Use waitUntil instead. " +
       "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
 )
-fun androidx.test.espresso.IdlingResource.asComposeIdlingResource(busyMessage: (() -> String)? = null): IdlingResource {
+fun EspressoIdlingResource.asComposeIdlingResource(busyMessage: (() -> String)? = null): IdlingResource {
    return object : IdlingResource {
       override val isIdleNow: Boolean
          get() = this@asComposeIdlingResource.isIdleNow

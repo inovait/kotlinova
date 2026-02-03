@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,10 +17,11 @@
 package si.inova.kotlinova.navigation.detekt
 
 import dev.detekt.api.RuleSet
+import dev.detekt.api.RuleSetId
 import dev.detekt.api.RuleSetProvider
 
 class RuleProvider : RuleSetProvider {
-   override val ruleSetId = RuleSet.Id("kotlinovanavigation")
+   override val ruleSetId = RuleSetId("kotlinovanavigation")
 
    override fun instance(): RuleSet = RuleSet(
       ruleSetId,

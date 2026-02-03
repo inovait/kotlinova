@@ -57,6 +57,7 @@ class Navigation3EntryProvider(
       key(it) {
          TrackAnimationCompletion()
       }
+
       it.Content()
    })
 

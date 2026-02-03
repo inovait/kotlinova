@@ -21,11 +21,12 @@ comments:
   active: true
   AbsentOrWrongFileLicense:
     active: true
-    licenseTemplateFile: 'license_template.txt'
+    licenseTemplate:
+      \/\*[\s*]*Copyright [0-9]+ INOVA IT d.o.o..*
     licenseTemplateIsRegex: true
-  CommentOverPrivateFunction:
+  DocumentationOverPrivateFunction:
     active: false
-  CommentOverPrivateProperty:
+  DocumentationOverPrivateProperty:
     active: false
   DeprecatedBlockTag:
     active: false
@@ -661,6 +662,8 @@ performance:
     active: true
   UnnecessaryTypeCasting:
     active: true
+  UnnecessaryInitOnArray:
+    active: true
 
 potential-bugs:
   active: true
@@ -865,8 +868,6 @@ style:
     allowedPatterns: ''
   ForbiddenImport:
     active: false
-    imports: [ ]
-    forbiddenPatterns: ''
   ForbiddenMethodCall:
     active: true
     methods:
@@ -1012,8 +1013,6 @@ style:
     ignoreAnnotated: [ 'Module', 'Component' ]
   AbstractClassCanBeInterface:
     active: true
-  UnnecessaryAnnotationUseSiteTarget:
-    active: false
   UnnecessaryAny:
     active: true
   UnnecessaryApply:
@@ -1094,3 +1093,6 @@ style:
     ignoreLateinitVar: false
   WildcardImport:
     active: true
+  UnnecessaryFullyQualifiedName:
+    # Disable until https://github.com/detekt/detekt/issues/9018 is fixed
+    active: false
