@@ -52,7 +52,7 @@ jobs:
         working-directory: repo
 
       - name: "Run instrumented tests on Firebase test lab"
-        if: steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/app-merged-instrumented-tests/build/outputs/apk/debug/app-merged-instrumented-tests-debug.apk') != ''
+        if: steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk') != ''
         run: |
           gcloud auth login --cred-file=test-lab-key.json
           gcloud config set project androidarchitectureplayground
