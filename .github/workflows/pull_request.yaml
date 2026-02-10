@@ -1,4 +1,4 @@
-name: "Pull Request"
+name: pull-request-build
 run-name: "Pull Request"
 on:
   pull_request
