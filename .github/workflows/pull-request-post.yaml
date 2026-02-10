@@ -1,0 +1,104 @@
+# For safety reasons, pull request jobs have no permissions for the project, so they cannot post comments etc.
+# Thus, pull requests jobs just upload their data and afterwards, this job runs to post comments etc. to the PR
+
+name: "pull-request-post"
+on:
+  workflow_run:
+    workflows: [ "pull-request-build" ]
+    types: [ completed ]
+
+permissions:
+  pull-requests: write
+  checks: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v3.0.1'
+      - name: 'Save Service account'
+        run: 'echo "${{ secrets.TEST_GCLOUD_ACCOUNT }}" | base64 -d > test-lab-key.json'
+
+      - name: Download and Extract Artifacts
+        uses: dawidd6/action-download-artifact@9dde25e7413c6123b6062d4c9fc954d6ff005cfc
+        continue-on-error: true
+        id: download
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          path: artifacts
+          allow_forks: true
+      - name: Set the PR_NUM
+        if: steps.download.outcome == 'success'
+        id: pr-meta
+        run: |
+          pr=$(cat artifacts/results/kotlinova/kotlinova/pr_number.txt)
+          echo "pr_num=$pr" > $GITHUB_OUTPUT
+          echo "pr_ref=refs/pull/$pr/merge" >> $GITHUB_OUTPUT
+          mkdir -p repo
+      - uses: actions/checkout@v6
+        if: steps.download.outcome == 'success'
+        with:
+          lfs: true
+          submodules: recursive
+          ref: ${{ steps.pr-meta.outputs.pr_ref }}
+          fetch-depth: 0
+          path: repo
+      - name: Set git ref
+        if: steps.download.outcome == 'success'
+        id: git-hash
+        run:
+          ref=$(git rev-parse HEAD);echo "git_hash=$ref" > $GITHUB_OUTPUT
+        working-directory: repo
+
+      - name: "Run instrumented tests on Firebase test lab"
+        if: steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/app-merged-instrumented-tests/build/outputs/apk/debug/app-merged-instrumented-tests-debug.apk') != ''
+        run: |
+          gcloud auth login --cred-file=test-lab-key.json
+          gcloud config set project androidarchitectureplayground
+          
+          tmp_file=$(mktemp)
+          gcloud firebase test android run \
+          --type instrumentation \
+          --app repo/config/dummy-apk.apk \
+          --test artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk \
+          --device model=MediumPhone.arm,version=26 \
+          --use-orchestrator \
+          --environment-variables clearPackageData=true \
+          |& tee tmp_file
+          
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          RESULTS=$(cat tmp_file)
+          rm tmp_file
+          
+          BUCKET=$(echo $RESULTS | grep -oP "browser/\K[^]]+")
+          mkdir -p instrumented_tests_results
+          gcloud storage cp -r gs://$BUCKET instrumented_tests_results/
+          
+          if [[ TEST_EXIT_CODE -ne 0 ]] then
+            exit 1
+          fi
+      - name: Post SARIF findings as comments in the pull request
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/merge.sarif') != ''
+        uses: sett-and-hive/sarif-to-comment-action/composite@d6808eaef0d23c26905ca02ea3dd44e1e22c1dae
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          branch: "${{ steps.git-hash.outputs.git_hash }}"
+          pr-number: "${{ steps.pr-meta.outputs.pr_num }}"
+          title: Lint report
+          show-rule-details: false
+          sarif-file: 'artifacts/results/kotlinova/kotlinova/merge.sarif'
+          simple: true
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@27d65e188ec43221b20d26de30f4892fad91df2f
+        if: always() && steps.download.outcome == 'success'
+        with:
+          comment_mode: failures
+          files: |
+            artifacts/**/TEST-*.xml
+            instrumented_tests_results/**/*.xml
+          commit: ${{ github.event.workflow_run.head_sha }}
+          event_file: artifacts/results/_temp/_github_workflow/event.json
+          event_name: ${{ github.event.workflow_run.event }}
+          check_run: 'true'
