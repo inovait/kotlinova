@@ -30,7 +30,7 @@ jobs:
         # that anvil build passes.
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint reportMerge --continue"
+        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest detektDebug :kotlinova-gradle:detektMain lint reportMerge --continue"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
       - run: echo ${{ github.event.number }} > pr_number.txt
