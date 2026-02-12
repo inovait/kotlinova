@@ -42,7 +42,7 @@ jobs:
         # that anvil build passes.
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektDebug detektJvmTest :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
         run: "./gradlew test jvmTest"
       - name: "Run instrumented tests on Firebase test lab"
