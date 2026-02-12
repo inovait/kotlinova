@@ -28,7 +28,7 @@ jobs:
       - name: Compile Unit Tests
         # We cannot run instrumented tests on CI, but at least we can compile them to ensure
         # that anvil build passes.
-        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses"
+        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
       - name: Lint
         run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint reportMerge --continue"
       - name: Run Unit Tests
@@ -47,3 +47,4 @@ jobs:
             ${{ github.event_path }}
             merge.sarif
             navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
+            navigation/tests/build/outputs/apk/debug/tests-debug.apk

@@ -60,7 +60,7 @@ jobs:
           tmp_file=$(mktemp)
           gcloud firebase test android run \
           --type instrumentation \
-          --app repo/config/dummy-apk.apk \
+          --app artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk \
           --test artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk \
           --device model=MediumPhone.arm,version=26 \
           --use-orchestrator \
