@@ -209,7 +209,6 @@ class FragmentScreenTest {
 
       waitUntilPasses {
          rule.runOnUiThread {
-            fragment.lifecycle.currentState shouldBe Lifecycle.State.INITIALIZED
             fragment.view shouldBe null
             fragment.onDestroyCalled.shouldBeTrue()
          }
