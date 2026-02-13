@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.compose.result
 
 import android.os.Parcelable
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.compositionLocalOf
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -38,35 +39,37 @@ import java.lang.ref.WeakReference
  * ```
  */
 @Parcelize
-class ResultPassingStore(private val store: @RawValue HashMap<Int, Any> = HashMap()) : Parcelable {
+class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any> = HashMap()) : Parcelable {
    @IgnoredOnParcel
-   private val callbacks = HashMap<Int, WeakReference<(Any) -> Unit>>()
+   private val callbacks = HashMap<Long, MutableList<WeakReference<(Any) -> Unit>>>()
 
    @Suppress("UNCHECKED_CAST")
-   fun <T> registerCallback(key: Int, callback: (T) -> Unit): ResultKey<T> {
-      val existingData = store.remove(key)
+   @VisibleForTesting
+   fun <T> registerCallback(compositeKeyHashCode: Long, callback: (T) -> Unit): ResultKey<T> {
+      val index = callbacks[compositeKeyHashCode]?.size ?: 0
+      val resultKey = ResultKey<T>(compositeKeyHashCode, index)
+
+      val existingData = store.remove(resultKey)
       if (existingData != null) {
          callback(existingData as T)
       }
 
-      callbacks += key to WeakReference(callback as (Any) -> Unit)
+      callbacks.getOrPut(compositeKeyHashCode) { ArrayList() }.add(WeakReference(callback as (Any) -> Unit))
 
-      return ResultKey(key)
+      return resultKey
    }
 
-   fun <T> unregisterCallback(callback: (T) -> Unit) {
-      callbacks.values.removeIf {
-         // Also remove all callbacks that have been garbage collected (are null)
-         it.get() == callback || it.get() == null
-      }
+   @VisibleForTesting
+   fun unregisterCallback(key: ResultKey<*>) {
+      callbacks[key.compositeKeyHashCode]?.set(key.index, WeakReference(null))
    }
 
    fun <T : Any> sendResult(key: ResultKey<T>, result: T) {
-      val callback = callbacks[key.key]?.get()
+      val callback = callbacks[key.compositeKeyHashCode]?.elementAtOrNull(key.index)?.get()
       if (callback != null) {
          callback(result)
       } else {
-         store[key.key] = result
+         store[key] = result
       }
    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,13 @@
 package si.inova.kotlinova.compose.result
 
 import android.os.Parcelable
+import androidx.annotation.VisibleForTesting
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class ResultKey<T>(val key: Int) : Parcelable
+class ResultKey<T> @VisibleForTesting constructor(
+   @VisibleForTesting
+   val compositeKeyHashCode: Long,
+   @VisibleForTesting
+   val index: Int,
+) : Parcelable

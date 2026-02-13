@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -18,7 +18,7 @@ package si.inova.kotlinova.compose.result
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.currentCompositeKeyHash
+import androidx.compose.runtime.currentCompositeKeyHashCode
 
 /**
  * Register a receiver that can receive result data from another screen. This method will return a [ResultKey]
@@ -39,13 +39,13 @@ import androidx.compose.runtime.currentCompositeKeyHash
 @Composable
 fun <T : Any> registerResultReceiver(callback: (T) -> Unit): ResultKey<T> {
    val store = LocalResultPassingStore.current
-   val key = currentCompositeKeyHash
+   val key = currentCompositeKeyHashCode
 
    val resultKey = store.registerCallback(key, callback)
 
    DisposableEffect(callback) {
       onDispose {
-         store.unregisterCallback(callback)
+         store.unregisterCallback(resultKey)
       }
    }
 
