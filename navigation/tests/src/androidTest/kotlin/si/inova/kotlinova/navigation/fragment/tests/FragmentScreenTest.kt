@@ -207,7 +207,6 @@ class FragmentScreenTest {
       }
       rule.waitForIdle()
 
-
       waitUntilPasses {
          rule.runOnUiThread {
             fragment.view shouldBe null
