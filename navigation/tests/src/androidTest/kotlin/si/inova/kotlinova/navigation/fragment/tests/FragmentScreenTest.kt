@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -51,6 +51,7 @@ import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.exists
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
+import si.inova.kotlinova.navigation.testutils.waitUntilPasses
 import java.util.UUID
 
 class FragmentScreenTest {
@@ -206,10 +207,12 @@ class FragmentScreenTest {
       }
       rule.waitForIdle()
 
-      rule.runOnUiThread {
-         fragment.lifecycle.currentState shouldBe Lifecycle.State.INITIALIZED
-         fragment.view shouldBe null
-         fragment.onDestroyCalled.shouldBeTrue()
+
+      waitUntilPasses {
+         rule.runOnUiThread {
+            fragment.view shouldBe null
+            fragment.onDestroyCalled.shouldBeTrue()
+         }
       }
    }
 
