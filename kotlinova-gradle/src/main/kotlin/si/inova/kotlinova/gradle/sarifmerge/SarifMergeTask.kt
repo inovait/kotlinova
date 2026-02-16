@@ -17,6 +17,7 @@
 package si.inova.kotlinova.gradle.sarifmerge
 
 import io.github.detekt.sarif4k.Level
+import io.github.detekt.sarif4k.MergingConfig
 import io.github.detekt.sarif4k.ReportingConfiguration
 import io.github.detekt.sarif4k.SarifSerializer
 import io.github.detekt.sarif4k.merge
@@ -55,7 +56,8 @@ abstract class SarifMergeTask : DefaultTask() {
       } else {
          val sarifFiles = inputFiles.map { SarifSerializer.fromJson(it.readText()) }
 
-         val merged = sarifFiles.reduce { a, b -> a.merge(b) }
+         val config = MergingConfig(allowMismatchedSchema = true)
+         val merged = sarifFiles.reduce { a, b -> a.merge(b, config) }
 
          val fixedSeverity = merged.copy(
             runs = merged.runs.map { run ->
