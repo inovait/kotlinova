@@ -16,6 +16,8 @@
 
 package si.inova.kotlinova.core.outcome
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -31,5 +33,22 @@ inline fun <T> catchIntoOutcome(block: () -> Outcome<T>): Outcome<T> {
       Outcome.Error(e)
    } catch (e: Exception) {
       Outcome.Error(UnknownCauseException(cause = e))
+   }
+}
+
+/**
+ * Returns a result of the [Outcome.Success] emitted by this flow or
+ * throws an exception from the [Outcome.Error] emitted by this flow,
+ * whichever is emitted first.
+ */
+suspend fun <T> Flow<Outcome<T>>.firstSuccessOrThrow(): T {
+   val result = first {
+      it is Outcome.Success || it is Outcome.Error
+   }
+
+   return when (result) {
+      is Outcome.Success -> result.data
+      is Outcome.Error -> throw result.exception
+      is Outcome.Progress -> error("Result should never be progress")
    }
 }
