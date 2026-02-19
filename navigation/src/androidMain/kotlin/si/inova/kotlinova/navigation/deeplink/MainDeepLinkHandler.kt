@@ -31,4 +31,3 @@ class MainDeepLinkHandler(
       return injectedHandlers.asSequence().mapNotNull { it.handleDeepLink(uri, startup) }.firstOrNull()
    }
 }
-

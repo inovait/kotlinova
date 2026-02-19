@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -175,7 +175,6 @@ private inline fun <reified T : Outcome<*>> beInstanceOfOutcome() = object : Mat
 
 // Copied from https://github.com/kotest/kotest/blob/04f888183b35a3c834000efc673c9410b2d39c87/kotest-assertions/kotest-assertions-shared/src/jvmMain/kotlin/io/kotest/assertions/AssertionErrorBuilder.jvm.kt#L59
 private fun intellijFormattedComparison(expected: Expected, actual: Actual): String {
-
    // only include types if they are different and neither is null
    val includeTypes = when {
       expected.value.type == null || actual.value.type == null -> false
@@ -185,9 +184,10 @@ private fun intellijFormattedComparison(expected: Expected, actual: Actual): Str
 
    fun format(printed: Printed): String {
       val qualifiedName = printed.type?.qualifiedName
-      return when (includeTypes) {
-         true if qualifiedName != null -> "${qualifiedName}<${printed.value}>"
-         else -> "<${printed.value}>"
+      return if (includeTypes && qualifiedName != null) {
+         "$qualifiedName<${printed.value}>"
+      } else {
+         "<${printed.value}>"
       }
    }
    return "expected:${format(expected.value)} but was:${format(actual.value)}"

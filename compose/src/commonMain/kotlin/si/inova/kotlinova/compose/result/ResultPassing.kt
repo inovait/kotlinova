@@ -14,6 +14,8 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+@file:Suppress("UnusedImport") // https://github.com/detekt/detekt/issues/9137
+
 package si.inova.kotlinova.compose.result
 
 import androidx.compose.runtime.Composable

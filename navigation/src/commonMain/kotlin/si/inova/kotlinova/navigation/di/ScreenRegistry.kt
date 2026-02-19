@@ -46,7 +46,7 @@ class ScreenRegistry(
    fun <T : ScreenKey> getRegistration(key: T): ScreenRegistration<T> {
       val reg = staticRegistrations[key::class]
          ?: error(
-            "No screen registered for ${key}. Did you add an @InjectNavigationScreen to its screen?"
+            "No screen registered for $key. Did you add an @InjectNavigationScreen to its screen?"
          )
 
       return reg as ScreenRegistration<T>

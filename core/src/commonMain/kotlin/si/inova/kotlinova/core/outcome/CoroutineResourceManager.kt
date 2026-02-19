@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import si.inova.kotlinova.core.collections.createConcurrentMap
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
@@ -126,8 +125,6 @@ open class CoroutineResourceManager(
       currentJobForThatResource?.cancel()
 
       val newJob = scope.launch(context, CoroutineStart.LAZY) {
-         val thisJob = coroutineContext.job
-
          currentJobForThatResource?.join()
 
          if (!isActive) {

@@ -25,4 +25,3 @@ package si.inova.kotlinova.core.data
    ReplaceWith("Immutable", "androidx.compose.runtime.Immutable")
 )
 actual annotation class Immutable()
-
