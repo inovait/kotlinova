@@ -19,29 +19,9 @@
 package si.inova.kotlinova.core.test.fakes
 
 import android.annotation.SuppressLint
-import android.app.ActionBar
-import android.app.Activity
-import android.app.ActivityManager
-import android.app.Dialog
-import android.app.Fragment
-import android.app.FragmentManager
-import android.app.LoaderManager
-import android.app.PendingIntent
-import android.app.PictureInPictureParams
-import android.app.SharedElementCallback
-import android.app.TaskStackBuilder
-import android.app.VoiceInteractor
+import android.app.*
 import android.app.assist.AssistContent
-import android.content.BroadcastReceiver
-import android.content.ComponentCallbacks
-import android.content.ComponentName
-import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.IntentSender
-import android.content.ServiceConnection
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.content.res.AssetManager
@@ -54,29 +34,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.PersistableBundle
-import android.os.UserHandle
+import android.os.*
 import android.transition.Scene
 import android.transition.TransitionManager
-import android.view.ActionMode
-import android.view.ContextMenu
-import android.view.Display
-import android.view.DragAndDropPermissions
-import android.view.DragEvent
-import android.view.KeyEvent
-import android.view.KeyboardShortcutGroup
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MotionEvent
-import android.view.SearchEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import android.widget.Toolbar
 import java.io.File
@@ -165,7 +126,7 @@ class FakeActivity : Activity() {
       writePermission: String?,
       pid: Int,
       uid: Int,
-      modeFlags: Int
+      modeFlags: Int,
    ): Int {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -191,7 +152,7 @@ class FakeActivity : Activity() {
       fillInIntent: Intent?,
       flagsMask: Int,
       flagsValues: Int,
-      extraFlags: Int
+      extraFlags: Int,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -202,7 +163,7 @@ class FakeActivity : Activity() {
       flagsMask: Int,
       flagsValues: Int,
       extraFlags: Int,
-      options: Bundle?
+      options: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -238,7 +199,7 @@ class FakeActivity : Activity() {
    override fun sendBroadcastAsUser(
       intent: Intent?,
       user: UserHandle?,
-      receiverPermission: String?
+      receiverPermission: String?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -270,16 +231,7 @@ class FakeActivity : Activity() {
    override fun registerReceiver(
       receiver: BroadcastReceiver?,
       filter: IntentFilter?,
-      flags: Int
-   ): Intent? {
-      throw UnsupportedOperationException("Operation not supported by FakeActivity")
-   }
-
-   override fun registerReceiver(
-      receiver: BroadcastReceiver?,
-      filter: IntentFilter?,
-      broadcastPermission: String?,
-      scheduler: Handler?
+      flags: Int,
    ): Intent? {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -289,7 +241,16 @@ class FakeActivity : Activity() {
       filter: IntentFilter?,
       broadcastPermission: String?,
       scheduler: Handler?,
-      flags: Int
+   ): Intent? {
+      throw UnsupportedOperationException("Operation not supported by FakeActivity")
+   }
+
+   override fun registerReceiver(
+      receiver: BroadcastReceiver?,
+      filter: IntentFilter?,
+      broadcastPermission: String?,
+      scheduler: Handler?,
+      flags: Int,
    ): Intent? {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -384,7 +345,7 @@ class FakeActivity : Activity() {
       scheduler: Handler?,
       initialCode: Int,
       initialData: String?,
-      initialExtras: Bundle?
+      initialExtras: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -413,7 +374,7 @@ class FakeActivity : Activity() {
       scheduler: Handler?,
       initialCode: Int,
       initialData: String?,
-      initialExtras: Bundle?
+      initialExtras: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -441,7 +402,7 @@ class FakeActivity : Activity() {
       scheduler: Handler?,
       initialCode: Int,
       initialData: String?,
-      initialExtras: Bundle?
+      initialExtras: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -461,7 +422,7 @@ class FakeActivity : Activity() {
    override fun openOrCreateDatabase(
       name: String?,
       mode: Int,
-      factory: SQLiteDatabase.CursorFactory?
+      factory: SQLiteDatabase.CursorFactory?,
    ): SQLiteDatabase {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -470,7 +431,7 @@ class FakeActivity : Activity() {
       name: String?,
       mode: Int,
       factory: SQLiteDatabase.CursorFactory?,
-      errorHandler: DatabaseErrorHandler?
+      errorHandler: DatabaseErrorHandler?,
    ): SQLiteDatabase {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -505,7 +466,7 @@ class FakeActivity : Activity() {
    override fun startInstrumentation(
       className: ComponentName,
       profileFile: String?,
-      arguments: Bundle?
+      arguments: Bundle?,
    ): Boolean {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -521,7 +482,7 @@ class FakeActivity : Activity() {
       scheduler: Handler?,
       initialCode: Int,
       initialData: String?,
-      initialExtras: Bundle?
+      initialExtras: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -626,7 +587,7 @@ class FakeActivity : Activity() {
       pid: Int,
       uid: Int,
       modeFlags: Int,
-      message: String?
+      message: String?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -638,7 +599,7 @@ class FakeActivity : Activity() {
       pid: Int,
       uid: Int,
       modeFlags: Int,
-      message: String?
+      message: String?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -681,7 +642,7 @@ class FakeActivity : Activity() {
       fillInIntent: Intent?,
       flagsMask: Int,
       flagsValues: Int,
-      extraFlags: Int
+      extraFlags: Int,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -693,7 +654,7 @@ class FakeActivity : Activity() {
       flagsMask: Int,
       flagsValues: Int,
       extraFlags: Int,
-      options: Bundle?
+      options: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -754,7 +715,7 @@ class FakeActivity : Activity() {
       fragment: Fragment,
       intent: Intent?,
       requestCode: Int,
-      options: Bundle?
+      options: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -890,7 +851,7 @@ class FakeActivity : Activity() {
    override fun onProvideKeyboardShortcuts(
       data: MutableList<KeyboardShortcutGroup>?,
       menu: Menu?,
-      deviceId: Int
+      deviceId: Int,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1003,7 +964,7 @@ class FakeActivity : Activity() {
       child: Activity,
       intent: Intent?,
       requestCode: Int,
-      options: Bundle?
+      options: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1047,7 +1008,7 @@ class FakeActivity : Activity() {
    override fun onCreateContextMenu(
       menu: ContextMenu?,
       v: View?,
-      menuInfo: ContextMenu.ContextMenuInfo?
+      menuInfo: ContextMenu.ContextMenuInfo?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1243,7 +1204,7 @@ class FakeActivity : Activity() {
    override fun onRequestPermissionsResult(
       requestCode: Int,
       permissions: Array<String>,
-      grantResults: IntArray
+      grantResults: IntArray,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1343,7 +1304,7 @@ class FakeActivity : Activity() {
       fillInIntent: Intent?,
       flagsMask: Int,
       flagsValues: Int,
-      extraFlags: Int
+      extraFlags: Int,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1356,7 +1317,7 @@ class FakeActivity : Activity() {
       flagsMask: Int,
       flagsValues: Int,
       extraFlags: Int,
-      options: Bundle?
+      options: Bundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1411,7 +1372,7 @@ class FakeActivity : Activity() {
 
    override fun onWindowStartingActionMode(
       callback: ActionMode.Callback?,
-      type: Int
+      type: Int,
    ): ActionMode? {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1443,7 +1404,7 @@ class FakeActivity : Activity() {
    override fun startActivityIfNeeded(
       intent: Intent,
       requestCode: Int,
-      options: Bundle?
+      options: Bundle?,
    ): Boolean {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1468,7 +1429,7 @@ class FakeActivity : Activity() {
       initialQuery: String?,
       selectInitialQuery: Boolean,
       appSearchData: Bundle?,
-      globalSearch: Boolean
+      globalSearch: Boolean,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
@@ -1483,14 +1444,14 @@ class FakeActivity : Activity() {
 
    override fun onRestoreInstanceState(
       savedInstanceState: Bundle?,
-      persistentState: PersistableBundle?
+      persistentState: PersistableBundle?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }
 
    override fun onPictureInPictureModeChanged(
       isInPictureInPictureMode: Boolean,
-      newConfig: Configuration?
+      newConfig: Configuration?,
    ) {
       throw UnsupportedOperationException("Operation not supported by FakeActivity")
    }

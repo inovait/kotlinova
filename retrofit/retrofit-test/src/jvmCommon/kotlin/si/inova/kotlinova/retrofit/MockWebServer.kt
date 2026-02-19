@@ -31,8 +31,10 @@ import java.net.HttpURLConnection
  * You can use [MockWebServerScope.baseUrl] inside the provided block to initialize your Retrofit service
  * and [MockWebServerScope.mockResponse] to create mock HTTP responses.
  */
+
+@Suppress("MissingUseCall") // It is closed in the runServer block
 inline fun mockWebServer(
-   block: MockWebServerScope.() -> Unit
+   block: MockWebServerScope.() -> Unit,
 ) {
    MockWebServerScope().runServer(block)
 }
@@ -59,6 +61,7 @@ inline fun MockWebServerScope.runServer(block: MockWebServerScope.() -> Unit) {
 }
 
 class MockWebServerScope : Dispatcher() {
+   @Suppress("MissingUseCall") // It is closed in the runServer block
    val server: MockWebServer = MockWebServer()
    val baseUrl: String
       get() = server.url("").toString()
@@ -86,8 +89,10 @@ class MockWebServerScope : Dispatcher() {
    }
 
    /**
+    * @param url URL to mock
     * @param includeQueryParameters when *true*, you will also need to include query parameters in the *url* to be matched.
     *                               Otherwise, it will only match by path.
+    * @param responseBuilder Builder for adding extra response data
     */
    inline fun mockResponse(url: String, includeQueryParameters: Boolean = false, responseBuilder: () -> MockResponse) {
       val response = responseBuilder()
@@ -111,7 +116,8 @@ class MockWebServerScope : Dispatcher() {
       return MockResponse(
          HttpURLConnection.HTTP_INTERNAL_ERROR,
          headersOf(
-            "Content-Type", "text/plain"
+            "Content-Type",
+            "text/plain"
          ),
          body = "Response to $url not mocked"
       )

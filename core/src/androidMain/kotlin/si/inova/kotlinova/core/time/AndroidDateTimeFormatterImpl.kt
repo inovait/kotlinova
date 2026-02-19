@@ -22,7 +22,7 @@ import android.text.format.DateFormat
 import si.inova.kotlinova.core.reporting.ErrorReporter
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 /**
  * Provides Android-specific [DateTimeFormatter]s, such as a localized time formatter that respects the user's
@@ -32,7 +32,7 @@ import java.util.Locale
  */
 class AndroidDateTimeFormatterImpl(
    private val context: Context,
-   private val errorReporter: ErrorReporter
+   private val errorReporter: ErrorReporter,
 ) : BaseAndroidDateTimeFormatter() {
 
    //endregion

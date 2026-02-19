@@ -54,12 +54,12 @@ fun <T : Enum<T>> Class<T>.createEnumAdapter(): JsonAdapter<T> {
 
    enumConstants?.forEach { enumConstant ->
       if (getField(enumConstant.name).isAnnotationPresent(JsonFallback::class.java)) {
-         check(default == null) { "Multiple entries annotated with @${JsonFallback::class.simpleName} on $name" }
+         check(default == null) { "Multiple entries annotated with @${JsonFallback::class.simpleName ?: "NULl"} on $name" }
          default = enumConstant
       }
    }
 
-   requireNotNull(default) { "No entry annotated with @${JsonFallback::class.simpleName} on $name" }
+   requireNotNull(default) { "No entry annotated with @${JsonFallback::class.simpleName ?: "NULl"} on $name" }
 
    return EnumJsonAdapter.create(this).withUnknownFallback(default)
 }

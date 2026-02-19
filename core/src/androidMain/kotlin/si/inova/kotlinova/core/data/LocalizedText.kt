@@ -60,7 +60,7 @@ data class LiteralText(private val text: CharSequence) : LocalizedText {
 class ResourceText(
    @StringRes
    private val resource: Int,
-   private vararg val arguments: @RawValue Any
+   private vararg val arguments: @RawValue Any,
 ) : LocalizedText {
    override fun get(resources: Resources): CharSequence {
       return resources.getString(resource, *arguments)
@@ -94,7 +94,7 @@ class PluralText(
    @PluralsRes
    private val resource: Int,
    private val quantity: Int,
-   private vararg val arguments: @RawValue Any
+   private vararg val arguments: @RawValue Any,
 ) : LocalizedText {
    override fun get(resources: Resources): CharSequence {
       return resources.getQuantityString(resource, quantity, *arguments)

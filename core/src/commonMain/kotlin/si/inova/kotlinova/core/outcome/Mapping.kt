@@ -16,12 +16,7 @@
 
 package si.inova.kotlinova.core.outcome
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 
 /**
  * Map data of this outcome, while keeping the type.
@@ -109,7 +104,7 @@ fun <A, B> Flow<Outcome<A>>.flatMapLatestOutcome(mapper: (A) -> Flow<Outcome<B>>
  * * Otherwise, [Outcome.Success] is returned, with the data of [this].
  */
 fun <T> Outcome<T>.downgradeTo(
-   targetType: Outcome<*>
+   targetType: Outcome<*>,
 ): Outcome<T> {
    return when {
       this is Outcome.Error -> this

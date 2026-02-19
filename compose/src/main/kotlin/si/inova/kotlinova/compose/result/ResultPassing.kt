@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.compose.result
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.currentCompositeKeyHashCode
@@ -37,6 +38,7 @@ import androidx.compose.runtime.currentCompositeKeyHashCode
  * Only parcelizable types (https://developer.android.com/kotlin/parcelize#types) are supported as a result types.
  */
 @Composable
+@SuppressLint("VisibleForTests") // This is the primary use :)
 fun <T : Any> registerResultReceiver(callback: (T) -> Unit): ResultKey<T> {
    val store = LocalResultPassingStore.current
    val key = currentCompositeKeyHashCode

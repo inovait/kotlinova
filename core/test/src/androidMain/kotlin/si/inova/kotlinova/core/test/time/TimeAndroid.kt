@@ -21,12 +21,7 @@ import kotlinx.coroutines.test.currentTime
 import si.inova.kotlinova.core.time.AndroidTimeProvider
 import si.inova.kotlinova.core.time.FakeAndroidTimeProvider
 import si.inova.kotlinova.core.time.TimeProvider
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 
 /**
  * A [TimeProvider] instance that provides time based on virtual clock of this kotlin test.
@@ -36,7 +31,7 @@ fun TestScope.virtualAndroidTimeProvider(
    currentLocalTime: () -> LocalTime = { LocalTime.MIN },
    currentLocalDateTime: () -> LocalDateTime = { LocalDateTime.of(currentLocalDate(), currentLocalTime()) },
    currentTimezone: () -> ZoneId = { ZoneId.of("UTC") },
-   currentZonedDateTime: (() -> ZonedDateTime)? = null
+   currentZonedDateTime: (() -> ZonedDateTime)? = null,
 ): AndroidTimeProvider {
    return FakeAndroidTimeProvider(
       currentLocalDate,

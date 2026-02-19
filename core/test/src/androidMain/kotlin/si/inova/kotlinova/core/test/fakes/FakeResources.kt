@@ -17,12 +17,7 @@
 package si.inova.kotlinova.core.test.fakes
 
 import android.annotation.SuppressLint
-import android.content.res.AssetFileDescriptor
-import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.content.res.Resources
-import android.content.res.TypedArray
-import android.content.res.XmlResourceParser
+import android.content.res.*
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -54,7 +49,7 @@ class FakeResources : Resources(null, null, null) {
    fun putString(
       @StringRes
       resource: Int,
-      text: String
+      text: String,
    ) {
       putString(resource) { text }
    }
@@ -62,7 +57,7 @@ class FakeResources : Resources(null, null, null) {
    fun putString(
       @StringRes
       resource: Int,
-      textGenerator: (Array<out Any?>) -> String
+      textGenerator: (Array<out Any?>) -> String,
    ) {
       stringMap[resource] = textGenerator
    }
@@ -70,10 +65,11 @@ class FakeResources : Resources(null, null, null) {
    fun putPlural(
       @PluralsRes
       resource: Int,
-      textGenerator: (amount: Int, args: Array<out Any?>) -> String
+      textGenerator: (amount: Int, args: Array<out Any?>) -> String,
    ) {
       pluralMap[resource] = textGenerator
    }
+
    override fun getString(id: Int): String {
       val generator = getStringOrFallback(id)
 
@@ -296,7 +292,7 @@ class FakeResources : Resources(null, null, null) {
       id: Int,
       density: Int,
       outValue: TypedValue?,
-      resolveRefs: Boolean
+      resolveRefs: Boolean,
    ) {
       throw UnsupportedOperationException("Method not supported by FakeResources")
    }

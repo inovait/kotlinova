@@ -20,11 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import okhttp3.Request
 import okio.Timeout
-import retrofit2.Call
-import retrofit2.CallAdapter
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
+import retrofit2.*
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
@@ -51,12 +47,12 @@ import java.lang.reflect.Type
 class ErrorHandlingAdapterFactory(
    private val coroutineScope: CoroutineScope,
    private val errorHandler: ErrorHandler? = null,
-   private val exceptionInterceptor: (Throwable) -> CauseException? = { null }
+   private val exceptionInterceptor: (Throwable) -> CauseException? = { null },
 ) : CallAdapter.Factory() {
    override fun get(
       returnType: Type,
       annotations: Array<Annotation>,
-      retrofit: Retrofit
+      retrofit: Retrofit,
    ): CallAdapter<*, *>? {
       if (returnType !is ParameterizedType) {
          return null
@@ -117,7 +113,7 @@ class ErrorHandlingAdapterFactory(
    }
 
    private abstract class CallDelegate<TIn, TOut>(
-      protected val proxy: Call<TIn>
+      protected val proxy: Call<TIn>,
    ) : Call<TOut> {
       override fun execute(): Response<TOut> = executeImpl()
       final override fun enqueue(callback: Callback<TOut>) = enqueueImpl(callback)
