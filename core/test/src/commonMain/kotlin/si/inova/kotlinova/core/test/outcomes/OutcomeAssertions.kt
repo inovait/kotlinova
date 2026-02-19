@@ -68,7 +68,7 @@ infix fun <T> Outcome<T>.shouldBeProgressWithData(expectedData: T?) {
 fun <T> Outcome<T>.shouldBeProgressWith(
    expectedData: T? = data,
    expectedProgress: Float? = null,
-   expectedStyle: LoadingStyle? = null
+   expectedStyle: LoadingStyle? = null,
 ) {
    assertSoftly {
       this should beInstanceOfOutcome<Outcome.Progress<T>>()
@@ -106,10 +106,11 @@ fun <T> Outcome<T>.shouldBeProgressWith(
    }
 }
 
+@Suppress("CognitiveComplexMethod") // Just a bunch of successive type checks
 fun <T> Outcome<T>.shouldBeErrorWith(
    expectedData: T? = data,
    exceptionType: Class<out CauseException>? = null,
-   exceptionMessage: String? = null
+   exceptionMessage: String? = null,
 ): Exception {
    lateinit var returnException: Exception
 
@@ -161,13 +162,13 @@ private inline fun <reified T : Outcome<*>> beInstanceOfOutcome() = object : Mat
          value is T,
          {
             if (value is Outcome.Error) {
-               "Outcome should be a ${T::class.simpleName} but was an Outcome.Error " +
+               "Outcome should be a ${T::class.simpleName ?: "NULL"} but was an Outcome.Error " +
                   "with exception ${value.exception.stackTraceToString()}"
             } else {
-               "Outcome should be a ${T::class.simpleName} but was a ${value.javaClass.simpleName}."
+               "Outcome should be a ${T::class.simpleName ?: "NULL"} but was a ${value.javaClass.simpleName}."
             }
          },
-         { "Outcome should not be a ${T::class.simpleName} but it was." }
+         { "Outcome should not be a ${T::class.simpleName ?: "NULL"} but it was." }
       )
    }
 }

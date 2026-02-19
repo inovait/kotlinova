@@ -25,7 +25,7 @@ import kotlin.math.min
 
 /**
  * A [logcat] logger that delegates to [android.util.Log] for any log with a priority of
- * at least [minPriorityInt], and is otherwise a no-op.
+ * at least [minPriority], and is otherwise a no-op.
  *
  * Handles special cases for [LogPriority.ASSERT] (which requires sending to Log.wtf) and
  * splitting logs to be at most 4000 characters per line (otherwise logcat just truncates).
@@ -50,7 +50,7 @@ class AndroidLogcatLogger(minPriority: LogPriority = LogPriority.DEBUG) : Logcat
    override fun log(
       priority: LogPriority,
       tag: String,
-      message: String
+      message: String,
    ) {
       // Tag length limit was removed in API 26.
       val trimmedTag = if (tag.length <= MAX_TAG_LENGTH || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -83,7 +83,7 @@ class AndroidLogcatLogger(minPriority: LogPriority = LogPriority.DEBUG) : Logcat
    private fun logToLogcat(
       priority: Int,
       tag: String,
-      part: String
+      part: String,
    ) {
       if (priority == Log.ASSERT) {
          Log.wtf(tag, part)

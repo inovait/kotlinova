@@ -23,12 +23,12 @@ package si.inova.kotlinova.core.logging
  */
 @Deprecated("Upstream logcat now supports KMP. Use that instead", replaceWith = ReplaceWith("LogPriority", "logcat.LogPriority"))
 enum class LogPriority(
-   val priorityInt: Int
+   val priorityInt: Int,
 ) {
    VERBOSE(2),
    DEBUG(3),
    INFO(4),
    WARN(5),
    ERROR(6),
-   ASSERT(7)
+   ASSERT(7),
 }

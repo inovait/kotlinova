@@ -25,5 +25,5 @@ abstract class CauseException(
    message: String? = null,
    cause: Throwable? = null,
    val isProgrammersFault: Boolean = true,
-   val shouldReport: Boolean = isProgrammersFault
+   val shouldReport: Boolean = isProgrammersFault,
 ) : Exception(message, cause)

@@ -25,11 +25,7 @@ import kotlinx.coroutines.flow.channelFlow
 import okhttp3.CacheControl
 import okhttp3.Request
 import okhttp3.internal.cache.CacheStrategy
-import retrofit2.Call
-import retrofit2.CallAdapter
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.parseResponse
+import retrofit2.*
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
@@ -69,10 +65,11 @@ import kotlin.coroutines.cancellation.CancellationException
  *                               into CauseException that can then be consumed upstream. This is not called when a full response
  *                               is received. Use [errorHandler] for that.
  */
+@Suppress("SuspendFunWithCoroutineScopeReceiver") // We are using ProducerScope only to send data, not to launch anything
 class StaleWhileRevalidateCallAdapterFactory(
    private val errorHandler: ErrorHandler?,
    private val errorReporter: ErrorReporter = ErrorReporter {},
-   private val exceptionInterceptor: (Throwable) -> CauseException? = { null }
+   private val exceptionInterceptor: (Throwable) -> CauseException? = { null },
 ) : CallAdapter.Factory() {
    override fun get(returnType: Type, annotations: Array<out Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
       if (returnType !is ParameterizedType) {
@@ -115,7 +112,7 @@ class StaleWhileRevalidateCallAdapterFactory(
          var networkRequest: Request? = originalCall.request()
 
          return try {
-            val forceNetwork = originalCall.request().header(SyntheticHeaders.HEADER_FORCE_REFRESH)?.toBoolean() ?: false
+            val forceNetwork = originalCall.request().header(SyntheticHeaders.HEADER_FORCE_REFRESH)?.toBoolean() == true
 
             val cacheRequest = originalCall.request().newBuilder()
                .cacheControl(CacheControl.FORCE_CACHE)
@@ -181,10 +178,11 @@ class StaleWhileRevalidateCallAdapterFactory(
          }
       }
 
+      @Suppress("CanBeNonNullable") // False positive: this function does a lot if dataFromCache is null
       private suspend fun ProducerScope<Outcome<T>>.makeMainRequest(
          networkRequest: Request,
          call: Call<T>,
-         dataFromCache: T?
+         dataFromCache: T?,
       ) {
          try {
             val networkResponse = retrofit.callFactory().newCall(networkRequest).enqueueAndAwait()
@@ -213,7 +211,7 @@ class StaleWhileRevalidateCallAdapterFactory(
       private suspend fun ProducerScope<Outcome<T>>.parseResultFromCacheResponse(
          parsedResponse: Response<T>,
          networkRequest: Request?,
-         originalCall: Call<T>
+         originalCall: Call<T>,
       ): Pair<Request?, T?> {
          val result = catchIntoOutcome {
             val data = parsedResponse.bodyOrThrow(errorHandler)
@@ -237,7 +235,7 @@ class StaleWhileRevalidateCallAdapterFactory(
       private suspend fun ProducerScope<Outcome<T>>.handleCacheError(
          networkRequest: Request?,
          e: CauseException,
-         originalCall: Call<T>
+         originalCall: Call<T>,
       ) {
          if (networkRequest == null) {
             // Cache is our main request - forward all errors

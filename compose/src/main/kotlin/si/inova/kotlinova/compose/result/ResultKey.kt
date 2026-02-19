@@ -22,8 +22,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class ResultKey<T> @VisibleForTesting constructor(
-   @VisibleForTesting
+   @get:VisibleForTesting
    val compositeKeyHashCode: Long,
-   @VisibleForTesting
+   @get:VisibleForTesting
    val index: Int,
 ) : Parcelable

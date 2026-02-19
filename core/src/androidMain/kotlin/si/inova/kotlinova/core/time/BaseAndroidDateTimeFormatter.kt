@@ -22,7 +22,7 @@ import java.time.chrono.IsoChronology
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.format.FormatStyle
-import java.util.Locale
+import java.util.*
 
 /**
  * Provides Android-specific [DateTimeFormatter]s, such as a localized time formatter that respects the user's
@@ -55,6 +55,7 @@ abstract class BaseAndroidDateTimeFormatter : AndroidDateTimeFormatter {
    }
    //endregion
    //region ofLocalizedDate
+
    /**
     * Returns a locale specific date format for the ISO chronology.
     *
@@ -83,6 +84,7 @@ abstract class BaseAndroidDateTimeFormatter : AndroidDateTimeFormatter {
    }
    //endregion
    //region ofLocalizedDateTime
+
    /**
     * Returns a locale specific date and time format for the ISO chronology.
     *
@@ -106,7 +108,7 @@ abstract class BaseAndroidDateTimeFormatter : AndroidDateTimeFormatter {
     * @return the date, time or date-time formatter
     */
    override fun ofLocalizedDateTime(
-      dateStyle: FormatStyle
+      dateStyle: FormatStyle,
    ): DateTimeFormatter {
       // If time format is SHORT, try system 12-/24-hour setting-specific time format:
       return attemptSystemSettingDateTimeFormatter(dateStyle)
@@ -129,6 +131,7 @@ abstract class BaseAndroidDateTimeFormatter : AndroidDateTimeFormatter {
 
    //endregion
    //region ofSkeleton
+
    /**
     * Returns the best possible localized formatter of the given skeleton for the given context's primary locale. A
     * skeleton is similar to, and uses the same format characters as, a Unicode

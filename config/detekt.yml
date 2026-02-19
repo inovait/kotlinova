@@ -1028,7 +1028,7 @@ style:
   UnnecessaryInnerClass:
     active: true
   UnnecessaryLet:
-    active: true
+    active: false # Sometimes code is cleaner with let
   UnnecessaryParentheses:
     active: false # This rule can make precedence of operators confusing since we are prevented from inserting clarifying parentheses
     allowForUnclearPrecedence: false

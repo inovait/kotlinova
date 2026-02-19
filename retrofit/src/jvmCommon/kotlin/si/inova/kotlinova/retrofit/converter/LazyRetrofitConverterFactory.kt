@@ -34,7 +34,7 @@ class LazyRetrofitConverterFactory(private val parentFactory: Lazy<Converter.Fac
    override fun responseBodyConverter(
       type: Type,
       annotations: Array<out Annotation>,
-      retrofit: Retrofit
+      retrofit: Retrofit,
    ): Converter<ResponseBody, *> {
       val lazyConverter = lazy {
          requireNotNull(
@@ -53,7 +53,7 @@ class LazyRetrofitConverterFactory(private val parentFactory: Lazy<Converter.Fac
       type: Type,
       parameterAnnotations: Array<out Annotation>,
       methodAnnotations: Array<out Annotation>,
-      retrofit: Retrofit
+      retrofit: Retrofit,
    ): Converter<*, RequestBody> {
       val lazyConverter = lazy {
          @Suppress("UNCHECKED_CAST")
@@ -63,7 +63,7 @@ class LazyRetrofitConverterFactory(private val parentFactory: Lazy<Converter.Fac
                parameterAnnotations,
                methodAnnotations,
                retrofit
-            ) as Converter<Any?, RequestBody>
+            ) as Converter<Any?, RequestBody>?
          ) { "Moshi converter should never be null" }
       }
 

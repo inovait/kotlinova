@@ -78,7 +78,7 @@ inline fun Any.logcat(
     * site.
     */
    tag: String? = null,
-   message: () -> String
+   message: () -> String,
 ) {
    LogcatLogger.logger.let { logger ->
       if (logger.isLoggable(priority)) {
@@ -96,7 +96,7 @@ inline fun Any.logcat(
 inline fun logcat(
    tag: String,
    priority: LogPriority = LogPriority.DEBUG,
-   message: () -> String
+   message: () -> String,
 ) {
    with(LogcatLogger.logger) {
       if (isLoggable(priority)) {

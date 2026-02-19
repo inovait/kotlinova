@@ -17,12 +17,7 @@
 package si.inova.kotlinova.core.test.time
 
 import si.inova.kotlinova.core.time.TimeProvider
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 
 /**
  * Time provider that provides fake pre-determined time. Use for tests.
@@ -33,7 +28,7 @@ class FakeTimeProvider(
    private val currentLocalDateTime: () -> LocalDateTime = { LocalDateTime.of(currentLocalDate(), currentLocalTime()) },
    private val currentTimezone: () -> ZoneId = { ZoneId.of("UTC") },
    private val currentZonedDateTime: () -> ZonedDateTime = { ZonedDateTime.of(currentLocalDateTime(), currentTimezone()) },
-   private val currentMilliseconds: () -> Long = { 0 }
+   private val currentMilliseconds: () -> Long = { 0 },
 ) : TimeProvider {
    override fun currentTimeMillis(): Long {
       return currentMilliseconds()

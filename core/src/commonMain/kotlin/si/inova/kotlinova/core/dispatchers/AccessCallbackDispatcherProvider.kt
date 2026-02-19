@@ -40,7 +40,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class AccessCallbackDispatcherProvider(
    private val parent: DispatcherProvider,
-   private val onDispatcherAccess: () -> Unit
+   private val onDispatcherAccess: () -> Unit,
 ) : DispatcherProvider {
    override val default: CoroutineDispatcher
       get() {

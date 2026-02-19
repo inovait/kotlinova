@@ -16,16 +16,10 @@
 
 package si.inova.kotlinova.core.outcome
 
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
 import si.inova.kotlinova.core.flow.collectInto
 import si.inova.kotlinova.core.reporting.ErrorReporter
@@ -38,7 +32,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  */
 open class CoroutineResourceManager(
    val scope: CoroutineScope,
-   private val reportService: ErrorReporter
+   private val reportService: ErrorReporter,
 ) {
    private val activeJobs = ConcurrentHashMap<Any, Job>()
 
@@ -61,7 +55,7 @@ open class CoroutineResourceManager(
       currentValue: T? = resource.value.data,
       context: CoroutineContext = EmptyCoroutineContext,
       keepDataOnExceptions: Boolean = true,
-      block: suspend ResourceControlBlock<T>.() -> Unit
+      block: suspend ResourceControlBlock<T>.() -> Unit,
    ) = launchBoundControlTask(resource, context) {
       try {
          resource.value = Outcome.Progress(currentValue)
@@ -88,7 +82,7 @@ open class CoroutineResourceManager(
 
    inner class ResourceControlBlock<T>(
       originalFlow: MutableStateFlow<Outcome<T>>,
-      coroutineScope: CoroutineScope
+      coroutineScope: CoroutineScope,
    ) : MutableStateFlow<Outcome<T>> by originalFlow,
       CoroutineScope by coroutineScope {
       fun launchAndEmitAll(flow: Flow<Outcome<T>>) {
@@ -116,7 +110,7 @@ open class CoroutineResourceManager(
    fun launchBoundControlTask(
       resource: Any,
       context: CoroutineContext = EmptyCoroutineContext,
-      block: suspend CoroutineScope.() -> Unit
+      block: suspend CoroutineScope.() -> Unit,
    ) {
       // To prevent threading issues, only one job can handle one resource at a time
       // Cancel active job first.
@@ -151,7 +145,7 @@ open class CoroutineResourceManager(
    fun launchWithExceptionReporting(
       context: CoroutineContext = EmptyCoroutineContext,
       start: CoroutineStart = CoroutineStart.DEFAULT,
-      block: suspend CoroutineScope.() -> Unit
+      block: suspend CoroutineScope.() -> Unit,
    ) {
       scope.launch(context, start) {
          try {

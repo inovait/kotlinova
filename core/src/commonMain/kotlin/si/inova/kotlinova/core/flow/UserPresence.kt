@@ -17,14 +17,7 @@
 package si.inova.kotlinova.core.flow
 
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -50,6 +43,7 @@ fun <T> Flow<T>.onlyFlowWhenUserPresent(onStartWithUserNotPresent: suspend FlowC
                startedWithoutPresence = false
                flow(onStartWithUserNotPresent)
             } else {
+               @Suppress("ForbiddenMethodCall") // Use here is fine
                emptyFlow()
             }
          }

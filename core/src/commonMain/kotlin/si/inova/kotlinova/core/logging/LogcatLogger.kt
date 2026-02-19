@@ -43,7 +43,7 @@ interface LogcatLogger {
    fun log(
       priority: LogPriority,
       tag: String,
-      message: String
+      message: String,
    )
 
    companion object {
@@ -96,7 +96,7 @@ interface LogcatLogger {
       override fun log(
          priority: LogPriority,
          tag: String,
-         message: String
+         message: String,
       ) = error("Should never receive any log")
    }
 }
