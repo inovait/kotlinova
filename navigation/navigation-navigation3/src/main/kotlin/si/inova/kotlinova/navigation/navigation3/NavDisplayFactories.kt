@@ -52,7 +52,7 @@ fun NavigationInjection.Factory.NavDisplay(
    entryProvider.NavDisplay(
       modifier,
       contentAlignment,
-      entryDecorators + entryProvider.completionListenerDecorator,
+      entryDecorators,
       sceneStrategy,
       sizeTransform,
    )
