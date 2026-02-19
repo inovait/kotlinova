@@ -21,15 +21,13 @@ import org.gradle.accessors.dm.LibrariesForLibs
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("com.android.library")
    kotlin("multiplatform")
-   id("android-commons")
+   id("com.android.kotlin.multiplatform.library")
+   id("standard-config")
    id("kotlin-parcelize")
 }
 
 kotlin {
-   androidTarget()
-
    jvm {
       testRuns["test"].executionTask.configure {
          useJUnitPlatform()
@@ -62,6 +60,24 @@ kotlin {
       }
       val androidMain by getting {
          dependsOn(jvmCommon)
+      }
+   }
+
+   androidLibrary {
+      compileSdk = 36
+      minSdk = 23
+
+      packaging {
+         resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+         }
+      }
+
+      lint {
+         lintConfig = file("$rootDir/config/android-lint.xml")
+         abortOnError = true
+
+         warningsAsErrors = true
       }
    }
 }

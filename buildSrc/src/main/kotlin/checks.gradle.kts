@@ -15,6 +15,7 @@
  */
 
 import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
 import org.gradle.accessors.dm.LibrariesForLibs
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import util.commonAndroid
@@ -23,9 +24,10 @@ import util.isAndroidProject
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("dev.detekt")
    id("kotlinova")
 }
+
+apply(plugin = "dev.detekt")
 
 if (isAndroidProject()) {
    commonAndroid {
@@ -47,7 +49,7 @@ configure<KotlinovaExtension> {
    }
 }
 
-detekt {
+configure<DetektExtension> {
    config.from(files("$rootDir/config/detekt.yml"))
 }
 
@@ -60,5 +62,5 @@ tasks.withType<Detekt>().configureEach {
 }
 
 dependencies {
-   detektPlugins(libs.detekt.ktlint)
+   add("detektPlugins", libs.detekt.ktlint)
 }

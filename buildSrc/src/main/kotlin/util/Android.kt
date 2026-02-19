@@ -24,8 +24,11 @@ import com.android.build.api.dsl.Installation
 import com.android.build.api.dsl.ProductFlavor
 import com.android.build.gradle.internal.dsl.InternalTestedExtension
 import com.android.build.gradle.internal.utils.KOTLIN_ANDROID_PLUGIN_ID
+import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * android {} block that can be used without applying specific android plugin

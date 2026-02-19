@@ -20,10 +20,6 @@ plugins {
    multiplatformModule
 }
 
-android {
-   namespace = "si.inova.kotlinova.retrofit.test"
-}
-
 publishLibrary(
    userFriendlyName = "Kotlinova retrofit test",
    description = "Test helpers for kotlinova-retrofit",
@@ -32,6 +28,10 @@ publishLibrary(
 )
 
 kotlin {
+   androidLibrary {
+      namespace = "si.inova.kotlinova.retrofit.test"
+   }
+
    sourceSets {
       jvmCommon {
          dependencies {

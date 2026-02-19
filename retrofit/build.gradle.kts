@@ -20,10 +20,6 @@ plugins {
    multiplatformModule
 }
 
-android {
-   namespace = "si.inova.kotlinova.retrofit"
-}
-
 publishLibrary(
    userFriendlyName = "kotlinova-retrofit",
    description = "A collection of utilities for retrofit requests",
@@ -31,6 +27,10 @@ publishLibrary(
 )
 
 kotlin {
+   androidLibrary {
+      namespace = "si.inova.kotlinova.retrofit"
+   }
+
    sourceSets {
       androidMain {
          dependencies {

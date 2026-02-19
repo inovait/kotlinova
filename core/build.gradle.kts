@@ -20,10 +20,6 @@ plugins {
    multiplatformModule
 }
 
-android {
-   namespace = "si.inova.kotlinova.core"
-}
-
 publishLibrary(
    userFriendlyName = "kotlinova-core",
    description = "A collection of core utilities",
@@ -31,6 +27,10 @@ publishLibrary(
 )
 
 kotlin {
+   androidLibrary {
+      namespace = "si.inova.kotlinova.core"
+   }
+
    sourceSets {
       val androidMain by getting {
          dependencies {

@@ -20,10 +20,6 @@ plugins {
    multiplatformModule
 }
 
-android {
-   namespace = "si.inova.kotlinova.core.test"
-}
-
 publishLibrary(
    userFriendlyName = "Kotlinova core test",
    description = "Test helpers for kotlinova-core",
@@ -32,6 +28,10 @@ publishLibrary(
 )
 
 kotlin {
+   androidLibrary {
+      namespace = "si.inova.kotlinova.core.test"
+   }
+
    sourceSets {
       val commonMain by getting {
          dependencies {
