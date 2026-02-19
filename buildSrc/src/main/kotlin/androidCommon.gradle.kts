@@ -14,9 +14,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.api.dsl.androidLibrary
 import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import util.COMMON_COMPILE_SDK
+import util.COMMON_MIN_SDK
 import util.commonAndroid
 
 /*
@@ -41,59 +45,67 @@ plugins {
    id("standardConfig")
 }
 
-commonAndroid {
-   compileSdk = 36
-
-   compileOptions {
-      // Android still creates java tasks, even with 100% Kotlin.
-      // Ensure that target compatiblity is equal to kotlin's jvmToolchain
-      lateinit var javaVersion: JavaVersion
-      the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
-      targetCompatibility = javaVersion
-
-      isCoreLibraryDesugaringEnabled = true
-   }
-
-   defaultConfig {
-      minSdk = 23
-
-      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-   }
-
-   testOptions {
-      unitTests.all {
-         it.useJUnitPlatform()
-
-         // Better test output
-         it.systemProperty("kotest.assertions.collection.print.size", "300")
-         it.systemProperty("kotest.assertions.collection.enumerate.size", "300")
+if (project.pluginManager.hasPlugin("com.android.kotlin.multiplatform.library")) {
+   configure<KotlinMultiplatformExtension> {
+      androidLibrary {
+         compileSdk = COMMON_COMPILE_SDK
+         minSdk = COMMON_MIN_SDK
       }
    }
+} else {
+   commonAndroid {
+      compileSdk = 36
 
-   packaging {
-      resources {
-         excludes += "/META-INF/{AL2.0,LGPL2.1}"
+      compileOptions {
+         // Android still creates java tasks, even with 100% Kotlin.
+         // Ensure that target compatiblity is equal to kotlin's jvmToolchain
+         lateinit var javaVersion: JavaVersion
+         the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
+         targetCompatibility = javaVersion
+
+         isCoreLibraryDesugaringEnabled = true
       }
-   }
 
-   lint {
-      lintConfig = file("$rootDir/config/android-lint.xml")
-      abortOnError = true
+      defaultConfig {
+         minSdk = 23
 
-      warningsAsErrors = true
-   }
+         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      }
 
-   buildTypes {
-      debug {
-         testCoverage {
-            jacocoVersion = libs.versions.jacoco.get()
+      testOptions {
+         unitTests.all {
+            it.useJUnitPlatform()
+
+            // Better test output
+            it.systemProperty("kotest.assertions.collection.print.size", "300")
+            it.systemProperty("kotest.assertions.collection.enumerate.size", "300")
          }
-         enableUnitTestCoverage = true
-         enableAndroidTestCoverage = true
+      }
+
+      packaging {
+         resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+         }
+      }
+
+      lint {
+         lintConfig = file("$rootDir/config/android-lint.xml")
+         abortOnError = true
+
+         warningsAsErrors = true
+      }
+
+      buildTypes {
+         debug {
+            testCoverage {
+               jacocoVersion = libs.versions.jacoco.get()
+            }
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+         }
       }
    }
 }
-
 dependencies {
    add("coreLibraryDesugaring", libs.desugarJdkLibs)
 }

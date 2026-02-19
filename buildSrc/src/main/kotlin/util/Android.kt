@@ -27,8 +27,11 @@ import com.android.build.api.variant.Variant
 import com.android.build.api.variant.VariantBuilder
 import com.android.build.gradle.internal.dsl.InternalTestedExtension
 import com.android.build.gradle.internal.utils.KOTLIN_ANDROID_PLUGIN_ID
+import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * android {} block that can be used without applying specific android plugin
@@ -60,3 +63,6 @@ fun Project.commonAndroidComponents(
 ) {
    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("androidComponents", block)
 }
+
+const val COMMON_COMPILE_SDK = 36
+const val COMMON_MIN_SDK = 23

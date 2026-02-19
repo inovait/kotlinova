@@ -21,10 +21,6 @@ plugins {
    jvmMultiplatformModule
 }
 
-android {
-   namespace = "si.inova.kotlinova.retrofit.moshi"
-}
-
 publishLibrary(
    userFriendlyName = "Kotlinova retrofit moshi",
    description = "Utilities for Moshi JSON library",
@@ -33,6 +29,10 @@ publishLibrary(
 )
 
 kotlin {
+   androidLibrary {
+      namespace = "si.inova.kotlinova.retrofit.moshi"
+   }
+
    sourceSets {
       jvmCommon {
          dependencies {

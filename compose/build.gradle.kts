@@ -29,18 +29,17 @@ publishLibrary(
    githubPath = "compose"
 )
 
-android {
-   namespace = "si.inova.kotlinova.compose"
-}
-
 kotlin {
-   androidTarget {
+   androidLibrary {
+   namespace = "si.inova.kotlinova.compose"
+
       compilerOptions {
          freeCompilerArgs.addAll(
             "-P",
             "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=si.inova.kotlinova.compose.parcelize.ParcelizeOnAndroid"
          )
       }
+
    }
 
    sourceSets {
