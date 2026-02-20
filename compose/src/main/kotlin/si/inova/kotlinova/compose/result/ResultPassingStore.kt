@@ -18,7 +18,7 @@ package si.inova.kotlinova.compose.result
 
 import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
@@ -90,7 +90,7 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
    }
 }
 
-val LocalResultPassingStore = compositionLocalOf<ResultPassingStore> {
+val LocalResultPassingStore = staticCompositionLocalOf<ResultPassingStore> {
    error("Missing LocalResultPassingStore")
 }
 
