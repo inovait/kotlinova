@@ -71,7 +71,7 @@ fun Navigation3EntryProvider.NavDisplay(
 ) {
    BackstackProvider(this.simpleStackBackstack) {
       val decoratedNavEntries =
-         rememberDecoratedNavEntries(this.backstackEntries, entryDecorators + completionListenerDecorator)
+         rememberDecoratedNavEntries(this.backstackEntries, entryDecorators)
 
       NavDisplay(
          entries = decoratedNavEntries,
