@@ -41,7 +41,7 @@ import java.lang.ref.WeakReference
 @Parcelize
 class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any> = HashMap()) : Parcelable {
    @IgnoredOnParcel
-   private val callbacks = HashMap<Long, MutableList<WeakReference<(Any) -> Unit>>>()
+   private val callbacks = HashMap<Long, MutableList<WeakReference<(Any?) -> Unit>?>>()
 
    @Suppress("UNCHECKED_CAST")
    @VisibleForTesting
@@ -51,7 +51,7 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
 
       val existingData = store.remove(resultKey)
       if (existingData != null) {
-         callback(existingData as T)
+         callback(unwrapResult(existingData))
       }
 
       callbacks.getOrPut(compositeKeyHashCode) { ArrayList() }.add(WeakReference(callback as (Any) -> Unit))
@@ -69,8 +69,16 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
       if (callback != null) {
          callback(result)
       } else {
-         store[key] = result
+         store[key] = result ?: NullValue
       }
+
+   private fun <T> unwrapResult(result: Any): T {
+      @Suppress("UNCHECKED_CAST")
+      return if (result === NullValue) {
+         null
+      } else {
+         result
+      } as T
    }
 }
 

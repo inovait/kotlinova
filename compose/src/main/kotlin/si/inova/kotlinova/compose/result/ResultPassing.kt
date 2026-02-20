@@ -39,7 +39,7 @@ import androidx.compose.runtime.currentCompositeKeyHashCode
  */
 @Composable
 @SuppressLint("VisibleForTests") // This is the primary use :)
-fun <T : Any> registerResultReceiver(callback: (T) -> Unit): ResultKey<T> {
+fun <T> registerResultReceiver(callback: (T) -> Unit): ResultKey<T> {
    val store = LocalResultPassingStore.current
    val key = currentCompositeKeyHashCode
 
