@@ -46,7 +46,9 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
    @Suppress("UNCHECKED_CAST")
    @VisibleForTesting
    fun <T> registerCallback(compositeKeyHashCode: Long, callback: (T) -> Unit): ResultKey<T> {
-      val index = callbacks[compositeKeyHashCode]?.size ?: 0
+      val list = callbacks.getOrPut(compositeKeyHashCode) { ArrayList() }
+      val index = list.indexOfFirst { it == null }.let { if (it < 0) list.size else it }
+
       val resultKey = ResultKey<T>(compositeKeyHashCode, index)
 
       val existingData = store.remove(resultKey)
@@ -54,23 +56,29 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
          callback(unwrapResult(existingData))
       }
 
-      callbacks.getOrPut(compositeKeyHashCode) { ArrayList() }.add(WeakReference(callback as (Any) -> Unit))
+      val ref = WeakReference<(Any?) -> Unit>(callback as (Any?) -> Unit)
+      if (index >= list.size) {
+         list.add(ref)
+      } else {
+         list.set(index, ref)
+      }
 
       return resultKey
    }
 
    @VisibleForTesting
    fun unregisterCallback(key: ResultKey<*>) {
-      callbacks[key.compositeKeyHashCode]?.set(key.index, WeakReference(null))
+      callbacks[key.compositeKeyHashCode]?.set(key.index, null)
    }
 
-   fun <T : Any> sendResult(key: ResultKey<T>, result: T) {
+   fun <T> sendResult(key: ResultKey<T>, result: T) {
       val callback = callbacks[key.compositeKeyHashCode]?.elementAtOrNull(key.index)?.get()
       if (callback != null) {
          callback(result)
       } else {
          store[key] = result ?: NullValue
       }
+   }
 
    private fun <T> unwrapResult(result: Any): T {
       @Suppress("UNCHECKED_CAST")
@@ -85,3 +93,6 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
 val LocalResultPassingStore = compositionLocalOf<ResultPassingStore> {
    error("Missing LocalResultPassingStore")
 }
+
+@Parcelize
+private data object NullValue : Parcelable

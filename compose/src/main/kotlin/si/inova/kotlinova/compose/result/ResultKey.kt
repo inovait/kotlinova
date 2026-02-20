@@ -21,7 +21,7 @@ import androidx.annotation.VisibleForTesting
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class ResultKey<T> @VisibleForTesting constructor(
+data class ResultKey<T> @VisibleForTesting constructor(
    @get:VisibleForTesting
    val compositeKeyHashCode: Long,
    @get:VisibleForTesting
