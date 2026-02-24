@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -41,6 +41,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.Inherited
+import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
 class NestedNavigation {
@@ -56,7 +57,7 @@ class NestedNavigation {
       rule.onNodeWithText("Navigate").performClick()
       rule.onNodeWithText("World").assertIsDisplayed()
 
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          NestedNavigationScreenKey(listOf(BasicNavigationTest.TestScreenAKey("Hello")))
       )
    }
@@ -84,7 +85,7 @@ class NestedNavigation {
       val backstack = rule.insertTestNavigation(ParentScreenWithSharedServiceKey())
 
       rule.runOnUiThread {
-         backstack.goTo(ParentScreenWithSharedServiceKey(666))
+         backstack.updateBackstack(backstack.backstack.value + ParentScreenWithSharedServiceKey(666))
       }
 
       rule.waitForIdle()

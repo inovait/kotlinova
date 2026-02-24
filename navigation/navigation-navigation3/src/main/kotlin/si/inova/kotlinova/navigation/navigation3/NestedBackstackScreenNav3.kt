@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,43 +17,49 @@
 package si.inova.kotlinova.navigation.navigation3
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import com.zhuinden.simplestack.Backstack
 import kotlinx.android.parcel.Parcelize
+import si.inova.kotlinova.navigation.backstack.Backstack
+import si.inova.kotlinova.navigation.backstack.LocalBackstack
+import si.inova.kotlinova.navigation.backstack.rememberBackstack
 import si.inova.kotlinova.navigation.di.MainNavigation
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.CurrentScopeTag
-import si.inova.kotlinova.navigation.simplestack.LocalBackstack
-import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 
 /**
  *
  */
 @InjectNavigationScreen
-open class NestedBackstackScreen(
+class NestedBackstackScreen(
+   navigationStackComponentFactory: NavigationInjection.Factory,
+   @MainNavigation
+   mainBackstack: Backstack,
+   @CurrentScopeTag
+   scope: String,
+) : BaseNestedBackstackScreen<NestedNavigationScreenKey>(navigationStackComponentFactory, mainBackstack, scope)
+
+abstract class BaseNestedBackstackScreen<K : BaseNestedNavigationScreenKey>(
    private val navigationStackComponentFactory: NavigationInjection.Factory,
    @MainNavigation
    private val mainBackstack: Backstack,
    @CurrentScopeTag
    val scope: String,
-) : Screen<NestedNavigationScreenKey>() {
+) : Screen<K>() {
    @Composable
-   override fun Content(key: NestedNavigationScreenKey) {
-      val entryProvider = remember { Navigation3EntryProvider() }
-
+   override fun Content(key: K) {
       val parentBackstack = LocalBackstack.current
 
-      navigationStackComponentFactory.rememberBackstack(
-         entryProvider,
+      val backstack = navigationStackComponentFactory.rememberBackstack(
          id = key.id,
          initialHistory = { key.initialHistory },
          overrideMainBackstack = mainBackstack,
          parentBackstack = parentBackstack,
          parentBackstackScope = scope
       )
+
+      val entryProvider = backstack.rememberNavigation3EntryProvider()
 
       NavDisplay(entryProvider)
    }
@@ -66,8 +72,13 @@ open class NestedBackstackScreen(
    }
 }
 
+abstract class BaseNestedNavigationScreenKey : ScreenKey() {
+   abstract val initialHistory: List<ScreenKey>
+   abstract val id: String
+}
+
 @Parcelize
 data class NestedNavigationScreenKey(
-   val initialHistory: List<ScreenKey>,
-   val id: String = "SINGLE",
-) : ScreenKey()
+   override val initialHistory: List<ScreenKey>,
+   override val id: String = "SINGLE",
+) : BaseNestedNavigationScreenKey()

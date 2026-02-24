@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -50,7 +50,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(AdvancedTestScreenAKey)
+      backstack.backstack.value.shouldContainExactly(AdvancedTestScreenAKey)
    }
 
    @Test
@@ -68,7 +68,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          BlankScreenKey,
          AdvancedTestScreenAKey,
          AdvancedTestScreenBKey
@@ -89,7 +89,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          AdvancedTestScreenBKey
       )
    }
@@ -108,7 +108,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          AdvancedTestScreenBKey
       )
    }
@@ -123,7 +123,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          AdvancedTestScreenAKey,
          AdvancedTestScreenBKey
       )

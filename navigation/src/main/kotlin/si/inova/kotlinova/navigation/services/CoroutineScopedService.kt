@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,6 @@
 package si.inova.kotlinova.navigation.services
 
 import androidx.annotation.CallSuper
-import com.zhuinden.simplestack.ScopedServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 
@@ -31,7 +30,7 @@ abstract class CoroutineScopedService(
    @Suppress("MemberVisibilityCanBePrivate")
    val coroutineScope: CoroutineScope,
 ) : ScopedService,
-   ScopedServices.Registered {
+   ScopedService.Registered {
 
    override fun onServiceRegistered() {}
 

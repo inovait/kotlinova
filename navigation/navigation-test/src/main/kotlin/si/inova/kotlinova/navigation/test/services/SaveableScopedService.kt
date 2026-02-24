@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,5 +23,5 @@ import si.inova.kotlinova.navigation.services.SaveableScopedService
  * process death (create another service, copy state from the old service and check that the new state matches)
  */
 fun <T : SaveableScopedService> T.copyStateFrom(another: T) {
-   fromBundle(another.toBundle())
+   restoreState(another.saveState())
 }

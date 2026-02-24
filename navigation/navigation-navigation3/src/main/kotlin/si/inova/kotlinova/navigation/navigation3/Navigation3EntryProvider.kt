@@ -17,35 +17,64 @@
 package si.inova.kotlinova.navigation.navigation3
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.scene.DialogSceneStrategy
-import com.zhuinden.simplestack.Backstack
-import com.zhuinden.simplestack.StateChange
-import com.zhuinden.simplestack.StateChanger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import si.inova.kotlinova.navigation.backstack.Backstack
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.di.ScreenRegistry
 import si.inova.kotlinova.navigation.screenkeys.DialogKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 import si.inova.kotlinova.navigation.screens.Screen
-import si.inova.kotlinova.navigation.simplestack.rememberBackstack
 
 /**
  * Provider for the [backstackEntries] that can be supplied directly to the NavDisplay
  */
 class Navigation3EntryProvider(
+   val backstack: Backstack,
+   private val screenRegistry: ScreenRegistry,
    private val generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() },
-) : StateChanger {
-   lateinit var simpleStackBackstack: Backstack
-      private set
+) {
+   private val currentNavEntries = ArrayList<NavEntry<out ScreenKey>>()
 
-   private lateinit var screenRegistry: ScreenRegistry
-   private var initialized: Boolean = false
+   private val _navEntries = MutableStateFlow<List<NavEntry<out ScreenKey>>>(
+      run {
+         handleNewBackstack(backstack.backstack.value)
+         ArrayList(currentNavEntries)
+      }
+   )
+   val navEntries: StateFlow<List<NavEntry<out ScreenKey>>>
+      get() = _navEntries
 
-   private val _backstackEntries = mutableStateListOf<NavEntry<ScreenKey>>()
-   val backstackEntries: List<NavEntry<ScreenKey>> get() = _backstackEntries
+   suspend fun processBackstack() {
+      backstack.backstack.collect { newKeys ->
+         handleNewBackstack(newKeys)
+
+         _navEntries.value = ArrayList(currentNavEntries)
+      }
+   }
+
+   private fun handleNewBackstack(newKeys: List<ScreenKey>) {
+      val matchingKeys = newKeys.withIndex().takeWhile { (index, it) -> currentNavEntries.elementAtOrNull(index)?.key() == it }
+      val oldTop = currentNavEntries.lastOrNull()
+
+      // Drop everything after matching keys
+      currentNavEntries.subList(matchingKeys.size, currentNavEntries.size).clear()
+
+      val addedKeys = newKeys.drop(matchingKeys.size)
+      addedKeys.forEachIndexed { index, key ->
+         if (key is SingleTopKey && index == addedKeys.lastIndex && key.javaClass == oldTop?.key()?.javaClass) {
+            // Single top key, copy previous Screen instance
+            @Suppress("UNCHECKED_CAST")
+            currentNavEntries.add(createNavEntry(key, oldTop.metadata.getValue(METADATA_SCREEN) as Screen<ScreenKey>))
+         } else {
+            currentNavEntries.add(createNavEntry(key))
+         }
+      }
+   }
 
    private fun createNavEntry(
       key: ScreenKey,
@@ -67,61 +96,24 @@ class Navigation3EntryProvider(
          screen.Content(key)
       }
    }
-
-   private fun initIfNeeded(backstack: Backstack) {
-      if (initialized) {
-         return
-      }
-      this.simpleStackBackstack = backstack
-
-      val navigationInjection = NavigationInjection.fromBackstack(backstack)
-      screenRegistry = navigationInjection.screenRegistry()
-
-      initialized = true
-   }
-
-   override fun handleStateChange(
-      stateChange: StateChange,
-      completionCallback: StateChanger.Callback,
-   ) {
-      initIfNeeded(stateChange.backstack)
-
-      val newKeys = stateChange.getNewKeys<ScreenKey>()
-
-      val matchingKeys = newKeys.withIndex().takeWhile { (index, it) -> _backstackEntries.elementAtOrNull(index)?.key() == it }
-      val oldTop = _backstackEntries.lastOrNull()
-
-      // Drop everything after matching keys
-      _backstackEntries.removeRange(matchingKeys.size, _backstackEntries.size)
-
-      val addedKeys = newKeys.drop(matchingKeys.size)
-      addedKeys.forEachIndexed { index, key ->
-         if (key is SingleTopKey && index == addedKeys.lastIndex && key.javaClass == oldTop?.key()?.javaClass) {
-            // Single top key, copy previous Screen instance
-            @Suppress("UNCHECKED_CAST")
-            _backstackEntries.add(createNavEntry(key, oldTop.metadata.getValue(METADATA_SCREEN) as Screen<ScreenKey>))
-         } else {
-            _backstackEntries.add(createNavEntry(key))
-         }
-      }
-
-      completionCallback.stateChangeComplete()
-   }
 }
 
 @Composable
-fun NavigationInjection.Factory.rememberNavigation3EntryProvider(
-   initialHistory: () -> List<ScreenKey>,
+fun Backstack.rememberNavigation3EntryProvider(
    generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() },
 ): Navigation3EntryProvider {
-   val entryProvider = remember { Navigation3EntryProvider(generateExtraNavEntryMetadata) }
-
-   rememberBackstack(entryProvider) { initialHistory() }
+   val entryProvider = remember(this) {
+      Navigation3EntryProvider(
+         this,
+         NavigationInjection.fromBackstack(this).screenRegistry(),
+         generateExtraNavEntryMetadata,
+      )
+   }
 
    return entryProvider
 }
 
-fun NavEntry<ScreenKey>.key(): ScreenKey {
+fun NavEntry<out ScreenKey>.key(): ScreenKey {
    return metadata.getValue(METADATA_KEY) as ScreenKey
 }
 

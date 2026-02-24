@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,11 +16,11 @@
 
 package si.inova.kotlinova.navigation.di
 
-import com.zhuinden.simplestack.Backstack
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
+import si.inova.kotlinova.navigation.backstack.Backstack
+import si.inova.kotlinova.navigation.navigator.DefaultNavigator
 import si.inova.kotlinova.navigation.navigator.Navigator
-import si.inova.kotlinova.navigation.navigator.SimpleStackNavigator
 
 @ContributesTo(BackstackScope::class)
 interface NestedNavigationProviders {
@@ -31,6 +31,6 @@ interface NestedNavigationProviders {
       backstack: Backstack,
       navigationContext: Lazy<NavigationContext>,
    ): Navigator {
-      return SimpleStackNavigator(backstack, navigationContext)
+      return DefaultNavigator(backstack, navigationContext)
    }
 }

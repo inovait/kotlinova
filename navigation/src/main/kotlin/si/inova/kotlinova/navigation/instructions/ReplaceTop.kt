@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
@@ -26,14 +25,11 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  * Remove the top of the backstack and replace it with the provided instructions
  *
  * @param with The navigation instruction to execute after removing the top screen.
- * @param direction Optional animation direction of the [StateChange]:
- *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
- *   Defaults to [StateChange.REPLACE].
  */
 @Parcelize
-class ReplaceTop(val with: NavigationInstruction, private val direction: Int = StateChange.REPLACE) : NavigationInstruction() {
+class ReplaceTop(val with: NavigationInstruction) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
-      return with.performNavigation(backstack.dropLast(1), context).copy(direction = direction)
+      return with.performNavigation(backstack.dropLast(1), context).copy()
    }
 }
 
@@ -41,10 +37,7 @@ class ReplaceTop(val with: NavigationInstruction, private val direction: Int = S
  * Replace the top of the backstack with the provided screen
  *
  * @param screen The screen to replace current screen with
- * @param direction Optional animation direction of the [StateChange]:
- *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
- *   Defaults to [StateChange.REPLACE].
  */
-fun Navigator.replaceTopWith(screen: ScreenKey, direction: Int = StateChange.REPLACE) {
-   navigate(ReplaceTop(OpenScreen(screen).withConditions(), direction))
+fun Navigator.replaceTopWith(screen: ScreenKey) {
+   navigate(ReplaceTop(OpenScreen(screen).withConditions()))
 }

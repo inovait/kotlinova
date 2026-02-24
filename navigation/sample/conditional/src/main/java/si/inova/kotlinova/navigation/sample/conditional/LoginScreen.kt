@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.instructions.ReplaceTop
@@ -43,7 +42,7 @@ class LoginScreen(
          Button(onClick = {
             loginRepository.setUserLoggedIn(true)
             // Close login screen and then navigate to the target screen, with FORWARD animation
-            navigator.navigate(ReplaceTop(key.postLoginNavigation, direction = StateChange.FORWARD))
+            navigator.navigate(ReplaceTop(key.postLoginNavigation))
          }) {
             Text("Login")
          }

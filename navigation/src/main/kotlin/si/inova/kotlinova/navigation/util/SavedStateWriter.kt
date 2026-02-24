@@ -14,19 +14,34 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.instructions
+package si.inova.kotlinova.navigation.util
 
 import android.os.Parcelable
-import si.inova.kotlinova.navigation.di.NavigationContext
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import androidx.savedstate.SavedState
+import androidx.savedstate.SavedStateWriter
+import java.io.Serializable
 
-abstract class NavigationInstruction : Parcelable {
-   abstract fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult
-
-   /**
-    * @param newBackstack New back stack after this navigation call.
-    */
-   data class NavigationResult(
-      val newBackstack: List<ScreenKey>,
-   )
+/**
+ * Helper single method to set any object into SavedState without using different set methods for different types
+ */
+operator fun SavedStateWriter.set(key: String, value: Any) {
+   when (value) {
+      is String -> putString(key, value)
+      is Boolean -> putBoolean(key, value)
+      is BooleanArray -> putBooleanArray(key, value)
+      is Int -> putInt(key, value)
+      is IntArray -> putIntArray(key, value)
+      is Long -> putLong(key, value)
+      is LongArray -> putLongArray(key, value)
+      is Char -> putChar(key, value)
+      is CharArray -> putCharArray(key, value)
+      is CharSequence -> putCharSequence(key, value)
+      is Float -> putFloat(key, value)
+      is SavedState -> putSavedState(key, value)
+      is Parcelable -> putParcelable(key, value)
+      is Serializable -> putJavaSerializable(key, value)
+      else -> error(
+         "Type ${value.javaClass.canonicalName} of property $key is not supported in saved state"
+      )
+   }
 }

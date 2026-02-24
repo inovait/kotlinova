@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,29 +14,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.simplestack
+package si.inova.kotlinova.navigation.navigator
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.staticCompositionLocalOf
-import com.zhuinden.simplestack.Backstack
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import si.inova.kotlinova.navigation.backstack.Backstack
+import si.inova.kotlinova.navigation.di.BackstackScope
+import si.inova.kotlinova.navigation.di.NavigationContext
+import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 
-/**
- * Composition local to access the Backstack within screens.
- */
-val LocalBackstack =
-   staticCompositionLocalOf<Backstack> {
-      throw IllegalStateException(
-         "You must ensure that the BackstackProvider provides the backstack, but it currently doesn't exist."
-      )
-   }
+@ContributesBinding(BackstackScope::class)
+@Inject
+class DefaultNavigator(
+   private val backstack: Backstack,
+   private val navigationContext: Lazy<NavigationContext>,
+) : Navigator {
+   override fun navigate(navigationInstruction: NavigationInstruction) {
+      val res = navigationInstruction.performNavigation(backstack.backstack.value, navigationContext.value)
 
-/**
- * Provider for the backstack composition local.
- */
-@Composable
-fun BackstackProvider(backstack: Backstack, content: @Composable () -> Unit) {
-   CompositionLocalProvider(LocalBackstack provides (backstack)) {
-      content()
+      backstack.updateBackstack(res.newBackstack)
    }
 }

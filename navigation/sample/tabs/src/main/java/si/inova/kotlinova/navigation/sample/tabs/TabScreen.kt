@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -30,8 +30,11 @@ import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.sample.keys.TabScreenKey
 import si.inova.kotlinova.navigation.sample.tabs.subscreens.SubscreenA
+import si.inova.kotlinova.navigation.sample.tabs.subscreens.SubscreenAKey
 import si.inova.kotlinova.navigation.sample.tabs.subscreens.SubscreenB
+import si.inova.kotlinova.navigation.sample.tabs.subscreens.SubscreenBKey
 import si.inova.kotlinova.navigation.sample.tabs.subscreens.SubscreenC
+import si.inova.kotlinova.navigation.sample.tabs.subscreens.SubscreenCKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 
@@ -75,13 +78,12 @@ class TabScreen(
                      slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
                }
             }) {
-            val targetScreen = when (it) {
-               TabScreenKey.SelectedTab.A -> subscreenA
-               TabScreenKey.SelectedTab.B -> subscreenB
-               TabScreenKey.SelectedTab.C -> subscreenC
-            }
 
-            targetScreen.Content(key)
+            when (it) {
+               TabScreenKey.SelectedTab.A -> subscreenA.Content(SubscreenAKey)
+               TabScreenKey.SelectedTab.B -> subscreenB.Content(SubscreenBKey)
+               TabScreenKey.SelectedTab.C -> subscreenC.Content(SubscreenCKey)
+            }
          }
 
          Text(

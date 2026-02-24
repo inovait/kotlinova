@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -28,9 +28,11 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.Inject
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.instructions.navigateTo
@@ -40,12 +42,21 @@ import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
+import si.inova.kotlinova.navigation.testutils.BlankScreenKey
+import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import java.util.UUID
+
+private var unregisterCalled: Boolean = false
 
 class ServiceScopes {
    @get:Rule
    val rule = createComposeRule()
+
+   @Before
+   fun setUp() {
+      unregisterCalled = false
+   }
 
    @Test
    internal fun doNotShareServicesByDefault() {
@@ -74,6 +85,52 @@ class ServiceScopes {
       rule.onNodeWithText("Open another screen").performClick()
 
       rule.onNodeWithText("1").assertIsDisplayed()
+   }
+
+   @Test
+   internal fun callOnServiceUnregisteredWhenAllKeysSharingAServicesGoOffBackstack() {
+      val backstack = rule.insertTestNavigation(BlankScreenKey)
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(
+            listOf(
+               BlankScreenKey,
+               SharedServiceScreenKey(UUID.fromString("3865ef01-7ca6-4f8a-a7c2-9874a8877771"))
+            )
+         )
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(
+            listOf(
+               BlankScreenKey,
+               SharedServiceScreenKey(UUID.fromString("3865ef01-7ca6-4f8a-a7c2-9874a8877771")),
+               SharedServiceScreenKey(UUID.fromString("c6870b67-81cd-439f-997c-6b38216ea8f1")),
+            )
+         )
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(
+            listOf(
+               BlankScreenKey,
+               SharedServiceScreenKey(UUID.fromString("3865ef01-7ca6-4f8a-a7c2-9874a8877771")),
+            )
+         )
+      }
+      rule.waitForIdle()
+
+      unregisterCalled shouldBe false
+
+      rule.runOnUiThread {
+         backstack.goBack()
+      }
+      rule.waitForIdle()
+
+      unregisterCalled shouldBe true
    }
 
    @Parcelize
@@ -134,5 +191,10 @@ class ServiceScopes {
    @Inject
    class SharedService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val number by savedFlow(0)
+
+      override fun onServiceUnregistered() {
+         super.onServiceUnregistered()
+         unregisterCalled = true
+      }
    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -34,6 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.BackstackScope
@@ -44,22 +45,53 @@ import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.services.SingleScreenViewModel
+import si.inova.kotlinova.navigation.testutils.BlankScreenKey
+import si.inova.kotlinova.navigation.testutils.clearBackstackFromMemory
+import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
 
 private var lastReceivedKey: Any? = null
+private var numRegisterCalled: Int = 0
+private var unregisterCalled: Boolean = false
 
 class ServicesTest {
    @get:Rule
    val rule = createComposeRule()
 
+   @Before
+   fun setUp() {
+      numRegisterCalled = 0
+      unregisterCalled = false
+   }
+
    @Test
    internal fun allowScreensToInteractWithServices() {
       rule.insertTestNavigation(ScreenWithBasicServiceKey)
+      rule.waitForIdle()
 
       rule.onNodeWithText("Number: 0").assertIsDisplayed()
       rule.onNodeWithText("Increase").performClick()
       rule.onNodeWithText("Number: 1").assertIsDisplayed()
+   }
+
+   @Test
+   internal fun preserveServicesWhenScreenGoesToTheBackstack() {
+      val backstack = rule.insertTestNavigation(ScreenWithBasicServiceKey)
+
+      rule.onNodeWithText("Number: 0").assertIsDisplayed()
+      rule.onNodeWithText("Increase").performClick()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(listOf(ScreenWithBasicServiceKey, BlankScreenKey))
+      }
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(listOf(ScreenWithBasicServiceKey))
+      }
+
+      rule.onNodeWithText("Number: 1").assertIsDisplayed()
+      unregisterCalled shouldBe false
    }
 
    @Test
@@ -70,10 +102,13 @@ class ServicesTest {
       rule.onNodeWithText("Number: 0").assertIsDisplayed()
       rule.onNodeWithText("Increase").performClick()
 
+      numRegisterCalled = 0
+
       rule.waitForIdle()
       stateRestorationTester.emulateSavedInstanceStateRestore()
 
       rule.onNodeWithText("Number: 1").assertIsDisplayed()
+      numRegisterCalled shouldBe 0
    }
 
    @Test
@@ -104,11 +139,12 @@ class ServicesTest {
       rule.onNodeWithText("Increase").performClick()
 
       rule.waitForIdle()
+      numRegisterCalled = 0
       rule.removeBackstackFromMemory()
-
       stateRestorationTester.emulateSavedInstanceStateRestore()
 
       rule.onNodeWithText("Number: 1").assertIsDisplayed()
+      numRegisterCalled shouldBe 1
    }
 
    @Test
@@ -137,6 +173,55 @@ class ServicesTest {
       rule.onNodeWithText("Number: 1").assertIsDisplayed()
    }
 
+   @Test
+   internal fun callOnServiceUnregisteredWhenActivityFinishes() {
+      rule.insertTestNavigation(ScreenWithBasicServiceKey)
+      rule.waitForIdle()
+
+      rule.clearBackstackFromMemory()
+      rule.waitForIdle()
+
+      unregisterCalled shouldBe true
+   }
+
+   @Test
+   internal fun callOnServiceUnregisteredWhenScreenGoesOffBackstack() {
+      val backstack = rule.insertTestNavigation(BlankScreenKey)
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(listOf(BlankScreenKey, ScreenWithBasicServiceKey))
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.goBack()
+      }
+      rule.waitForIdle()
+
+      unregisterCalled shouldBe true
+   }
+
+   @Test
+   internal fun callOnServiceRegisteredOnInitialServices() {
+      rule.insertTestNavigation(ScreenWithBasicServiceKey)
+      rule.waitForIdle()
+
+      numRegisterCalled shouldBe 1
+   }
+
+   @Test
+   internal fun callOnServiceRegisteredOnNewServices() {
+      val backstack = rule.insertTestNavigation(BlankScreenKey)
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(listOf(BlankScreenKey, ScreenWithBasicServiceKey))
+      }
+      rule.waitForIdle()
+      numRegisterCalled shouldBe 1
+   }
+
    @Parcelize
    data object ScreenWithBasicServiceKey : ScreenKey()
 
@@ -157,8 +242,16 @@ class ServicesTest {
 
    @ContributesScopedService
    @Inject
-   class BasicService : ScopedService {
+   class BasicService : ScopedService, ScopedService.Registered {
       val data = MutableStateFlow(0)
+
+      override fun onServiceRegistered() {
+         numRegisterCalled++
+      }
+
+      override fun onServiceUnregistered() {
+         unregisterCalled = true
+      }
    }
 
    @Parcelize
@@ -183,6 +276,10 @@ class ServicesTest {
    @Inject
    class StateSavingService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val data by savedFlow(0)
+
+      override fun onServiceRegistered() {
+         numRegisterCalled++
+      }
    }
 
    @Parcelize

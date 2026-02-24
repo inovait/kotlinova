@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -28,7 +28,6 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setContainerAvailable
 import androidx.lifecycle.withStarted
-import com.zhuinden.simplestack.ScopedServices
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -124,7 +123,7 @@ abstract class FragmentScreen<K>(
 
 @ContributesScopedService
 @Inject
-class ScopeExitListener : ScopedServices.Registered, ScopedService {
+class ScopeExitListener : ScopedService.Registered, ScopedService {
    val fragments = HashMap<Class<ScreenKey>, WeakReference<Pair<FragmentManager, Fragment>>>()
 
    override fun onServiceRegistered() {}

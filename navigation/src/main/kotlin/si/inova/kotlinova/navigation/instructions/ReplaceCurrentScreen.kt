@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -25,11 +24,10 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  * Replace current top screen ont he backstack with the provided screen.
  *
  * @param screen The screen to replace current screen with
- * @param direction The direction of the [StateChange]: [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
  */
 @Parcelize
-data class ReplaceCurrentScreen(val screen: ScreenKey, val direction: Int = StateChange.REPLACE) : NavigationInstruction() {
+data class ReplaceCurrentScreen(val screen: ScreenKey) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
-      return NavigationResult(backstack.dropLast(1) + backstack, direction)
+      return NavigationResult(backstack.dropLast(1) + backstack)
    }
 }

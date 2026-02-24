@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,20 +14,14 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.zhuinden.simplestack.navigator
+package si.inova.kotlinova.navigation.backstack
 
 import androidx.lifecycle.ViewModel
-import com.zhuinden.simplestack.BackHandlingModel
-import com.zhuinden.simplestack.Backstack
-import com.zhuinden.simplestack.GlobalServices
-import com.zhuinden.simplestack.KeyFilter
-import com.zhuinden.simplestack.KeyParceler
-import com.zhuinden.simplestack.ScopedServices
+import dev.zacsweers.metro.Provider
+import si.inova.kotlinova.navigation.di.ScreenRegistry
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import kotlin.reflect.KClass
 
-/**
- * This is a copy from https://github.com/Zhuinden/simple-stack-compose-integration/pull/22/ until
- * it gets merged.
- */
 internal class BackstackHolderViewModel : ViewModel() {
    private val backstacks = HashMap<String, Backstack>()
 
@@ -37,38 +31,29 @@ internal class BackstackHolderViewModel : ViewModel() {
 
    fun createInitializer(id: String) = object : ComposeNavigatorInitializer {
       override fun createBackstack(
-         initialKeys: List<*>,
-         keyFilter: KeyFilter,
-         keyParceler: KeyParceler,
-         stateClearStrategy: Backstack.StateClearStrategy,
-         scopedServices: ScopedServices?,
-         globalServices: GlobalServices?,
+         initialKeys: List<ScreenKey>,
+         scopedServicesFactories: Lazy<Map<KClass<*>, Provider<out Any>>>,
+         screenRegistry: Lazy<ScreenRegistry>,
          parent: Backstack?,
          parentScope: String?,
-         globalServicesFactory: GlobalServices.Factory?,
+         globalServices: List<KClass<*>>,
       ): Backstack {
-         val backstack = Backstack()
-
-         backstack.setBackHandlingModel(BackHandlingModel.AHEAD_OF_TIME)
-         backstack.setKeyFilter(keyFilter)
-         backstack.setKeyParceler(keyParceler)
-         backstack.setStateClearStrategy(stateClearStrategy)
-         backstack.setParentServices(parent, parentScope)
-
-         scopedServices?.let { backstack.setScopedServices(it) }
-         globalServices?.let { backstack.setGlobalServices(it) }
-         globalServicesFactory?.let { backstack.setGlobalServices(it) }
-
-         backstack.setup(initialKeys)
-         backstacks[id] = backstack
-
-         return backstack
+         return Backstack(
+            initialKeys,
+            scopedServicesFactories,
+            screenRegistry,
+            parent,
+            parentScope,
+            globalServices,
+         ).also {
+            backstacks[id] = it
+         }
       }
    }
 
    override fun onCleared() {
       for (backstack in backstacks.values) {
-         backstack.finalizeScopes()
+         backstack.onDestroy()
       }
    }
 }

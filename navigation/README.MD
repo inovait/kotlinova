@@ -43,8 +43,8 @@ version.
 # Features
 
 Kotlinova Navigation is yet another type safe parcelable-keys-based navigation backend that handles creation/injection of
-the screens its scoped dependencies and management of the backstack. It's based on the
-[Metro](https://zacsweers.github.io/metro/index.html) and [Simple Stack](https://github.com/Zhuinden/simple-stack).
+the screens its scoped dependencies and management of the backstack. It's heavily integrated with the
+[Metro](https://zacsweers.github.io/metro/index.html) DI.
 
 Library is frontend ("display") agnostic, but [Navigation3](https://developer.android.com/guide/navigation/navigation-3)
 integraiton is provided.
@@ -390,18 +390,16 @@ For example, let's take a look at `GoBack` NavigationInstruction:
 object GoBack : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.size > 1) {
-         NavigationResult(backstack.dropLast(1), StateChange.BACKWARD)
+         NavigationResult(backstack.dropLast(1))
       } else {
-         NavigationResult(backstack, StateChange.REPLACE)
+         NavigationResult(backstack)
       }
    }
 }
 ```
 
 As you can see, NavigationInstruction receives a backstack and returns a new backstack. This allows very flexible navigation,
-as developer can be in a full control of the backstack. In addition to the backstack, navigation instruction also
-returns state change type (either `FORWARD`, `BACKWARD` or `REPLACE`). This determines what kind of animation is played
-when navigation is performed.
+as developer can be in a full control of the backstack.
 
 Navigation instructions are classes instead of just extension methods to allow composition of them. For example,
 you can use `MultiNavigationInstructions` to perform multiple navigation actions at once:
@@ -444,6 +442,9 @@ entryDecorators = listOf(
    rememberViewModelStoreNavEntryDecorator()
 )
 ```
+
+If you want to customize the `NavDisplay` arguments of the nested screen, you can create your own screen that
+extends `BaseNestedBackstackScreen` and override its `NavDisplay` method.
 
 ## Conditional navigation
 
@@ -562,7 +563,7 @@ In MainActivity (or wherever your Compose root is):
 ```kotlin
 SharedTransitionLayout {
    CompositionLocalProvider(LocalSharedTransitionScope provides this) {
-      navigationInjectionFactory.NavDisplay { History.of(FirstScreenKey) }
+      navigationInjectionFactory.NavDisplay { listOf(FirstScreenKey) }
    }
 }
 ```
@@ -695,10 +696,8 @@ To add the library to your app:
 
 1. Add navigation, navigation3 libraries as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
-2. Make sure you have [Jitpack](https://jitpack.io/) repository added to your project, as some sub-dependencies
-   need it
-3. Create Key and Screen for your root screen
-4. Add a `OuterNavigationScope` to your main graph's scopes via `additionalScopes` parameter:
+2. Create Key and Screen for your root screen
+3. Add a `OuterNavigationScope` to your main graph's scopes via `additionalScopes` parameter:
 
 ```kotlin
 @DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
@@ -721,11 +720,11 @@ class MainActivity(
 ```
 
 7. Inside a composable inside main activity (for example, inside `setContent` lambda), call `NavDisplay` and pass in
-   your initial backstack, usually just `History.of` with your root screen:
+   your initial backstack, usually just `listOf` with your root screen:
 
 ```kotlin
 setContent {
-   navigationInjectionFactory.NavDisplay(initialHistory = { History.of(FirstScreenKey) })
+   navigationInjectionFactory.NavDisplay(initialHistory = { listOf(FirstScreenKey) })
 }
 ```
 
@@ -767,7 +766,7 @@ val deepLinkTarget = if (savedInstanceState == null) {
 ```kotlin
 navigationInjectionFactory.NavDisplay(
    initialHistory = {
-      val initialBackstack = History.of(FirstScreenKey)
+      val initialBackstack = listOf(FirstScreenKey)
 
       if (deepLinkTarget != null) {
          deepLinkTarget.performNavigation(initialBackstack, navigationContext).newBackstack
@@ -796,3 +795,8 @@ kotlinovanavigation:
   NavigationKeyNoEnums:
     active: true
 ```
+
+# Credits
+
+* Scoping / service functionality in this project is heavily inspired by
+  the [Simple Stack](https://github.com/Zhuinden/simple-stack) library.

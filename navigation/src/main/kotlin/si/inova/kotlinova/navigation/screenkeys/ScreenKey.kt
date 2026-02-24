@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -27,14 +27,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import com.zhuinden.simplestack.ScopeKey
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
 
-abstract class ScreenKey : Parcelable, ScopeKey {
+abstract class ScreenKey : Parcelable {
    open val navigationConditions: List<NavigationCondition>
       get() = emptyList()
 
-   override fun getScopeTag(): String {
+   open fun getScopeTag(): String {
       return toString()
    }
 

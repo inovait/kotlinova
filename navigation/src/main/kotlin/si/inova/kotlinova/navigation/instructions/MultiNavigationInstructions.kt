@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -24,32 +23,26 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 /**
  * Execute multiple navigation instructions sequentially
  * @param instructions a list of instructions to navigate to
- * @param overrideDirection The direction of the [StateChange]:
- *   [StateChange.BACKWARD], [StateChange.FORWARD] or [StateChange.REPLACE].
  *   When not provided, direction of the last performed
  *   instruction is used instead.
  */
 @Parcelize
 class MultiNavigationInstructions(
    vararg val instructions: NavigationInstruction,
-   val overrideDirection: Int? = null,
 ) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
-      var lastDirection = StateChange.REPLACE
       var currentBackstack = backstack
 
       for (instruction in instructions) {
          val res = instruction.performNavigation(currentBackstack, context)
-         lastDirection = res.direction
          currentBackstack = res.newBackstack
       }
 
-      return NavigationResult(currentBackstack, overrideDirection ?: lastDirection)
+      return NavigationResult(currentBackstack)
    }
 
    override fun toString(): String {
-      return "MultiNavigationInstructions(instructions=${instructions.contentToString()}, " +
-         "overrideDirection=${overrideDirection ?: "null"})"
+      return "MultiNavigationInstructions(instructions=${instructions.contentToString()})"
    }
 
    override fun equals(other: Any?): Boolean {
@@ -57,14 +50,11 @@ class MultiNavigationInstructions(
       if (other !is MultiNavigationInstructions) return false
 
       if (!instructions.contentEquals(other.instructions)) return false
-      if (overrideDirection != other.overrideDirection) return false
 
       return true
    }
 
    override fun hashCode(): Int {
-      var result = instructions.contentHashCode()
-      result = 31 * result + (overrideDirection ?: 0)
-      return result
+      return instructions.contentHashCode() * 31
    }
 }

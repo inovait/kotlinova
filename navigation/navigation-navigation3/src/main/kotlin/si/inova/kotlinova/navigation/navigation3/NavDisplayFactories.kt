@@ -21,8 +21,11 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SizeTransform
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -30,10 +33,11 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import com.zhuinden.simplestack.Backstack
+import si.inova.kotlinova.navigation.backstack.Backstack
+import si.inova.kotlinova.navigation.backstack.BackstackProvider
+import si.inova.kotlinova.navigation.backstack.rememberBackstack
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.simplestack.BackstackProvider
 
 @Composable
 @SuppressLint("ComposableNaming") // Backstack return is only there as a convenience, it's mostly meant to be used without return
@@ -47,7 +51,11 @@ fun NavigationInjection.Factory.NavDisplay(
    sceneStrategy: SceneStrategy<ScreenKey> = SinglePaneSceneStrategy(),
    sizeTransform: SizeTransform? = null,
 ): Backstack {
-   val entryProvider = rememberNavigation3EntryProvider(initialHistory, generateExtraNavEntryMetadata)
+   val backstack = rememberBackstack { initialHistory() }
+
+   val entryProvider = backstack.rememberNavigation3EntryProvider(
+      generateExtraNavEntryMetadata
+   )
 
    entryProvider.NavDisplay(
       modifier,
@@ -57,21 +65,30 @@ fun NavigationInjection.Factory.NavDisplay(
       sizeTransform,
    )
 
-   return entryProvider.simpleStackBackstack
+   return backstack
 }
 
 @Composable
 fun Navigation3EntryProvider.NavDisplay(
    modifier: Modifier = Modifier,
    contentAlignment: Alignment = Alignment.TopStart,
-   entryDecorators: List<NavEntryDecorator<ScreenKey>> =
+   entryDecorators: List<NavEntryDecorator<out ScreenKey>> =
       listOf(rememberSaveableStateHolderNavEntryDecorator()),
    sceneStrategy: SceneStrategy<ScreenKey> = SinglePaneSceneStrategy(),
    sizeTransform: SizeTransform? = null,
 ) {
-   BackstackProvider(this.simpleStackBackstack) {
+   BackstackProvider(this.backstack) {
+      LaunchedEffect(this.backstack) {
+         processBackstack()
+      }
+      val backstackEntries = navEntries.collectAsStateWithLifecycle().value
+
+      @Suppress("UNCHECKED_CAST")
       val decoratedNavEntries =
-         rememberDecoratedNavEntries(this.backstackEntries, entryDecorators)
+         rememberDecoratedNavEntries(
+            backstackEntries as List<NavEntry<ScreenKey>>,
+            entryDecorators as List<@JvmSuppressWildcards NavEntryDecorator<ScreenKey>>
+         )
 
       NavDisplay(
          entries = decoratedNavEntries,
@@ -88,7 +105,7 @@ fun Navigation3EntryProvider.NavDisplay(
          predictivePopTransitionSpec = fun AnimatedContentTransitionScope<Scene<ScreenKey>>.(it: Int): ContentTransform {
             return initialState.entries.last().key().backAnimation(this, it)
          },
-         onBack = { this.simpleStackBackstack.goBack() },
+         onBack = { this.backstack.run { updateBackstack(backstack.value.dropLast(1)) } },
       )
    }
 }

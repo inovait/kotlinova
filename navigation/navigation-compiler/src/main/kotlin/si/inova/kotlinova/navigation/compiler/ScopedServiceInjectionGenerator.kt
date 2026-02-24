@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -74,7 +74,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
          .build()
 
       val provideServiceFunction = createBindsServiceFunction(serviceClassName)
-      val provideFromSimpleStackFunction = createProvideFromSimpleStackFunction(serviceClassName, serviceClassName)
+      val provideFromBackstackFunction = createProvideFromBackstackFunction(serviceClassName, serviceClassName)
 
       val contributesBindingAnnotation =
          service.annotations.firstOrNull { it.annotationType.toTypeName() == ContributesBinding::class.asClassName() }
@@ -84,7 +84,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
 
       val fromBackstackProviderProviders = TypeSpec.interfaceBuilder(serviceClassName.simpleName + "BackstackProviders")
          .addAnnotation(backstackContributesToAnnotation)
-         .addFunction(provideFromSimpleStackFunction)
+         .addFunction(provideFromBackstackFunction)
          .addFunction(provideServiceFunction)
          .apply {
             if (contributesBindingAnnotation != null) {
@@ -93,7 +93,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
                // So we are forced to use another annotation for that
                val boundType = boundType(service, contributesScopedServiceAnnotation).toClassName()
                addFunction(createBindsServiceFunction(boundType))
-               addFunction(createProvideFromSimpleStackFunction(serviceClassName, boundType))
+               addFunction(createProvideFromBackstackFunction(serviceClassName, boundType))
             }
          }
          .build()
@@ -124,15 +124,19 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
          .build()
    }
 
-   private fun createProvideFromSimpleStackFunction(
+   private fun createProvideFromBackstackFunction(
       serviceClassName: ClassName,
       targetClassName: ClassName,
-   ) = FunSpec.builder("provide${targetClassName.simpleName}FromSimpleStack")
+   ) = FunSpec.builder("provide${targetClassName.simpleName}FromBackstack")
       .returns(targetClassName)
-      .addParameter("backstack", SIMPLE_STACK_BACKSTACK_CLASS)
+      .addParameter("backstack", BACKSTACK_CLASS)
       .addAnnotation(Provides::class)
       .addAnnotation(FROM_BACKSTACK_QUALIFIER_ANNOTATION)
-      .addCode("return backstack.lookupService(%T::class.java.name)", serviceClassName)
+      .addCode(
+         $$"return backstack.lookupService(%T::class) ?: error(\"Internal error: service ${%T::class.java} not in scope\")",
+         serviceClassName,
+         serviceClassName
+      )
       .build()
 
    /**

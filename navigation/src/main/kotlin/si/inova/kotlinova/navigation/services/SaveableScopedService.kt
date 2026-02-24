@@ -17,8 +17,9 @@
 package si.inova.kotlinova.navigation.services
 
 import android.os.Parcelable
-import com.zhuinden.simplestack.Bundleable
-import com.zhuinden.statebundle.StateBundle
+import androidx.savedstate.SavedState
+import androidx.savedstate.savedState
+import androidx.savedstate.write
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,8 +44,8 @@ import kotlin.reflect.KProperty
  */
 abstract class SaveableScopedService(
    coroutineScope: CoroutineScope,
-) : CoroutineScopedService(coroutineScope), Bundleable {
-   protected var bundle = StateBundle()
+) : CoroutineScopedService(coroutineScope), ScopedService.Saveable {
+   protected var savedState = savedState()
 
    /**
     * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
@@ -86,14 +87,12 @@ abstract class SaveableScopedService(
       defaultValue: T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow { defaultValue }
 
-   override fun toBundle(): StateBundle {
-      return bundle
+   override fun saveState(): SavedState {
+      return savedState
    }
 
-   override fun fromBundle(bundle: StateBundle?) {
-      if (bundle != null) {
-         this.bundle = bundle
-      }
+   override fun restoreState(savedState: SavedState) {
+      this.savedState = savedState
    }
 
    private class StateSavedProperty<T>(
@@ -105,8 +104,8 @@ abstract class SaveableScopedService(
       @Suppress("UNCHECKED_CAST")
       override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): T {
          if (!initialized) {
-            if (thisRef.bundle.containsKey(property.name)) {
-               val savedValue = thisRef.bundle.get(property.name)!! as T
+            if (thisRef.savedState.containsKey(property.name)) {
+               val savedValue = thisRef.savedState.get(property.name)!! as T
                value = if (savedValue == NullValue) {
                   null
                } else {
@@ -136,7 +135,9 @@ abstract class SaveableScopedService(
          thisRef: SaveableScopedService,
          property: KProperty<*>,
       ) {
-         thisRef.bundle[property.name] = if (value == null) NullValue else value
+         thisRef.savedState.write {
+            this[property.name] = value ?: NullValue
+         }
       }
    }
 
@@ -152,8 +153,8 @@ abstract class SaveableScopedService(
          }
 
          @Suppress("UNCHECKED_CAST")
-         val initialValue = if (thisRef.bundle.containsKey(property.name)) {
-            val savedValue = thisRef.bundle.get(property.name) as T
+         val initialValue = if (thisRef.savedState.containsKey(property.name)) {
+            val savedValue = thisRef.savedState.get(property.name) as T
             if (savedValue == NullValue) {
                null as T
             } else {
@@ -176,7 +177,9 @@ abstract class SaveableScopedService(
       ) {
          thisRef.coroutineScope.launch {
             collect { value ->
-               thisRef.bundle[property.name] = if (value == null) NullValue else value
+               thisRef.savedState.write {
+                  this[property.name] = value ?: NullValue
+               }
             }
          }
       }

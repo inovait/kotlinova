@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import com.zhuinden.simplestack.StateChange
 import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
@@ -30,13 +29,13 @@ import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 data class OpenScreenOrMoveToTop(val screen: ScreenKey) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.lastOrNull() == screen) {
-         NavigationResult(backstack, StateChange.REPLACE)
+         NavigationResult(backstack)
       } else if (backstack.isNotEmpty() && screen is SingleTopKey && backstack.last().javaClass == screen.javaClass) {
          val newBackstack = backstack.dropLast(1) + screen
-         NavigationResult(newBackstack, StateChange.REPLACE)
+         NavigationResult(newBackstack)
       } else {
          val backstackWithoutTargetScreen = backstack.filter { it != screen }
-         NavigationResult(backstackWithoutTargetScreen + screen, StateChange.FORWARD)
+         NavigationResult(backstackWithoutTargetScreen + screen)
       }
    }
 }

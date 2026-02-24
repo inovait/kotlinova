@@ -14,18 +14,13 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.simplestack
+package si.inova.kotlinova.navigation.backstack
 
 import androidx.compose.runtime.Composable
-import com.zhuinden.simplestack.BackHandlingModel
-import com.zhuinden.simplestack.Backstack
-import com.zhuinden.simplestack.GlobalServices
-import com.zhuinden.simplestack.StateChanger
-import com.zhuinden.simplestack.navigator.rememberBackstack
+import dev.zacsweers.metro.Provider
 import si.inova.kotlinova.navigation.di.MainBackstackWrapper
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.services.InjectedScopedServices
 
 /**
  * Create a [Backstack] for navigation with the screens provided by this factory
@@ -43,28 +38,25 @@ import si.inova.kotlinova.navigation.services.InjectedScopedServices
  */
 @Composable
 fun NavigationInjection.Factory.rememberBackstack(
-   stateChanger: StateChanger,
    id: String = "SINGLE",
    overrideMainBackstack: Backstack? = null,
    parentBackstack: Backstack? = null,
    parentBackstackScope: String? = null,
    initialHistory: () -> List<ScreenKey>,
 ): Backstack {
-   return rememberBackstack(stateChanger, id, init = {
-      val scopedServices = InjectedScopedServices()
-
+   return rememberBackstack(id, init = {
       lateinit var navigationInjection: NavigationInjection
 
       val backstack = createBackstack(
          initialHistory(),
-         scopedServices = scopedServices,
+         scopedServicesFactories = lazy {
+            navigationInjection.scopedServicesFactories() +
+               mapOf(NavigationInjection::class to Provider { navigationInjection })
+         },
+         screenRegistry = lazy { navigationInjection.screenRegistry() },
          parent = parentBackstack,
          parentScope = parentBackstackScope,
-         globalServicesFactory = {
-            GlobalServices.builder()
-               .addService(NavigationInjection::class.java.name, navigationInjection)
-               .build()
-         }
+         globalServices = listOf(NavigationInjection::class),
       )
 
       navigationInjection = create(backstack, MainBackstackWrapper(overrideMainBackstack ?: backstack))

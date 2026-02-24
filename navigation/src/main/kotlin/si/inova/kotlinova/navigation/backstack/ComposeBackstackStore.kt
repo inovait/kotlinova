@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,28 +14,17 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.zhuinden.simplestack.navigator
+package si.inova.kotlinova.navigation.backstack
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.zhuinden.simplestack.BackHandlingModel
-import com.zhuinden.simplestack.Backstack
-import com.zhuinden.simplestack.Backstack.StateClearStrategy
-import com.zhuinden.simplestack.DefaultKeyFilter
-import com.zhuinden.simplestack.DefaultKeyParceler
-import com.zhuinden.simplestack.DefaultStateClearStrategy
-import com.zhuinden.simplestack.GlobalServices
-import com.zhuinden.simplestack.KeyFilter
-import com.zhuinden.simplestack.KeyParceler
-import com.zhuinden.simplestack.ScopedServices
-import com.zhuinden.simplestack.StateChanger
-import com.zhuinden.statebundle.StateBundle
+import androidx.savedstate.SavedState
+import dev.zacsweers.metro.Provider
+import si.inova.kotlinova.navigation.di.ScreenRegistry
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import kotlin.reflect.KClass
 
 /**
  * Create a [Backstack] for navigation and remember it across state changes and process kills.
@@ -50,16 +39,9 @@ import com.zhuinden.statebundle.StateBundle
  *
  * optional [id] argument allows you to have multiple backstacks inside single screen. To do that,
  * you have to provide unique ID to every distinct [rememberBackstack] call.
- *
- * Note that backstack created with this method
- * uses [BackHandlingModel.AHEAD_OF_TIME] back handling model.
- *
- * This is a copy from https://github.com/Zhuinden/simple-stack-compose-integration/pull/22/ until
- * it gets merged.
  */
 @Composable
 internal fun rememberBackstack(
-   stateChanger: StateChanger,
    id: String = "SINGLE",
    init: ComposeNavigatorInitializer.() -> Backstack,
 ): Backstack {
@@ -67,15 +49,6 @@ internal fun rememberBackstack(
    val backstack = viewModel.getBackstack(id) ?: init(viewModel.createInitializer(id))
 
    SaveBackstackState(backstack)
-   ListenToLifecycleEvents(backstack)
-
-   remember(stateChanger) {
-      // Attach state changer after init call to defer first navigation. That way,
-      // caller can use backstack to init their own things with Backstack instance
-      // before navigation is performed.
-      backstack.setStateChanger(stateChanger)
-      true
-   }
 
    return backstack
 }
@@ -89,55 +62,23 @@ private fun SaveBackstackState(backstack: Backstack) {
          return@remember true
       }
 
-      val oldState = stateSavingRegistry.consumeRestored(STATE_SAVING_KEY) as StateBundle?
-      oldState?.let {
-         backstack.fromBundle(it)
-      }
+      val oldState = stateSavingRegistry.consumeRestored(STATE_SAVING_KEY) as SavedState?
+      backstack.init(oldState)
 
       stateSavingRegistry.registerProvider(STATE_SAVING_KEY) {
-         backstack.toBundle()
-      }
-   }
-}
-
-@Composable
-private fun ListenToLifecycleEvents(backstack: Backstack) {
-   val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-   DisposableEffect(lifecycle) {
-      val lifecycleListener = LifecycleEventObserver { _, event ->
-         val isResumed = event.targetState.isAtLeast(Lifecycle.State.RESUMED)
-         val isStateChangerAlreadyAttached = backstack.hasStateChanger()
-         if (isResumed != isStateChangerAlreadyAttached) {
-            if (isResumed) {
-               backstack.reattachStateChanger()
-            } else {
-               backstack.detachStateChanger()
-            }
-         }
-      }
-
-      lifecycle.addObserver(lifecycleListener)
-
-      onDispose {
-         lifecycle.removeObserver(lifecycleListener)
-         backstack.executePendingStateChange()
-         backstack.setStateChanger(null)
+         backstack.saveState()
       }
    }
 }
 
 interface ComposeNavigatorInitializer {
    fun createBackstack(
-      initialKeys: List<*>,
-      keyFilter: KeyFilter = DefaultKeyFilter(),
-      keyParceler: KeyParceler = DefaultKeyParceler(),
-      stateClearStrategy: StateClearStrategy = DefaultStateClearStrategy(),
-      scopedServices: ScopedServices? = null,
-      globalServices: GlobalServices? = null,
+      initialKeys: List<ScreenKey>,
+      scopedServicesFactories: Lazy<Map<KClass<*>, Provider<out Any>>>,
+      screenRegistry: Lazy<ScreenRegistry>,
       parent: Backstack? = null,
       parentScope: String? = null,
-      globalServicesFactory: GlobalServices.Factory? = null,
+      globalServices: List<KClass<*>> = emptyList(),
    ): Backstack
 }
 
