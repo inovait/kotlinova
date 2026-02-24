@@ -14,17 +14,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.sample.keys
+package si.inova.kotlinova.navigation.di
 
-import kotlinx.serialization.Serializable
-import si.inova.kotlinova.navigation.sample.keys.base.BaseSingleTopScreenKey
+import dev.zacsweers.metro.Qualifier
 
-// SingleTopKey will cause navigation to not actually navigate, but to only recompose the top screen with the new key.
-@Serializable
-data class TabScreenKey(val selectedTab: SelectedTab = SelectedTab.A) : BaseSingleTopScreenKey() {
-   enum class SelectedTab {
-      A,
-      B,
-      C
-   }
-}
+@Qualifier
+annotation class NavigationSerializersModule

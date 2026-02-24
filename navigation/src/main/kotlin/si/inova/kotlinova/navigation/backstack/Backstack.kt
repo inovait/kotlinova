@@ -16,14 +16,17 @@
 
 package si.inova.kotlinova.navigation.backstack
 
-import android.os.Parcelable
 import androidx.savedstate.SavedState
 import androidx.savedstate.read
 import androidx.savedstate.savedState
+import androidx.savedstate.serialization.SavedStateConfiguration
+import androidx.savedstate.serialization.decodeFromSavedState
+import androidx.savedstate.serialization.encodeToSavedState
 import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.serializer
 import si.inova.kotlinova.navigation.di.ScreenRegistry
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.services.ScopedService
@@ -34,6 +37,7 @@ class Backstack(
    initialKeys: List<ScreenKey>,
    private val scopedServicesFactories: Lazy<Map<KClass<*>, Provider<out Any>>>,
    private val screenRegistry: Lazy<ScreenRegistry>,
+   private val serializersModule: Lazy<SerializersModule>,
    private val parent: Backstack?,
    private val parentScope: String?,
    private val globalServices: List<KClass<*>> = emptyList(),
@@ -54,13 +58,17 @@ class Backstack(
       }
       createScope(GLOBAL_SERVICE_SCOPE_TAG, globalServices, callOnRegistered = false)
 
-      val restoredBackstack = if (savedState != null) {
-         savedState.read {
-            getParcelable<SavedBackstack>(SAVED_STATE_KEY_BACKSTACK).keys
+      val restoredBackstack = savedState?.read {
+         getSavedStateListOrNull(SAVED_STATE_KEY_BACKSTACK)?.map {
+            decodeFromSavedState<ScreenKey>(
+               serializersModule.value.serializer<ScreenKey>(),
+               it,
+               SavedStateConfiguration {
+                  serializersModule = this@Backstack.serializersModule.value
+               }
+            )
          }
-      } else {
-         backstack.value
-      }
+      } ?: backstack.value
 
       updateBackstack(restoredBackstack, callOnRegisteredForServices = false)
 
@@ -83,7 +91,18 @@ class Backstack(
 
    fun saveState(): SavedState {
       return savedState {
-         putParcelable(SAVED_STATE_KEY_BACKSTACK, SavedBackstack(_backstack.value))
+         putSavedStateList(
+            SAVED_STATE_KEY_BACKSTACK,
+            backstack.value.map {
+               encodeToSavedState(
+                  serializersModule.value.serializer<ScreenKey>(),
+                  it,
+                  SavedStateConfiguration {
+                     serializersModule = this@Backstack.serializersModule.value
+                  },
+               )
+            },
+         )
 
          for ((scopeKey, scope) in scopes) {
             for ((serviceKey, service) in scope) {
@@ -196,9 +215,6 @@ class Backstack(
       val serviceName = serviceCls.qualifiedName ?: error("Unnamed classes are not supported as scoped services")
       return "SERVICE_${scopeKey}_$serviceName"
    }
-
-   @Parcelize
-   private data class SavedBackstack(val keys: List<ScreenKey>) : Parcelable
 
    companion object {
       const val GLOBAL_SERVICE_SCOPE_TAG = "SPECIAL_GLOBAL_SERVICES"

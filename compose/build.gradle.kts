@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,6 +20,7 @@ plugins {
    androidLibraryModule
    id("kotlin-parcelize")
    id("org.jetbrains.kotlin.plugin.compose")
+   id("kotlinx-serialization")
 }
 
 publishLibrary(
@@ -42,6 +43,7 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.coil)
+   implementation(libs.kotlin.serialization)
 
    debugImplementation(libs.androidx.compose.ui.tooling)
 }

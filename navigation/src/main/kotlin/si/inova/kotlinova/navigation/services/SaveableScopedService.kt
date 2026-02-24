@@ -16,15 +16,14 @@
 
 package si.inova.kotlinova.navigation.services
 
-import android.os.Parcelable
 import androidx.savedstate.SavedState
+import androidx.savedstate.read
 import androidx.savedstate.savedState
 import androidx.savedstate.write
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
 import si.inova.kotlinova.navigation.util.set
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -104,20 +103,22 @@ abstract class SaveableScopedService(
       @Suppress("UNCHECKED_CAST")
       override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): T {
          if (!initialized) {
-            if (thisRef.savedState.containsKey(property.name)) {
-               val savedValue = thisRef.savedState.get(property.name)!! as T
-               value = if (savedValue == NullValue) {
-                  null
+            thisRef.savedState.read {
+               if (contains(property.name)) {
+                  value = if (isNull(property.name)) {
+                     null
+                  } else {
+                     @Suppress("DEPRECATION")
+                     thisRef.savedState.get(property.name) as T
+                  }
                } else {
-                  savedValue
+                  val default = defaultValue()
+                  value = default
+                  save(default, thisRef, property)
                }
-            } else {
-               val default = defaultValue()
-               value = default
-               save(default, thisRef, property)
-            }
 
-            initialized = true
+               initialized = true
+            }
          }
 
          return value as T
@@ -136,7 +137,7 @@ abstract class SaveableScopedService(
          property: KProperty<*>,
       ) {
          thisRef.savedState.write {
-            this[property.name] = value ?: NullValue
+            this[property.name] = value
          }
       }
    }
@@ -153,15 +154,17 @@ abstract class SaveableScopedService(
          }
 
          @Suppress("UNCHECKED_CAST")
-         val initialValue = if (thisRef.savedState.containsKey(property.name)) {
-            val savedValue = thisRef.savedState.get(property.name) as T
-            if (savedValue == NullValue) {
-               null as T
+         val initialValue = thisRef.savedState.read {
+            if (contains(property.name)) {
+               if (isNull(property.name)) {
+                  null as T
+               } else {
+                  @Suppress("DEPRECATION")
+                  thisRef.savedState.get(property.name) as T
+               }
             } else {
-               savedValue
+               defaultValue()
             }
-         } else {
-            defaultValue()
          }
 
          val newFlow = MutableStateFlow<T>(initialValue)
@@ -178,13 +181,10 @@ abstract class SaveableScopedService(
          thisRef.coroutineScope.launch {
             collect { value ->
                thisRef.savedState.write {
-                  this[property.name] = value ?: NullValue
+                  this[property.name] = value
                }
             }
          }
       }
    }
 }
-
-@Parcelize
-private data object NullValue : Parcelable

@@ -31,7 +31,7 @@ import dev.zacsweers.metro.Inject
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -45,7 +45,7 @@ import si.inova.kotlinova.navigation.services.SaveableScopedService
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
-import java.util.UUID
+import kotlin.random.Random
 
 private var unregisterCalled: Boolean = false
 
@@ -96,7 +96,7 @@ class ServiceScopes {
          backstack.updateBackstack(
             listOf(
                BlankScreenKey,
-               SharedServiceScreenKey(UUID.fromString("3865ef01-7ca6-4f8a-a7c2-9874a8877771"))
+               SharedServiceScreenKey(1)
             )
          )
       }
@@ -106,8 +106,8 @@ class ServiceScopes {
          backstack.updateBackstack(
             listOf(
                BlankScreenKey,
-               SharedServiceScreenKey(UUID.fromString("3865ef01-7ca6-4f8a-a7c2-9874a8877771")),
-               SharedServiceScreenKey(UUID.fromString("c6870b67-81cd-439f-997c-6b38216ea8f1")),
+               SharedServiceScreenKey(1),
+               SharedServiceScreenKey(2),
             )
          )
       }
@@ -117,7 +117,7 @@ class ServiceScopes {
          backstack.updateBackstack(
             listOf(
                BlankScreenKey,
-               SharedServiceScreenKey(UUID.fromString("3865ef01-7ca6-4f8a-a7c2-9874a8877771")),
+               SharedServiceScreenKey(1),
             )
          )
       }
@@ -133,8 +133,8 @@ class ServiceScopes {
       unregisterCalled shouldBe true
    }
 
-   @Parcelize
-   data class NotSharedServiceScreenKey(val id: UUID = UUID.randomUUID()) : ScreenKey()
+   @Serializable
+   data class NotSharedServiceScreenKey(val id: Int = Random.nextInt()) : ScreenKey()
 
    @InjectNavigationScreen
    class NotSharedServiceScreen(sharedService: SharedService, navigator: Navigator) :
@@ -144,8 +144,8 @@ class ServiceScopes {
       }
    }
 
-   @Parcelize
-   data class SharedServiceScreenKey(val id: UUID = UUID.randomUUID()) : ScreenKey() {
+   @Serializable
+   data class SharedServiceScreenKey(val id: Int = Random.nextInt()) : ScreenKey() {
       override fun getScopeTag(): String {
          return "SharedScope"
       }

@@ -19,8 +19,10 @@ package si.inova.kotlinova.compose.result
 import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class ResultKey<T> @VisibleForTesting constructor(
    @get:VisibleForTesting
    val compositeKeyHashCode: Long,

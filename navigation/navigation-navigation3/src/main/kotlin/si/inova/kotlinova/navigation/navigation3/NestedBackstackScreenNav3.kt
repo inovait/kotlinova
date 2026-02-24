@@ -17,7 +17,8 @@
 package si.inova.kotlinova.navigation.navigation3
 
 import androidx.compose.runtime.Composable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.backstack.Backstack
 import si.inova.kotlinova.navigation.backstack.LocalBackstack
 import si.inova.kotlinova.navigation.backstack.rememberBackstack
@@ -77,8 +78,8 @@ abstract class BaseNestedNavigationScreenKey : ScreenKey() {
    abstract val id: String
 }
 
-@Parcelize
+@Serializable
 data class NestedNavigationScreenKey(
-   override val initialHistory: List<ScreenKey>,
+   override val initialHistory: List<@Contextual ScreenKey>,
    override val id: String = "SINGLE",
 ) : BaseNestedNavigationScreenKey()

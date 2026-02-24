@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -26,8 +27,8 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  *
  * @param with The navigation instruction to execute after removing the top screen.
  */
-@Parcelize
-class ReplaceTop(val with: NavigationInstruction) : NavigationInstruction() {
+@Serializable
+class ReplaceTop(val with: @Contextual NavigationInstruction) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return with.performNavigation(backstack.dropLast(1), context).copy()
    }

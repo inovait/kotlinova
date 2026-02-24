@@ -16,7 +16,7 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -24,8 +24,8 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 /**
  * Go back to the previous screen
  */
-@Parcelize
-object GoBack : NavigationInstruction() {
+@Serializable
+data object GoBack : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.size > 1) {
          NavigationResult(backstack.dropLast(1))

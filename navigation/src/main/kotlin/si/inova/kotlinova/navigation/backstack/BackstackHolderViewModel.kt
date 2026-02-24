@@ -18,6 +18,7 @@ package si.inova.kotlinova.navigation.backstack
 
 import androidx.lifecycle.ViewModel
 import dev.zacsweers.metro.Provider
+import kotlinx.serialization.modules.SerializersModule
 import si.inova.kotlinova.navigation.di.ScreenRegistry
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import kotlin.reflect.KClass
@@ -34,6 +35,7 @@ internal class BackstackHolderViewModel : ViewModel() {
          initialKeys: List<ScreenKey>,
          scopedServicesFactories: Lazy<Map<KClass<*>, Provider<out Any>>>,
          screenRegistry: Lazy<ScreenRegistry>,
+         serializersModule: Lazy<SerializersModule>,
          parent: Backstack?,
          parentScope: String?,
          globalServices: List<KClass<*>>,
@@ -42,6 +44,7 @@ internal class BackstackHolderViewModel : ViewModel() {
             initialKeys,
             scopedServicesFactories,
             screenRegistry,
+            serializersModule,
             parent,
             parentScope,
             globalServices,

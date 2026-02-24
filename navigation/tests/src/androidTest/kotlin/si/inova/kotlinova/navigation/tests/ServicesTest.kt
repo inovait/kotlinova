@@ -33,7 +33,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -222,7 +222,7 @@ class ServicesTest {
       numRegisterCalled shouldBe 1
    }
 
-   @Parcelize
+   @Serializable
    data object ScreenWithBasicServiceKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -254,7 +254,7 @@ class ServicesTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object ScreenWithStateSavingServiceKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -282,7 +282,7 @@ class ServicesTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data class ScreenWithSingleScreenViewModelKey(val text: String) : ScreenKey()
 
    @InjectNavigationScreen
@@ -304,7 +304,7 @@ class ServicesTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object ScreenWithBasicServiceWithInterfaceKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -322,7 +322,7 @@ class ServicesTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object ScreenWithBasicServiceWithInterfaceAndMultipleParentsKey : ScreenKey()
 
    @InjectNavigationScreen

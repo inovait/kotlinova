@@ -18,10 +18,11 @@ import util.publishLibrary
 
 plugins {
    androidLibraryModule
-   id("kotlin-parcelize")
+   id("kotlinx-serialization")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
+   unmock
 }
 
 publishLibrary(
@@ -49,6 +50,7 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.viewModel.compose)
+   implementation(libs.kotlin.serialization)
 
    ksp(projects.navigation.navigationCompiler)
 

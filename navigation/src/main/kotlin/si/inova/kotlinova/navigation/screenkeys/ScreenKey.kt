@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.navigation.screenkeys
 
-import android.os.Parcelable
 import androidx.activity.BackEventCompat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -29,7 +28,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
 
-abstract class ScreenKey : Parcelable {
+abstract class ScreenKey {
    open val navigationConditions: List<NavigationCondition>
       get() = emptyList()
 

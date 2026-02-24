@@ -35,7 +35,7 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.NavigationInjection
@@ -243,7 +243,7 @@ class FragmentScreenTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data class TestFragmentScreenKey(override val tag: String = UUID.randomUUID().toString()) : ScreenKey(), FragmentScreenKey
 
    @InjectNavigationScreen
@@ -253,7 +253,7 @@ class FragmentScreenTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data class TestFragmentScreen2Key(override val tag: String = UUID.randomUUID().toString()) : ScreenKey(), FragmentScreenKey
 
    @InjectNavigationScreen
@@ -263,7 +263,7 @@ class FragmentScreenTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object ScreenThatContainsTwoFragmentsKey : ScreenKey()
 
    @InjectNavigationScreen

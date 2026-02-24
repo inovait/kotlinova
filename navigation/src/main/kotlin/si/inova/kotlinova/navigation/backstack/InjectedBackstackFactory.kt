@@ -54,6 +54,7 @@ fun NavigationInjection.Factory.rememberBackstack(
                mapOf(NavigationInjection::class to Provider { navigationInjection })
          },
          screenRegistry = lazy { navigationInjection.screenRegistry() },
+         serializersModule = lazy { navigationInjection.serializers() },
          parent = parentBackstack,
          parentScope = parentBackstackScope,
          globalServices = listOf(NavigationInjection::class),

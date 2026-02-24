@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,7 +19,7 @@ package si.inova.kotlinova.navigation.sample.conditional
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
@@ -35,7 +35,7 @@ class PostLoginScreen : Screen<PostLoginScreenKey>() {
    }
 }
 
-@Parcelize
+@Serializable
 data object PostLoginScreenKey : ScreenKey() {
    override val navigationConditions: List<NavigationCondition>
       get() = listOf(LoginCondition)

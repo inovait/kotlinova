@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -28,11 +29,11 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  * screen) and then redirect back to the target screen. You can intercept navigation to the condition meeting screen via
  * [conditionScreenWrapper] argument.
  */
-@Parcelize
+@Serializable
 class NavigateWithConditions(
-   val target: NavigationInstruction,
-   vararg val conditions: NavigationCondition,
-   val conditionScreenWrapper: (NavigationInstruction) -> NavigationInstruction = { it },
+   val target: @Contextual NavigationInstruction,
+   vararg val conditions: @Contextual NavigationCondition,
+   val conditionScreenWrapper: (@Contextual NavigationInstruction) -> @Contextual NavigationInstruction = { it },
 ) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       for (condition in conditions) {

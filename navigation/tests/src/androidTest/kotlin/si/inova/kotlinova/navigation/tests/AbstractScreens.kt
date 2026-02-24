@@ -23,7 +23,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import dev.zacsweers.metro.Inject
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.ContributesScreenBinding
@@ -64,10 +64,10 @@ class AbstractScreens {
       rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
    }
 
-   @Parcelize
+   @Serializable
    data object OuterScreenReferencingAbstractScreenKey : ScreenKey()
 
-   @Parcelize
+   @Serializable
    data object AbstractScreenKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -96,7 +96,7 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object OuterScreenReferencingAbstractScreenWithServiceKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -129,7 +129,7 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object OuterScreenReferencingGenericScreenKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -144,7 +144,7 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -175,7 +175,7 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object InnerScreenKey : ScreenKey()
 
    @Suppress("unused")
@@ -194,6 +194,6 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object InnerScreenKeyWithExplicitBoundType : ScreenKey()
 }

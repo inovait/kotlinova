@@ -82,7 +82,7 @@ class Navigation3EntryProvider(
    ): NavEntry<ScreenKey> {
       return NavEntry(
          key,
-         contentKey = if (key is SingleTopKey) key.javaClass.name else key,
+         contentKey = if (key is SingleTopKey) key.javaClass.name else key.toString(),
          metadata = buildMap {
             put(METADATA_KEY, key)
             put(METADATA_SCREEN, screen)

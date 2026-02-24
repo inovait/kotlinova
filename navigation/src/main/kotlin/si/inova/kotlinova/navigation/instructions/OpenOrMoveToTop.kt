@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -25,8 +26,8 @@ import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 /**
  * If the screen already exists on the backstack, it moves it to the top. Otherwise, it adds it to the backstack.
  */
-@Parcelize
-data class OpenScreenOrMoveToTop(val screen: ScreenKey) : NavigationInstruction() {
+@Serializable
+data class OpenScreenOrMoveToTop(val screen: @Contextual ScreenKey) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.lastOrNull() == screen) {
          NavigationResult(backstack)

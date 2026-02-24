@@ -10,6 +10,7 @@ androidx-navigation3 = "1.0.0"
 desugarJdkLibs = "2.1.5"
 kotlin = "2.3.0"
 kotlinova = "4.0.0-alpha15"
+kotlin-serializationRuntime = "1.10.0"
 ksp = "2.3.3"
 metro = "0.10.2"
 
@@ -33,6 +34,7 @@ androidx-compose-material3 = { module = "androidx.compose.material3:material3", 
 desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-plugin-compose = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-serialization-runtime = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serializationRuntime" }
 kotlinova-compose = { module = "si.inova.kotlinova:compose", version.ref = "kotlinova" }
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
@@ -42,3 +44,4 @@ ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin"
 
 [plugins]
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
@@ -40,5 +40,5 @@ class SubscreenA : Screen<SubscreenAKey>() {
    }
 }
 
-@Parcelize
+@Serializable
 data object SubscreenAKey : ScreenKey()

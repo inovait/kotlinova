@@ -24,8 +24,9 @@ import java.io.Serializable
 /**
  * Helper single method to set any object into SavedState without using different set methods for different types
  */
-operator fun SavedStateWriter.set(key: String, value: Any) {
+operator fun SavedStateWriter.set(key: String, value: Any?) {
    when (value) {
+      null -> putNull(key)
       is String -> putString(key, value)
       is Boolean -> putBoolean(key, value)
       is BooleanArray -> putBooleanArray(key, value)
@@ -44,4 +45,8 @@ operator fun SavedStateWriter.set(key: String, value: Any) {
          "Type ${value.javaClass.canonicalName} of property $key is not supported in saved state"
       )
    }
+}
+
+operator fun SavedState.get(key: String): Any? {
+   return get(key)
 }

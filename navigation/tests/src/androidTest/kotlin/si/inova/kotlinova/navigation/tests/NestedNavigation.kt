@@ -27,7 +27,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
@@ -111,7 +111,7 @@ class NestedNavigation {
       rule.onNodeWithText("333").assertIsDisplayed()
    }
 
-   @Parcelize
+   @Serializable
    data object NestedScreenGoingBackKey : ScreenKey() {
       override val navigationConditions: List<NavigationCondition>
          get() = listOf(ConditionalNavigationTest.TestCondition)
@@ -130,7 +130,7 @@ class NestedNavigation {
       }
    }
 
-   @Parcelize
+   @Serializable
    data class ParentScreenWithSharedServiceKey(val number: Int = 333) : NoArgsScreenKey()
 
    @InjectNavigationScreen
@@ -147,7 +147,7 @@ class NestedNavigation {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object ChildScreenWithSharedServiceKey : ScreenKey()
 
    @InjectNavigationScreen

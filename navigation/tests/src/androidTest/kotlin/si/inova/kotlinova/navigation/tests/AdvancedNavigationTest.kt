@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createComposeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.NavigationInjection
@@ -141,7 +141,7 @@ class AdvancedNavigationTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object AdvancedTestScreenAKey : ScreenKey()
 
    @InjectNavigationScreen
@@ -151,7 +151,7 @@ class AdvancedNavigationTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object AdvancedTestScreenBKey : ScreenKey()
 
    @InjectNavigationScreen

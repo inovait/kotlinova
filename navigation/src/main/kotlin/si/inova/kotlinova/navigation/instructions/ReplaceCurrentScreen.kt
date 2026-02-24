@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
@@ -25,8 +26,8 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  *
  * @param screen The screen to replace current screen with
  */
-@Parcelize
-data class ReplaceCurrentScreen(val screen: ScreenKey) : NavigationInstruction() {
+@Serializable
+data class ReplaceCurrentScreen(val screen: @Contextual ScreenKey) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return NavigationResult(backstack.dropLast(1) + backstack)
    }

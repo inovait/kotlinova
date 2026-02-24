@@ -16,15 +16,16 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 /**
  * Clear the entire backstack and replace it with the provided screens
  */
-@Parcelize
-class ReplaceBackstack(vararg val history: ScreenKey) : NavigationInstruction() {
+@Serializable
+class ReplaceBackstack(vararg val history: @Contextual ScreenKey) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return NavigationResult(history.toList())
    }

@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
@@ -26,9 +27,9 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  *   When not provided, direction of the last performed
  *   instruction is used instead.
  */
-@Parcelize
+@Serializable
 class MultiNavigationInstructions(
-   vararg val instructions: NavigationInstruction,
+   vararg val instructions: @Contextual NavigationInstruction,
 ) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       var currentBackstack = backstack

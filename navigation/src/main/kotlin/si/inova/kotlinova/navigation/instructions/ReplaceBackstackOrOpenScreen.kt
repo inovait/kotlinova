@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
@@ -29,8 +30,11 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  * This instruction also supports navigation conditions on the last screen. If screen has any unmet conditions, the condition
  * resolving screen will be displayed first, on an empty backstack. Then, action described in above paragraph will occur.
  */
-@Parcelize
-class ReplaceBackstackOrOpenScreen(val replaceBackstack: Boolean, vararg val history: ScreenKey) : NavigationInstruction() {
+@Serializable
+class ReplaceBackstackOrOpenScreen(
+   val replaceBackstack: Boolean,
+   vararg val history: @Contextual ScreenKey,
+) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       require(history.isNotEmpty()) { "You should provide at least one screen to ReplaceBackstackOrOpenScreen" }
 

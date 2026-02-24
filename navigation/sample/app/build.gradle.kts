@@ -20,6 +20,7 @@ plugins {
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
+   alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -77,6 +78,7 @@ dependencies {
    implementation(libs.androidx.navigation3.ui)
    implementation(libs.androidx.fragment)
    implementation(libs.androidx.core)
+   implementation(libs.kotlin.serialization.runtime)
    implementation(libs.kotlinova.compose)
    implementation(libs.kotlinova.navigation)
    implementation(libs.kotlinova.navigation.navigation3)

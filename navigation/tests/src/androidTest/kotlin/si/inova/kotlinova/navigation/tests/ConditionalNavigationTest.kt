@@ -19,6 +19,7 @@ package si.inova.kotlinova.navigation.tests
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import dev.zacsweers.metro.ClassKey
@@ -26,7 +27,8 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Provides
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.conditions.ConditionalNavigationHandler
@@ -41,6 +43,7 @@ import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
+import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
 
 class ConditionalNavigationTest {
    @get:Rule
@@ -79,8 +82,30 @@ class ConditionalNavigationTest {
       )
    }
 
-   @Parcelize
-   object TestCondition : NavigationCondition
+   @Test
+   internal fun restoreConditionResolvingScreenAfterProcessKill() {
+      TestConditionHandler.meetsCondition = false
+
+      val stateRestorationTester = StateRestorationTester(rule)
+      val backstack = stateRestorationTester.insertTestNavigation(rule, BlankScreenKey)
+      val navigator = NavigationInjection.fromBackstack(backstack).navigator()
+
+      rule.runOnUiThread {
+         navigator.navigateTo(TargetScreenKey)
+      }
+
+      rule.removeBackstackFromMemory()
+      stateRestorationTester.emulateSavedInstanceStateRestore()
+
+      rule.onNodeWithText("Condition Resolver").assertIsDisplayed()
+      backstack.backstack.value.shouldContainExactly(
+         BlankScreenKey,
+         ConditionResolvingScreenKey(OpenScreen(TargetScreenKey))
+      )
+   }
+
+   @Serializable
+   data object TestCondition : NavigationCondition
 
    object TestConditionHandler : ConditionalNavigationHandler {
       var meetsCondition: Boolean = false
@@ -97,7 +122,7 @@ class ConditionalNavigationTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data object TargetScreenKey : ScreenKey() {
       override val navigationConditions: List<NavigationCondition>
          get() = listOf(TestCondition)
@@ -111,8 +136,8 @@ class ConditionalNavigationTest {
       }
    }
 
-   @Parcelize
-   data class ConditionResolvingScreenKey(val targetNavigation: NavigationInstruction) : ScreenKey()
+   @Serializable
+   data class ConditionResolvingScreenKey(val targetNavigation: @Contextual NavigationInstruction) : ScreenKey()
 
    @InjectNavigationScreen
    class ConditionResolvingScreen : Screen<ConditionResolvingScreenKey>() {

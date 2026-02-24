@@ -16,11 +16,11 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import android.os.Parcelable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
-abstract class NavigationInstruction : Parcelable {
+@Suppress("AbstractClassCanBeInterface") // Backwards compatibility
+abstract class NavigationInstruction {
    abstract fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult
 
    /**

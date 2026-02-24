@@ -16,7 +16,8 @@
 
 package si.inova.kotlinova.navigation.instructions
 
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.di.NavigationContext
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -25,8 +26,11 @@ import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 /**
  * Open provided screen. If screen has any [ScreenKey.navigationConditions], they will be navigated to if they are not met.
  */
-@Parcelize
-data class OpenScreen(val screen: ScreenKey) : NavigationInstruction() {
+@Serializable
+data class OpenScreen(
+   @Contextual
+   val screen: ScreenKey,
+) : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.isNotEmpty() && screen is SingleTopKey && backstack.last().javaClass == screen.javaClass) {
          val newBackstack = backstack.dropLast(1) + screen

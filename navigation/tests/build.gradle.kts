@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,6 +23,7 @@ plugins {
    androidCommon
    id("com.google.devtools.ksp")
    id("kotlin-parcelize")
+   id("kotlinx-serialization")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
 }
@@ -56,6 +57,7 @@ dependencies {
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.navigation3)
    implementation(libs.androidx.lifecycle.viewModel.compose)
+   implementation(libs.kotlin.serialization)
 
    kspAndroidTest(projects.navigation.navigationCompiler)
 

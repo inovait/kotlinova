@@ -16,9 +16,12 @@
 
 package si.inova.kotlinova.navigation.di
 
+import dev.zacsweers.metro.OptionalBinding
 import dev.zacsweers.metro.Provider
+import kotlinx.serialization.modules.SerializersModule
 import si.inova.kotlinova.navigation.backstack.Backstack
 import si.inova.kotlinova.navigation.navigator.Navigator
+import si.inova.kotlinova.navigation.serialization.defaultNavigationSerializersModule
 import si.inova.kotlinova.navigation.services.ScopedService
 import kotlin.reflect.KClass
 
@@ -26,8 +29,10 @@ interface NavigationInjection {
    fun screenRegistry(): ScreenRegistry
    fun scopedServicesFactories(): Map<KClass<*>, Provider<ScopedService>>
    fun navigator(): Navigator
-   fun navigationContext(): NavigationContext
 
+   @NavigationSerializersModule
+   @OptionalBinding
+   fun serializers(): SerializersModule = defaultNavigationSerializersModule
    interface Factory {
       fun create(
          backstack: Backstack,

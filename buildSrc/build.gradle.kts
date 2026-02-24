@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -42,7 +42,9 @@ dependencies {
    implementation(libs.dokka)
    implementation(libs.kotlin.plugin)
    implementation(libs.kotlin.plugin.compose)
+   implementation(libs.kotlin.plugin.serialization)
    implementation(libs.mavenPublish)
+   implementation(libs.unmock.plugin)
    implementation("si.inova.kotlinova:kotlinova-gradle")
 
    // Workaround to have libs accessible (from https://github.com/gradle/gradle/issues/15383)

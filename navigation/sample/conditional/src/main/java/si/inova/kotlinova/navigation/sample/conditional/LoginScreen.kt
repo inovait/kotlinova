@@ -21,7 +21,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.instructions.ReplaceTop
 import si.inova.kotlinova.navigation.navigator.Navigator
@@ -58,5 +59,5 @@ class LoginScreen(
    }
 }
 
-@Parcelize
-data class LoginScreenKey(val postLoginNavigation: NavigationInstruction) : ScreenKey()
+@Serializable
+data class LoginScreenKey(val postLoginNavigation: @Contextual NavigationInstruction) : ScreenKey()

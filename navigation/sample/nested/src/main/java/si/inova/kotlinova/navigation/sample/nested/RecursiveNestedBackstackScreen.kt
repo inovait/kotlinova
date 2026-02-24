@@ -19,7 +19,8 @@ package si.inova.kotlinova.navigation.sample.nested
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.backstack.Backstack
 import si.inova.kotlinova.navigation.di.MainNavigation
 import si.inova.kotlinova.navigation.di.NavigationInjection
@@ -54,8 +55,8 @@ class RecursiveNestedBackstackScreen(
    }
 }
 
-@Parcelize
+@Serializable
 data class RecursiveNestedNavigationScreenKey(
-   override val initialHistory: List<ScreenKey>,
+   override val initialHistory: List<@Contextual ScreenKey>,
    override val id: String = "SINGLE",
 ) : BaseNestedNavigationScreenKey()

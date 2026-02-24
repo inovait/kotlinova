@@ -42,12 +42,13 @@ version.
 
 # Features
 
-Kotlinova Navigation is yet another type safe parcelable-keys-based navigation backend that handles creation/injection of
+Kotlinova Navigation is yet another type safe serializable-keys-based navigation backend that handles creation/injection of
 the screens its scoped dependencies and management of the backstack. It's heavily integrated with the
-[Metro](https://zacsweers.github.io/metro/index.html) DI.
+[Metro](https://zacsweers.github.io/metro/index.html) DI
+and [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html).
 
 Library is frontend ("display") agnostic, but [Navigation3](https://developer.android.com/guide/navigation/navigation-3)
-integraiton is provided.
+integration is provided.
 
 See [sample](sample) project for more practical examples.
 
@@ -55,10 +56,10 @@ See [sample](sample) project for more practical examples.
 
 Main selling point of this library is that, for every screen, you only need to create two classes.
 
-First a parcelable key for the screen, which contains screen's arguments and metadata:
+First a serializable key for the screen, which contains screen's arguments and metadata:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class MyScreenKey(
    val firstArgument: Int,
    val secondArgument: String
@@ -118,7 +119,7 @@ However, this will force you to manually implement `hashCode`, `equals` and `toS
 To avoid that, you can just use `data object`:
 
 ```kotlin
-@Parcelize
+@Serializable
 data object MyScreenKey : ScreenKey()
 ```
 
@@ -231,14 +232,14 @@ You can override this behavior by overriding `getScopeTag` on the keys of the sc
 services:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class FirstScreenKey(...) : ScreenKey() {
    override fun getScopeTag(): String {
       return "SharedScope"
    }
 }
 
-@Parcelize
+@Serializable
 data class SecondScreenKey(...) : ScreenKey() {
    override fun getScopeTag(): String {
       return "SharedScope"
@@ -312,7 +313,7 @@ of screen is already displayed, navigation part will be skipped and only `Conten
 be re-called with the new key. For example:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class TabScreenKey(val selectedTab: SelectedTab = SelectedTab.A) : SingleTopKey() {
    enum class SelectedTab {
       A,
@@ -382,11 +383,11 @@ class FirstTabScreenImpl : Screen<FirstTabKey>() {
 You might have noticed that `Navigator.navigateTo` is an extension method and the only method on the actual
 `Navigator` is `Navigator.navigate(NavigationInstructions)`.
 
-`NavigationInstructions` is a composable, parcelable class that tells navigation what do to.
+`NavigationInstructions` is a composable, serializable class that tells navigation what do to.
 For example, let's take a look at `GoBack` NavigationInstruction:
 
 ```kotlin
-@Parcelize
+@Serializable
 object GoBack : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.size > 1) {
@@ -413,7 +414,7 @@ navigator.navigate(
 )
 ```
 
-In addition, since instructions are parcelable, you can pass them around, which has several useful properties,
+In addition, since instructions are serializable, you can pass them around, which has several useful properties,
 for example for conditional navigation (see below).
 
 You can use one of the several [pre-written navigation instructions](src/main/kotlin/si/inova/kotlinova/navigation/instructions)
@@ -455,7 +456,7 @@ To enable this, you first have to create a condition. This is a simple object or
 (if condition has arguments, like login type):
 
 ```kotlin
-@Parcelize
+@Serializable
 object LoginCondition : NavigationCondition
 ```
 
@@ -616,7 +617,7 @@ To conform to that interface, you need to provide a unique `tag` for your key th
 process death. Easiest way to do so is to put the tag into key's constructor and give it a default random value:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class MyFragmentScreenKey(
    ...,
    override val tag: String = UUID.randomUUID().toString()
@@ -687,6 +688,24 @@ class MyDeepLinkHandler() : DeepLinkHandler {
 }
 ```
 
+## Custom serializers
+
+If any of your serializable navigation classes need access to custom contextual/polymorphic serializers,
+you can declare that serializer in your DI system, with a function that provides `@NavigationSerializersModule SerializersModule`:
+
+```kotlin
+@ContributesTo(OuterNavigationScope::class)
+class NavigationSerializationProviders {
+   @Provides
+   @NavigationSerializersModule
+   fun provideNavigationSerializers(): SerializersModule = SerializersModule {
+      include(defaultNavigationSerializersModule)
+
+      // Put your contextual & polymorphic definitions here
+   }
+}
+```
+
 # Setup
 
 (Note: these steps assume you have Metro already set up in your project. If not, you can
@@ -696,6 +715,8 @@ To add the library to your app:
 
 1. Add navigation, navigation3 libraries as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
+2. Set up [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html) in your project
+   (only `kotlinx-serialization-core` is necessary if you don't need any other formats)
 2. Create Key and Screen for your root screen
 3. Add a `OuterNavigationScope` to your main graph's scopes via `additionalScopes` parameter:
 

@@ -22,6 +22,7 @@ import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.SavedState
 import dev.zacsweers.metro.Provider
+import kotlinx.serialization.modules.SerializersModule
 import si.inova.kotlinova.navigation.di.ScreenRegistry
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import kotlin.reflect.KClass
@@ -76,6 +77,7 @@ interface ComposeNavigatorInitializer {
       initialKeys: List<ScreenKey>,
       scopedServicesFactories: Lazy<Map<KClass<*>, Provider<out Any>>>,
       screenRegistry: Lazy<ScreenRegistry>,
+      serializersModule: Lazy<SerializersModule>,
       parent: Backstack? = null,
       parentScope: String? = null,
       globalServices: List<KClass<*>> = emptyList(),
