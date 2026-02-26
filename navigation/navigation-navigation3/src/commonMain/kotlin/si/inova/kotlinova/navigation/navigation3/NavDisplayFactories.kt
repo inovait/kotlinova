@@ -16,15 +16,14 @@
 
 package si.inova.kotlinova.navigation.navigation3
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.SizeTransform
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
@@ -38,9 +37,9 @@ import si.inova.kotlinova.navigation.backstack.BackstackProvider
 import si.inova.kotlinova.navigation.backstack.rememberBackstack
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import kotlin.jvm.JvmSuppressWildcards
 
 @Composable
-@SuppressLint("ComposableNaming") // Backstack return is only there as a convenience, it's mostly meant to be used without return
 fun NavigationInjection.Factory.NavDisplay(
    initialHistory: () -> List<ScreenKey>,
    modifier: Modifier = Modifier,
@@ -81,7 +80,7 @@ fun Navigation3EntryProvider.NavDisplay(
       LaunchedEffect(this.backstack) {
          processBackstack()
       }
-      val backstackEntries = navEntries.collectAsStateWithLifecycle().value
+      val backstackEntries = navEntries.collectAsState().value
 
       @Suppress("UNCHECKED_CAST")
       val decoratedNavEntries =

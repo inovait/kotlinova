@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   androidLibraryModule
+   multiplatformModule
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
@@ -33,14 +33,27 @@ android {
    namespace = "si.inova.kotlinova.navigation.navigation3"
 }
 
+
+kotlin {
+   iosArm64()
+
+   sourceSets {
+      commonMain {
+         dependencies {
+            api(projects.navigation)
+            api(libs.androidx.navigation3)
+            api(libs.androidx.navigation3.ui)
+
+            implementation(libs.composeMultiplatform.ui)
+         }
+      }
+      val nonAndroidMain by creating {
+         dependsOn(commonMain.get())
+      }
+   }
+}
+
+
 dependencies {
-   api(projects.navigation)
-   api(libs.androidx.navigation3)
-   api(libs.androidx.navigation3.ui)
-
-   implementation(libs.androidx.compose.ui)
-
-   ksp(projects.navigation.navigationCompiler)
-
-   debugImplementation(libs.androidx.compose.ui.tooling)
+   add("ksp", projects.navigation.navigationCompiler)
 }

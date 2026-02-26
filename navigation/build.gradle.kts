@@ -19,7 +19,6 @@ import util.publishLibrary
 plugins {
    multiplatformModule
    id("kotlinx-serialization")
-   id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
    unmock
@@ -80,9 +79,4 @@ kotlin {
          }
       }
    }
-}
-
-
-dependencies {
-   add("kspCommonMainMetadata", projects.navigation.navigationCompiler)
 }

@@ -66,7 +66,7 @@ class Navigation3EntryProvider(
 
       val addedKeys = newKeys.drop(matchingKeys.size)
       addedKeys.forEachIndexed { index, key ->
-         if (key is SingleTopKey && index == addedKeys.lastIndex && key.javaClass == oldTop?.key()?.javaClass) {
+         if (key is SingleTopKey && index == addedKeys.lastIndex && key::class == oldTop?.key()?.let { it::class }) {
             // Single top key, copy previous Screen instance
             @Suppress("UNCHECKED_CAST")
             currentNavEntries.add(createNavEntry(key, oldTop.metadata.getValue(METADATA_SCREEN) as Screen<ScreenKey>))
@@ -82,7 +82,11 @@ class Navigation3EntryProvider(
    ): NavEntry<ScreenKey> {
       return NavEntry(
          key,
-         contentKey = if (key is SingleTopKey) key.javaClass.name else key.toString(),
+         contentKey = if (key is SingleTopKey) {
+            key::class.qualifiedName ?: error("Unnamed classes are not supported")
+         } else {
+            key.toString()
+         },
          metadata = buildMap {
             put(METADATA_KEY, key)
             put(METADATA_SCREEN, screen)
