@@ -36,7 +36,6 @@ import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.navigation3.NestedBackstackScreen
 import si.inova.kotlinova.navigation.navigation3.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.navigator.Navigator
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
@@ -131,7 +130,7 @@ class NestedNavigation {
    }
 
    @Serializable
-   data class ParentScreenWithSharedServiceKey(val number: Int = 333) : NoArgsScreenKey()
+   data class ParentScreenWithSharedServiceKey(val number: Int = 333) : ScreenKey()
 
    @InjectNavigationScreen
    class ParentScreenWithSharedService(
