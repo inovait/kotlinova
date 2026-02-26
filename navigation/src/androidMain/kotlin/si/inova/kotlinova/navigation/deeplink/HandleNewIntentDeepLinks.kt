@@ -16,6 +16,7 @@
 
 package si.inova.kotlinova.navigation.deeplink
 
+import android.app.Activity
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable

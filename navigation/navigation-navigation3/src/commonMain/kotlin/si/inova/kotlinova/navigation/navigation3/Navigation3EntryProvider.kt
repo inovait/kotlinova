@@ -31,7 +31,7 @@ import si.inova.kotlinova.navigation.screenkeys.SingleTopKey
 import si.inova.kotlinova.navigation.screens.Screen
 
 /**
- * Provider for the [backstackEntries] that can be supplied directly to the NavDisplay
+ * Provider for the [navEntries] that can be supplied directly to the NavDisplay
  */
 class Navigation3EntryProvider(
    val backstack: Backstack,

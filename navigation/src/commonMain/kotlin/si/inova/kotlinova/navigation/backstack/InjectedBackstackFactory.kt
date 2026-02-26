@@ -28,13 +28,6 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  *
  * optional [id] argument allows you to have multiple backstacks inside single screen. To do that,
  * you have to provide unique ID to every distinct [rememberBackstack] call.
- *
- * Created backstack will automatically intercept all back button presses when necessary, if
- * [interceptBackButton] flag is enabled. Otherwise it is up to the caller to manually call
- * [Backstack.goBack].
- *
- * Note that backstack created with this method
- * uses [BackHandlingModel.AHEAD_OF_TIME] back handling model.
  */
 @Composable
 fun NavigationInjection.Factory.rememberBackstack(
