@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -30,7 +30,7 @@ import java.util.Locale
 class ComposeAndroidDateTimeFormatter(private val androidDateTimeFormatter: AndroidDateTimeFormatter) {
    /**
     * Returns a [DateTimeFormatter] that can format the time according to the context's locale and the user's
-    * 12-/24-hour clock preference. Convenience for [.ofLocalizedTime] which uses [ ][FormatStyle.SHORT].
+    * 12-/24-hour clock preference. Convenience for [.ofLocalizedTime] which uses [FormatStyle.SHORT].
     *
     * @return the time formatter
     */

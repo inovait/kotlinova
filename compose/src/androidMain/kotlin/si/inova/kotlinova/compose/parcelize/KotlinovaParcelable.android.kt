@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,41 +14,8 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+package si.inova.kotlinova.compose.parcelize
 
-plugins {
-   multiplatformModule
-   id("com.google.devtools.ksp")
-   id("org.jetbrains.kotlin.plugin.compose")
-   alias(libs.plugins.metro)
-}
-
-publishLibrary(
-   userFriendlyName = "Navigation Navigation3",
-   description = "Module that enables integration of the Kotlinova Navigation with the Google's Navigation3 library",
-   githubPath = "navigation"
-)
-
-android {
-   namespace = "si.inova.kotlinova.navigation.navigation3"
-}
-
-
-kotlin {
-   sourceSets {
-      commonMain {
-         dependencies {
-            api(projects.navigation)
-            api(libs.androidx.navigation3)
-            api(libs.androidx.navigation3.ui)
-
-            implementation(libs.composeMultiplatform.ui)
-         }
-      }
-   }
-}
-
-
-dependencies {
-   add("ksp", projects.navigation.navigationCompiler)
-}
+actual typealias ParcelableOnAndroid = android.os.Parcelable
+actual typealias IgnoredOnParcel = kotlinx.parcelize.IgnoredOnParcel
+actual typealias RawValue = kotlinx.parcelize.RawValue

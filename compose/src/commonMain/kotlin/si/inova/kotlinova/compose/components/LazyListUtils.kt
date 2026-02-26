@@ -19,7 +19,7 @@ package si.inova.kotlinova.compose.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -44,7 +44,7 @@ import androidx.compose.ui.Modifier
 inline fun <T> LazyListScope.itemsWithDivider(
    items: List<T>,
    crossinline modifier: LazyItemScope.(T) -> Modifier = { Modifier },
-   crossinline dividerContent: @Composable () -> Unit = { HorizontalDivider() },
+   crossinline dividerContent: @Composable () -> Unit = { Divider() },
    noinline key: ((item: T) -> Any)? = null,
    noinline contentType: (item: T) -> Any? = { null },
    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,

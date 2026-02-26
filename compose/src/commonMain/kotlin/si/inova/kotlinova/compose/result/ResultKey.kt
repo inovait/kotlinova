@@ -16,16 +16,16 @@
 
 package si.inova.kotlinova.compose.result
 
-import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
-import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import si.inova.kotlinova.compose.parcelize.ParcelableOnAndroid
+import si.inova.kotlinova.compose.parcelize.ParcelizeOnAndroid
 
-@Parcelize
+@ParcelizeOnAndroid
 @Serializable
 data class ResultKey<T> @VisibleForTesting constructor(
    @get:VisibleForTesting
    val compositeKeyHashCode: Long,
    @get:VisibleForTesting
    val index: Int,
-) : Parcelable
+) : ParcelableOnAndroid

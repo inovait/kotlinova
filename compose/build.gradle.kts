@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   androidLibraryModule
+   multiplatformModule
    id("kotlin-parcelize")
    id("org.jetbrains.kotlin.plugin.compose")
    id("kotlinx-serialization")
@@ -33,17 +33,41 @@ android {
    namespace = "si.inova.kotlinova.compose"
 }
 
-dependencies {
-   implementation(projects.kotlinova.core)
+kotlin {
+   androidTarget {
+      compilerOptions {
+         freeCompilerArgs.addAll(
+            "-P",
+            "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=si.inova.kotlinova.compose.parcelize.ParcelizeOnAndroid"
+         )
+      }
+   }
 
-   implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.ui.util)
-   implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.compose)
-   implementation(libs.coil)
-   implementation(libs.kotlin.serialization)
+   sourceSets {
+      commonMain {
+         dependencies {
+            implementation(projects.kotlinova.core)
 
-   debugImplementation(libs.androidx.compose.ui.tooling)
+            implementation(libs.composeMultiplatform.ui)
+            implementation(libs.composeMultiplatform.material3)
+            implementation(libs.androidx.lifecycle.compose)
+            implementation(libs.coil)
+            implementation(libs.kotlin.serialization)
+         }
+      }
+
+      val nonAndroidMain by creating {
+         dependsOn(commonMain.get())
+      }
+
+      jvmMain {
+         dependsOn(nonAndroidMain)
+      }
+
+      nativeMain {
+         dependsOn(nonAndroidMain)
+      }
+   }
 }
+
+

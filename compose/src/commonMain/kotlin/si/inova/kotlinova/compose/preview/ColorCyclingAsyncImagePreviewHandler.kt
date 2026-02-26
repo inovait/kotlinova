@@ -16,7 +16,6 @@
 
 package si.inova.kotlinova.compose.preview
 
-import android.graphics.Color
 import androidx.annotation.ColorInt
 import coil3.ColorImage
 import coil3.ImageLoader
@@ -38,13 +37,13 @@ import coil3.size.pxOrElse
 @OptIn(ExperimentalCoilApi::class)
 class ColorCyclingAsyncImagePreviewHandler(
    private val colors: List<Int> = listOf(
-      Color.RED,
-      Color.GREEN,
-      Color.BLUE,
-      Color.GRAY,
-      Color.CYAN,
-      Color.YELLOW,
-      Color.MAGENTA,
+      RED,
+      GREEN,
+      BLUE,
+      GRAY,
+      CYAN,
+      YELLOW,
+      MAGENTA,
    ),
 ) : AsyncImagePreviewHandler {
    @ColorInt
@@ -59,3 +58,11 @@ class ColorCyclingAsyncImagePreviewHandler(
       return AsyncImagePainter.State.Success(image.asPainter(request.context), SuccessResult(image, request))
    }
 }
+
+private const val GRAY = -0x777778
+private const val RED = -0x10000
+private const val GREEN = -0xff0100
+private const val BLUE = -0xffff01
+private const val YELLOW = -0x100
+private const val CYAN = -0xff0001
+private const val MAGENTA = -0xff01

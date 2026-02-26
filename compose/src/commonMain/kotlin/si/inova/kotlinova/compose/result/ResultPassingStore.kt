@@ -16,12 +16,12 @@
 
 package si.inova.kotlinova.compose.result
 
-import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.staticCompositionLocalOf
-import kotlinx.parcelize.IgnoredOnParcel
-import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
+import si.inova.kotlinova.compose.parcelize.IgnoredOnParcel
+import si.inova.kotlinova.compose.parcelize.ParcelableOnAndroid
+import si.inova.kotlinova.compose.parcelize.ParcelizeOnAndroid
+import si.inova.kotlinova.compose.parcelize.RawValue
 import java.lang.ref.WeakReference
 
 /**
@@ -38,8 +38,8 @@ import java.lang.ref.WeakReference
  * }
  * ```
  */
-@Parcelize
-class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any> = HashMap()) : Parcelable {
+@ParcelizeOnAndroid
+class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any> = HashMap()) : ParcelableOnAndroid {
    @IgnoredOnParcel
    private val callbacks = HashMap<Long, MutableList<WeakReference<(Any?) -> Unit>?>>()
 
@@ -94,5 +94,5 @@ val LocalResultPassingStore = staticCompositionLocalOf<ResultPassingStore> {
    error("Missing LocalResultPassingStore")
 }
 
-@Parcelize
-private data object NullValue : Parcelable
+@ParcelizeOnAndroid
+private data object NullValue : ParcelableOnAndroid
