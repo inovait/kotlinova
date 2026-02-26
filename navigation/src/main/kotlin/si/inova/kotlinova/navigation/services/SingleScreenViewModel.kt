@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,9 @@
 package si.inova.kotlinova.navigation.services
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.modules.SerializersModule
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.serialization.defaultNavigationSerializersModule
 
 /**
  * A ViewModel that is meant to be bound to a single screen. [key] will automatically get populated with that screen's key.
@@ -25,8 +27,12 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
  * Override [onServiceRegistered] method if you need to do any initialisation - key is guaranteed to be initialized here.
  *
  * @param [coroutineScope] See documentation for [CoroutineScopedService]
+ * @param [serializersModule] See documentation for [SaveableScopedService]
  */
-abstract class SingleScreenViewModel<K : ScreenKey>(coroutineScope: CoroutineScope) :
-   SaveableScopedService(coroutineScope) {
+abstract class SingleScreenViewModel<K : ScreenKey>(
+   coroutineScope: CoroutineScope,
+   serializersModule: SerializersModule = defaultNavigationSerializersModule,
+) :
+   SaveableScopedService(coroutineScope, serializersModule) {
    lateinit var key: K
 }

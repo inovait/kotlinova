@@ -20,6 +20,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.Serializable
 import org.junit.jupiter.api.Test
 import si.inova.kotlinova.navigation.test.services.copyStateFrom
 
@@ -138,9 +139,35 @@ internal class SaveableScopedServiceTest {
       newNewService.regularProperty shouldBe null
       newNewService.flowProperty.value shouldBe null
    }
+
+   @Test
+   internal fun `Save and restore Serializable state`() = runTest {
+      val service = TestService(backgroundScope)
+      service.serializableProperty = SerializableClass("Regular")
+      service.serializableFlowProperty.value = SerializableClass("Flow")
+      runCurrent()
+
+      val newService = TestService(backgroundScope)
+      newService.copyStateFrom(service)
+
+      newService.serializableProperty shouldBe SerializableClass("Regular")
+      newService.serializableFlowProperty.value shouldBe SerializableClass("Flow")
+   }
 }
 
-class TestService(coroutineScope: CoroutineScope, defaultValue: () -> Int? = { 0 }) : SaveableScopedService(coroutineScope) {
+private class TestService(coroutineScope: CoroutineScope, defaultValue: () -> Int? = { 0 }) :
+   SaveableScopedService(coroutineScope) {
    var regularProperty by saved<Int?>(defaultValue)
    val flowProperty by savedFlow<Int?>(defaultValue)
+   var serializableProperty by saved<SerializableClass>(
+      SerializableClass("Initial"),
+      SerializableClass.serializer(),
+   )
+   val serializableFlowProperty by savedFlow<SerializableClass>(
+      SerializableClass("Initial"),
+      SerializableClass.serializer(),
+   )
 }
+
+@Serializable
+private data class SerializableClass(val value: String)

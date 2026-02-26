@@ -24,7 +24,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import si.inova.kotlinova.navigation.util.set
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.modules.SerializersModule
+import si.inova.kotlinova.navigation.serialization.defaultNavigationSerializersModule
+import si.inova.kotlinova.navigation.util.get
+import si.inova.kotlinova.navigation.util.put
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -40,9 +44,11 @@ import kotlin.reflect.KProperty
  * ```
  *
  * @param [coroutineScope] See documentation for [CoroutineScopedService]
+ * @param [serializersModule] Serializers module used to serialize any Serializable types into the state
  */
 abstract class SaveableScopedService(
    coroutineScope: CoroutineScope,
+   private val serializersModule: SerializersModule = defaultNavigationSerializersModule,
 ) : CoroutineScopedService(coroutineScope), ScopedService.Saveable {
    protected var savedState = savedState()
 
@@ -54,7 +60,20 @@ abstract class SaveableScopedService(
    fun <T> saved(
       defaultValue: () -> T,
    ): ReadWriteProperty<SaveableScopedService, T> {
-      return StateSavedProperty(defaultValue)
+      return saved(null, defaultValue)
+   }
+
+   /**
+    * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> saved(
+      serializer: KSerializer<T>? = null,
+      defaultValue: () -> T,
+   ): ReadWriteProperty<SaveableScopedService, T> {
+      return StateSavedProperty(defaultValue, serializer)
    }
 
    /**
@@ -65,26 +84,43 @@ abstract class SaveableScopedService(
    fun <T> savedFlow(
       defaultValue: () -> T,
    ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
-      return StateSavedFlowProperty(defaultValue)
+      return savedFlow(null, defaultValue)
+   }
+
+   /**
+    * Flow of a property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> savedFlow(
+      serializer: KSerializer<T>? = null,
+      defaultValue: () -> T,
+   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
+      return StateSavedFlowProperty(defaultValue, serializer)
    }
 
    /**
     * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
     */
    fun <T> saved(
       defaultValue: T,
-   ): ReadWriteProperty<SaveableScopedService, T> = saved { defaultValue }
+      serializer: KSerializer<T>? = null,
+   ): ReadWriteProperty<SaveableScopedService, T> = saved(serializer) { defaultValue }
 
    /**
     * Flow of a property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
     *
     * @param defaultValue Default value that property has. This value is only saved on the first read.
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
     */
    fun <T> savedFlow(
       defaultValue: T,
-   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow { defaultValue }
+      serializer: KSerializer<T>? = null,
+   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow(serializer) { defaultValue }
 
    override fun saveState(): SavedState {
       return savedState
@@ -96,6 +132,7 @@ abstract class SaveableScopedService(
 
    private class StateSavedProperty<T>(
       private val defaultValue: () -> T,
+      private val serializer: KSerializer<T>? = null,
    ) : ReadWriteProperty<SaveableScopedService, T> {
       var value: T? = null
       var initialized = false
@@ -109,7 +146,7 @@ abstract class SaveableScopedService(
                      null
                   } else {
                      @Suppress("DEPRECATION")
-                     thisRef.savedState.get(property.name) as T
+                     thisRef.savedState.get(serializer, thisRef.serializersModule, property.name) as T
                   }
                } else {
                   val default = defaultValue()
@@ -137,13 +174,14 @@ abstract class SaveableScopedService(
          property: KProperty<*>,
       ) {
          thisRef.savedState.write {
-            this[property.name] = value
+            this.put(serializer, thisRef.serializersModule, property.name, value)
          }
       }
    }
 
    private class StateSavedFlowProperty<T>(
       private val defaultValue: () -> T,
+      private val serializer: KSerializer<T>? = null,
    ) : ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
       var flow: MutableStateFlow<T>? = null
 
@@ -160,7 +198,11 @@ abstract class SaveableScopedService(
                   null as T
                } else {
                   @Suppress("DEPRECATION")
-                  thisRef.savedState.get(property.name) as T
+                  thisRef.savedState.get(
+                     serializer,
+                     thisRef.serializersModule,
+                     property.name
+                  ) as T
                }
             } else {
                defaultValue()
@@ -181,7 +223,12 @@ abstract class SaveableScopedService(
          thisRef.coroutineScope.launch {
             collect { value ->
                thisRef.savedState.write {
-                  this[property.name] = value
+                  this.put(
+                     serializer,
+                     thisRef.serializersModule,
+                     property.name,
+                     value
+                  )
                }
             }
          }
