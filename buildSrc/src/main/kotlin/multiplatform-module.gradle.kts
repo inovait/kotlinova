@@ -30,6 +30,8 @@ plugins {
 kotlin {
    androidTarget()
 
+   applyDefaultHierarchyTemplate()
+
    jvm {
       testRuns["test"].executionTask.configure {
          useJUnitPlatform()

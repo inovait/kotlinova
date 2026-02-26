@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   androidLibraryModule
+   multiplatformModule
    id("kotlinx-serialization")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
@@ -35,33 +35,54 @@ android {
    namespace = "si.inova.kotlinova.navigation"
 }
 
+kotlin {
+   iosArm64()
+
+   sourceSets {
+      androidMain {
+         dependencies {
+            api(libs.androidx.activity.compose)
+            implementation(libs.androidx.core)
+         }
+      }
+      commonMain {
+         dependencies {
+            api(libs.androidx.savedState)
+
+            implementation(libs.composeMultiplatform.animation)
+            implementation(libs.composeMultiplatform.ui)
+            implementation(libs.composeMultiplatform.material3)
+            implementation(libs.androidx.lifecycle.viewModel.compose)
+            implementation(libs.kotlin.serialization)
+         }
+      }
+      val nonAndroidMain by creating {
+         dependsOn(commonMain.get())
+      }
+
+      jvmMain {
+         dependsOn(nonAndroidMain)
+      }
+
+      nativeMain {
+         dependsOn(nonAndroidMain)
+      }
+
+      androidUnitTest {
+         dependencies {
+            implementation(projects.navigation.navigationTest)
+            implementation(libs.turbine)
+            implementation(libs.kotlin.coroutines.test)
+            implementation(libs.kotest.assertions)
+            implementation(libs.junit5.api)
+            runtimeOnly(libs.junit5.engine)
+            runtimeOnly(libs.junit5.launcher)
+         }
+      }
+   }
+}
+
+
 dependencies {
-   api(libs.androidx.activity.compose)
-   api(libs.androidx.savedState)
-
-   implementation(projects.kotlinova.core)
-
-   implementation(libs.androidx.core)
-   implementation(libs.androidx.compose.animation)
-   implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.ui.util)
-   implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.compose)
-   implementation(libs.androidx.lifecycle.viewModel.compose)
-   implementation(libs.kotlin.serialization)
-
-   ksp(projects.navigation.navigationCompiler)
-
-   debugImplementation(libs.androidx.compose.ui.tooling)
-   debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-   testImplementation(projects.navigation.navigationTest)
-   testImplementation(libs.turbine)
-   testImplementation(libs.kotlin.coroutines.test)
-   testImplementation(libs.kotest.assertions)
-   testImplementation(libs.junit5.api)
-   testRuntimeOnly(libs.junit5.engine)
-   testRuntimeOnly(libs.junit5.launcher)
+   add("kspCommonMainMetadata", projects.navigation.navigationCompiler)
 }
