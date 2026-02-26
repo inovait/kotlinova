@@ -27,6 +27,7 @@ class RuleProvider : RuleSetProvider {
       ruleSetId,
       listOf(
          ::NavigationKeyNoEnums,
+         ::NavigationSerializable,
       )
    )
 }

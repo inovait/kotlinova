@@ -815,6 +815,8 @@ Navigation also contains detekt plugin to safeguard against some common mistakes
 kotlinovanavigation:
   NavigationKeyNoEnums:
     active: true
+  NavigationSerializable:
+    active: true
 ```
 
 # Credits
