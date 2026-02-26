@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,39 +14,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.core.math
+package si.inova.kotlinova.core.logging
 
-/**
- * @return Square of provided number
- */
-fun Double.squared(): Double {
-   return this * this
-}
-
-/**
- * @return Square of provided number
- */
-fun Float.squared(): Float {
-   return this * this
-}
-
-/**
- * @return Square of provided number
- */
-fun Int.squared(): Int {
-   return this * this
-}
-
-/**
- * @return Square of provided number
- */
-fun Long.squared(): Long {
-   return this * this
-}
-
-/**
- * @return Square of provided number
- */
-fun Short.squared(): Int {
-   return this * this
+@Deprecated(
+   message = "Upstream logcat now supports KMP. Use that instead",
+   replaceWith = ReplaceWith(expression = "asLog", imports = ["logcat.asLog"])
+)
+actual fun Throwable.asLog(): String {
+   throw UnsupportedOperationException("Not supported on native, use non-deprecated version")
 }

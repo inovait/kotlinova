@@ -107,8 +107,8 @@ inline fun logcat(
 
 @PublishedApi
 internal fun Any.outerClassSimpleNameInternalOnlyDoNotUseKThxBye(): String {
-   val javaClass = this::class.java
-   val fullClassName = javaClass.name
+   val javaClass = this::class
+   val fullClassName = javaClass.simpleName.orEmpty()
    val outerClassName = fullClassName.substringBefore('$')
    val simplerOuterClassName = outerClassName.substringAfterLast('.')
    return if (simplerOuterClassName.isEmpty()) {

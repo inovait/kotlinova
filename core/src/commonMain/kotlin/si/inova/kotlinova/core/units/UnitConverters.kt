@@ -14,7 +14,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-@file:JvmName("UnitConverters")
 @file:Suppress("MagicNumber")
 
 package si.inova.kotlinova.core.units
@@ -22,7 +21,6 @@ package si.inova.kotlinova.core.units
 import kotlin.math.floor
 
 object Centimeters {
-   @JvmStatic
    fun toFeetInches(centimeters: Double): FeetInches {
       val inches = centimeters * 0.393701
 
@@ -31,21 +29,18 @@ object Centimeters {
       return FeetInches(feet, inches % 12)
    }
 
-   @JvmStatic
    fun toInches(centimeters: Double): Double {
       return centimeters * 0.393701
    }
 }
 
 object Kilograms {
-   @JvmStatic
    fun toPounds(kilograms: Double): Double {
       return kilograms * 0002.20462
    }
 }
 
 object Pounds {
-   @JvmStatic
    fun toKilograms(pounds: Double): Double {
       return pounds / 2.20462
    }
@@ -58,19 +53,16 @@ data class FeetInches(val feet: Double, val inches: Double) {
 }
 
 object Meters {
-   @JvmStatic
    fun toMiles(meters: Double): Double {
       return meters * 0.000621371
    }
 
-   @JvmStatic
    fun toKilometers(meters: Double): Double {
       return meters / 1000.0
    }
 }
 
 object Inches {
-   @JvmStatic
    fun toCentimeters(inches: Double): Double {
       return inches / 0.393701
    }

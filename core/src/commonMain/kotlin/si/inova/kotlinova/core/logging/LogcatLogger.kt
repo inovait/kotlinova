@@ -47,12 +47,10 @@ interface LogcatLogger {
    )
 
    companion object {
-      @Volatile
       @PublishedApi
       internal var logger: LogcatLogger = NoLog
          private set
 
-      @Volatile
       private var installedThrowable: Throwable? = null
 
       val isInstalled: Boolean
@@ -65,28 +63,24 @@ interface LogcatLogger {
        * however doing this won't throw, it'll log an error to the newly provided logger.
        */
       fun install(logger: LogcatLogger) {
-         synchronized(this) {
-            if (isInstalled) {
-               logger.log(
-                  LogPriority.ERROR,
-                  "LogcatLogger",
-                  "Installing $logger even though a logger was previously installed here: " +
-                     requireNotNull(installedThrowable).asLog()
-               )
-            }
-            installedThrowable = RuntimeException("Previous logger installed here")
-            Companion.logger = logger
+         if (isInstalled) {
+            logger.log(
+               LogPriority.ERROR,
+               "LogcatLogger",
+               "Installing $logger even though a logger was previously installed here: " +
+                  requireNotNull(installedThrowable).asLog()
+            )
          }
+         installedThrowable = RuntimeException("Previous logger installed here")
+         Companion.logger = logger
       }
 
       /**
        * Replaces the current logger (if any) with a no-op logger.
        */
       fun uninstall() {
-         synchronized(this) {
-            installedThrowable = null
-            logger = NoLog
-         }
+         installedThrowable = null
+         logger = NoLog
       }
    }
 

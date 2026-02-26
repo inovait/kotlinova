@@ -16,14 +16,20 @@
 
 package si.inova.kotlinova.core.outcome
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import si.inova.kotlinova.core.collections.createConcurrentMap
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
 import si.inova.kotlinova.core.flow.collectInto
 import si.inova.kotlinova.core.reporting.ErrorReporter
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -34,7 +40,7 @@ open class CoroutineResourceManager(
    val scope: CoroutineScope,
    private val reportService: ErrorReporter,
 ) {
-   private val activeJobs = ConcurrentHashMap<Any, Job>()
+   private val activeJobs = createConcurrentMap<Any, Job>()
 
    /**
     * Method that launches coroutine task that handles data fetching for provided resources.
@@ -106,7 +112,6 @@ open class CoroutineResourceManager(
     * Any previous launched coroutines that were bound to an object equal to passed object will
     * be cancelled.
     */
-   @Synchronized
    fun launchBoundControlTask(
       resource: Any,
       context: CoroutineContext = EmptyCoroutineContext,
@@ -130,7 +135,7 @@ open class CoroutineResourceManager(
          try {
             block()
          } finally {
-            activeJobs.remove(resource, thisJob)
+            activeJobs.remove(resource)
          }
       }
 
