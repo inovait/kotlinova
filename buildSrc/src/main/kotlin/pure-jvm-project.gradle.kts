@@ -47,7 +47,7 @@ plugins {
 mavenPublishing {
    configure(
       KotlinJvm(
-         javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationJavadoc"),
+         javadocJar = JavadocJar.Dokka("dokkaGenerateHtml"),
          sourcesJar = true,
       )
    )

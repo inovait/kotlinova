@@ -36,7 +36,6 @@ plugins {
    id("checks")
    id("com.vanniktech.maven.publish.base")
    id("org.jetbrains.dokka")
-   id("org.jetbrains.dokka-javadoc")
 }
 
 configure<KotlinProjectExtension> {

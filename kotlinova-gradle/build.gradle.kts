@@ -29,7 +29,6 @@ plugins {
    alias(libs.plugins.mavenPublish)
    alias(libs.plugins.detekt)
    alias(libs.plugins.dokka)
-   alias(libs.plugins.dokka.javadoc)
 }
 
 group = "si.inova.kotlinova"
@@ -57,7 +56,7 @@ mavenPublishing {
 
    configure(
       KotlinJvm(
-         javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationJavadoc"),
+         javadocJar = JavadocJar.Dokka("dokkaGenerateHtml"),
          sourcesJar = true,
       )
    )

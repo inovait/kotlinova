@@ -120,7 +120,6 @@ unmock-plugin = { module = "com.github.bjoernq:unmockplugin", version.ref = "unm
 [plugins]
 detekt = { id = "dev.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
