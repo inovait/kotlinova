@@ -21,7 +21,9 @@ import dev.detekt.api.Entity
 import dev.detekt.api.Finding
 import dev.detekt.api.RequiresAnalysisApi
 import dev.detekt.api.Rule
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
@@ -35,7 +37,9 @@ class NavigationSerializable(config: Config) :
    ),
    RequiresAnalysisApi {
    override fun visitClassOrObject(klass: KtClassOrObject) {
-      if ((klass is KtClass && (klass.isAbstract() || klass.isInterface())) || klass.getSuperTypeList()?.entries?.isNullOrEmpty() != false) {
+      if ((klass is KtClass && (klass.isAbstract() || klass.isInterface())) ||
+         klass.getSuperTypeList()?.entries?.isNullOrEmpty() != false
+      ) {
          return
       }
 
@@ -43,38 +47,34 @@ class NavigationSerializable(config: Config) :
          analyze(klass) {
             val classSymbol = klass.classSymbol ?: return
 
-            val screenKey = findClass(SCREEN_KEY_CLASS) ?: return
-            if (classSymbol.isSubClassOf(screenKey)) {
-               report(
-                  Finding(
-                     Entity.from(klass),
-                     "Screen key ${klass.name ?: "UNKNOWN"} must have a @Serializable annotation.",
-                  )
-               )
-               return
+            reportOnFoundSuperclass(SCREEN_KEY_CLASS, classSymbol) {
+               "Screen key ${klass.name ?: "UNKNOWN"} must have a @Serializable annotation."
             }
 
-            val navigationCondition = findClass(NAVIGATION_CONDITION_CLASS) ?: return
-            if (classSymbol.isSubClassOf(navigationCondition)) {
-               report(
-                  Finding(
-                     Entity.from(klass),
-                     "Navigation condition ${klass.name ?: "UNKNOWN"} must have a @Serializable annotation.",
-                  )
-               )
-               return
+            reportOnFoundSuperclass(NAVIGATION_CONDITION_CLASS, classSymbol) {
+               "Navigation condition ${klass.name ?: "UNKNOWN"} must have a @Serializable annotation."
             }
 
-            val navigationInstruction = findClass(NAVIGATION_INSTRUCTION_CLASS) ?: return
-            if (classSymbol.isSubClassOf(navigationInstruction)) {
-               report(
-                  Finding(
-                     Entity.from(klass),
-                     "Navigation instruction ${klass.name ?: "UNKNOWN"} must have a @Serializable annotation.",
-                  )
-               )
+            reportOnFoundSuperclass(NAVIGATION_INSTRUCTION_CLASS, classSymbol) {
+               "Navigation instruction ${klass.name ?: "UNKNOWN"} must have a @Serializable annotation."
             }
          }
+      }
+   }
+
+   private inline fun KaSession.reportOnFoundSuperclass(
+      classId: ClassId,
+      classSymbol: KaClassSymbol,
+      message: () -> String,
+   ) {
+      val screenKey = findClass(classId)
+      if (screenKey != null && classSymbol.isSubClassOf(screenKey)) {
+         report(
+            Finding(
+               Entity.from(classSymbol.psi!!),
+               message(),
+            )
+         )
       }
    }
 }
