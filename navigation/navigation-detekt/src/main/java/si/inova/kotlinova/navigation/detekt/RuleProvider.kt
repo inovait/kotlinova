@@ -26,7 +26,6 @@ class RuleProvider : RuleSetProvider {
    override fun instance(): RuleSet = RuleSet(
       ruleSetId,
       listOf(
-         ::NavigationKeyNoEnums,
          ::NavigationSerializable,
       )
    )
