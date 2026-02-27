@@ -281,7 +281,7 @@ internal class CoroutineResourceManagerTest {
 
       runCurrent()
 
-      resource.value.shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+      resource.value.shouldBeErrorWith(exceptionType = NoNetworkException::class)
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
    }
 
@@ -406,7 +406,7 @@ internal class CoroutineResourceManagerTest {
 
       resource.value.shouldBeErrorWith(
          expectedData = 18,
-         exceptionType = NoNetworkException::class.java,
+         exceptionType = NoNetworkException::class,
       )
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
    }
@@ -424,7 +424,7 @@ internal class CoroutineResourceManagerTest {
 
       resource.value.shouldBeErrorWith(
          expectedData = null,
-         exceptionType = NoNetworkException::class.java,
+         exceptionType = NoNetworkException::class,
       )
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
    }

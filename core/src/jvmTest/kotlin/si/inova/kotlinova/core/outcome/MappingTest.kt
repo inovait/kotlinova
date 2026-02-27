@@ -60,7 +60,7 @@ internal class MappingTest {
       val flow = flowOf(Outcome.Success(10))
          .flatMapLatestOutcome { flowOf(Outcome.Error(NoNetworkException(), it * 20)) }
 
-      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class.java)
+      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class)
    }
 
    @Test
@@ -84,7 +84,7 @@ internal class MappingTest {
       val flow = flowOf(Outcome.Progress(10, 0.5f))
          .flatMapLatestOutcome { flowOf(Outcome.Error(NoNetworkException(), it * 20)) }
 
-      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class.java)
+      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class)
    }
 
    @Test
@@ -92,7 +92,7 @@ internal class MappingTest {
       val flow = flowOf(Outcome.Error(NoNetworkException(), 10f))
          .flatMapLatestOutcome { flowOf(Outcome.Success(it * 20)) }
 
-      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class.java)
+      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class)
    }
 
    @Test
@@ -100,7 +100,7 @@ internal class MappingTest {
       val flow = flowOf(Outcome.Error(NoNetworkException(), 10f))
          .flatMapLatestOutcome { flowOf(Outcome.Progress(it * 20, 0.7f)) }
 
-      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class.java)
+      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class)
    }
 
    @Test
@@ -108,7 +108,7 @@ internal class MappingTest {
       val flow = flowOf(Outcome.Error(NoNetworkException(), 10f))
          .flatMapLatestOutcome { flowOf(Outcome.Error(NoNetworkException(), it * 20)) }
 
-      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class.java)
+      flow.first().shouldBeErrorWith(expectedData = 200, exceptionType = NoNetworkException::class)
    }
 
    @Test
@@ -124,6 +124,6 @@ internal class MappingTest {
       val flow = flowOf(Outcome.Error<Int>(NoNetworkException()))
          .flatMapLatestOutcome { flowOf(Outcome.Error(NoNetworkException(), it * 20)) }
 
-      flow.first().shouldBeErrorWith(expectedData = null, exceptionType = NoNetworkException::class.java)
+      flow.first().shouldBeErrorWith(expectedData = null, exceptionType = NoNetworkException::class)
    }
 }

@@ -73,7 +73,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class)
             awaitComplete()
          }
       }
@@ -91,7 +91,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class)
             awaitComplete()
          }
       }
@@ -107,7 +107,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class)
             awaitComplete()
          }
       }
@@ -123,7 +123,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class)
             awaitComplete()
          }
       }
@@ -139,7 +139,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            val exception = awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
+            val exception = awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class)
 
             exception.message.shouldNotBeNull().apply {
                shouldContain(" http://localhost")
@@ -165,7 +165,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            val exception = awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class.java)
+            val exception = awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class)
 
             exception.cause.shouldNotBeNull().message.apply {
                shouldContain(" http://localhost")
@@ -311,7 +311,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class)
             awaitComplete()
          }
       }
@@ -359,7 +359,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
 
          service.getEnumResult().test {
             awaitItem() // Ignore first loading
-            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java, expectedData = FakeEnumResult.FIRST)
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class, expectedData = FakeEnumResult.FIRST)
             awaitComplete()
          }
       }
@@ -382,7 +382,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
 
          service.getEnumResult().test {
             awaitItem() // Ignore first loading
-            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java, expectedData = FakeEnumResult.FIRST)
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class, expectedData = FakeEnumResult.FIRST)
             awaitComplete()
          }
       }
