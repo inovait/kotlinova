@@ -32,6 +32,7 @@ publishLibrary(
 
 kotlin {
    iosArm64()
+   iosSimulatorArm64()
 
    sourceSets {
       val androidMain by getting {
