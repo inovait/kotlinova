@@ -32,6 +32,8 @@ publishLibrary(
 )
 
 kotlin {
+   iosArm64()
+
    sourceSets {
       val commonMain by getting {
          dependencies {
@@ -39,12 +41,16 @@ kotlin {
             implementation(libs.kotlin.coroutines.test)
             implementation(libs.kotest.assertions)
             implementation(libs.turbine)
-            implementation(libs.dispatch)
          }
       }
       val androidMain by getting {
          dependencies {
             implementation(libs.androidx.core)
+         }
+      }
+      val jvmCommon by getting {
+         dependencies {
+            implementation(libs.dispatch)
          }
       }
    }

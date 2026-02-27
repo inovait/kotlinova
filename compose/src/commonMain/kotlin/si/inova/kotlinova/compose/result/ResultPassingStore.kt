@@ -22,7 +22,6 @@ import si.inova.kotlinova.compose.parcelize.IgnoredOnParcel
 import si.inova.kotlinova.compose.parcelize.ParcelableOnAndroid
 import si.inova.kotlinova.compose.parcelize.ParcelizeOnAndroid
 import si.inova.kotlinova.compose.parcelize.RawValue
-import java.lang.ref.WeakReference
 
 /**
  * A result store that serves as a mediator between result receiver and sender.
@@ -41,7 +40,7 @@ import java.lang.ref.WeakReference
 @ParcelizeOnAndroid
 class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any> = HashMap()) : ParcelableOnAndroid {
    @IgnoredOnParcel
-   private val callbacks = HashMap<Long, MutableList<WeakReference<(Any?) -> Unit>?>>()
+   private val callbacks = HashMap<Long, MutableList<((Any?) -> Unit)?>>()
 
    @Suppress("UNCHECKED_CAST")
    @VisibleForTesting
@@ -56,7 +55,7 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
          callback(unwrapResult(existingData))
       }
 
-      val ref = WeakReference<(Any?) -> Unit>(callback as (Any?) -> Unit)
+      val ref = callback as (Any?) -> Unit
       if (index >= list.size) {
          list.add(ref)
       } else {
@@ -72,7 +71,7 @@ class ResultPassingStore(private val store: @RawValue HashMap<ResultKey<*>, Any>
    }
 
    fun <T> sendResult(key: ResultKey<T>, result: T) {
-      val callback = callbacks[key.compositeKeyHashCode]?.elementAtOrNull(key.index)?.get()
+      val callback = callbacks[key.compositeKeyHashCode]?.elementAtOrNull(key.index)
       if (callback != null) {
          callback(result)
       } else {

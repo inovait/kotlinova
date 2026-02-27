@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,43 +14,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+package si.inova.kotlinova.navigation.kmmsample
 
-plugins {
-   multiplatformModule
-   id("com.google.devtools.ksp")
-   id("org.jetbrains.kotlin.plugin.compose")
-   alias(libs.plugins.metro)
-}
+import android.app.Application
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
+import si.inova.kotlinova.navigation.di.NavigationInjection
+import si.inova.kotlinova.navigation.di.OuterNavigationScope
 
-publishLibrary(
-   userFriendlyName = "Navigation Navigation3",
-   description = "Module that enables integration of the Kotlinova Navigation with the Google's Navigation3 library",
-   githubPath = "navigation"
-)
+@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
+@SingleIn(AppScope::class)
+interface AndroidAppGraph: AppGraph {
+    fun getNavigationInjectionFactory(): NavigationInjection.Factory
 
-android {
-   namespace = "si.inova.kotlinova.navigation.navigation3"
-}
-
-
-kotlin {
-   iosArm64()
-
-   sourceSets {
-      commonMain {
-         dependencies {
-            api(projects.navigation)
-            api(libs.androidx.navigation3)
-            api(libs.androidx.navigation3.ui)
-
-            implementation(libs.composeMultiplatform.ui)
-         }
-      }
-   }
-}
-
-
-dependencies {
-   add("ksp", projects.navigation.navigationCompiler)
+    @DependencyGraph.Factory
+    interface Factory {
+        fun create(
+            @Provides
+            application: Application,
+        ): AndroidAppGraph
+    }
 }

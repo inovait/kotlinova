@@ -31,6 +31,8 @@ publishLibrary(
 )
 
 kotlin {
+   iosArm64()
+
    sourceSets {
       val androidMain by getting {
          dependencies {

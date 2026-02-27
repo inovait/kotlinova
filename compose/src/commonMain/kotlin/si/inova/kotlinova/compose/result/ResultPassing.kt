@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toLong
 
 /**
  * Register a receiver that can receive result data from another screen. This method will return a [ResultKey]
@@ -42,7 +43,7 @@ fun <T> registerResultReceiver(callback: (T) -> Unit): ResultKey<T> {
    val store = LocalResultPassingStore.current
    val key = currentCompositeKeyHashCode
 
-   val resultKey = remember { store.registerCallback(key, callback) }
+   val resultKey = remember { store.registerCallback(key.toLong(), callback) }
 
    DisposableEffect(callback) {
       onDispose {

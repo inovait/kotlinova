@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -27,14 +27,14 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**
- * A [DispatcherProvider] that provides test dispatcher for all dispatchers.
+ * A [dispatch.core.DispatcherProvider] that provides test dispatcher for all dispatchers.
  */
 @OptIn(ExperimentalStdlibApi::class)
 val TestScope.testDispatcherProvider: DispatcherProvider
-   get() = SingleDispatcherProvider(requireNotNull(coroutineContext[CoroutineDispatcher]))
+   get() = SingleDispatcherProvider(requireNotNull(coroutineContext[CoroutineDispatcher.Key]))
 
 /**
- * [MainImmediateCoroutineScope] based on a [TestScope.backgroundScope].
+ * [dispatch.core.MainImmediateCoroutineScope] based on a [TestScope.backgroundScope].
  *
  * This scope will have a test dispatcher and will be automatically cancelled when test finishes.
  */

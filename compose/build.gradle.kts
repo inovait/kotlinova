@@ -34,6 +34,8 @@ android {
 }
 
 kotlin {
+   iosArm64()
+
    androidTarget {
       compilerOptions {
          freeCompilerArgs.addAll(
