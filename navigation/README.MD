@@ -120,12 +120,11 @@ data object MyScreenKey : ScreenKey()
 
 ## Scoped Services
 
-To persist data between activity configuration changes and/or share data between screens, you can create
-[Scoped Services](https://github.com/Zhuinden/simple-stack/wiki/5.-Scoping,-data-or-state-sharing-between-screens#service-lifecycle)
-.
+To persist data between activity configuration changes and/or share data between screens, you can create Scoped Services .
 
-Simply put, a Scoped Service is very similar to the AndroidX ViewModel - It is created when screen first added to the
-navigation backstack and is kept alive until screen is removed from the backstack, including through Activity's configuration
+Simply put, a Scoped Service is very similar to the AndroidX ViewModel - It is created when the screen referencing it is first
+added to the
+navigation backstack and is kept alive until that screen is removed from the backstack, including through Activity's configuration
 change restarts.
 
 To create a scoped service, simply create your class and have that class extend `ScopedService`.
@@ -708,7 +707,7 @@ see the [Metro sample android app](https://github.com/ZacSweers/metro/tree/main/
 
 To add the library to your app:
 
-1. Add navigation, navigation3 libraries as implementation dependency and navigation compiler as ksp dependency
+1. Add `navigation` and `navigation-navigation3` libraries as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
 2. Set up [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html) in your project
    (only `kotlinx-serialization-core` is necessary if you don't need any other formats)
