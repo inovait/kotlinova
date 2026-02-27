@@ -14,26 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.first
 
-import android.app.Application
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Provides
-import dev.zacsweers.metro.SingleIn
-import si.inova.kotlinova.navigation.di.NavigationInjection
-import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import kotlinx.serialization.Serializable
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
-@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
-@SingleIn(AppScope::class)
-interface AndroidAppGraph: AppGraph {
-    override fun getNavigationInjectionFactory(): NavigationInjection.Factory
-
-    @DependencyGraph.Factory
-    interface Factory {
-        fun create(
-            @Provides
-            application: Application,
-        ): AndroidAppGraph
-    }
-}
+@Serializable
+data object FirstScreenKey : ScreenKey()

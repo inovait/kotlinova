@@ -17,23 +17,9 @@
 package si.inova.kotlinova.navigation.kmmsample
 
 import android.app.Application
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Provides
-import dev.zacsweers.metro.SingleIn
-import si.inova.kotlinova.navigation.di.NavigationInjection
-import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import dev.zacsweers.metro.createGraphFactory
+import kotlin.getValue
 
-@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
-@SingleIn(AppScope::class)
-interface AndroidAppGraph: AppGraph {
-    override fun getNavigationInjectionFactory(): NavigationInjection.Factory
-
-    @DependencyGraph.Factory
-    interface Factory {
-        fun create(
-            @Provides
-            application: Application,
-        ): AndroidAppGraph
-    }
+class MultiplatformDemoApplication : Application() {
+   val appGraph by lazy { createGraphFactory<AndroidAppGraph.Factory>().create(this) }
 }

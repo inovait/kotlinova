@@ -14,26 +14,17 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.second
 
-import android.app.Application
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Provides
-import dev.zacsweers.metro.SingleIn
-import si.inova.kotlinova.navigation.di.NavigationInjection
-import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
+import si.inova.kotlinova.navigation.services.ContributesScopedService
+import si.inova.kotlinova.navigation.services.SingleScreenViewModel
 
-@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
-@SingleIn(AppScope::class)
-interface AndroidAppGraph: AppGraph {
-    override fun getNavigationInjectionFactory(): NavigationInjection.Factory
-
-    @DependencyGraph.Factory
-    interface Factory {
-        fun create(
-            @Provides
-            application: Application,
-        ): AndroidAppGraph
-    }
+@ContributesScopedService
+@Inject
+class SecondScreenViewModel(
+   coroutineScope: CoroutineScope,
+) : SingleScreenViewModel<SecondScreenKey>(coroutineScope) {
+   val number by savedFlow(0)
 }
