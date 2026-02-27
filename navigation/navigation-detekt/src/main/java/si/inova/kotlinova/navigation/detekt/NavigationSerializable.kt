@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 
 class NavigationSerializable(config: Config) :
@@ -33,8 +34,8 @@ class NavigationSerializable(config: Config) :
       "ScreenKey, NavigationInstruction, NavigationConditions classes must be serializable",
    ),
    RequiresAnalysisApi {
-   override fun visitClass(klass: KtClass) {
-      if (klass.isAbstract() || klass.isInterface() || klass.getSuperTypeList()?.entries?.isNullOrEmpty() != false) {
+   override fun visitClassOrObject(klass: KtClassOrObject) {
+      if ((klass is KtClass && (klass.isAbstract() || klass.isInterface())) || klass.getSuperTypeList()?.entries?.isNullOrEmpty() != false) {
          return
       }
 
@@ -76,41 +77,6 @@ class NavigationSerializable(config: Config) :
          }
       }
    }
-
-//   private fun KaSession.processParameters(
-//      originalScreenClass: KtClass,
-//      resolvedClass: KaClassSymbol,
-//      parentTree: List<String>,
-//   ) {
-//      val primaryConstructor = resolvedClass.memberScope.constructors.firstOrNull { it.isPrimary } ?: return
-//
-//      val parameters = primaryConstructor.valueParameters
-//      for (parameter in parameters) {
-//         val directSupertypes = parameter.returnType.directSupertypes.mapNotNull {
-//            it.expandedSymbol?.classId?.asSingleFqName()?.asString()
-//         }
-//         if (directSupertypes.any { it == "kotlin.Enum" || it == "java.lang.Enum" }) {
-//            report(
-//               Finding(
-//                  Entity.from(originalScreenClass),
-//                  "Screen key ${parentTree.joinToString(" -> ")} has " +
-//                     "Enum parameter '${parameter.name}'.",
-//               )
-//            )
-//
-//            continue
-//         }
-//
-//         val typeClass = parameter.returnType.expandedSymbol as? KaNamedClassSymbol
-//         if (typeClass?.isData == true) {
-//            processParameters(
-//               originalScreenClass,
-//               typeClass,
-//               parentTree + typeClass.name.toString()
-//            )
-//         }
-//      }
-//   }
 }
 
 private val SCREEN_KEY_CLASS = ClassId.topLevel(FqName("si.inova.kotlinova.navigation.screenkeys.ScreenKey"))

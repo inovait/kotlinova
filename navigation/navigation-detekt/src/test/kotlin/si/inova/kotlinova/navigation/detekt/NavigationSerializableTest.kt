@@ -100,6 +100,23 @@ class NavigationSerializableTest(val env: KotlinEnvironmentContainer) {
    }
 
    @Test
+   fun `Complain about non-serializable ScreenKey object`() {
+      @Language("kotlin")
+      val code = """
+         import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+
+         data object Test: ScreenKey()
+      """.trimIndent()
+
+      val findings = subject.lintWithContext(env, code, *baseClasses)
+
+      findings.shouldHaveSize(1).first().apply {
+         message shouldContain "Test"
+         message shouldContain "Serializable"
+      }
+   }
+
+   @Test
    fun `Complain about non-serializable class that is not a direct subclass of a ScreenKey`() {
       @Language("kotlin")
       val code = """
@@ -151,6 +168,23 @@ class NavigationSerializableTest(val env: KotlinEnvironmentContainer) {
    }
 
    @Test
+   fun `Complain about non-serializable NavigationCondition object`() {
+      @Language("kotlin")
+      val code = """
+         import si.inova.kotlinova.navigation.conditions.NavigationCondition
+
+         data object Test: NavigationCondition
+      """.trimIndent()
+
+      val findings = subject.lintWithContext(env, code, *baseClasses)
+
+      findings.shouldHaveSize(1).first().apply {
+         message shouldContain "Test"
+         message shouldContain "Serializable"
+      }
+   }
+
+   @Test
    fun `Complain about non-serializable class that is not a direct subclass of a NavigationCondition`() {
       @Language("kotlin")
       val code = """
@@ -191,6 +225,23 @@ class NavigationSerializableTest(val env: KotlinEnvironmentContainer) {
          import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 
          data class Test(val argument: Int): NavigationInstruction()
+      """.trimIndent()
+
+      val findings = subject.lintWithContext(env, code, *baseClasses)
+
+      findings.shouldHaveSize(1).first().apply {
+         message shouldContain "Test"
+         message shouldContain "Serializable"
+      }
+   }
+
+   @Test
+   fun `Complain about non-serializable NavigationInstruction object`() {
+      @Language("kotlin")
+      val code = """
+         import si.inova.kotlinova.navigation.instructions.NavigationInstruction
+
+         data object Test: NavigationInstruction()
       """.trimIndent()
 
       val findings = subject.lintWithContext(env, code, *baseClasses)
