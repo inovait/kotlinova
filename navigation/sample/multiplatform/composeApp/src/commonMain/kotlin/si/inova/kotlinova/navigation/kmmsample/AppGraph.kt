@@ -20,8 +20,11 @@ import dev.zacsweers.metro.Provides
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import si.inova.kotlinova.navigation.di.NavigationInjection
 
 interface AppGraph {
+   fun getNavigationInjectionFactory(): NavigationInjection.Factory
+
    @Provides
    fun provideCoroutineScope(): CoroutineScope {
       // Provide default coroutine scope for the ViewModels.

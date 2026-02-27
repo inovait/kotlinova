@@ -27,7 +27,7 @@ import si.inova.kotlinova.navigation.di.OuterNavigationScope
 @DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
 @SingleIn(AppScope::class)
 interface AndroidAppGraph: AppGraph {
-    fun getNavigationInjectionFactory(): NavigationInjection.Factory
+    override fun getNavigationInjectionFactory(): NavigationInjection.Factory
 
     @DependencyGraph.Factory
     interface Factory {
