@@ -35,6 +35,8 @@ android {
 }
 
 kotlin {
+   iosArm64()
+
    sourceSets {
       androidMain {
          dependencies {
