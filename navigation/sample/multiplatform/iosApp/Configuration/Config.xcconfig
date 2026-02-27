@@ -1,0 +1,7 @@
+TEAM_ID=
+
+PRODUCT_NAME=Kotlinova Navigation Multiplatform sample
+PRODUCT_BUNDLE_IDENTIFIER=si.inova.kotlinova.navigation.kmmsample.KotlinovaNavigationMultiplatformsample$(TEAM_ID)
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0
