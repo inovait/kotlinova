@@ -133,7 +133,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
       .addAnnotation(Provides::class)
       .addAnnotation(FROM_BACKSTACK_QUALIFIER_ANNOTATION)
       .addCode(
-         $$"return backstack.lookupService(%T::class) ?: error(\"Internal error: service ${%T::class.java} not in scope\")",
+         $$"return backstack.lookupService(%T::class) ?: error(\"Internal error: service ${%T::class} not in scope\")",
          serviceClassName,
          serviceClassName
       )

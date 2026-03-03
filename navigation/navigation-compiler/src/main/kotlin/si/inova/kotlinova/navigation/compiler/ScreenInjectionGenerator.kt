@@ -311,7 +311,7 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
 
             addStatement(
                "val %L = backstack.lookupFromScope<%T>(%L, %T::class) ?:" +
-                  $$" error(\"Internal error: service ${%T::class.java} not in scope\")",
+                  $$" error(\"Internal error: service ${%T::class} not in scope\")",
                service.nameOrThrow().asString(),
                serviceType,
                "scope",
