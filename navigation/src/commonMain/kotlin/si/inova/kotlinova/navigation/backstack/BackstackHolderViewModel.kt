@@ -23,14 +23,14 @@ import si.inova.kotlinova.navigation.di.ScreenRegistry
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import kotlin.reflect.KClass
 
-internal class BackstackHolderViewModel : ViewModel() {
+class BackstackHolderViewModel : ViewModel() {
    private val backstacks = HashMap<String, Backstack>()
 
-   fun getBackstack(id: String): Backstack? {
+   internal fun getBackstack(id: String): Backstack? {
       return backstacks[id]
    }
 
-   fun createInitializer(id: String) = object : ComposeNavigatorInitializer {
+   internal fun createInitializer(id: String) = object : ComposeNavigatorInitializer {
       override fun createBackstack(
          initialKeys: List<ScreenKey>,
          scopedServicesFactories: Lazy<Map<KClass<*>, Provider<out Any>>>,
