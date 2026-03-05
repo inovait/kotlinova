@@ -43,6 +43,7 @@ kotlin {
          languageSettings {
             optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             optIn("kotlinx.coroutines.FlowPreview")
+            languageSettings.enableLanguageFeature("ExpectActualClasses")
          }
       }
       val commonMain by getting
