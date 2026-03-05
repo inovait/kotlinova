@@ -43,7 +43,7 @@ version.
 # Features
 
 Kotlinova Navigation is yet another type safe serializable-keys-based navigation backend that handles creation/injection of
-the screens its scoped dependencies and management of the backstack. It's heavily integrated with the
+the screens, its scoped dependencies and management of the backstack. It's heavily integrated with the
 [Metro](https://zacsweers.github.io/metro/index.html) DI
 and [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html).
 
@@ -156,9 +156,8 @@ class MyScreen(
 If you need to create coroutines inside your services, your service can extend `CoroutineScopedService`.
 
 You have to provide new `CoroutineScope` to its constructor, allowing for customization of various scope parameters,
-such as dispatcher. We recommend that you also pass construction of the scope to the injection and then
-create a scope within Dagger module. That way, you can easily create fake version of the service inside unit tests with test
-dispatcher.
+such as dispatcher. We recommend that you create the scope with dependency injection and pass it via the service's constructor.
+That way, you can easily create fake version of the service inside unit tests with the test dispatcher.
 
 Passed coroutine scope will be cancelled automatically when service is destroyed.
 
