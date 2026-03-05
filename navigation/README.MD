@@ -178,7 +178,7 @@ your app to reclaim memory.
 
 If your service keeps important data (such as entered form data, before user confirms the form), that data should also survive
 process death. To do this, your service can
-implement [Bundleable](https://github.com/Zhuinden/simple-stack/blob/master/simple-stack/src/main/java/com/zhuinden/simplestack/Bundleable.java)
+implement [ScopedService.Saveable](src/commonMain/kotlin/si/inova/kotlinova/navigation/services/ScopedService.kt)
 .
 
 Navigation library already includes a convenience implementation of `Bundleable` that allows you to create variables inside your
@@ -297,7 +297,7 @@ To customize animations, you can override `forwardAnimation` and `backwardAnimat
 See [AnimatedContent's transitionSpec](https://developer.android.com/jetpack/compose/animation/composables-modifiers#animatedcontent)
 for more info on the contents of these methods.
 
-See [SlideAnimationScreenKey](sample/keys/src/main/java/si/inova/kotlinova/navigation/sample/keys/SlideAnimationScreenKey.kt)
+See [SlideAnimationScreenKey](sample/android/keys/src/main/java/si/inova/kotlinova/navigation/sample/keys/SlideAnimationScreenKey.kt)
 for example.
 
 ## Single top screens
@@ -411,7 +411,7 @@ navigator.navigate(
 In addition, since instructions are serializable, you can pass them around, which has several useful properties,
 for example for conditional navigation (see below).
 
-You can use one of the several [pre-written navigation instructions](src/main/kotlin/si/inova/kotlinova/navigation/instructions)
+You can use one of the several [pre-written navigation instructions](src/commonMain/kotlin/si/inova/kotlinova/navigation/instructions)
 or feel free to write your own.
 
 ## Nested navigation
@@ -423,7 +423,7 @@ via `NestedNavigationScreenKey`.
 Inside nested screen, regular `private val navigator: Navigator` will navigate the nested backstack. But you can also
 inject `@MainNavigation private val mainNavigator: Navigator` which will navigate outer (root) backstack.
 
-See [NestedScreen in sample](sample/nested/src/main/java/si/inova/kotlinova/navigation/sample/nested/NestedScreen.kt)
+See [NestedScreen in sample](sample/android/nested/src/main/java/si/inova/kotlinova/navigation/sample/nested/NestedScreen.kt)
 for example.
 
 Nested screens can also use parent's scoped services by putting the service into the constructor (like usual), and annotating it
@@ -502,7 +502,7 @@ class LoginConditionalNavigationHandler {
 }
 ```
 
-See [login example](sample/conditional/src/main/java/si/inova/kotlinova/navigation/sample/conditional)
+See [login example](sample/android/conditional/src/main/java/si/inova/kotlinova/navigation/sample/conditional)
 for more information.
 
 ## Predictive back gesture
