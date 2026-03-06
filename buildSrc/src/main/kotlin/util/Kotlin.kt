@@ -14,27 +14,27 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import util.commonKotlinCompilerOptions
+package util
 
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-plugins {
-   id("checks")
-   id("com.vanniktech.maven.publish.base")
-   id("org.jetbrains.dokka")
+fun Project.commonKotlinCompilerOptions(action: KotlinCommonCompilerOptions.() -> Unit) {
+   if (isAndroidProject()) {
+      configure<KotlinAndroidProjectExtension> {
+         compilerOptions(action)
+      }
+   } else if (pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+      configure<KotlinMultiplatformExtension> {
+         compilerOptions(action)
+      }
+   } else {
+      configure<KotlinJvmProjectExtension> {
+         compilerOptions(action)
+      }
+   }
 }
-
-configure<KotlinProjectExtension> {
-   jvmToolchain(21)
-}
-
-commonKotlinCompilerOptions {
-   optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
-   optIn.add("kotlinx.coroutines.FlowPreview")
-
-   // https://blog.jetbrains.com/idea/2025/09/improved-annotation-handling-in-kotlin-2-2-less-boilerplate-fewer-surprises/
-   freeCompilerArgs.add("-Xannotation-default-target=param-property")
-}
-
-group = "si.inova.kotlinova"
-version = File(rootDir, "version.txt").readText().trim()
