@@ -48,7 +48,7 @@ the screens, its scoped dependencies and management of the backstack. It's heavi
 and [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html).
 
 Library is frontend ("display") agnostic, but [Navigation3](https://developer.android.com/guide/navigation/navigation-3)
-integration is provided.
+integration is provided. It supports Android, JVM and iOS multiplatform targets.
 
 See [sample](sample) project for more practical examples.
 
@@ -801,6 +801,13 @@ navigationInjectionFactory.NavDisplay(
 val backstack = navigationInjectionFactory.NavDisplay(...)
 mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)
 ```
+
+# Multiplatform
+
+Library is kotlin-multiplatform-ready and supports Android, JVM and iOS multiplatform targets. Most features are available
+on all platforms, while some (like deep links) are Android-only.
+
+See the [multiplatform sample](sample/multiplatform) for more info.
 
 # Detekt plugin
 
