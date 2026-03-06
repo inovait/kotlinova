@@ -1,7 +1,7 @@
 # KOTLINOVA
 
 An opinionated set of common multiplatform utility classes for Kotlin projects, primarily based on Kotlin coroutines.
-Most modules are multiplatform-capable, running on Android, JVM and iOS.
+Most modules are multiplatform-capable, running on Android, JVM, iOS and WASM.
 
 ## Modules
 

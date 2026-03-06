@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   fullMultiplatformModule
 }
 
 android {
@@ -31,14 +31,12 @@ publishLibrary(
 )
 
 kotlin {
-   iosArm64()
-   iosSimulatorArm64()
-
    sourceSets {
       val androidMain by getting {
          dependencies {
             implementation(libs.androidx.core)
 
+            api(libs.androidx.compose.runtime.annotation)
             compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }

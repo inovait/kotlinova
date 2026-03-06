@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,35 +14,53 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+val libs = the<LibrariesForLibs>()
 
 plugins {
-   jvmMultiplatformModule
+   id("multiplatform-jvm")
 }
-
-android {
-   namespace = "si.inova.kotlinova.retrofit.test"
-}
-
-publishLibrary(
-   userFriendlyName = "Kotlinova retrofit test",
-   description = "Test helpers for kotlinova-retrofit",
-   githubPath = "retrofit",
-   artifactName = "retrofit-test"
-)
 
 kotlin {
-   sourceSets {
-      jvmCommon {
-         dependencies {
-            api(projects.retrofit)
-            api(libs.okhttp.mockWebServer)
+   iosArm64()
+   iosSimulatorArm64()
+   macosArm64()
+   wasmJs() {
+      browser()
+      nodejs()
+      d8()
+   }
 
-            implementation(projects.core.test)
-            implementation(libs.kotlin.coroutines.test)
-            implementation(libs.dispatch)
-            implementation(libs.turbine)
-         }
+   // Native desktop not supported until
+   // https://youtrack.jetbrains.com/projects/CMP/issues/CMP-1923/Kotlin-Native-Support-for-Desktop
+   // is ready
+
+   sourceSets {
+      val commonMain by getting
+
+      val nonJvmMain by creating {
+         dependsOn(commonMain)
+      }
+      val nonAndroidMain by creating {
+         dependsOn(commonMain)
+      }
+
+      nativeMain {
+         dependsOn(nonJvmMain)
+         dependsOn(nonAndroidMain)
+      }
+
+      wasmJsMain {
+         dependsOn(nonJvmMain)
+         dependsOn(nonAndroidMain)
+      }
+
+      jvmMain {
+         dependsOn(nonAndroidMain)
       }
    }
 }

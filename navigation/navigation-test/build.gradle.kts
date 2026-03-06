@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   androidLibraryModule
+   fullMultiplatformModule
    alias(libs.plugins.metro)
 }
 
@@ -31,6 +31,12 @@ android {
    namespace = "si.inova.kotlinova.navigation.test"
 }
 
-dependencies {
-   api(projects.kotlinova.navigation)
+kotlin {
+   sourceSets {
+      commonMain {
+         dependencies {
+            api(projects.kotlinova.navigation)
+         }
+      }
+   }
 }

@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   fullMultiplatformModule
    id("kotlinx-serialization")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
@@ -35,9 +35,6 @@ android {
 }
 
 kotlin {
-   iosArm64()
-   iosSimulatorArm64()
-
    sourceSets {
       androidMain {
          dependencies {
@@ -55,17 +52,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewModel.compose)
             implementation(libs.kotlin.serialization)
          }
-      }
-      val nonAndroidMain by creating {
-         dependsOn(commonMain.get())
-      }
-
-      jvmMain {
-         dependsOn(nonAndroidMain)
-      }
-
-      nativeMain {
-         dependsOn(nonAndroidMain)
       }
 
       androidUnitTest {

@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   fullMultiplatformModule
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
@@ -35,9 +35,6 @@ android {
 
 
 kotlin {
-   iosArm64()
-   iosSimulatorArm64()
-
    sourceSets {
       commonMain {
          dependencies {

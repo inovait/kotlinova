@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   jvmMultiplatformModule
 }
 
 android {

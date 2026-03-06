@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   fullMultiplatformModule
    id("kotlin-parcelize")
    id("org.jetbrains.kotlin.plugin.compose")
    id("kotlinx-serialization")
@@ -34,9 +34,6 @@ android {
 }
 
 kotlin {
-   iosArm64()
-   iosSimulatorArm64()
-
    androidTarget {
       compilerOptions {
          freeCompilerArgs.addAll(
@@ -57,18 +54,6 @@ kotlin {
             implementation(libs.coil)
             implementation(libs.kotlin.serialization)
          }
-      }
-
-      val nonAndroidMain by creating {
-         dependsOn(commonMain.get())
-      }
-
-      jvmMain {
-         dependsOn(nonAndroidMain)
-      }
-
-      nativeMain {
-         dependsOn(nonAndroidMain)
       }
    }
 }
