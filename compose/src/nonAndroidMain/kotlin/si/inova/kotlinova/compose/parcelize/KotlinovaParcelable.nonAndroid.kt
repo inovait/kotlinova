@@ -21,5 +21,6 @@ actual interface ParcelableOnAndroid
 @Retention(AnnotationRetention.SOURCE)
 actual annotation class IgnoredOnParcel
 
+@Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.SOURCE)
 actual annotation class RawValue

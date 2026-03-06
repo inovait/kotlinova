@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 /**
  * Register all passed dispatchers as an idling resource for this test.
  */
+@Suppress("DEPRECATION")
 @Deprecated(
    "Idling resources are an old anti-pattern. " +
       "Use waitUntil instead. " +
@@ -52,7 +53,7 @@ fun ComposeTestRule.registerIdlingDispatchers(vararg dispatchers: CoroutineDispa
 /**
  * Register all dispatchers provided by this dispatcher provider as an idling resource for this test.
  */
-@Suppress("DeprecatedCallableAddReplaceWith")
+@Suppress("DeprecatedCallableAddReplaceWith", "DEPRECATION")
 @Deprecated(
    "Idling resources are an old anti-pattern. " +
       "Use waitUntil instead. " +

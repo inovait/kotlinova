@@ -35,8 +35,6 @@ kotlin {
       androidMain {
          dependencies {
             implementation(libs.androidx.core)
-
-            compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }
       jvmCommon {

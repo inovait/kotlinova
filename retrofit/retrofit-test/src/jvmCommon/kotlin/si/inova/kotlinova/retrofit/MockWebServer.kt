@@ -141,7 +141,7 @@ fun createJsonMockResponseFromResource(
    fileName: String,
    code: Int = HttpURLConnection.HTTP_OK,
    headers: Headers = headersOf(),
-   classLoader: ClassLoader = MockWebServerScope::class.java.classLoader,
+   classLoader: ClassLoader = MockWebServerScope::class.java.classLoader!!,
 ): MockResponse {
    val resource = classLoader.getResourceAsStream(fileName)
       ?: error("Resource $fileName does not exist")

@@ -35,14 +35,12 @@ kotlin {
       val androidMain by getting {
          dependencies {
             implementation(libs.androidx.core)
-
-            api(libs.androidx.compose.runtime.annotation)
-            compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }
       val commonMain by getting {
          dependencies {
             implementation(libs.kotlin.coroutines)
+            api(libs.androidx.compose.runtime.annotation)
             compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }

@@ -19,6 +19,7 @@ package si.inova.kotlinova.core.outcome
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -86,6 +87,7 @@ open class CoroutineResourceManager(
       reportService.report(throwable)
    }
 
+   @OptIn(ExperimentalForInheritanceCoroutinesApi::class) // It's fine, we are delegating to the actual impl
    inner class ResourceControlBlock<T>(
       originalFlow: MutableStateFlow<Outcome<T>>,
       coroutineScope: CoroutineScope,

@@ -67,6 +67,6 @@ class LazyRetrofitConverterFactory(private val parentFactory: Lazy<Converter.Fac
          ) { "Moshi converter should never be null" }
       }
 
-      return Converter<Any?, RequestBody> { value -> lazyConverter.value.convert(value) }
+      return Converter<Any?, RequestBody> { value: Any -> lazyConverter.value.convert(value) }
    }
 }

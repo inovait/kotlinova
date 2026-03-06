@@ -39,11 +39,10 @@ kotlin {
    }
 
    sourceSets {
-      all {
+      configureEach {
          languageSettings {
             optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
             optIn("kotlinx.coroutines.FlowPreview")
-            languageSettings.enableLanguageFeature("ExpectActualClasses")
          }
       }
       val commonMain by getting
@@ -66,6 +65,12 @@ kotlin {
       val androidMain by getting {
          dependsOn(jvmCommon)
       }
+   }
+
+   compilerOptions {
+      freeCompilerArgs.add("-Xexpect-actual-classes")
+      // https://blog.jetbrains.com/idea/2025/09/improved-annotation-handling-in-kotlin-2-2-less-boilerplate-fewer-surprises/
+      freeCompilerArgs.add("-Xannotation-default-target=param-property")
    }
 }
 

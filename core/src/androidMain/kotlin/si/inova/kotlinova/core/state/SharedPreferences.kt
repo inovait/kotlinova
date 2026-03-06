@@ -23,7 +23,7 @@ inline fun <reified T> SharedPreferences.get(key: String, default: T): T {
    return get(key, default, T::class.java)
 }
 
-@Suppress("IMPLICIT_CAST_TO_ANY")
+@Suppress("IMPLICIT_CAST_TO_ANY", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 fun <T> SharedPreferences.get(key: String, default: T, klass: Class<T>): T {
    if (!contains(key)) {
       return default

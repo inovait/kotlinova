@@ -76,6 +76,7 @@ actual fun SavedState.get(
    serializersModule: SerializersModule,
    key: String,
 ): Any? {
+   @Suppress("DEPRECATION") // Much better option than
    val value = get(key)
    return if (value is SavedState) {
       if (serializer != null) {

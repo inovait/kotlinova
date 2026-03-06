@@ -22,6 +22,7 @@ import java.util.Locale
  * Variant of the DateTimeFormatter that uses predefined config. Use for tests and Compose preview
  */
 class FakeAndroidDateTimeFormatter(
+   @Suppress("DEPRECATION") // We must use older deprecated version for backwards compatibility
    private val locale: Locale = Locale("US"),
    private val use24hTime: Boolean = true,
 ) : BaseAndroidDateTimeFormatter() {
