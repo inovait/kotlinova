@@ -596,6 +596,9 @@ navigationInjectionFactory.NavDisplay(
 
 ```
 
+You can use the [Kotlinova result passing](../compose/README.MD#result-passing) to pass the result from the Dialog back
+to the main screen
+
 ## Navigating to fragments
 
 Navigation also has an optional `navigation-fragment` library that allows navigation to fragments instead of to 100% compose
