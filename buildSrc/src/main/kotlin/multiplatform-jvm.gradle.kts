@@ -35,6 +35,10 @@ kotlin {
    jvm {
       testRuns["test"].executionTask.configure {
          useJUnitPlatform()
+
+         // Better test output
+         systemProperty("kotest.assertions.collection.print.size", "300")
+         systemProperty("kotest.assertions.collection.enumerate.size", "300")
       }
    }
 

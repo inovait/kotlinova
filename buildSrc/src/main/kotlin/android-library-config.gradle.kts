@@ -41,14 +41,6 @@ plugins {
    id("android-commons")
 }
 
-android {
-   testOptions {
-      unitTests.all {
-         it.useJUnitPlatform()
-      }
-   }
-}
-
 mavenPublishing {
    configure(
       AndroidSingleVariantLibrary(
