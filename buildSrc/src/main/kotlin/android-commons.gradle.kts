@@ -14,10 +14,12 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import util.commonAndroid
+import util.commonAndroidComponents
 
 /*
  * Copyright 2023 INOVA IT d.o.o.

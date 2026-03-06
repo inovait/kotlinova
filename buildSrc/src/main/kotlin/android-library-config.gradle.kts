@@ -14,8 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import org.gradle.accessors.dm.LibrariesForLibs
+import util.commonAndroidComponents
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -65,6 +67,23 @@ afterEvaluate {
    }
    tasks.withType<AbstractPublishToMaven>().configureEach {
       dependsOn(copyJavadocTask)
+   }
+}
+
+val runDebugTestsTask = tasks.register("runDebugTests")
+val runDebugDetektTask = tasks.register("runDebugDetekt")
+
+commonAndroidComponents {
+   onVariants { variant ->
+      // For variants, you can add extra filters, such as
+      // && (variant.productFlavors.isEmpty() || variant.productFlavors.contains("version" to "develop"))
+      if (variant.buildType == "debug") {
+         runDebugTestsTask.dependsOn(variant.computeTaskName("test", "UnitTest"))
+
+         runDebugDetektTask.dependsOn(variant.computeTaskName("detekt", "UnitTest"))
+         runDebugDetektTask.dependsOn(variant.computeTaskName("detekt", "AndroidTest"))
+         runDebugDetektTask.dependsOn("detekt${variant.name.replaceFirstChar { it.uppercaseChar() }}")
+      }
    }
 }
 

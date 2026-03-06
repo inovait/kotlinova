@@ -14,6 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.gradle.accessors.dm.LibrariesForLibs
@@ -69,6 +70,21 @@ kotlin {
       freeCompilerArgs.add("-Xexpect-actual-classes")
    }
 }
+
+val runDebugTestsTask = tasks.register("runDebugTests")
+runDebugTestsTask.dependsOn("jvmTest")
+runDebugTestsTask.dependsOn("testDebugUnitTest")
+//runDebugTestsTask.dependsOn("iosSimulatorArm64Test")
+//runDebugTestsTask.dependsOn("wasmJsTest")
+
+val runDebugDetektTask = tasks.register("runDebugDetekt")
+runDebugDetektTask.dependsOn("detektDebugAndroid")
+runDebugDetektTask.dependsOn("detektDebugAndroidTest")
+runDebugDetektTask.dependsOn("detektDebugUnitTestAndroid")
+runDebugDetektTask.dependsOn("detektJvmMainSourceSet")
+//runDebugDetektTask.dependsOn("detektIosArm64Main")
+//runDebugDetektTask.dependsOn("detektWasmJsMainSourceSet")
+
 
 mavenPublishing {
    configure(
