@@ -14,47 +14,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+package si.inova.kotlinova.retrofit
 
-plugins {
-   jvmMultiplatformModule
-}
+import si.inova.kotlinova.core.exceptions.NoNetworkException
+import si.inova.kotlinova.core.exceptions.UnknownCauseException
+import si.inova.kotlinova.core.outcome.CauseException
+import java.io.IOException
 
-android {
-   namespace = "si.inova.kotlinova.retrofit"
-}
+/**
+ * An interface to transfrom a raw retrofit exception into semantic CauseException.
+ */
+typealias RetrofitCauseExceptionFactory = (original: Throwable, requestDetails: String) -> CauseException
 
-publishLibrary(
-   userFriendlyName = "kotlinova-retrofit",
-   description = "A collection of utilities for retrofit requests",
-   githubPath = "retrofit"
-)
-
-kotlin {
-   sourceSets {
-      androidMain {
-         dependencies {
-            implementation(libs.androidx.core)
-         }
-      }
-      jvmCommon {
-         dependencies {
-            api(libs.okhttp)
-            api(libs.retrofit)
-
-            implementation(projects.core)
-            implementation(libs.dispatch)
-            implementation(libs.retrofit.moshi)
-            implementation(libs.kotlin.coroutines)
-         }
-      }
-      jvmTest {
-         dependencies {
-            implementation(projects.core.test)
-            implementation(projects.retrofit.retrofitTest)
-            implementation(projects.retrofit.retrofitMoshi)
-            implementation(libs.turbine)
-         }
+object DefaultRetrofitCauseExceptionFactory : RetrofitCauseExceptionFactory {
+   override fun invoke(original: Throwable, requestDetails: String): CauseException {
+      return when (original) {
+         is CauseException -> original
+         is IOException -> NoNetworkException(cause = original, message = "Failed to load $requestDetails")
+         else -> UnknownCauseException("Failed to load $requestDetails", cause = original)
       }
    }
 }

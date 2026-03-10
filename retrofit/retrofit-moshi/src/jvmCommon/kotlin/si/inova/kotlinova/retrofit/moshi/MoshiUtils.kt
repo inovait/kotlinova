@@ -14,47 +14,23 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+package si.inova.kotlinova.retrofit.moshi
 
-plugins {
-   jvmMultiplatformModule
+import com.squareup.moshi.Moshi
+import okio.BufferedSource
+
+/**
+ * Utilities for Moshi library
+ */
+
+inline fun <reified T> Moshi.fromJson(json: String): T {
+   return requireNotNull(adapter(T::class.java).nonNull().fromJson(json))
 }
 
-android {
-   namespace = "si.inova.kotlinova.retrofit"
+inline fun <reified T> Moshi.fromJson(source: BufferedSource): T {
+   return requireNotNull(adapter(T::class.java).nonNull().fromJson(source))
 }
 
-publishLibrary(
-   userFriendlyName = "kotlinova-retrofit",
-   description = "A collection of utilities for retrofit requests",
-   githubPath = "retrofit"
-)
-
-kotlin {
-   sourceSets {
-      androidMain {
-         dependencies {
-            implementation(libs.androidx.core)
-         }
-      }
-      jvmCommon {
-         dependencies {
-            api(libs.okhttp)
-            api(libs.retrofit)
-
-            implementation(projects.core)
-            implementation(libs.dispatch)
-            implementation(libs.retrofit.moshi)
-            implementation(libs.kotlin.coroutines)
-         }
-      }
-      jvmTest {
-         dependencies {
-            implementation(projects.core.test)
-            implementation(projects.retrofit.retrofitTest)
-            implementation(projects.retrofit.retrofitMoshi)
-            implementation(libs.turbine)
-         }
-      }
-   }
+inline fun <reified T> Moshi.toJson(value: T): String {
+   return requireNotNull(adapter(T::class.java).nonNull().toJson(value))
 }

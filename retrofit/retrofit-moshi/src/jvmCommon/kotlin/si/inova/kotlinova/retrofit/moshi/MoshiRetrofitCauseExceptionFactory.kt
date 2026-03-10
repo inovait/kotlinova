@@ -14,47 +14,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import util.publishLibrary
+package si.inova.kotlinova.retrofit.moshi
 
-plugins {
-   jvmMultiplatformModule
-}
+import com.squareup.moshi.JsonDataException
+import com.squareup.moshi.JsonEncodingException
+import si.inova.kotlinova.core.exceptions.DataParsingException
+import si.inova.kotlinova.core.outcome.CauseException
 
-android {
-   namespace = "si.inova.kotlinova.retrofit"
-}
+class MoshiRetrofitCauseExceptionFactory(
+   private val defaultFactory: (original: Throwable, requestDetails: String) -> CauseException,
+) : (Throwable, String) -> CauseException {
+   override fun invoke(original: Throwable, requestDetails: String): CauseException {
+      return when (original) {
+         is JsonDataException, is JsonEncodingException -> DataParsingException(
+            "Failed to parse $requestDetails",
+            cause = original
+         )
 
-publishLibrary(
-   userFriendlyName = "kotlinova-retrofit",
-   description = "A collection of utilities for retrofit requests",
-   githubPath = "retrofit"
-)
-
-kotlin {
-   sourceSets {
-      androidMain {
-         dependencies {
-            implementation(libs.androidx.core)
-         }
-      }
-      jvmCommon {
-         dependencies {
-            api(libs.okhttp)
-            api(libs.retrofit)
-
-            implementation(projects.core)
-            implementation(libs.dispatch)
-            implementation(libs.retrofit.moshi)
-            implementation(libs.kotlin.coroutines)
-         }
-      }
-      jvmTest {
-         dependencies {
-            implementation(projects.core.test)
-            implementation(projects.retrofit.retrofitTest)
-            implementation(projects.retrofit.retrofitMoshi)
-            implementation(libs.turbine)
-         }
+         else -> defaultFactory(original, requestDetails)
       }
    }
 }

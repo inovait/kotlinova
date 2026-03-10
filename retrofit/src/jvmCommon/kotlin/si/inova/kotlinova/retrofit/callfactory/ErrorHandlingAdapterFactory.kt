@@ -28,6 +28,8 @@ import retrofit2.Retrofit
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
+import si.inova.kotlinova.retrofit.RetrofitCauseExceptionFactory
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -42,16 +44,15 @@ import java.lang.reflect.Type
  *   @param coroutineScope A coroutine scope that all calls will be started on this scope. Ideally, it
  *          should have default dispatcher as a dispatcher to ensure first call initializes OkHttp on the background thread.
  *   @param errorHandler Error handler that parses the error responses
- *   @param exceptionInterceptor A callback that is called for all problems with talking to the server,
- *                               before regular exception handling happens.
- *                               Use it to convert your custom IOExceptions, thrown inside interceptors,
- *                               into CauseException that can then be consumed upstream. This is not called when a full response
- *                               is received. Use [errorHandler] for that.
+ *   @param causeExceptionFactory A callback that is called for all problems with talking to the server,
+ *                                Use it to convert your custom IOExceptions, thrown inside interceptors,
+ *                                into CauseException that can then be consumed upstream. On any other exceptions,
+ *                                your custom caller should defer to the [DefaultRetrofitCauseExceptionFactory].
  */
 class ErrorHandlingAdapterFactory(
    private val coroutineScope: CoroutineScope,
    private val errorHandler: ErrorHandler? = null,
-   private val exceptionInterceptor: (Throwable) -> CauseException? = { null },
+   private val causeExceptionFactory: RetrofitCauseExceptionFactory = DefaultRetrofitCauseExceptionFactory,
 ) : CallAdapter.Factory() {
    override fun get(
       returnType: Type,
@@ -81,15 +82,15 @@ class ErrorHandlingAdapterFactory(
          coroutineScope.launch {
             proxy.enqueue(object : Callback<T> {
                override fun onFailure(call: Call<T>, t: Throwable) {
-                  callback.onFailure(call, exceptionInterceptor(t) ?: t.transformRetrofitException(request().url.toString()))
+                  callback.onFailure(call, causeExceptionFactory(t, request().url.toString()))
                }
 
                override fun onResponse(call: Call<T>, response: Response<T>) {
                   return try {
-                     val result = response.bodyOrThrow(errorHandler)
+                     val result = response.bodyOrThrow(errorHandler, causeExceptionFactory)
                      callback.onResponse(call, Response.success(result, response.raw()))
                   } catch (e: Exception) {
-                     callback.onFailure(call, e.transformRetrofitException(request().url.toString()))
+                     callback.onFailure(call, causeExceptionFactory(e, request().url.toString()))
                   }
                }
             })
@@ -102,7 +103,7 @@ class ErrorHandlingAdapterFactory(
          val response = try {
             proxy.execute()
          } catch (e: Exception) {
-            throw exceptionInterceptor(e) ?: e.transformRetrofitException(request().url.toString())
+            throw causeExceptionFactory(e, request().url.toString())
          }
 
          if (!response.isSuccessful) {
@@ -110,7 +111,7 @@ class ErrorHandlingAdapterFactory(
                ?: response.createParentException()
          }
 
-         return Response.success(response.bodyOrThrow(errorHandler), response.raw())
+         return Response.success(response.bodyOrThrow(errorHandler, causeExceptionFactory), response.raw())
       }
 
       override fun timeout(): Timeout = proxy.timeout()

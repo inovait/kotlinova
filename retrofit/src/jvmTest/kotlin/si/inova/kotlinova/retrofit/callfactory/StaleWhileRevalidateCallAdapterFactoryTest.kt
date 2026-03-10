@@ -42,9 +42,11 @@ import si.inova.kotlinova.core.test.TestScopeWithDispatcherProvider
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeSuccessWithData
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.SyntheticHeaders
 import si.inova.kotlinova.retrofit.createJsonMockResponse
 import si.inova.kotlinova.retrofit.mockWebServer
+import si.inova.kotlinova.retrofit.moshi.MoshiRetrofitCauseExceptionFactory
 import java.io.File
 import java.io.IOException
 
@@ -295,11 +297,11 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
                   throw TestIOException()
                }
             },
-            exceptionInterceptor = {
-               if (it is TestIOException) {
-                  TestErrorResponseException(cause = it.cause)
+            causeExceptionFactory = { e, info ->
+               if (e is TestIOException) {
+                  TestErrorResponseException(cause = e.cause)
                } else {
-                  null
+                  MoshiRetrofitCauseExceptionFactory(DefaultRetrofitCauseExceptionFactory)(e, info)
                }
             }
          )

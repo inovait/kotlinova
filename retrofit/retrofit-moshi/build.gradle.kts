@@ -1,5 +1,6 @@
+
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,26 +15,31 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/**
- * Utilities for Moshi library
- *
- * @author Matej Drobnic
- */
-@file:JvmName("MoshiUtils")
+import util.publishLibrary
 
-package si.inova.kotlinova.retrofit.moshi
-
-import com.squareup.moshi.Moshi
-import okio.BufferedSource
-
-inline fun <reified T> Moshi.fromJson(json: String): T {
-   return requireNotNull(adapter(T::class.java).nonNull().fromJson(json))
+plugins {
+   jvmMultiplatformModule
 }
 
-inline fun <reified T> Moshi.fromJson(source: BufferedSource): T {
-   return requireNotNull(adapter(T::class.java).nonNull().fromJson(source))
+android {
+   namespace = "si.inova.kotlinova.retrofit.moshi"
 }
 
-inline fun <reified T> Moshi.toJson(value: T): String {
-   return requireNotNull(adapter(T::class.java).nonNull().toJson(value))
+publishLibrary(
+   userFriendlyName = "Kotlinova retrofit moshi",
+   description = "Utilities for Moshi JSON library",
+   githubPath = "retrofit",
+   artifactName = "retrofit-moshi"
+)
+
+kotlin {
+   sourceSets {
+      jvmCommon {
+         dependencies {
+            api(libs.moshi)
+            api(libs.moshi.adapters)
+            implementation(projects.core)
+         }
+      }
+   }
 }

@@ -37,6 +37,8 @@ import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.Outcome
 import si.inova.kotlinova.core.outcome.catchIntoOutcome
 import si.inova.kotlinova.core.reporting.ErrorReporter
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
+import si.inova.kotlinova.retrofit.RetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.SyntheticHeaders
 import si.inova.kotlinova.retrofit.okhttp.enqueueAndAwait
 import java.lang.reflect.ParameterizedType
@@ -63,17 +65,16 @@ import kotlin.coroutines.cancellation.CancellationException
  *
  *   @param errorHandler Error handler that parses the error responses
  *   @param errorReporter an error reporter class that will receive all cache parsinge errors.
- *   @param exceptionInterceptor A callback that is called for all problems with talking to the server,
- *                               before regular exception handling happens.
- *                               Use it to convert your custom IOExceptions, thrown inside interceptors,
- *                               into CauseException that can then be consumed upstream. This is not called when a full response
- *                               is received. Use [errorHandler] for that.
+ *   @param causeExceptionFactory A callback that is called for all problems with talking to the server,
+ *                                Use it to convert your custom IOExceptions, thrown inside interceptors,
+ *                                into CauseException that can then be consumed upstream. On any other exceptions,
+ *                                your custom caller should defer to the [DefaultRetrofitCauseExceptionFactory].
  */
 @Suppress("SuspendFunWithCoroutineScopeReceiver") // We are using ProducerScope only to send data, not to launch anything
 class StaleWhileRevalidateCallAdapterFactory(
    private val errorHandler: ErrorHandler?,
    private val errorReporter: ErrorReporter = ErrorReporter {},
-   private val exceptionInterceptor: (Throwable) -> CauseException? = { null },
+   private val causeExceptionFactory: RetrofitCauseExceptionFactory = DefaultRetrofitCauseExceptionFactory,
 ) : CallAdapter.Factory() {
    override fun get(returnType: Type, annotations: Array<out Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
       if (returnType !is ParameterizedType) {
@@ -175,7 +176,7 @@ class StaleWhileRevalidateCallAdapterFactory(
          } catch (e: Exception) {
             handleCacheError(
                networkRequest,
-               exceptionInterceptor(e) ?: e.transformRetrofitException(originalCall.request().url.toString()),
+               causeExceptionFactory(e, originalCall.request().url.toString()),
                originalCall
             )
             networkRequest to null
@@ -197,7 +198,7 @@ class StaleWhileRevalidateCallAdapterFactory(
 
             val parsedResponse = call.parseResponse(networkResponse)
 
-            val result = Outcome.Success(parsedResponse.bodyOrThrow(errorHandler))
+            val result = Outcome.Success(parsedResponse.bodyOrThrow(errorHandler, causeExceptionFactory))
 
             send(result)
          } catch (e: CancellationException) {
@@ -205,7 +206,7 @@ class StaleWhileRevalidateCallAdapterFactory(
          } catch (e: Exception) {
             send(
                Outcome.Error(
-                  exceptionInterceptor(e) ?: e.transformRetrofitException(networkRequest.url.toString()),
+                  causeExceptionFactory(e, networkRequest.url.toString()),
                   dataFromCache
                )
             )
@@ -218,7 +219,7 @@ class StaleWhileRevalidateCallAdapterFactory(
          originalCall: Call<T>,
       ): Pair<Request?, T?> {
          val result = catchIntoOutcome {
-            val data = parsedResponse.bodyOrThrow(errorHandler)
+            val data = parsedResponse.bodyOrThrow(errorHandler, causeExceptionFactory)
 
             if (networkRequest != null) {
                Outcome.Progress(data)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -36,9 +36,11 @@ import retrofit2.http.Header
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.SyntheticHeaders
 import si.inova.kotlinova.retrofit.createJsonMockResponse
 import si.inova.kotlinova.retrofit.mockWebServer
+import si.inova.kotlinova.retrofit.moshi.MoshiRetrofitCauseExceptionFactory
 import java.io.File
 import java.io.IOException
 
@@ -297,13 +299,11 @@ class SuspendCallAdapterFactoryTest {
                   throw TestIOException()
                }
             },
-            exceptionInterceptor = {
-               if (it is TestIOException) {
-                  TestErrorResponseException(
-                     cause = it.cause
-                  )
+            causeExceptionFactory = { e, info ->
+               if (e is TestIOException) {
+                  TestErrorResponseException(cause = e.cause)
                } else {
-                  null
+                  MoshiRetrofitCauseExceptionFactory(DefaultRetrofitCauseExceptionFactory)(e, info)
                }
             }
          )

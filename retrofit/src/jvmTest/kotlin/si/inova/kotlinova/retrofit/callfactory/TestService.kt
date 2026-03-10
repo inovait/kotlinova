@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,11 +23,13 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
-import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.test.outcomes.ThrowingErrorReporter
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.MockWebServerScope
+import si.inova.kotlinova.retrofit.RetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.converter.LazyRetrofitConverterFactory
 import si.inova.kotlinova.retrofit.interceptors.BypassCacheInterceptor
+import si.inova.kotlinova.retrofit.moshi.MoshiRetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.moshi.adapters.JavaTimeMoshiAdapter
 import java.util.concurrent.TimeUnit
 
@@ -36,7 +38,8 @@ inline fun <reified T> MockWebServerScope.createRetrofitService(
    cache: Cache? = null,
    errorHandler: ErrorHandler? = null,
    okHttpSetup: OkHttpClient.Builder.() -> Unit = {},
-   noinline exceptionInterceptor: (Throwable) -> CauseException? = { null },
+   noinline causeExceptionFactory: RetrofitCauseExceptionFactory =
+      MoshiRetrofitCauseExceptionFactory(DefaultRetrofitCauseExceptionFactory),
 ): T {
    val client = OkHttpClient.Builder()
       .addInterceptor(BypassCacheInterceptor())
@@ -57,10 +60,10 @@ inline fun <reified T> MockWebServerScope.createRetrofitService(
          StaleWhileRevalidateCallAdapterFactory(
             errorHandler,
             ThrowingErrorReporter(testScope),
-            exceptionInterceptor
+            causeExceptionFactory,
          )
       )
-      .addCallAdapterFactory(ErrorHandlingAdapterFactory(testScope, errorHandler, exceptionInterceptor))
+      .addCallAdapterFactory(ErrorHandlingAdapterFactory(testScope, errorHandler, causeExceptionFactory))
       .build()
 
    return retrofit.create()
