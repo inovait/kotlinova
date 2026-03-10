@@ -67,3 +67,7 @@ kotlin {
       }
    }
 }
+
+dependencies {
+   add("detektPlugins", projects.navigation.navigationDetekt)
+}

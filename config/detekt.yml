@@ -2,6 +2,9 @@ config:
   validation: true
   warningsAsErrors: true
   checkExhaustiveness: true
+  excludes:
+    - 'kotlinovanavigation'
+
 processors:
   active: true
   exclude:
@@ -1096,3 +1099,7 @@ style:
   UnnecessaryFullyQualifiedName:
     # Disable until https://github.com/detekt/detekt/issues/9018 is fixed
     active: false
+
+kotlinovanavigation:
+  NavigationSerializable:
+    active: true
