@@ -52,4 +52,5 @@ kotlin {
 dependencies {
    add("ksp", projects.navigation.navigationCompiler)
    add("detektPlugins", projects.navigation.navigationDetekt)
+   add("detektPlugins", libs.detekt.compose)
 }

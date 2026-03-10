@@ -39,6 +39,7 @@ import kotlin.reflect.KClass
  * you have to provide unique ID to every distinct [rememberBackstack] call.
  */
 @Composable
+@Suppress("ViewModelInjection") // Intentional. This ViewModel is an implementation detail.
 internal fun rememberBackstack(
    id: String = "SINGLE",
    init: ComposeNavigatorInitializer.() -> Backstack,

@@ -58,4 +58,9 @@ kotlin {
    }
 }
 
+dependencies {
+   add("detektPlugins", libs.detekt.compose)
+}
+
+
 

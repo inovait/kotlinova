@@ -40,6 +40,8 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import kotlin.jvm.JvmSuppressWildcards
 
 @Composable
+// This function is a replacement for the original Nav3 NavDisplay, so it must be named the same
+@Suppress("ComposableNaming")
 fun NavigationInjection.Factory.NavDisplay(
    initialHistory: () -> List<ScreenKey>,
    modifier: Modifier = Modifier,

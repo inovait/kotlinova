@@ -70,4 +70,5 @@ kotlin {
 
 dependencies {
    add("detektPlugins", projects.navigation.navigationDetekt)
+   add("detektPlugins", libs.detekt.compose)
 }

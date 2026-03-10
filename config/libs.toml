@@ -14,6 +14,7 @@ compose = "1.10.4"
 compose-material3 = "1.4.0"
 desugarJdkLibs = "2.1.5"
 detekt = "2.0.0-alpha.2"
+detekt-compose = "0.5.6"
 dispatch = "1.0.0-beta10"
 dokka = "2.1.0"
 # Do not update this until we update gradle
@@ -79,6 +80,7 @@ composeMultiplatform-runtime-annotation = { module = "org.jetbrains.compose.runt
 composeMultiplatform-ui = "org.jetbrains.compose.ui:ui:1.10.1"
 desugarJdkLibs = { module = " com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 detekt-api = { module = "dev.detekt:detekt-api", version.ref = "detekt" }
+detekt-compose = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose" }
 detekt-ktlint = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 detekt-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detekt-test = { module = "dev.detekt:detekt-test", version.ref = "detekt" }
