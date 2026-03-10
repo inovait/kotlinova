@@ -144,8 +144,8 @@ fun <T> Outcome<T>.shouldBeErrorWith(
                this::class
                   .let {
                      if (exception::class != exceptionType) {
-                        val expected = Expected(Printed(exceptionType::class.simpleName.orEmpty()))
-                        val actual = Actual(Printed(it::class.simpleName.orEmpty()))
+                        val expected = Expected(Printed(exceptionType.simpleName.orEmpty()))
+                        val actual = Actual(Printed(it.simpleName.orEmpty()))
                         throw AssertionError("Exception type: ${intellijFormattedComparison(expected, actual)}", exception)
                      }
                   }
