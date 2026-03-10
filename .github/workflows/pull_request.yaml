@@ -30,9 +30,9 @@ jobs:
         # that DI build passes.
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektTest detektMain detektJvmMain detektAndroidDebug detektAndroidRelease detektJvmTest :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
-        run: "./gradlew test jvmTest"
+        run: "./gradlew runDebugTests"
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action/composite@v2
         if: always()

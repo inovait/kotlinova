@@ -16,6 +16,7 @@
 
 @file:OptIn(ExperimentalWasmDsl::class)
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
@@ -64,3 +65,12 @@ kotlin {
       }
    }
 }
+
+val runDebugTestsTask = tasks.named("runDebugTests")
+runDebugTestsTask.dependsOn("iosSimulatorArm64Test")
+runDebugTestsTask.dependsOn("wasmJsTest")
+
+val runDebugDetektTask = tasks.named("runDebugDetekt")
+runDebugDetektTask.dependsOn("detektNonJvmMainSourceSet")
+runDebugDetektTask.dependsOn("detektNonAndroidMainSourceSet")
+runDebugDetektTask.dependsOn("detektNativeMainSourceSet")

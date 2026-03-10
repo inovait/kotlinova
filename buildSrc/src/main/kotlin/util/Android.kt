@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -22,6 +22,9 @@ import com.android.build.api.dsl.BuildType
 import com.android.build.api.dsl.DefaultConfig
 import com.android.build.api.dsl.Installation
 import com.android.build.api.dsl.ProductFlavor
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.Variant
+import com.android.build.api.variant.VariantBuilder
 import com.android.build.gradle.internal.dsl.InternalTestedExtension
 import com.android.build.gradle.internal.utils.KOTLIN_ANDROID_PLUGIN_ID
 import org.gradle.api.Action
@@ -47,4 +50,13 @@ fun Project.commonAndroid(
 
 fun Project.isAndroidProject(): Boolean {
    return pluginManager.hasPlugin(KOTLIN_ANDROID_PLUGIN_ID)
+}
+
+/**
+ * androidComponents {} block that can be used without applying specific android plugin
+ */
+fun Project.commonAndroidComponents(
+   block: Action<AndroidComponentsExtension<Unit, VariantBuilder, Variant>>,
+) {
+   (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("androidComponents", block)
 }

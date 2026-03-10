@@ -14,6 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.asJavaVersion
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
@@ -60,6 +61,13 @@ tasks.test {
    systemProperty("kotest.assertions.collection.print.size", "300")
    systemProperty("kotest.assertions.collection.enumerate.size", "300")
 }
+
+val runDebugTestsTask = tasks.register("runDebugTests")
+runDebugTestsTask.dependsOn(tasks.test)
+
+val runDebugDetektTask = tasks.register("runDebugDetekt")
+runDebugDetektTask.dependsOn("detektMain")
+runDebugDetektTask.dependsOn("detektTest")
 
 java {
    // Ensure that target compatiblity is equal to kotlin's jvmToolchain
