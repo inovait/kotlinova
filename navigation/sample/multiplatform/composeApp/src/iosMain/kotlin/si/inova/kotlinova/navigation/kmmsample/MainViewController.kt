@@ -1,7 +1,6 @@
 package si.inova.kotlinova.navigation.kmmsample
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DISPOSED
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.window.ComposeUIViewController
