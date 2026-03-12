@@ -38,6 +38,7 @@ dependencies {
    implementation(libs.androidGradleCacheFix)
    implementation(libs.android.agp)
    implementation(libs.ksp)
+   implementation(libs.dependencyAnalysis)
    implementation(libs.detekt.plugin)
    implementation(libs.dokka)
    implementation(libs.kotlin.plugin)

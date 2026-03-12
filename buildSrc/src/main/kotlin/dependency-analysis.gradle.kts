@@ -14,28 +14,35 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import util.commonKotlinCompilerOptions
-
+import com.autonomousapps.DependencyAnalysisSubExtension
 
 plugins {
-   id("checks")
-   id("com.vanniktech.maven.publish.base")
-   id("org.jetbrains.dokka")
-   id("dependency-analysis")
+   id("com.autonomousapps.dependency-analysis")
 }
 
-configure<KotlinProjectExtension> {
-   jvmToolchain(21)
+configure<DependencyAnalysisSubExtension> {
+   issues {
+      onAny {
+         // Fail build if there are any violations
+         severity("fail")
+
+         // Included by kotlin automatically, we can't affect it
+         exclude("org.jetbrains.kotlin:kotlin-stdlib")
+      }
+
+      onIncorrectConfiguration {
+      }
+
+      onUsedTransitiveDependencies {
+         // AndroidX Annotations are auto-included with many other AndroidX libraries. It's fine to not explicitly depend on them
+         exclude("androidx.annotation:annotation")
+
+         //  Auto included with the parcelize plugin
+         exclude("org.jetbrains.kotlin:kotlin-parcelize-runtime")
+
+         // Detekt API dependencies
+         exclude("org.jetbrains.kotlin:kotlin-compiler")
+         exclude("dev.detekt:detekt-kotlin-analysis-api")
+      }
+   }
 }
-
-commonKotlinCompilerOptions {
-   optIn.add("kotlinx.coroutines.ExperimentalCoroutinesApi")
-   optIn.add("kotlinx.coroutines.FlowPreview")
-
-   // https://blog.jetbrains.com/idea/2025/09/improved-annotation-handling-in-kotlin-2-2-less-boilerplate-fewer-surprises/
-   freeCompilerArgs.add("-Xannotation-default-target=param-property")
-}
-
-group = "si.inova.kotlinova"
-version = File(rootDir, "version.txt").readText().trim()
