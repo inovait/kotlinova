@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -22,11 +22,13 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.time.Clock
+import kotlin.time.toKotlinInstant
 
 /**
  * Injectable interface that provides current time
  */
-interface TimeProvider {
+interface TimeProvider: Clock {
    /**
     * @return difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
     *
@@ -57,4 +59,8 @@ interface TimeProvider {
    fun currentZonedDateTime(): ZonedDateTime
 
    fun systemDefaultZoneId(): ZoneId
+
+   override fun now(): kotlin.time.Instant {
+      return currentInstant().toKotlinInstant()
+   }
 }
