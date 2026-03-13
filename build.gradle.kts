@@ -14,6 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import jacoco.setupJacocoMergingRoot
 import nl.littlerobots.vcu.plugin.resolver.ModuleVersionCandidate
 import nl.littlerobots.vcu.plugin.versionSelector
 
@@ -40,7 +41,10 @@ plugins {
    id("kotlinova")
    id("com.autonomousapps.dependency-analysis")
    alias(libs.plugins.versionCatalogUpdate)
+   jacoco
 }
+
+setupJacocoMergingRoot()
 
 versionCatalogUpdate {
    catalogFile.set(file("config/libs.toml"))

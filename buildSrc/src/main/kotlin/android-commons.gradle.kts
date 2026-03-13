@@ -15,6 +15,7 @@
  */
 
 import com.android.build.gradle.tasks.asJavaVersion
+import jacoco.setupJacocoMergingAndroid
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import util.commonAndroid
@@ -81,6 +82,16 @@ commonAndroid {
       abortOnError = true
 
       warningsAsErrors = true
+   }
+
+   buildTypes {
+      debug {
+         testCoverage {
+            jacocoVersion = libs.versions.jacoco.get()
+         }
+         enableUnitTestCoverage = true
+         enableAndroidTestCoverage = true
+      }
    }
 }
 

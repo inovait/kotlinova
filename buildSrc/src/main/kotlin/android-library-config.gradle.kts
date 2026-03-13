@@ -16,6 +16,7 @@
 
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+import jacoco.setupJacocoMergingAndroid
 import org.gradle.accessors.dm.LibrariesForLibs
 import util.commonAndroidComponents
 
@@ -97,3 +98,5 @@ afterEvaluate {
       }
    }
 }
+
+setupJacocoMergingAndroid()

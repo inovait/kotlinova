@@ -17,6 +17,7 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
+import jacoco.setupJacocoMergingMultiplatform
 import org.gradle.accessors.dm.LibrariesForLibs
 
 val libs = the<LibrariesForLibs>()
@@ -26,6 +27,7 @@ plugins {
    kotlin("multiplatform")
    id("android-commons")
    id("kotlin-parcelize")
+   jacoco
 }
 
 kotlin {
@@ -90,3 +92,10 @@ mavenPublishing {
       )
    )
 }
+
+jacoco {
+   val libs = the<LibrariesForLibs>()
+   toolVersion = libs.versions.jacoco.get()
+}
+
+setupJacocoMergingMultiplatform()

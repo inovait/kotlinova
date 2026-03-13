@@ -26,6 +26,7 @@ dokka = "2.1.0"
 googleCloud-monitoring = "3.87.0"
 # Do not update, new version not compatible with the AGP https://issuetracker.google.com/issues/371158364
 googleCloud-protobufUtil = "4.34.0"
+jacoco = "0.8.14"
 junit4 = "4.13.2"
 junit5 = "6.0.3"
 junit5-launcher = "6.0.3"
@@ -91,6 +92,10 @@ dispatch-espresso = { module = "com.rickbusarow.dispatch:dispatch-android-espres
 dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 googleCloud-monitoring = { module = "com.google.cloud:google-cloud-monitoring", version.ref = "googleCloud-monitoring" }
 googleCloud-protobufUtil = { module = "com.google.protobuf:protobuf-java-util", version.ref = "googleCloud-protobufUtil" }
+# @keep This particular dependency is not used directly. We declare it here to enable dependency updates.
+# But only the version number is used in the Gradle configuration
+# noinspection UnusedVersionCatalogEntry
+jacoco = { module = "org.jacoco:jacoco", version.ref = "jacoco" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit5-api = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }

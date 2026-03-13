@@ -18,6 +18,7 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.asJavaVersion
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
+import jacoco.setupJacocoMergingPureKotlin
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
@@ -43,6 +44,7 @@ plugins {
    id("java-library")
    id("org.jetbrains.kotlin.jvm")
    id("standard-config")
+   jacoco
 }
 
 mavenPublishing {
@@ -76,3 +78,10 @@ java {
    sourceCompatibility = javaVersion
    targetCompatibility = javaVersion
 }
+
+jacoco {
+   val libs = the<LibrariesForLibs>()
+   toolVersion = libs.versions.jacoco.get()
+}
+
+setupJacocoMergingPureKotlin()
