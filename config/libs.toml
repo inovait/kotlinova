@@ -12,6 +12,8 @@ autoService = "1.1.1"
 coil = "3.4.0"
 compose = "1.10.4"
 compose-material3 = "1.4.0"
+composeMultiplatform = "1.10.2"
+composeMultiplatform-material3 = "1.9.0"
 dependencyAnalysis = "3.5.1"
 desugarJdkLibs = "2.1.5"
 detekt = "2.0.0-alpha.2"
@@ -52,7 +54,6 @@ androidGradleCacheFix = { module = "org.gradle.android.cache-fix:org.gradle.andr
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-compose-animation = { module = "androidx.compose.animation:animation", version.ref = "compose" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
-androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "compose" }
 androidx-compose-runtime-annotation = { module = "androidx.compose.runtime:runtime-annotation", version.ref = "compose" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "compose" }
@@ -68,17 +69,15 @@ androidx-lifecycle-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmo
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewModel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-navigation3 = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidx-navigation3" }
-androidx-navigation3-ui = "org.jetbrains.androidx.navigation3:navigation3-ui:1.1.0-alpha03"
+androidx-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-navigation3" }
 androidx-savedState = { module = "androidx.savedstate:savedstate", version.ref = "androidx-savedState" }
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 autoService-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoService" }
 autoService-compiler = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-composeMultiplatform-animation = "org.jetbrains.compose.animation:animation:1.10.1"
-composeMultiplatform-material3 = "org.jetbrains.compose.material3:material3:1.9.0"
-composeMultiplatform-runtime = "org.jetbrains.compose.runtime:runtime:1.10.1"
-composeMultiplatform-runtime-annotation = { module = "org.jetbrains.compose.runtime:runtime-annotation", version.ref = "compose" }
-composeMultiplatform-ui = "org.jetbrains.compose.ui:ui:1.10.1"
+composeMultiplatform-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "composeMultiplatform" }
+composeMultiplatform-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
+composeMultiplatform-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform-material3" }
 desugarJdkLibs = { module = " com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 dependencyAnalysis = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependencyAnalysis" }
 detekt-api = { module = "dev.detekt:detekt-api", version.ref = "detekt" }
