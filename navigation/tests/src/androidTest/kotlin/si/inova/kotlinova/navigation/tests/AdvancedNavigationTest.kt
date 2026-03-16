@@ -17,7 +17,7 @@
 package si.inova.kotlinova.navigation.tests
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.serialization.Serializable
