@@ -1,4 +1,4 @@
-name: "Pull Request"
+name: pull-request-build
 run-name: "Pull Request"
 on:
   pull_request
@@ -26,18 +26,23 @@ jobs:
       - name: Compile library
         run: "./gradlew --parallel assemble :kotlinova-gradle:jar"
       - name: Compile Unit Tests
-        # We cannot run instrumented tests on CI, but at least we can compile them to ensure
-        # that DI build passes.
         run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses"
       - name: Lint
         run: "./gradlew --continue --parallel buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint  buildHealth"
       - name: Run Unit Tests
         run: "./gradlew runDebugTests"
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: always()
+      - run: echo ${{ github.event.number }} > pr_number.txt
+        if: (!cancelled())
+      - name: Upload Results
+        if: (!cancelled())
+        uses: actions/upload-artifact@v6
         with:
-          comment_mode: failures
-          junit_files: |
+          name: results
+          path: |
             **/build/outputs/*-results/**/*.xml
             **/build/*-results/**/*.xml
+            pr_number.txt
+            ${{ github.event_path }}
+            merge.sarif
+            navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
+            navigation/tests/build/outputs/apk/debug/tests-debug.apk
