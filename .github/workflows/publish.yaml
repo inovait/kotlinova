@@ -81,9 +81,13 @@ jobs:
           fi
       - name: Generate Changelog
         id: changelog
-        uses: inovait/actions-common/changelog-since-last-build@v11
+        uses: inovait/actions-common/changelog-since-last-build@e39161d71d6b0200b425ed4145cc4cc080c4cf56
         with:
           git_commit_url_prefix: 'https://github.com/inovait/kotlinova/commit/'
+          show_names: true
+          excluded_name_emails: |
+            matej@matejdro.com
+            matej.drobnic@inova.si
       - name: 'Save GPG key'
         run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
       - name: 'Publish'
