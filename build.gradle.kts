@@ -39,7 +39,6 @@ import nl.littlerobots.vcu.plugin.versionSelector
 
 plugins {
    id("kotlinova")
-   id("com.autonomousapps.dependency-analysis")
    alias(libs.plugins.versionCatalogUpdate)
    jacoco
 }
@@ -61,60 +60,5 @@ versionCatalogUpdate {
          !it.newlyContains("eap") &&
          !it.newlyContains("dev") &&
          !it.newlyContains("pre")
-   }
-}
-
-dependencyAnalysis {
-   structure {
-      ignoreKtx(true)
-
-      bundle("androidxActivity") {
-         includeGroup("androidx.activity")
-      }
-
-      bundle("androidxCore") {
-         includeGroup("androidx.core")
-      }
-
-      bundle("androidxLifecycle") {
-         includeGroup("androidx.lifecycle")
-      }
-
-      bundle("androidxTest") {
-         includeGroup("androidx.test")
-      }
-
-      bundle("coil") {
-         // We only ever want coil-compose, so coil is considered as a group
-         includeGroup("io.coil-kt.coil3")
-      }
-
-      bundle("compose") {
-         includeGroup("androidx.compose.animation")
-         includeGroup("androidx.compose.foundation")
-         includeGroup("androidx.compose.material")
-         includeGroup("androidx.compose.material3")
-         includeGroup("androidx.compose.runtime")
-         includeGroup("androidx.compose.ui")
-         includeGroup("org.jetbrains.compose.animation")
-         includeGroup("org.jetbrains.compose.foundation")
-         includeGroup("org.jetbrains.compose.material")
-         includeGroup("org.jetbrains.compose.material3")
-         includeGroup("org.jetbrains.compose.runtime")
-         includeGroup("org.jetbrains.compose.ui")
-      }
-
-      bundle("kotest") {
-         includeGroup("io.kotest")
-      }
-
-
-      bundle("navigation3") {
-         includeGroup("androidx.navigation3")
-      }
-
-      bundle("okhttp") {
-         includeGroup("com.squareup.okhttp3")
-      }
    }
 }

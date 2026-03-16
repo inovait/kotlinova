@@ -14,7 +14,6 @@ compose = "1.10.4"
 compose-material3 = "1.4.0"
 composeMultiplatform = "1.10.2"
 composeMultiplatform-material3 = "1.9.0"
-dependencyAnalysis = "3.5.1"
 desugarJdkLibs = "2.1.5"
 detekt = "2.0.0-alpha.2"
 detekt-compose = "0.5.6"
@@ -80,7 +79,6 @@ composeMultiplatform-animation = { module = "org.jetbrains.compose.animation:ani
 composeMultiplatform-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 composeMultiplatform-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMultiplatform-material3" }
 desugarJdkLibs = { module = " com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibs" }
-dependencyAnalysis = { module = "com.autonomousapps:dependency-analysis-gradle-plugin", version.ref = "dependencyAnalysis" }
 detekt-api = { module = "dev.detekt:detekt-api", version.ref = "detekt" }
 detekt-compose = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose" }
 detekt-ktlint = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
