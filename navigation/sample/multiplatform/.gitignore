@@ -3,3 +3,4 @@ build
 .kotlin
 .idea
 composeApp/build
+/kotlin-js-store
