@@ -55,6 +55,16 @@ android {
       versionName = "1.0"
       targetSdk = 33
    }
+
+   // Force static signing config to ensure apks across CI attempts are compatible with each other
+   signingConfigs {
+      getByName("debug") {
+         storeFile = File(rootDir, "config/instrumented_tests_key.jks")
+         storePassword = "android"
+         keyAlias = "androiddebugkey"
+         keyPassword = "android"
+      }
+   }
 }
 
 dependencies {
