@@ -28,6 +28,7 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           path: artifacts
           allow_forks: true
+          search_artifacts: true
       - name: Set the PR_NUM
         if: steps.download.outcome == 'success'
         id: pr-meta
