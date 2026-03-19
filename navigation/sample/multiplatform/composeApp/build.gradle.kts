@@ -74,6 +74,7 @@ kotlin {
         }
         webMain.dependencies {
             implementation(libs.androidx.savedstate)
+            implementation(libs.uriKmp)
         }
     }
 }

@@ -18,6 +18,9 @@ import si.inova.kotlinova.navigation.di.NavigationSerializersModule
 import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.kmmsample.first.FirstScreenKey
 import si.inova.kotlinova.navigation.kmmsample.second.SecondScreenKey
+import si.inova.kotlinova.navigation.kmmsample.third.ThirdScreenKey
+import si.inova.kotlinova.navigation.navigator.DefaultNavigator
+import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.serialization.defaultNavigationSerializersModule
 
@@ -38,7 +41,11 @@ object DependencyInjectionHolder {
     val appGraph by lazy { createGraph<WebAppGraph>() }
 }
 
-@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
+@DependencyGraph(
+    AppScope::class,
+    additionalScopes = [OuterNavigationScope::class],
+    excludes = [DefaultNavigator::class]
+)
 @SingleIn(AppScope::class)
 interface WebAppGraph : AppGraph {
     override fun getNavigationInjectionFactory(): NavigationInjection.Factory
@@ -61,7 +68,7 @@ interface WebAppGraph : AppGraph {
 }
 
 @ContributesTo(OuterNavigationScope::class)
-interface NavigationSerializationProviders {
+interface NavigationProviders {
     @Provides
     @NavigationSerializersModule
     fun provideNavigationSerializers(): SerializersModule = SerializersModule {
@@ -70,8 +77,14 @@ interface NavigationSerializationProviders {
         polymorphic(ScreenKey::class) {
             subclass(FirstScreenKey::class)
             subclass(SecondScreenKey::class)
+            subclass(ThirdScreenKey::class)
         }
 
         contextual(ScreenKey::class, PolymorphicSerializer<ScreenKey>(ScreenKey::class))
+    }
+
+    @Provides
+    fun provideWebNavigator(defaultNavigator: DefaultNavigator): Navigator {
+        return WebNavigator(defaultNavigator)
     }
 }

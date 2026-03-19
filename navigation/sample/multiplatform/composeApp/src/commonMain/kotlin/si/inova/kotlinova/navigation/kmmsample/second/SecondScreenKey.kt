@@ -17,7 +17,12 @@
 package si.inova.kotlinova.navigation.kmmsample.second
 
 import kotlinx.serialization.Serializable
+import si.inova.kotlinova.navigation.kmmsample.WebScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 @Serializable
-data object SecondScreenKey : ScreenKey()
+data object SecondScreenKey : ScreenKey(), WebScreenKey {
+    override fun getPathLink(): String {
+        return "second"
+    }
+}
