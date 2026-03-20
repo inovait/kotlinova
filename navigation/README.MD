@@ -691,7 +691,7 @@ you can declare that serializer in your DI system, with a function that provides
 
 ```kotlin
 @ContributesTo(OuterNavigationScope::class)
-class NavigationSerializationProviders {
+interface NavigationSerializationProviders {
    @Provides
    @NavigationSerializersModule
    fun provideNavigationSerializers(): SerializersModule = SerializersModule {
