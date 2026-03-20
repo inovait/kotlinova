@@ -88,7 +88,7 @@ jobs:
           gcloud storage cp -r gs://$BUCKET repo/instrumented_tests_results/
           
           if [[ TEST_EXIT_CODE -ne 0 ]] then
-            exit 1
+            exit $TEST_EXIT_CODE
           fi
       - name: Post SARIF findings as comments in the pull request
         if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/merge.sarif') != ''
