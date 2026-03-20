@@ -11,6 +11,23 @@ jobs:
     env:
       BUILD_NUMBER: ${{ github.run_number }}
     steps:
+      # Preparation
+      - name: Globally enable build cache and parallel execution
+        run: |
+          mkdir -p ~/.gradle
+          
+          cat >> ~/.gradle/gradle.properties<< EOF
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          EOF
+      - name: Force all tasks to be rerun when debug mode is on
+        # This allows us to force rerun the build if cache has gotten corrupted
+        run: 'if [[ "${{ runner.debug }}" == "1" ]]; then
+                  echo "GLOBAL_FLAGS= --rerun-tasks" >> "$GITHUB_ENV";
+              else
+                  echo "GLOBAL_FLAGS=" >> "$GITHUB_ENV";
+              fi
+            '
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -18,19 +35,34 @@ jobs:
         with:
           java-version: '21'
           distribution: temurin
-          cache: gradle
+      - uses: burrunan/gradle-cache-action@663fbad34e03c8f12b27f4999ac46e3d90f87eca
+        with:
+          debug: false
+          concurrent: true
+          read-only: true
       - name: Setup Android SDK
         uses: android-actions/setup-android@7c5672355aaa8fde5f97a91aa9a99616d1ace6bc
       - name: Validate Gradle Wrapper
         uses: gradle/actions/wrapper-validation@ac638b010cf58a27ee6c972d7336334ccaf61c96
+
+      # Build
+
       - name: Compile library
-        run: "./gradlew --parallel assemble :kotlinova-gradle:jar"
+        run: "./gradlew assemble :kotlinova-gradle:jar"
+
+      # Tests
+
       - name: Compile Unit Tests
-        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
+        run: "./gradlew jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
         run: "./gradlew runDebugTests"
+
+      # GitHub Actions does not allow PR actions triggered from external contributors
+      # to post comments. As a workaround, we upload metadata artifacts
+      # and then sarif-comment.yaml workflow will run, which will post the comment
+
       - run: echo ${{ github.event.number }} > pr_number.txt
         if: (!cancelled())
       - name: Upload Results
@@ -46,3 +78,6 @@ jobs:
             merge.sarif
             navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
             navigation/tests/build/outputs/apk/debug/tests-debug.apk
+            **/build/jacoco/**/*.*
+            **/build/outputs/unit_test_code_coverage/**/*.*
+            **/build/outputs/code_coverage/**/*.*
