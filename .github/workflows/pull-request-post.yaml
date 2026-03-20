@@ -78,7 +78,7 @@ jobs:
           --use-orchestrator \
           --environment-variables clearPackageData=true,coverage=true,coverageFilePath=/sdcard/Download/ \
           --directories-to-pull /sdcard/Download \
-          |& tee tmp_file
+          |& tee "$tmp_file"
           
           TEST_EXIT_CODE=${PIPESTATUS[0]}
           RESULTS=$(cat "$tmp_file")
