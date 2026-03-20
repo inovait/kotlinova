@@ -39,7 +39,13 @@ import kotlin.coroutines.EmptyCoroutineContext
 open class CoroutineResourceManager(
    val scope: CoroutineScope,
    private val reportService: ErrorReporter,
+   /**
+    * Tag attached to every error report that does not report CauseException
+    */
+   var tag: String?,
 ) {
+   constructor(scope: CoroutineScope, reportService: ErrorReporter) : this(scope, reportService, null)
+
    private val activeJobs = createConcurrentMap<Any, Job>()
 
    /**
@@ -73,10 +79,12 @@ open class CoroutineResourceManager(
          val exception = if (e is CauseException) {
             e
          } else {
-            UnknownCauseException(cause = e)
+            val message = tag?.let { "Got an error during a coroutine launched from '$tag'" }
+
+            UnknownCauseException(message = message, cause = e)
          }
 
-         interceptException(e)
+         interceptException(exception)
 
          resource.value = Outcome.Error(exception, resource.value.data.takeIf { keepDataOnExceptions })
       }
@@ -156,8 +164,11 @@ open class CoroutineResourceManager(
             block()
          } catch (e: CancellationException) {
             throw e
-         } catch (e: Throwable) {
+         } catch (e: CauseException) {
             reportService.report(e)
+         } catch (e: Throwable) {
+            val message = tag?.let { "Got an error during a coroutine launched from '$tag'" }
+            reportService.report(UnknownCauseException(message, e))
          }
       }
    }
@@ -193,5 +204,10 @@ open class CoroutineResourceManager(
     */
    fun getCurrentJob(resource: Any): Job? {
       return activeJobs[resource]
+   }
+
+   // Helper interface that does nothing on its own, but can be wired later into DI
+   fun interface Factory {
+      fun create(tag: String): CoroutineResourceManager
    }
 }

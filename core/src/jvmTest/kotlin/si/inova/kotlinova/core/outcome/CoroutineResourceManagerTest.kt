@@ -21,6 +21,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import kotlinx.coroutines.CompletableDeferred
@@ -41,7 +42,11 @@ import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWithData
 internal class CoroutineResourceManagerTest {
    private val reportedErrors = ArrayList<Throwable>()
    private val scope = TestScope()
-   private val manager = CoroutineResourceManager(scope.backgroundScope) { reportedErrors += it }
+   private val manager = CoroutineResourceManager(
+      scope = scope.backgroundScope,
+      reportService = { reportedErrors += it },
+      tag = "TestManager",
+   )
 
    @Test
    internal fun `Launch job`() = scope.runTest {
@@ -304,7 +309,11 @@ internal class CoroutineResourceManagerTest {
             it.cause shouldBeSameInstanceAs exception
          }
 
-      reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<IndexOutOfBoundsException>()
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause.shouldBeInstanceOf<IndexOutOfBoundsException>()
+         it.message.shouldContain("TestManager")
+      }
    }
 
    @Test
@@ -324,9 +333,14 @@ internal class CoroutineResourceManagerTest {
          .exception.let {
             it.shouldBeInstanceOf<UnknownCauseException>()
             it.cause shouldBeSameInstanceAs error
+            it.message.shouldContain("TestManager")
          }
 
-      reportedErrors.shouldHaveSize(1).first() shouldBeSameInstanceAs error
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause shouldBeSameInstanceAs error
+         it.message.shouldContain("TestManager")
+      }
    }
 
    @Test
@@ -448,6 +462,21 @@ internal class CoroutineResourceManagerTest {
 
       runCurrent()
 
-      reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<StackOverflowError>()
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause.shouldBeInstanceOf<StackOverflowError>()
+      }
    }
+
+   @Test
+   internal fun `launchWithExceptionReporting should include tag with reported non-cause exceptions`() = scope.runTest {
+      manager.launchWithExceptionReporting {
+         throw IllegalStateException()
+      }
+
+      runCurrent()
+
+      reportedErrors.shouldHaveSize(1).first().message.shouldContain("TestManager")
+   }
+
 }
