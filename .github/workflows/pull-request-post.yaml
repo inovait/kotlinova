@@ -59,6 +59,7 @@ jobs:
       - name: "Run instrumented tests on Firebase test lab"
         if: steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk') != ''
         run: |
+          set -x
           tree artifacts/results/kotlinova/kotlinova/navigation
           md5sum artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk
           md5sum artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
