@@ -25,6 +25,7 @@ jobs:
           cat >> ~/.gradle/gradle.properties<< EOF
           org.gradle.caching=true
           org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx6G
           EOF
       - name: Force all tasks to be rerun when debug mode is on
         # This allows us to force rerun the build if cache has gotten corrupted

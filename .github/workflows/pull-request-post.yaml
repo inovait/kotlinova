@@ -106,6 +106,17 @@ jobs:
           check_run: 'true'
 
       # Compile the project if jacoco test exec is present, to generate classes for jacoco report
+      # Preparation
+      - name: Globally enable build cache and parallel execution
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        run: |
+          mkdir -p ~/.gradle
+          
+          cat >> ~/.gradle/gradle.properties<< EOF
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx6G
+          EOF
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 #v5
         if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
         with:
