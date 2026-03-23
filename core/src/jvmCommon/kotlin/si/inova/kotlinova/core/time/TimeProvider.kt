@@ -28,7 +28,7 @@ import kotlin.time.toKotlinInstant
 /**
  * Injectable interface that provides current time
  */
-interface TimeProvider: Clock {
+interface TimeProvider : Clock {
    /**
     * @return difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
     *

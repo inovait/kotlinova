@@ -478,5 +478,4 @@ internal class CoroutineResourceManagerTest {
 
       reportedErrors.shouldHaveSize(1).first().message.shouldContain("TestManager")
    }
-
 }

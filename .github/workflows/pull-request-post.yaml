@@ -44,6 +44,7 @@ jobs:
           ref: ${{ steps.pr-meta.outputs.pr_ref }}
           fetch-depth: 0
           path: repo
+          persist-credentials: false
       - name: Set git ref
         if: steps.download.outcome == 'success'
         id: git-hash
@@ -64,16 +65,17 @@ jobs:
           --test artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk \
           --device model=MediumPhone.arm,version=26 \
           --use-orchestrator \
-          --environment-variables clearPackageData=true \
+          --environment-variables clearPackageData=true,coverage=true,coverageFilePath=/sdcard/Download/ \
+          --directories-to-pull /sdcard/Download \
           |& tee tmp_file
           
           TEST_EXIT_CODE=${PIPESTATUS[0]}
-          RESULTS=$(cat tmp_file)
-          rm tmp_file
+          RESULTS=$(cat "$tmp_file")
+          rm "$tmp_file"
           
           BUCKET=$(echo $RESULTS | grep -oP "browser/\K[^]]+")
-          mkdir -p instrumented_tests_results
-          gcloud storage cp -r gs://$BUCKET instrumented_tests_results/
+          mkdir -p repo/instrumented_tests_results
+          gcloud storage cp -r gs://$BUCKET repo/instrumented_tests_results/
           
           if [[ TEST_EXIT_CODE -ne 0 ]] then
             exit 1
@@ -97,8 +99,72 @@ jobs:
           comment_mode: failures
           files: |
             artifacts/**/TEST-*.xml
-            instrumented_tests_results/**/*.xml
+            repo/instrumented_tests_results/**/*.xml
           commit: ${{ github.event.workflow_run.head_sha }}
           event_file: artifacts/results/_temp/_github_workflow/event.json
           event_name: ${{ github.event.workflow_run.event }}
           check_run: 'true'
+
+      # Compile the project if jacoco test exec is present, to generate classes for jacoco report
+      # Preparation
+      - name: Globally enable build cache and parallel execution
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        run: |
+          mkdir -p ~/.gradle
+          
+          cat >> ~/.gradle/gradle.properties<< EOF
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx6G
+          EOF
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 #v5
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        with:
+          java-version: '21'
+          distribution: temurin
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+      - name: Compile classes
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        uses: burrunan/gradle-cache-action@663fbad34e03c8f12b27f4999ac46e3d90f87eca # v3.0.1
+        with:
+          arguments: "compileKotlinJvm compileDebugKotlinAndroid --parallel"
+          build-root-directory: repo
+          debug: false
+          concurrent: true
+          read-only: true
+      - name: "Copy coverage data from PR"
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        run: |
+          shopt -s globstar
+          
+          mkdir repo/coverage-data
+          cp --backup=numbered artifacts/results/kotlinova/kotlinova/**/*.exec repo/coverage-data/
+          cd repo/coverage-data
+          for file in $(ls -1); do mv "$file" "$file".exec; done
+          find .
+      - name: "Create jacoco aggregate"
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        run: "./gradlew aggregatedJacocoReport"
+        working-directory: repo
+
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@50d3aff4548aa991e6753342d9ba291084e63848
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        with:
+          paths: |
+            repo/build/reports/jacoco/aggregatedJacocoReport/aggregatedJacocoReport.xml,
+          token: ${{ secrets.GITHUB_TOKEN }}
+          update-comment: true
+          title: Code Coverage
+          min-coverage-overall: 50
+          min-coverage-changed-files: 30
+          pr-number: "${{ steps.pr-meta.outputs.pr_num }}"
+      - name: "Upload jacoco coverage report"
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f #v6
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        with:
+          name: test-coverage
+          path: ${{ github.workspace }}/repo/build/reports/jacoco/aggregatedJacocoReport/html
