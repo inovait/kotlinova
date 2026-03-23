@@ -34,19 +34,22 @@ import kotlin.math.roundToLong
  * To create cache, just access [cache] object. Please note that the operations makes some blocking disk accesses and thus, first
  * call to [cache] MUST be done on the worker thread.
  *
+ * @param context
+ * @param errorReporter Reporter that will receive any errors caught by the cache manager
  * @param fallbackCacheSize Cache size in bytes if we cannot get the quota from the Android system (for example due to
  *                               older API level)
  * @param cacheSubfolderName Name of the subfolder inside cache folder where OkHttp cache will be created
  * @param cacheQuotaFraction Fraction of the total cache quota that can be used for OkHttp Disk cache.
  */
-class GlobalOkHttpDiskCacheManager constructor(
+class GlobalOkHttpDiskCacheManager(
    private val context: Context,
    private val errorReporter: ErrorReporter,
    private val fallbackCacheSize: Long = DEFAULT_FALLBACK_CACHE_SIZE_BYTES,
    private val cacheSubfolderName: String = DEFAULT_CACHE_SUBFOLDER,
-   private val cacheQuotaFraction: Float = DEFAULT_CACHE_QUOTA_PERCENTAGE
+   private val cacheQuotaFraction: Float = DEFAULT_CACHE_QUOTA_PERCENTAGE,
 ) {
    @get:WorkerThread
+   @Suppress("MissingUseCall") // We don't want to close the cache, it remains open as it's a singleton
    val cache: Cache by lazy {
       if (Thread.currentThread().name == "main") {
          error("Disk cache must not be initialized on the main thread")

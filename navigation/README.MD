@@ -4,8 +4,10 @@ Direct gradle usage:
 
 ```kotlin
 implementation("si.inova.kotlinova:navigation:X.Y.Z")
-anvil("si.inova.kotlinova:navigation-compiler:X.Y.Z")
+ksp("si.inova.kotlinova:navigation-compiler:X.Y.Z")
+implementation("si.inova.kotlinova:navigation-deeplink:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
+implementation("si.inova.kotlinova:navigation-navigation3:X.Y.Z")
 testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
 detektPlugins("si.inova.kotlinova:navigation-detekt:X.Y.Z")
 ```
@@ -21,15 +23,18 @@ kotlinova = "X.Y.Z"
 [libraries]
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
+kotlinova-navigation-deeplink = { module = "si.inova.kotlinova:navigation-deeplink", version.ref = "kotlinova" }
 kotlinova-navigation-detekt = { module = "si.inova.kotlinova:navigation-detekt", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
+kotlinova-navigation-navigation3 = { module = "si.inova.kotlinova:navigation-navigation3", version.ref = "kotlinova" }
 kotlinova-navigation-test = { module = "si.inova.kotlinova:navigation-test", version.ref = "kotlinova" }
 ```
 
 ```kotlin
 implementation(libs.kotlinova.navigation)
-anvil(libs.kotlinova.navigation.compiler)
+ksp(libs.kotlinova.navigation.compiler)
 implementation(libs.kotlinova.navigation.fragment)
+implementation(libs.kotlinova.navigation.navigation3)
 test(libs.kotlinova.navigation.test)
 detektPlugins(libs.kotlinova.navigation.detekt)
 ```
@@ -39,8 +44,13 @@ version.
 
 # Features
 
-Kotlinova Navigation is yet another type safe parcelable-keys-based navigation library for Compose, based on the
-[Anvil](https://github.com/square/anvil) and [Simple Stack](https://github.com/Zhuinden/simple-stack).
+Kotlinova Navigation is yet another type safe serializable-keys-based navigation backend that handles creation/injection of
+the screens, its scoped dependencies and management of the backstack. It's heavily integrated with the
+[Metro](https://zacsweers.github.io/metro/index.html) DI
+and [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html).
+
+Library is frontend ("display") agnostic, but [Navigation3](https://developer.android.com/guide/navigation/navigation-3)
+integration is provided. It supports Android, JVM, iOS and WASM multiplatform targets.
 
 See [sample](sample) project for more practical examples.
 
@@ -48,24 +58,20 @@ See [sample](sample) project for more practical examples.
 
 Main selling point of this library is that, for every screen, you only need to create two classes.
 
-First a parcelable key for the screen, which contains screen's arguments and metadata:
+First a serializable key for the screen, which contains screen's arguments and metadata:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class MyScreenKey(
    val firstArgument: Int,
    val secondArgument: String
 ) : ScreenKey()
 ```
 
-**Warning**     
-You should not put any enums inside your keys,
-as [they do not have deterministic hashcode and thus break state restoration](https://github.com/Zhuinden/simple-stack-compose-integration/issues/29).
-You can add detekt plugin to safeguard against accidental inclusion of enums (see "Detekt plugin" below).
-
 Second, you create a Screen class that contains actual composable:
 
 ```kotlin
+@InjectNavigationScreen
 class MyScreen : Screen<MyScreenKey> {
    @Composable
    override fun Content(key: MyScreenKey) {
@@ -74,7 +80,7 @@ class MyScreen : Screen<MyScreenKey> {
 }
 ```
 
-And that's it. There is no need to manually put this screen into any xml, when statement, map etc. Anvil compiler does the magic
+And that's it. There is no need to manually put this screen into any xml, when statement, map etc. Metro compiler does the magic
 for you behind the scenes. Even better, **Key and its corresponding screen do not need to be in the same module**. This allows
 you to completely decouple your screen modules from each other. Only thing that screen needs to navigate to another screen, is the
 key, which can be in some common module. Actual screen, can be in a private module that nobody (except for the main module)
@@ -83,13 +89,14 @@ depends on, allowing for very flat module tree.
 ## Navigating to another screen
 
 Constructor of every screen behaves similarly to the `@Inject` constructor
-(but please do not add explicit `@Inject` keyword as it may mess up lifecycles - injection happens automatically).
+(but please do NOT add explicit `@Inject` keyword as it may mess up lifecycles - injection happens automatically).
 
 To navigate to another screen, you need to get access to the `si.inova.kotlinova.navigation.navigator.Navigator`. Since
 constructor is an injecting one, simply inject it to the screen. Then you can call `Navigator.navigateTo(anotherScreen)`
 to navigate:
 
 ```kotlin
+@InjectNavigationScreen
 class MyScreen(
    private val navigator: Navigator
 ) : Screen<MyScreenKey> {
@@ -106,38 +113,31 @@ class MyScreen(
 
 If the screen does not require any arguments, you can just create it as an `object` instead of `data class`.
 However, this will force you to manually implement `hashCode`, `equals` and `toString`.
-To avoid that, you can either:
-
-a) Have your object extend `NoArgsScreenKey`:
+To avoid that, you can just use `data object`:
 
 ```kotlin
-@Parcelize
-object MyScreenKey : NoArgsScreenKey()
-```
-
-b) Enable and use [data objects](https://kotlinlang.org/docs/object-declarations.html#data-objects):
-
-```kotlin
-@Parcelize
+@Serializable
 data object MyScreenKey : ScreenKey()
 ```
 
 ## Scoped Services
 
-To persist data between activity configuration changes and/or share data between screens, you can create
-[Scoped Services](https://github.com/Zhuinden/simple-stack/wiki/5.-Scoping,-data-or-state-sharing-between-screens#service-lifecycle)
-.
+To persist data between activity configuration changes and/or share data between screens, you can create Scoped Services .
 
-Simply put, a Scoped Service is very similar to the AndroidX ViewModel - It is created when screen first added to the
-navigation backstack and is kept alive until screen is removed from the backstack, including through Activity's configuration
+Simply put, a Scoped Service is very similar to the AndroidX ViewModel - It is created when the screen referencing it is first
+added to the
+navigation backstack and is kept alive until that screen is removed from the backstack, including through Activity's configuration
 change restarts.
 
 To create a scoped service, simply create your class and have that class extend `ScopedService`.
-Class also needs to have an `@Inject` constructor, since it is created by the framework (of course, you can
+Class also needs to have an `@Inject` constructor/top level annotation and
+an `@ContributesScopedService` top level annotation, since it is created by the framework (of course, you can
 use this constructor to inject any dependencies that the service needs):
 
 ```kotlin
-class MyService @Inject constructor() : ScopedService {
+@ContributesScopedService
+@Inject
+class MyService : ScopedService {
 
 }
 ```
@@ -145,6 +145,7 @@ class MyService @Inject constructor() : ScopedService {
 To use the service, simply add it to the constructor of your screen:
 
 ```kotlin
+@InjectNavigationScreen
 class MyScreen(
    private val myService: MyService
 ) : Screen<MyScreenKey> {
@@ -157,14 +158,15 @@ class MyScreen(
 If you need to create coroutines inside your services, your service can extend `CoroutineScopedService`.
 
 You have to provide new `CoroutineScope` to its constructor, allowing for customization of various scope parameters,
-such as dispatcher. We recommend that you also pass construction of the scope to the injection and then
-create a scope within Dagger module. That way, you can easily create fake version of the service inside unit tests with test
-dispatcher.
+such as dispatcher. We recommend that you create the scope with dependency injection and pass it via the service's constructor.
+That way, you can easily create fake version of the service inside unit tests with the test dispatcher.
 
 Passed coroutine scope will be cancelled automatically when service is destroyed.
 
 ```kotlin
-class MyService @Inject constructor(coroutineScope: CoroutineScope) : CoroutineScopedService(coroutineScope) {
+@ContributesScopedService
+@Inject
+class MyService(coroutineScope: CoroutineScope) : CoroutineScopedService(coroutineScope) {
    // You can use coroutineScope variable inside.
    // Scope will automatically get cancelled when service is destroyed.
 }
@@ -177,14 +179,16 @@ your app to reclaim memory.
 
 If your service keeps important data (such as entered form data, before user confirms the form), that data should also survive
 process death. To do this, your service can
-implement [Bundleable](https://github.com/Zhuinden/simple-stack/blob/master/simple-stack/src/main/java/com/zhuinden/simplestack/Bundleable.java)
+implement [ScopedService.Saveable](src/commonMain/kotlin/si/inova/kotlinova/navigation/services/ScopedService.kt)
 .
 
 Navigation library already includes a convenience implementation of `Bundleable` that allows you to create variables inside your
 services that will survive process deaths, using `by saved` and `by savedFlow` syntax:
 
 ```kotlin
-class MySaveableService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
+@ContributesScopedService
+@Inject
+class MySaveableService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
    // Contents of those two variables will be saved and restored across process kills
    var savedVariable by saved("defaultValue")
    val savedFlow by savedFlow("defaultValue")
@@ -202,7 +206,9 @@ allow you to access `key` property, which will contain a key that was used to cr
 for example, to automatically load data on that screen, without the need for manual load calls.
 
 ```kotlin
-class MyScreenViewModel @Inject constructor(coroutineScope: CoroutineScope) : SingleScreenViewModel<MyScreenKey>(coroutineScope) {
+@ContributesScopedService
+@Inject
+class MyScreenViewModel(coroutineScope: CoroutineScope) : SingleScreenViewModel<MyScreenKey>(coroutineScope) {
    override fun onServiceRegistered() {
       // Key is available at this point
       val key: MyScreenKey = key
@@ -221,14 +227,14 @@ You can override this behavior by overriding `getScopeTag` on the keys of the sc
 services:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class FirstScreenKey(...) : ScreenKey() {
    override fun getScopeTag(): String {
       return "SharedScope"
    }
 }
 
-@Parcelize
+@Serializable
 data class SecondScreenKey(...) : ScreenKey() {
    override fun getScopeTag(): String {
       return "SharedScope"
@@ -239,13 +245,60 @@ data class SecondScreenKey(...) : ScreenKey() {
 All screens with the same scope tag will share the same service instances. For this to work properly,
 you also must inject all shared services into all screens.
 
+### Service interfaces
+
+You can use `ContributesBinding` annotation to inject a service interface into a screen, the same way it works with normal
+injection:
+
+```kotlin
+@ContributesScopedService
+@contributesBinding(BackstackScope::class)
+@Inject
+class MyServiceImpl() : MyService {
+   ...
+}
+
+interface MyService: ScopedService {
+   ...
+}
+
+@InjectNavigationScreen
+class MyScreen(
+   private val myService: MyService
+) : Screen<MyScreenKey> {
+   ...
+}
+```
+
+If your service has multiple parents, you have to specify which interface to bind to in the `ContributesScopedService` annotation:
+
+```kotlin
+@ContributesScopedService(MyService::class)
+@contributesBinding(BackstackScope::class, binding<MyService>())
+@Inject
+class MyServiceImpl() : MyService, AnotherInterface {
+   ...
+}
+
+interface MyService : ScopedService {
+   ...
+}
+
+@InjectNavigationScreen
+class MyScreen(
+   private val myService: MyService
+) : Screen<MyScreenKey> {
+   ...
+}
+```
+
 ## Custom animations
 
 To customize animations, you can override `forwardAnimation` and `backwardAnimation` methods of the screen's key.
 See [AnimatedContent's transitionSpec](https://developer.android.com/jetpack/compose/animation/composables-modifiers#animatedcontent)
 for more info on the contents of these methods.
 
-See [SlideAnimationScreenKey](sample/keys/src/main/java/si/inova/kotlinova/navigation/sample/keys/SlideAnimationScreenKey.kt)
+See [SlideAnimationScreenKey](sample/android/keys/src/main/java/si/inova/kotlinova/navigation/sample/keys/SlideAnimationScreenKey.kt)
 for example.
 
 ## Single top screens
@@ -255,7 +308,7 @@ of screen is already displayed, navigation part will be skipped and only `Conten
 be re-called with the new key. For example:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class TabScreenKey(val selectedTab: SelectedTab = SelectedTab.A) : SingleTopKey() {
    enum class SelectedTab {
       A,
@@ -273,6 +326,7 @@ This allows easy composition of screens inside another screens.
 For example:
 
 ```kotlin
+@InjectNavigationScreen
 class TabScreen(
    private val firstTabSubscreen: FirstTabScreen,
    private val secondTabSubscreen: SecondTabScreen,
@@ -301,6 +355,7 @@ For example:
 ```kotlin
 data class FirstTabKey(...) : ScreenKey
 
+@InjectNavigationScreen
 class TabScreen(
    private val firstTabSubscreen: Screen<FirstTabKey>,
    ...
@@ -309,6 +364,7 @@ class TabScreen(
 }
 
 @ContributesScreenBinding
+@InjectNavigationScreen
 class FirstTabScreenImpl : Screen<FirstTabKey>() {
    @Composable
    override fun Content(key: FirstTabKey) {
@@ -322,26 +378,24 @@ class FirstTabScreenImpl : Screen<FirstTabKey>() {
 You might have noticed that `Navigator.navigateTo` is an extension method and the only method on the actual
 `Navigator` is `Navigator.navigate(NavigationInstructions)`.
 
-`NavigationInstructions` is a composable, parcelable class that tells navigation what do to.
+`NavigationInstructions` is a composable, serializable class that tells navigation what do to.
 For example, let's take a look at `GoBack` NavigationInstruction:
 
 ```kotlin
-@Parcelize
+@Serializable
 object GoBack : NavigationInstruction() {
    override fun performNavigation(backstack: List<ScreenKey>, context: NavigationContext): NavigationResult {
       return if (backstack.size > 1) {
-         NavigationResult(backstack.dropLast(1), StateChange.BACKWARD)
+         NavigationResult(backstack.dropLast(1))
       } else {
-         NavigationResult(backstack, StateChange.REPLACE)
+         NavigationResult(backstack)
       }
    }
 }
 ```
 
 As you can see, NavigationInstruction receives a backstack and returns a new backstack. This allows very flexible navigation,
-as developer can be in a full control of the backstack. In addition to the backstack, navigation instruction also
-returns state change type (either `FORWARD`, `BACKWARD` or `REPLACE`). This determines what kind of animation is played
-when navigation is performed.
+as developer can be in a full control of the backstack.
 
 Navigation instructions are classes instead of just extension methods to allow composition of them. For example,
 you can use `MultiNavigationInstructions` to perform multiple navigation actions at once:
@@ -355,10 +409,10 @@ navigator.navigate(
 )
 ```
 
-In addition, since instructions are parcelable, you can pass them around, which has several useful properties,
+In addition, since instructions are serializable, you can pass them around, which has several useful properties,
 for example for conditional navigation (see below).
 
-You can use one of the several [pre-written navigation instructions](src/main/kotlin/si/inova/kotlinova/navigation/instructions)
+You can use one of the several [pre-written navigation instructions](src/commonMain/kotlin/si/inova/kotlinova/navigation/instructions)
 or feel free to write your own.
 
 ## Nested navigation
@@ -370,11 +424,23 @@ via `NestedNavigationScreenKey`.
 Inside nested screen, regular `private val navigator: Navigator` will navigate the nested backstack. But you can also
 inject `@MainNavigation private val mainNavigator: Navigator` which will navigate outer (root) backstack.
 
-See [NestedScreen in sample](sample/nested/src/main/java/si/inova/kotlinova/navigation/sample/nested/NestedScreen.kt)
+See [NestedScreen in sample](sample/android/nested/src/main/java/si/inova/kotlinova/navigation/sample/nested/NestedScreen.kt)
 for example.
 
 Nested screens can also use parent's scoped services by putting the service into the constructor (like usual), and annotating it
 with `@Inherited`.
+
+Note: For the nested screen to work, you need to provide ViewModel store decorator to the root `NavDisplay`:
+
+```kotlin
+entryDecorators = listOf(
+   rememberSaveableStateHolderNavEntryDecorator(),
+   rememberViewModelStoreNavEntryDecorator()
+)
+```
+
+If you want to customize the `NavDisplay` arguments of the nested screen, you can create your own screen that
+extends `BaseNestedBackstackScreen` and override its `NavDisplay` method.
 
 ## Conditional navigation
 
@@ -385,7 +451,7 @@ To enable this, you first have to create a condition. This is a simple object or
 (if condition has arguments, like login type):
 
 ```kotlin
-@Parcelize
+@Serializable
 object LoginCondition : NavigationCondition
 ```
 
@@ -395,14 +461,10 @@ Called method is an interception method and user will be navigate to whatever yo
 already met, you can just pass along `navigateToIfConditionMet`. Otherwise, you have to navigate to a screen that allows user to
 meet that condition (or an error screen if user cannot meet it).
 
-To register the handler with the navigation library, you must put `@ContributesMultibinding` and `@ClassKey` annotations on it.
-
 For example:
 
 ```kotlin
-@ClassKey(LoginCondition::class)
-@ContributesMultibinding(OuterNavigationScope::class)
-class LoginConditionalNavigationHandler @Inject constructor(
+class LoginConditionalNavigationHandler(
    // You can inject dependencies, such as login repository here
 ) : ConditionalNavigationHandler {
    override fun getNavigationRedirect(
@@ -428,7 +490,20 @@ class LoginConditionalNavigationHandler @Inject constructor(
 }
 ```
 
-See [login example](sample/conditional/src/main/java/si/inova/kotlinova/navigation/sample/conditional)
+After that, you also need to register your handler with the Metro. You can do this by
+adding a `ContributesIntoMap` + `ClassKey` annotations, where `ClassKey` points to your condition type and
+`ContributesIntoMap` points into `OuterNavigationScope`:
+
+```kotlin
+@ContributesIntoMap(OuterNavigationScope::class)
+@ClassKey(LoginCondition::class)
+@Inject
+class LoginConditionalNavigationHandler {
+   ...
+}
+```
+
+See [login example](sample/android/conditional/src/main/java/si/inova/kotlinova/navigation/sample/conditional)
 for more information.
 
 ## Predictive back gesture
@@ -446,15 +521,19 @@ To enable, you just opt-in in your Android Manifest:
 See [Android documentation](https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture#opt-predictive) for
 more info.
 
-You can customize the back animation based on which side user swipes from by accessing `scope.targetState.backSwipeEdge` property
+You can customize the back animation based on which side user swipes from by accessing `backSwipeEdge` argument
 in the animation declaration:
 
 ```kotlin
 abstract class MyScreenKey : ScreenKey() {
-   override fun backAnimation(scope: AnimatedContentTransitionScope<StateChangeResult>): ContentTransform {
-      val animation = when (scope.targetState.backSwipeEdge) {
-         BackEventCompat.EDGE_LEFT -> ...
-         BackEventCompat.EDGE_RIGHT-> ...
+   override fun backAnimation(
+      scope: AnimatedContentTransitionScope<*>,
+      backSwipeEdge: @BackEventCompat.SwipeEdge Int?
+   ): ContentTransform {
+      val animation = when (backSwipeEdge) {
+         BackEventCompat.EDGE_LEFT ->...
+            BackEventCompat.EDGE_RIGHT
+         ->...
          else ->... // Not predictive back
       }
 
@@ -462,6 +541,65 @@ abstract class MyScreenKey : ScreenKey() {
    }
 }
 ```
+
+## Shared element transition
+
+Navigation library supports
+Compose's [Shared element transition](https://developer.android.com/develop/ui/compose/animation/shared-elements). To access both
+shared transition scope and animated visibility scope, you can use local compositions. If using Navigation 3, you can use
+already provided`LocalNavAnimatedContentScope`, while you have to define a `LocalSharedTransitionScope` yourself. For example:
+
+```kotlin
+val LocalSharedTransitionScope =
+   staticCompositionLocalOf<SharedTransitionScope> { error("LocalSharedTransitionScope should be provided") }
+```
+
+In MainActivity (or wherever your Compose root is):
+
+```kotlin
+SharedTransitionLayout {
+   CompositionLocalProvider(LocalSharedTransitionScope provides this) {
+      navigationInjectionFactory.NavDisplay { listOf(FirstScreenKey) }
+   }
+}
+```
+
+Then in your screens:
+
+```kotlin
+@Composable
+override fun Content(key: MyScreenKeyKey) = with(LocalSharedTransitionScope.current) {
+   Image(
+      Modifier
+         .sharedElement(rememberSharedContentState("..."), LocalNavAnimatedContentScope.current)
+   )
+}
+```
+
+## Dialogs
+
+A screen can also appear as a dialog.
+
+To do that, the key of the screen needs to implement `DialogKey`:
+
+```kotlin
+abstract class MyDialogKey : ScreenKey(), DialogKey {
+   ...
+}
+```
+
+Then, when you create your `NavDisplay`, be sure to add a `DialogScreneStrategy`:
+
+```kotlin
+navigationInjectionFactory.NavDisplay(
+   sceneStrategy = remember { DialogSceneStrategy() },
+   ...
+)
+
+```
+
+You can use the [Kotlinova result passing](../compose/README.MD#result-passing) to pass the result from the Dialog back
+to the main screen
 
 ## Navigating to fragments
 
@@ -477,7 +615,7 @@ To conform to that interface, you need to provide a unique `tag` for your key th
 process death. Easiest way to do so is to put the tag into key's constructor and give it a default random value:
 
 ```kotlin
-@Parcelize
+@Serializable
 data class MyFragmentScreenKey(
    ...,
    override val tag: String = UUID.randomUUID().toString()
@@ -490,6 +628,7 @@ Inside
 that screen, you implement `createFragment` method where you create a `Fragment` instance (and pass all arguments, if applicable):
 
 ```kotlin
+@InjectNavigationScreen
 class DemoFragmentScreen(scopeExitListener: ScopeExitListener) : FragmentScreen<MyFragmentScreenKey>(scopeExitListener) {
    override fun createFragment(key: MyFragmentScreenKey, fragmentManager: FragmentManager): Fragment {
       return ...
@@ -503,7 +642,8 @@ Navigation also has optional system to route deep links to the navigation screen
 
 System works by creating `DeepLinkHandler` classes. You can create as many of them as you want, in as many
 modules as you want (so you can logically group them with features in the same module). Use
-`@ContributesMultibinding(OuterNavigationScope::class)` to register them with Anvil to ensure they will be called.
+`@ContributesIntoSet(OuterNavigationScope::class)` to register them with Kotlin Inject to ensure they will be
+called.
 
 Every `DeepLinkHandler` will receive `Uri`. You need to then parse that Uri. If it matches your screen,
 you have to return `NavigationInstruction` that opens your screen. Oherwise, return null. `startup` argument is true if your
@@ -512,8 +652,9 @@ app was started using this deep link.
 You can use `matchDeepLink` helper to make deep link parsing easier:
 
 ```kotlin
-@ContributesMultibinding(OuterNavigationScope::class)
-class MyScreenDeepLinkHandler @Inject constructor() : DeepLinkHandler {
+@ContributesIntoSet(OuterNavigationScope::class)
+@Inject
+class MyScreenDeepLinkHandler() : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return uri.matchDeepLink("myapp://screenA/{argument}") {
          val argument = it.getValue("argument")
@@ -529,8 +670,9 @@ class MyScreenDeepLinkHandler @Inject constructor() : DeepLinkHandler {
 If your handler needs to handle multiple deep links, you can use `handleMultipledeepLinks`:
 
 ```kotlin
-@ContributesMultibinding(OuterNavigationScope::class)
-class MyDeepLinkHandler @Inject constructor() : DeepLinkHandler {
+@ContributesIntoSet(OuterNavigationScope::class)
+@Inject
+class MyDeepLinkHandler() : DeepLinkHandler {
    override fun handleDeepLink(uri: Uri, startup: Boolean): NavigationInstruction? {
       return handleMultipleDeepLinks(uri, startup) {
          matchDeepLink("myapp://screenA") { args, startup ->
@@ -544,47 +686,68 @@ class MyDeepLinkHandler @Inject constructor() : DeepLinkHandler {
 }
 ```
 
+## Custom serializers
+
+If any of your serializable navigation classes need access to custom contextual/polymorphic serializers,
+you can declare that serializer in your DI system, with a function that provides `@NavigationSerializersModule SerializersModule`:
+
+```kotlin
+@ContributesTo(OuterNavigationScope::class)
+interface NavigationSerializationProviders {
+   @Provides
+   @NavigationSerializersModule
+   fun provideNavigationSerializers(): SerializersModule = SerializersModule {
+      include(defaultNavigationSerializersModule)
+
+      // Put your contextual & polymorphic definitions here
+   }
+}
+```
+
 # Setup
+
+(Note: these steps assume you have Metro already set up in your project. If not, you can
+see the [Metro sample android app](https://github.com/ZacSweers/metro/tree/main/samples/android-app)).
 
 To add the library to your app:
 
-1. Add navigation library as implementation dependency and navigation compiler as anvil dependency
+1. Add `navigation` and `navigation-navigation3` libraries as implementation dependency and navigation compiler as ksp dependency
    (see the top of this README)
+2. Set up [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html) in your project
+   (only `kotlinx-serialization-core` is necessary if you don't need any other formats)
 2. Create Key and Screen for your root screen
-3. Set up [Anvil](https://github.com/square/anvil) injection in your app (easiest way to do this is via
-   [Whetstone](https://github.com/deliveryhero/whetstone), with your own application component)
-4. Add `@MergeComponent(OuterNaviationScope::class)` to your application component:
+3. Add a `OuterNavigationScope` to your main graph's scopes via `additionalScopes` parameter:
 
 ```kotlin
-@MergeComponent(OuterNavigationScope::class)
-@...
-interface MyApplicationComponent : ApplicationComponent {
+@DependencyGraph(AppScope::class, additionalScopes = [OuterNavigationScope::class])
+@SingleIn(AppScope::class)
+interface AppGraph {
    ...
 }
 ```
 
-5. In your main activity (or whatever activity you want to use navigation in), inject `NavigationInjection.Factory`:
+6. Inject `NavigationInjection.Factory` into your main activity (or whatever activity you want to use navigation in):
 
 ```kotlin
-class MainActivity : Activity() {
-   @Inject
-   lateinit var navigationInjectionFactory: NavigationInjection.Factory
-
+@Inject
+class MainActivity(
+   ...
+   private val navigationInjectionFactory: NavigationInjection.Factory,
+) {
    ...
 }
 ```
 
-6. Inside a composable inside main activity (for example, inside `setContent` lambda), call `RootNavigationContainer` and pass in
-   your initial
-   backstack, usually just `History.of` with your root screen:
+7. Inside a composable inside main activity (for example, inside `setContent` lambda), call `NavDisplay` and pass in
+   your initial backstack, usually just `listOf` with your root screen:
 
 ```kotlin
 setContent {
-   navigationInjectionFactory.RootNavigationContainer { History.of(FirstScreenKey) }
+   navigationInjectionFactory.NavDisplay(initialHistory = { listOf(FirstScreenKey) })
 }
 ```
 
-7. That's it. When you run your app, it should display the first screen.
+8. That's it. When you run your app, it should display the first screen.
 
 ## Deep links
 
@@ -592,14 +755,17 @@ If you want to use deep link integration feature, you will need some extra setup
 
 1. Set your activity's `launchMode` to `singleTask` - this will ensure proper value of the `startup` parameter in the
    deep link handlers
-1. Inject `MainDeepLinkHandler` and `NavigationContext` to your activity:
+1. Inject `MainDeepLinkHandler` and `NavigationContext` into your activity:
 
 ```kotlin
 @Inject
-lateinit var mainDeepLinkHandler: MainDeepLinkHandler
-
-@Inject
-lateinit var navigationContext: NavigationContext
+class MainActivity(
+   ...
+   private val mainDeepLinkHandler: MainDeepLinkHandler,
+   private val navigationContext: NavigationContext,
+   ) {
+   ...
+}
 ```
 
 2. Inside Activity's `onCreate` method, query deep link handlers for received deep link, if any. If `savedInstanceState` is not
@@ -614,27 +780,36 @@ val deepLinkTarget = if (savedInstanceState == null) {
 }
 ```
 
-3. When you call `RootNavigationContainer`, navigate to the deep link instead of to the default screen, if applicable:
+3. When you call `NavDisplay`, navigate to the deep link instead of to the default screen, if applicable:
 
 ```kotlin
-navigationInjectionFactory.RootNavigationContainer {
-   val initialBackstack = History.of(FirstScreenKey)
+navigationInjectionFactory.NavDisplay(
+   initialHistory = {
+      val initialBackstack = listOf(FirstScreenKey)
 
-   if (deepLinkTarget != null) {
-      deepLinkTarget.performNavigation(initialBackstack, navigationContext).newBackstack
-   } else {
-      initialBackstack
+      if (deepLinkTarget != null) {
+         deepLinkTarget.performNavigation(initialBackstack, navigationContext).newBackstack
+      } else {
+         initialBackstack
+      }
    }
-}
+)
 ```
 
-4. Get `backstack` from the `RootNavigationContainer` and then call `handleNewIntentDeepLinks`. This method will
+4. Get `backstack` from the `NavDisplay` and then call `handleNewIntentDeepLinks`. This method will
    automatically handle all deep links that arrive while the app is open.
 
 ```kotlin
-val backstack = navigationInjectionFactory.RootNavigationContainer { ... }
+val backstack = navigationInjectionFactory.NavDisplay(...)
 mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)
 ```
+
+# Multiplatform
+
+Library is kotlin-multiplatform-ready and supports Android, JVM, iOS and WASM multiplatform targets. Most features are available
+on all platforms, while some (like deep links) are Android-only.
+
+See the [multiplatform sample](sample/multiplatform) for more info.
 
 # Detekt plugin
 
@@ -643,6 +818,11 @@ Navigation also contains detekt plugin to safeguard against some common mistakes
 
 ```yaml
 kotlinovanavigation:
-   NavigationKeyNoEnums:
-      active: true
+  NavigationSerializable:
+    active: true
 ```
+
+# Credits
+
+* Scoping / service functionality in this project is heavily inspired by
+  the [Simple Stack](https://github.com/Zhuinden/simple-stack) library.

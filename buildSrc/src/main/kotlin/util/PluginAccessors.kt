@@ -17,8 +17,11 @@
 import org.gradle.plugin.use.PluginDependenciesSpec
 import org.gradle.plugin.use.PluginDependencySpec
 
-inline val PluginDependenciesSpec.multiplatformModule: PluginDependencySpec
-   get() = id("multiplatform-module")
+inline val PluginDependenciesSpec.jvmMultiplatformModule: PluginDependencySpec
+   get() = id("multiplatform-jvm")
+
+inline val PluginDependenciesSpec.fullMultiplatformModule: PluginDependencySpec
+   get() = id("multiplatform-full")
 
 inline val PluginDependenciesSpec.androidLibraryModule: PluginDependencySpec
    get() = id("android-library-config")

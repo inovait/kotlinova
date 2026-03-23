@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -24,26 +24,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import dev.zacsweers.metro.Inject
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
+import si.inova.kotlinova.navigation.testutils.BlankScreenKey
+import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
-import java.util.UUID
-import javax.inject.Inject
+import kotlin.random.Random
+
+private var unregisterCalled: Boolean = false
 
 class ServiceScopes {
    @get:Rule
    val rule = createComposeRule()
+
+   @Before
+   fun setUp() {
+      unregisterCalled = false
+   }
 
    @Test
    internal fun doNotShareServicesByDefault() {
@@ -74,9 +87,56 @@ class ServiceScopes {
       rule.onNodeWithText("1").assertIsDisplayed()
    }
 
-   @Parcelize
-   data class NotSharedServiceScreenKey(val id: UUID = UUID.randomUUID()) : ScreenKey()
+   @Test
+   internal fun callOnServiceUnregisteredWhenAllKeysSharingAServicesGoOffBackstack() {
+      val backstack = rule.insertTestNavigation(BlankScreenKey)
+      rule.waitForIdle()
 
+      rule.runOnUiThread {
+         backstack.updateBackstack(
+            listOf(
+               BlankScreenKey,
+               SharedServiceScreenKey(1)
+            )
+         )
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(
+            listOf(
+               BlankScreenKey,
+               SharedServiceScreenKey(1),
+               SharedServiceScreenKey(2),
+            )
+         )
+      }
+      rule.waitForIdle()
+
+      rule.runOnUiThread {
+         backstack.updateBackstack(
+            listOf(
+               BlankScreenKey,
+               SharedServiceScreenKey(1),
+            )
+         )
+      }
+      rule.waitForIdle()
+
+      unregisterCalled shouldBe false
+
+      rule.runOnUiThread {
+         backstack.goBack()
+      }
+      rule.waitForIdle()
+
+      unregisterCalled shouldBe true
+   }
+
+   @Serializable
+   data class NotSharedServiceScreenKey(val id: Int = Random.nextInt()) : ScreenKey()
+
+   @InjectNavigationScreen
    class NotSharedServiceScreen(sharedService: SharedService, navigator: Navigator) :
       CommonSharedServiceTestScreen<NotSharedServiceScreenKey>(sharedService, navigator) {
       override fun getNewScreen(): NotSharedServiceScreenKey {
@@ -84,13 +144,14 @@ class ServiceScopes {
       }
    }
 
-   @Parcelize
-   data class SharedServiceScreenKey(val id: UUID = UUID.randomUUID()) : ScreenKey() {
+   @Serializable
+   data class SharedServiceScreenKey(val id: Int = Random.nextInt()) : ScreenKey() {
       override fun getScopeTag(): String {
          return "SharedScope"
       }
    }
 
+   @InjectNavigationScreen
    class SharedServiceScreen(sharedService: SharedService, navigator: Navigator) :
       CommonSharedServiceTestScreen<SharedServiceScreenKey>(sharedService, navigator) {
       override fun getNewScreen(): SharedServiceScreenKey {
@@ -100,7 +161,7 @@ class ServiceScopes {
 
    abstract class CommonSharedServiceTestScreen<K : ScreenKey>(
       private val sharedService: SharedService,
-      private val navigator: Navigator
+      private val navigator: Navigator,
    ) : Screen<K>() {
       abstract fun getNewScreen(): K
 
@@ -126,7 +187,14 @@ class ServiceScopes {
       }
    }
 
-   class SharedService @Inject constructor(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
+   @ContributesScopedService
+   @Inject
+   class SharedService(coroutineScope: CoroutineScope) : SaveableScopedService(coroutineScope) {
       val number by savedFlow(0)
+
+      override fun onServiceUnregistered() {
+         super.onServiceUnregistered()
+         unregisterCalled = true
+      }
    }
 }

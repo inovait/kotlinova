@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.retrofit.callfactory
 
 import dispatch.core.withDefault
+import dispatch.core.withIO
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,8 @@ import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.Outcome
 import si.inova.kotlinova.core.outcome.catchIntoOutcome
 import si.inova.kotlinova.core.reporting.ErrorReporter
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
+import si.inova.kotlinova.retrofit.RetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.SyntheticHeaders
 import si.inova.kotlinova.retrofit.okhttp.enqueueAndAwait
 import java.lang.reflect.ParameterizedType
@@ -62,16 +65,16 @@ import kotlin.coroutines.cancellation.CancellationException
  *
  *   @param errorHandler Error handler that parses the error responses
  *   @param errorReporter an error reporter class that will receive all cache parsinge errors.
- *   @param exceptionInterceptor A callback that is called for all problems with talking to the server,
- *                               before regular exception handling happens.
- *                               Use it to convert your custom IOExceptions, thrown inside interceptors,
- *                               into CauseException that can then be consumed upstream. This is not called when a full response
- *                               is received. Use [errorHandler] for that.
+ *   @param causeExceptionFactory A callback that is called for all problems with talking to the server,
+ *                                Use it to convert your custom IOExceptions, thrown inside interceptors,
+ *                                into CauseException that can then be consumed upstream. On any other exceptions,
+ *                                your custom caller should defer to the [DefaultRetrofitCauseExceptionFactory].
  */
+@Suppress("SuspendFunWithCoroutineScopeReceiver") // We are using ProducerScope only to send data, not to launch anything
 class StaleWhileRevalidateCallAdapterFactory(
    private val errorHandler: ErrorHandler?,
    private val errorReporter: ErrorReporter = ErrorReporter {},
-   private val exceptionInterceptor: (Throwable) -> CauseException? = { null }
+   private val causeExceptionFactory: RetrofitCauseExceptionFactory = DefaultRetrofitCauseExceptionFactory,
 ) : CallAdapter.Factory() {
    override fun get(returnType: Type, annotations: Array<out Annotation>, retrofit: Retrofit): CallAdapter<*, *>? {
       if (returnType !is ParameterizedType) {
@@ -114,14 +117,18 @@ class StaleWhileRevalidateCallAdapterFactory(
          var networkRequest: Request? = originalCall.request()
 
          return try {
-            val forceNetwork = originalCall.request().header(SyntheticHeaders.HEADER_FORCE_REFRESH)?.toBoolean() ?: false
+            val forceNetwork = originalCall.request().header(SyntheticHeaders.HEADER_FORCE_REFRESH)?.toBoolean() == true
 
             val cacheRequest = originalCall.request().newBuilder()
                .cacheControl(CacheControl.FORCE_CACHE)
                .removeHeader(SyntheticHeaders.HEADER_FORCE_REFRESH)
                .build()
 
-            val rawCacheResponse = retrofit.callFactory().newCall(cacheRequest).enqueueAndAwait()
+            // Use execute instead of dispatch to skip dispatcher and concurrent request limits.
+            // Those shouldn't be an issue, since we are loading from disk
+            val rawCacheResponse = withIO {
+               retrofit.callFactory().newCall(cacheRequest).execute()
+            }
 
             if (rawCacheResponse.code == HttpURLConnection.HTTP_GATEWAY_TIMEOUT) {
                // OkHttp returns gateway timeout when there is no cache or cache is not valid
@@ -169,17 +176,18 @@ class StaleWhileRevalidateCallAdapterFactory(
          } catch (e: Exception) {
             handleCacheError(
                networkRequest,
-               exceptionInterceptor(e) ?: e.transformRetrofitException(originalCall.request().url.toString()),
+               causeExceptionFactory(e, originalCall.request().url.toString()),
                originalCall
             )
             networkRequest to null
          }
       }
 
+      @Suppress("CanBeNonNullable") // False positive: this function does a lot if dataFromCache is null
       private suspend fun ProducerScope<Outcome<T>>.makeMainRequest(
          networkRequest: Request,
          call: Call<T>,
-         dataFromCache: T?
+         dataFromCache: T?,
       ) {
          try {
             val networkResponse = retrofit.callFactory().newCall(networkRequest).enqueueAndAwait()
@@ -190,9 +198,7 @@ class StaleWhileRevalidateCallAdapterFactory(
 
             val parsedResponse = call.parseResponse(networkResponse)
 
-            val result = catchIntoOutcome {
-               Outcome.Success(parsedResponse.bodyOrThrow(errorHandler))
-            }
+            val result = Outcome.Success(parsedResponse.bodyOrThrow(errorHandler, causeExceptionFactory))
 
             send(result)
          } catch (e: CancellationException) {
@@ -200,7 +206,7 @@ class StaleWhileRevalidateCallAdapterFactory(
          } catch (e: Exception) {
             send(
                Outcome.Error(
-                  exceptionInterceptor(e) ?: e.transformRetrofitException(networkRequest.url.toString()),
+                  causeExceptionFactory(e, networkRequest.url.toString()),
                   dataFromCache
                )
             )
@@ -210,10 +216,10 @@ class StaleWhileRevalidateCallAdapterFactory(
       private suspend fun ProducerScope<Outcome<T>>.parseResultFromCacheResponse(
          parsedResponse: Response<T>,
          networkRequest: Request?,
-         originalCall: Call<T>
+         originalCall: Call<T>,
       ): Pair<Request?, T?> {
          val result = catchIntoOutcome {
-            val data = parsedResponse.bodyOrThrow(errorHandler)
+            val data = parsedResponse.bodyOrThrow(errorHandler, causeExceptionFactory)
 
             if (networkRequest != null) {
                Outcome.Progress(data)
@@ -234,7 +240,7 @@ class StaleWhileRevalidateCallAdapterFactory(
       private suspend fun ProducerScope<Outcome<T>>.handleCacheError(
          networkRequest: Request?,
          e: CauseException,
-         originalCall: Call<T>
+         originalCall: Call<T>,
       ) {
          if (networkRequest == null) {
             // Cache is our main request - forward all errors

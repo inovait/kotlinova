@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   jvmMultiplatformModule
 }
 
 android {
@@ -34,17 +34,12 @@ kotlin {
    sourceSets {
       androidMain {
          dependencies {
-            implementation(libs.dagger.runtime)
             implementation(libs.androidx.core)
-
-            compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }
       jvmCommon {
          dependencies {
             api(libs.okhttp)
-            api(libs.moshi)
-            api(libs.moshi.adapters)
             api(libs.retrofit)
 
             implementation(projects.core)
@@ -57,6 +52,7 @@ kotlin {
          dependencies {
             implementation(projects.core.test)
             implementation(projects.retrofit.retrofitTest)
+            implementation(projects.retrofit.retrofitMoshi)
             implementation(libs.turbine)
          }
       }

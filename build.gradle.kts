@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,6 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import jacoco.setupJacocoMergingRoot
 import nl.littlerobots.vcu.plugin.resolver.ModuleVersionCandidate
 import nl.littlerobots.vcu.plugin.versionSelector
 
@@ -39,7 +40,10 @@ import nl.littlerobots.vcu.plugin.versionSelector
 plugins {
    id("kotlinova")
    alias(libs.plugins.versionCatalogUpdate)
+   jacoco
 }
+
+setupJacocoMergingRoot()
 
 versionCatalogUpdate {
    catalogFile.set(file("config/libs.toml"))

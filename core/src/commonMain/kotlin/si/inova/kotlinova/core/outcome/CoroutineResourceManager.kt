@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,6 +19,7 @@ package si.inova.kotlinova.core.outcome
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,10 +27,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import si.inova.kotlinova.core.collections.createConcurrentMap
+import si.inova.kotlinova.core.collections.removeConcurrently
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
 import si.inova.kotlinova.core.flow.collectInto
 import si.inova.kotlinova.core.reporting.ErrorReporter
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -38,9 +40,15 @@ import kotlin.coroutines.EmptyCoroutineContext
  */
 open class CoroutineResourceManager(
    val scope: CoroutineScope,
-   private val reportService: ErrorReporter
+   private val reportService: ErrorReporter,
+   /**
+    * Tag attached to every error report that does not report CauseException
+    */
+   var tag: String?,
 ) {
-   private val activeJobs = ConcurrentHashMap<Any, Job>()
+   constructor(scope: CoroutineScope, reportService: ErrorReporter) : this(scope, reportService, null)
+
+   private val activeJobs = createConcurrentMap<Any, Job>()
 
    /**
     * Method that launches coroutine task that handles data fetching for provided resources.
@@ -61,7 +69,7 @@ open class CoroutineResourceManager(
       currentValue: T? = resource.value.data,
       context: CoroutineContext = EmptyCoroutineContext,
       keepDataOnExceptions: Boolean = true,
-      block: suspend ResourceControlBlock<T>.() -> Unit
+      block: suspend ResourceControlBlock<T>.() -> Unit,
    ) = launchBoundControlTask(resource, context) {
       try {
          resource.value = Outcome.Progress(currentValue)
@@ -69,26 +77,29 @@ open class CoroutineResourceManager(
          block(ResourceControlBlock(resource, this))
       } catch (e: CancellationException) {
          throw e
-      } catch (e: Exception) {
+      } catch (e: Throwable) {
          val exception = if (e is CauseException) {
             e
          } else {
-            UnknownCauseException(cause = e)
+            val message = tag?.let { "Got an error during a coroutine launched from '$it'" }
+
+            UnknownCauseException(message = message, cause = e)
          }
 
-         interceptException(e)
+         interceptException(exception)
 
          resource.value = Outcome.Error(exception, resource.value.data.takeIf { keepDataOnExceptions })
       }
    }
 
-   private fun interceptException(exception: Exception) {
-      reportService.report(exception)
+   private fun interceptException(throwable: Throwable) {
+      reportService.report(throwable)
    }
 
+   @OptIn(ExperimentalForInheritanceCoroutinesApi::class) // It's fine, we are delegating to the actual impl
    inner class ResourceControlBlock<T>(
       originalFlow: MutableStateFlow<Outcome<T>>,
-      coroutineScope: CoroutineScope
+      coroutineScope: CoroutineScope,
    ) : MutableStateFlow<Outcome<T>> by originalFlow,
       CoroutineScope by coroutineScope {
       fun launchAndEmitAll(flow: Flow<Outcome<T>>) {
@@ -112,11 +123,10 @@ open class CoroutineResourceManager(
     * Any previous launched coroutines that were bound to an object equal to passed object will
     * be cancelled.
     */
-   @Synchronized
    fun launchBoundControlTask(
       resource: Any,
       context: CoroutineContext = EmptyCoroutineContext,
-      block: suspend CoroutineScope.() -> Unit
+      block: suspend CoroutineScope.() -> Unit,
    ) {
       // To prevent threading issues, only one job can handle one resource at a time
       // Cancel active job first.
@@ -136,7 +146,7 @@ open class CoroutineResourceManager(
          try {
             block()
          } finally {
-            activeJobs.remove(resource, thisJob)
+            activeJobs.removeConcurrently(resource, thisJob)
          }
       }
 
@@ -151,15 +161,18 @@ open class CoroutineResourceManager(
    fun launchWithExceptionReporting(
       context: CoroutineContext = EmptyCoroutineContext,
       start: CoroutineStart = CoroutineStart.DEFAULT,
-      block: suspend CoroutineScope.() -> Unit
+      block: suspend CoroutineScope.() -> Unit,
    ) {
       scope.launch(context, start) {
          try {
             block()
          } catch (e: CancellationException) {
             throw e
-         } catch (e: Exception) {
+         } catch (e: CauseException) {
             reportService.report(e)
+         } catch (e: Throwable) {
+            val message = tag?.let { "Got an error during a coroutine launched from '$it'" }
+            reportService.report(UnknownCauseException(message, e))
          }
       }
    }
@@ -195,5 +208,10 @@ open class CoroutineResourceManager(
     */
    fun getCurrentJob(resource: Any): Job? {
       return activeJobs[resource]
+   }
+
+   // Helper interface that does nothing on its own, but can be wired later into DI
+   fun interface Factory {
+      fun create(tag: String): CoroutineResourceManager
    }
 }

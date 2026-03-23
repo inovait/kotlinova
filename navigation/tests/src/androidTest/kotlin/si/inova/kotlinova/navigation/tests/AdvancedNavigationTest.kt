@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,10 +17,10 @@
 package si.inova.kotlinova.navigation.tests
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.NavigationInjection
@@ -30,8 +30,8 @@ import si.inova.kotlinova.navigation.instructions.OpenScreen
 import si.inova.kotlinova.navigation.instructions.ReplaceBackstack
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.instructions.navigateToSingle
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
@@ -50,7 +50,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(AdvancedTestScreenAKey)
+      backstack.backstack.value.shouldContainExactly(AdvancedTestScreenAKey)
    }
 
    @Test
@@ -68,7 +68,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          BlankScreenKey,
          AdvancedTestScreenAKey,
          AdvancedTestScreenBKey
@@ -89,7 +89,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          AdvancedTestScreenBKey
       )
    }
@@ -108,7 +108,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          AdvancedTestScreenBKey
       )
    }
@@ -123,7 +123,7 @@ class AdvancedNavigationTest {
       }
 
       rule.waitForIdle()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          AdvancedTestScreenAKey,
          AdvancedTestScreenBKey
       )
@@ -141,16 +141,20 @@ class AdvancedNavigationTest {
       }
    }
 
-   @Parcelize
-   object AdvancedTestScreenAKey : NoArgsScreenKey()
+   @Serializable
+   data object AdvancedTestScreenAKey : ScreenKey()
+
+   @InjectNavigationScreen
    class AdvancedTestScreenA : Screen<AdvancedTestScreenAKey>() {
       @Composable
       override fun Content(key: AdvancedTestScreenAKey) {
       }
    }
 
-   @Parcelize
-   object AdvancedTestScreenBKey : NoArgsScreenKey()
+   @Serializable
+   data object AdvancedTestScreenBKey : ScreenKey()
+
+   @InjectNavigationScreen
    class AdvancedTestScreenB : Screen<AdvancedTestScreenBKey>() {
       @Composable
       override fun Content(key: AdvancedTestScreenBKey) {

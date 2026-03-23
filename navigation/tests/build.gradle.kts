@@ -1,5 +1,23 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+ *  is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+import jacoco.setupJacocoMergingAndroid
+
+/*
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,14 +39,11 @@ plugins {
    id("com.android.application")
    kotlin("android")
    androidCommon
-   id("kotlin-kapt")
+   id("com.google.devtools.ksp")
    id("kotlin-parcelize")
+   id("kotlinx-serialization")
    id("org.jetbrains.kotlin.plugin.compose")
-}
-
-anvil {
-   generateDaggerFactories.set(false)
-   syncGeneratedSources.set(true)
+   alias(libs.plugins.metro)
 }
 
 android {
@@ -40,11 +55,24 @@ android {
       versionName = "1.0"
       targetSdk = 33
    }
+
+   // Force static signing config to ensure apks across CI attempts are compatible with each other
+   signingConfigs {
+      getByName("debug") {
+         storeFile = File(rootDir, "config/instrumented_tests_key.jks")
+         storePassword = "android"
+         keyAlias = "androiddebugkey"
+         keyPassword = "android"
+      }
+   }
 }
 
 dependencies {
-   androidTestImplementation(projects.kotlinova.navigation)
-   androidTestImplementation(projects.kotlinova.navigation.navigationFragment)
+   // Dependencies need to be "implementation" to be included in the coverage report
+   implementation(projects.kotlinova.navigation)
+   implementation(projects.kotlinova.navigation.navigationDeeplink)
+   implementation(projects.kotlinova.navigation.navigationFragment)
+   implementation(projects.kotlinova.navigation.navigationNavigation3)
 
    implementation(libs.androidx.core)
    implementation(libs.androidx.activity.compose)
@@ -57,13 +85,16 @@ dependencies {
    implementation(libs.androidx.compose.ui.util)
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.lifecycle.compose)
+   implementation(libs.androidx.lifecycle.navigation3)
    implementation(libs.androidx.lifecycle.viewModel.compose)
+   implementation(libs.kotlin.serialization)
 
-   kaptAndroidTest(libs.dagger.compiler)
-   anvilAndroidTest(projects.navigation.navigationCompiler)
+   kspAndroidTest(projects.navigation.navigationCompiler)
 
    androidTestImplementation(libs.junit4)
    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
    androidTestImplementation(libs.androidx.test.espresso)
    androidTestImplementation(libs.kotest.assertions)
 }
+
+setupJacocoMergingAndroid()

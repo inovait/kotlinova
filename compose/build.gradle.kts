@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,9 +17,10 @@
 import util.publishLibrary
 
 plugins {
-   androidLibraryModule
+   fullMultiplatformModule
    id("kotlin-parcelize")
    id("org.jetbrains.kotlin.plugin.compose")
+   id("kotlinx-serialization")
 }
 
 publishLibrary(
@@ -32,16 +33,34 @@ android {
    namespace = "si.inova.kotlinova.compose"
 }
 
-dependencies {
-   implementation(projects.kotlinova.core)
+kotlin {
+   androidTarget {
+      compilerOptions {
+         freeCompilerArgs.addAll(
+            "-P",
+            "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=si.inova.kotlinova.compose.parcelize.ParcelizeOnAndroid"
+         )
+      }
+   }
 
-   implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.ui.util)
-   implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.compose)
-   implementation(libs.coil)
+   sourceSets {
+      commonMain {
+         dependencies {
+            implementation(projects.kotlinova.core)
 
-   debugImplementation(libs.androidx.compose.ui.tooling)
+            implementation(libs.composeMultiplatform.ui)
+            implementation(libs.composeMultiplatform.material3)
+            implementation(libs.androidx.lifecycle.compose)
+            implementation(libs.coil)
+            implementation(libs.kotlin.serialization)
+         }
+      }
+   }
 }
+
+dependencies {
+   add("detektPlugins", libs.detekt.compose)
+}
+
+
+

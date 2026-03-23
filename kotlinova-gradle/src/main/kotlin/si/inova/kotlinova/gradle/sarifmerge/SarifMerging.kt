@@ -16,7 +16,7 @@
 
 package si.inova.kotlinova.gradle.sarifmerge
 
-import io.gitlab.arturbosch.detekt.Detekt
+import dev.detekt.gradle.Detekt
 import org.gradle.api.Project
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.VerificationType
@@ -120,18 +120,18 @@ internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
 
 private fun Project.registerDetektSarifMerging(
    localSarifMergeTask: TaskProvider<SarifMergeTask>,
-   sarifFiles: ConfigurableFileCollection
+   sarifFiles: ConfigurableFileCollection,
 ) {
    tasks.withType(Detekt::class.java).configureEach { detektTask ->
       // We need to set basePath to ensure sarif files have relative path in them
-      detektTask.basePath = this.rootDir.absolutePath
+      detektTask.basePath.set(this.rootDir.absolutePath)
 
       detektTask.reports {
          it.sarif.required.set(true)
       }
 
       sarifFiles.from(
-         detektTask.sarifReportFile.orElse { error("task ${detektTask.path} did not expose a sarif file") }
+         detektTask.reports.sarif.outputLocation.orElse { error("task ${detektTask.path} did not expose a sarif file") }
       )
 
       detektTask.finalizedBy(localSarifMergeTask)

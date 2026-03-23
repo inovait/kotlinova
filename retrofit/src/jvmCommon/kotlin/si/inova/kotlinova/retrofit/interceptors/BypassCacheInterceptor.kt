@@ -22,6 +22,7 @@ import okhttp3.Response
 import si.inova.kotlinova.retrofit.SyntheticHeaders
 
 class BypassCacheInterceptor : Interceptor {
+   @Suppress("MissingUseCall") // We are not responsible for closing this
    override fun intercept(chain: Interceptor.Chain): Response {
       val forceRefresh = chain.request().header(SyntheticHeaders.HEADER_FORCE_REFRESH)?.toBoolean()
       val updatedRequest = if (forceRefresh != null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,23 +23,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.StateRestorationTester
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
 import si.inova.kotlinova.navigation.di.MainNavigation
 import si.inova.kotlinova.navigation.instructions.goBack
+import si.inova.kotlinova.navigation.navigation3.NestedBackstackScreen
+import si.inova.kotlinova.navigation.navigation3.NestedNavigationScreenKey
 import si.inova.kotlinova.navigation.navigator.Navigator
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
-import si.inova.kotlinova.navigation.screens.NestedBackstackScreen
-import si.inova.kotlinova.navigation.screens.NestedNavigationScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.Inherited
+import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
 class NestedNavigation {
@@ -55,7 +56,7 @@ class NestedNavigation {
       rule.onNodeWithText("Navigate").performClick()
       rule.onNodeWithText("World").assertIsDisplayed()
 
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          NestedNavigationScreenKey(listOf(BasicNavigationTest.TestScreenAKey("Hello")))
       )
    }
@@ -83,7 +84,7 @@ class NestedNavigation {
       val backstack = rule.insertTestNavigation(ParentScreenWithSharedServiceKey())
 
       rule.runOnUiThread {
-         backstack.goTo(ParentScreenWithSharedServiceKey(666))
+         backstack.updateBackstack(backstack.backstack.value + ParentScreenWithSharedServiceKey(666))
       }
 
       rule.waitForIdle()
@@ -109,15 +110,16 @@ class NestedNavigation {
       rule.onNodeWithText("333").assertIsDisplayed()
    }
 
-   @Parcelize
-   object NestedScreenGoingBackKey : NoArgsScreenKey() {
+   @Serializable
+   data object NestedScreenGoingBackKey : ScreenKey() {
       override val navigationConditions: List<NavigationCondition>
          get() = listOf(ConditionalNavigationTest.TestCondition)
    }
 
+   @InjectNavigationScreen
    class NestedScreenGoingBack(
       @MainNavigation
-      private val mainNavigator: Navigator
+      private val mainNavigator: Navigator,
    ) : Screen<NestedScreenGoingBackKey>() {
       @Composable
       override fun Content(key: NestedScreenGoingBackKey) {
@@ -127,12 +129,13 @@ class NestedNavigation {
       }
    }
 
-   @Parcelize
-   data class ParentScreenWithSharedServiceKey(val number: Int = 333) : NoArgsScreenKey()
+   @Serializable
+   data class ParentScreenWithSharedServiceKey(val number: Int = 333) : ScreenKey()
 
+   @InjectNavigationScreen
    class ParentScreenWithSharedService(
       private val service: ServiceScopes.SharedService,
-      private val nestedScreen: NestedBackstackScreen
+      private val nestedScreen: NestedBackstackScreen,
    ) : Screen<ParentScreenWithSharedServiceKey>() {
       @SuppressLint("StateFlowValueCalledInComposition")
       @Composable
@@ -143,12 +146,13 @@ class NestedNavigation {
       }
    }
 
-   @Parcelize
-   object ChildScreenWithSharedServiceKey : NoArgsScreenKey()
+   @Serializable
+   data object ChildScreenWithSharedServiceKey : ScreenKey()
 
+   @InjectNavigationScreen
    class ChildScreenWithSharedService(
       @Inherited
-      private val service: ServiceScopes.SharedService
+      private val service: ServiceScopes.SharedService,
    ) : Screen<ChildScreenWithSharedServiceKey>() {
       @Composable
       override fun Content(key: ChildScreenWithSharedServiceKey) {

@@ -16,9 +16,33 @@ jobs:
     env:
       BUILD_NUMBER: ${{ github.run_number }}
     steps:
+      # Preparation
+
+      - name: Globally enable build cache and parallel execution
+        run: |
+          mkdir -p ~/.gradle
+          
+          cat >> ~/.gradle/gradle.properties<< EOF
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx6G
+          EOF
+      - name: Force all tasks to be rerun when debug mode is on
+        # This allows us to force rerun the build if cache has gotten corrupted
+        run: 'if [[ "${{ runner.debug }}" == "1" ]]; then
+                  echo "GLOBAL_FLAGS= --rerun-tasks" >> "$GITHUB_ENV";
+              else
+                  echo "GLOBAL_FLAGS=" >> "$GITHUB_ENV";
+              fi
+            '
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: burrunan/gradle-cache-action@663fbad34e03c8f12b27f4999ac46e3d90f87eca
+        with:
+          debug: false
+          concurrent: true
+          read-only: false
       - uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -32,19 +56,25 @@ jobs:
         uses: 'google-github-actions/setup-gcloud@v3.0.1'
       - name: 'Save Service account'
         run: 'echo "${{ secrets.TEST_GCLOUD_ACCOUNT }}" | base64 -d > test-lab-key.json'
-      - run: "./bump_version.sh ${{ github.event.inputs.version }}"
+      - run: "./bump_version.sh $TARGET_VERSION"
+        env:
+          TARGET_VERSION: ${{ github.event.inputs.version }}
       - run: "v=$(cat version.txt);echo \"VERSION=$v\" > $GITHUB_ENV"
       - run: "echo \"# Release version ${{ env.VERSION }}\" > $GITHUB_STEP_SUMMARY"
+
+      # Build
+
       - name: Compile library
         run: "./gradlew --parallel assemble :kotlinova-gradle:jar"
+
+      # Tests
+
       - name: Compile Unit Tests
-        # We cannot run instrumented tests on CI, but at least we can compile them to ensure
-        # that anvil build passes.
-        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
+        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses  :navigation:tests:assembleDebug"
       - name: Lint
-        run: "./gradlew --continue --parallel buildSrc:detekt detektMetadataMain detektJvmMain detektAndroidDebug detektAndroidRelease detektDebug detektJvmTest :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue --parallel buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests
-        run: "./gradlew test jvmTest"
+        run: "./gradlew runDebugTests"
       - name: "Run instrumented tests on Firebase test lab"
         run: |
           gcloud auth login --cred-file=test-lab-key.json
@@ -58,11 +88,11 @@ jobs:
           --device model=MediumPhone.arm,version=26 \
           --use-orchestrator \
           --environment-variables clearPackageData=true \
-          |& tee tmp_file
+          |& tee "$tmp_file"
           
           TEST_EXIT_CODE=${PIPESTATUS[0]}
-          RESULTS=$(cat tmp_file)
-          rm tmp_file
+          RESULTS=$(cat "$tmp_file")
+          rm "$tmp_file"
           
           BUCKET=$(echo $RESULTS | grep -oP "browser/\K[^]]+")
           mkdir -p instrumented_tests_results
@@ -71,6 +101,9 @@ jobs:
           if [[ TEST_EXIT_CODE -ne 0 ]] then
             exit 1
           fi
+
+      # Publish
+
       - name: 'Save GPG key'
         run: 'echo "${{ secrets.GPG_SIGNING_KEY }}" | base64 -d > signing_key.gpg'
       - name: 'Publish'
@@ -101,3 +134,9 @@ jobs:
           junit_files: |
             **/build/outputs/*-results/**/*.xml
             **/build/*-results/**/*.xml
+      - name: "Zip Instrumented tests results"
+        continue-on-error: true
+        if: failure()
+        run: |
+          shopt -s globstar
+          zip -r instrumented-test-results.zip instrumented_tests_results/**/*.xml

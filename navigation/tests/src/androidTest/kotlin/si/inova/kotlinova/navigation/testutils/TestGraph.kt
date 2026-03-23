@@ -1,0 +1,94 @@
+/*
+ * Copyright 2026 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+ *  is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package si.inova.kotlinova.navigation.testutils
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.createGraph
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import si.inova.kotlinova.navigation.backstack.Backstack
+import si.inova.kotlinova.navigation.di.NavigationInjection
+import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import si.inova.kotlinova.navigation.navigation3.NavDisplay
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+
+@DependencyGraph(OuterNavigationScope::class)
+@SingleIn(OuterNavigationScope::class)
+interface TestGraph {
+   fun navigationFactory(): NavigationInjection.Factory
+
+   @Provides
+   fun provideCoroutineScope(): CoroutineScope = CoroutineScope(Dispatchers.Unconfined + Job())
+}
+
+fun ComposeContentTestRule.insertTestNavigation(vararg initialHistory: ScreenKey): Backstack {
+   val navigation = createGraph<TestGraph>().navigationFactory()
+   lateinit var backstack: Backstack
+
+   setContent {
+      Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+         backstack = navigation.NavDisplay(
+            initialHistory = { initialHistory.toList() },
+            entryDecorators = listOf(
+               rememberSaveableStateHolderNavEntryDecorator(),
+               rememberViewModelStoreNavEntryDecorator()
+            )
+         )
+      }
+   }
+
+   waitForIdle()
+
+   return backstack
+}
+
+fun StateRestorationTester.insertTestNavigation(composeTestRule: ComposeTestRule, vararg initialHistory: ScreenKey): Backstack {
+   val navigation = createGraph<TestGraph>().navigationFactory()
+   lateinit var backstack: Backstack
+
+   setContent {
+      Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+         backstack = navigation.NavDisplay(
+            initialHistory = { initialHistory.toList() },
+            entryDecorators = listOf(
+               rememberSaveableStateHolderNavEntryDecorator(),
+               rememberViewModelStoreNavEntryDecorator()
+            )
+         )
+      }
+   }
+
+   composeTestRule.waitForIdle()
+
+   return backstack
+}
+
+fun Backstack.goBack() {
+   updateBackstack(backstack.value.dropLast(1))
+}

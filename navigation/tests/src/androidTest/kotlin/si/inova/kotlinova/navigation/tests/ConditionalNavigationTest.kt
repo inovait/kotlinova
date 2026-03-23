@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,15 +19,16 @@ package si.inova.kotlinova.navigation.tests
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.squareup.anvil.annotations.ContributesTo
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.ClassKey
-import dagger.multibindings.IntoMap
+import dev.zacsweers.metro.ClassKey
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Provides
 import io.kotest.matchers.collections.shouldContainExactly
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.conditions.ConditionalNavigationHandler
@@ -37,11 +38,12 @@ import si.inova.kotlinova.navigation.di.OuterNavigationScope
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
 import si.inova.kotlinova.navigation.instructions.OpenScreen
 import si.inova.kotlinova.navigation.instructions.navigateTo
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
+import si.inova.kotlinova.navigation.testutils.removeBackstackFromMemory
 
 class ConditionalNavigationTest {
    @get:Rule
@@ -59,7 +61,7 @@ class ConditionalNavigationTest {
       }
 
       rule.onNodeWithText("Target screen").assertIsDisplayed()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(BlankScreenKey, TargetScreenKey)
+      backstack.backstack.value.shouldContainExactly(BlankScreenKey, TargetScreenKey)
    }
 
    @Test
@@ -74,21 +76,43 @@ class ConditionalNavigationTest {
       }
 
       rule.onNodeWithText("Condition Resolver").assertIsDisplayed()
-      backstack.getHistory<ScreenKey>().shouldContainExactly(
+      backstack.backstack.value.shouldContainExactly(
          BlankScreenKey,
          ConditionResolvingScreenKey(OpenScreen(TargetScreenKey))
       )
    }
 
-   @Parcelize
-   object TestCondition : NavigationCondition
+   @Test
+   internal fun restoreConditionResolvingScreenAfterProcessKill() {
+      TestConditionHandler.meetsCondition = false
+
+      val stateRestorationTester = StateRestorationTester(rule)
+      val backstack = stateRestorationTester.insertTestNavigation(rule, BlankScreenKey)
+      val navigator = NavigationInjection.fromBackstack(backstack).navigator()
+
+      rule.runOnUiThread {
+         navigator.navigateTo(TargetScreenKey)
+      }
+
+      rule.removeBackstackFromMemory()
+      stateRestorationTester.emulateSavedInstanceStateRestore()
+
+      rule.onNodeWithText("Condition Resolver").assertIsDisplayed()
+      backstack.backstack.value.shouldContainExactly(
+         BlankScreenKey,
+         ConditionResolvingScreenKey(OpenScreen(TargetScreenKey))
+      )
+   }
+
+   @Serializable
+   data object TestCondition : NavigationCondition
 
    object TestConditionHandler : ConditionalNavigationHandler {
       var meetsCondition: Boolean = false
 
       override fun getNavigationRedirect(
          condition: NavigationCondition,
-         navigateToIfConditionMet: NavigationInstruction
+         navigateToIfConditionMet: NavigationInstruction,
       ): NavigationInstruction {
          return if (meetsCondition) {
             navigateToIfConditionMet
@@ -98,12 +122,13 @@ class ConditionalNavigationTest {
       }
    }
 
-   @Parcelize
-   object TargetScreenKey : NoArgsScreenKey() {
+   @Serializable
+   data object TargetScreenKey : ScreenKey() {
       override val navigationConditions: List<NavigationCondition>
          get() = listOf(TestCondition)
    }
 
+   @InjectNavigationScreen
    class TargetScreen : Screen<TargetScreenKey>() {
       @Composable
       override fun Content(key: TargetScreenKey) {
@@ -111,8 +136,10 @@ class ConditionalNavigationTest {
       }
    }
 
-   @Parcelize
-   data class ConditionResolvingScreenKey(val targetNavigation: NavigationInstruction) : ScreenKey()
+   @Serializable
+   data class ConditionResolvingScreenKey(val targetNavigation: @Contextual NavigationInstruction) : ScreenKey()
+
+   @InjectNavigationScreen
    class ConditionResolvingScreen : Screen<ConditionResolvingScreenKey>() {
       @Composable
       override fun Content(key: ConditionResolvingScreenKey) {
@@ -120,12 +147,12 @@ class ConditionalNavigationTest {
       }
    }
 
-   @Module
    @ContributesTo(OuterNavigationScope::class)
-   class ConditionTestModule {
+   interface ConditionTestProviders {
       @Provides
       @IntoMap
       @ClassKey(TestCondition::class)
-      fun provideTestCondition(): ConditionalNavigationHandler = TestConditionHandler
+      fun provideTestCondition(): ConditionalNavigationHandler =
+         TestConditionHandler
    }
 }

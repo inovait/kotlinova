@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -15,6 +15,7 @@
  */
 
 import com.android.build.gradle.tasks.asJavaVersion
+import jacoco.setupJacocoMergingAndroid
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import util.commonAndroid
@@ -63,6 +64,10 @@ commonAndroid {
    testOptions {
       unitTests.all {
          it.useJUnitPlatform()
+
+         // Better test output
+         it.systemProperty("kotest.assertions.collection.print.size", "300")
+         it.systemProperty("kotest.assertions.collection.enumerate.size", "300")
       }
    }
 
@@ -77,6 +82,16 @@ commonAndroid {
       abortOnError = true
 
       warningsAsErrors = true
+   }
+
+   buildTypes {
+      debug {
+         testCoverage {
+            jacocoVersion = libs.versions.jacoco.get()
+         }
+         enableUnitTestCoverage = true
+         enableAndroidTestCoverage = true
+      }
    }
 }
 

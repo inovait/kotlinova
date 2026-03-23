@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -24,8 +24,10 @@ import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.test.runTest
+import mockwebserver3.MockResponse
+import mockwebserver3.SocketEffect
 import okhttp3.Cache
-import okhttp3.mockwebserver.SocketPolicy
+import okhttp3.Headers.Companion.headersOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -36,101 +38,110 @@ import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.Outcome
+import si.inova.kotlinova.core.test.TestScopeWithDispatcherProvider
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeSuccessWithData
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.SyntheticHeaders
+import si.inova.kotlinova.retrofit.createJsonMockResponse
 import si.inova.kotlinova.retrofit.mockWebServer
-import si.inova.kotlinova.retrofit.setJsonBody
+import si.inova.kotlinova.retrofit.moshi.MoshiRetrofitCauseExceptionFactory
 import java.io.File
 import java.io.IOException
 
 internal class StaleWhileRevalidateCallAdapterFactoryTest {
+   private val scope = TestScopeWithDispatcherProvider()
+
    private lateinit var tempCache: Cache
 
    @BeforeEach
    internal fun setUp(
       @TempDir
-      cacheDirectory: File
+      cacheDirectory: File,
    ) {
       tempCache = Cache(cacheDirectory, 100_000)
    }
 
    @Test
-   internal fun `Throw NoNetworkException if request timeouts`() = runTest {
+   internal fun `Throw NoNetworkException if request timeouts`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.NO_RESPONSE
+            MockResponse.Builder()
+               .onRequestStart(SocketEffect.Stall)
+               .build()
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class)
             awaitComplete()
          }
       }
    }
 
    @Test
-   internal fun `Throw NoNetworkException if request fails to download`() = runTest {
+   internal fun `Throw NoNetworkException if request fails to download`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class)
             awaitComplete()
          }
       }
    }
 
    @Test
-   internal fun `Throw DataParsingException if json parsing fails`() = runTest {
+   internal fun `Throw DataParsingException if json parsing fails`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("{")
+            createJsonMockResponse("{")
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class)
             awaitComplete()
          }
       }
    }
 
    @Test
-   internal fun `Throw DataParsingException if json parsing has wrong fields`() = runTest {
+   internal fun `Throw DataParsingException if json parsing has wrong fields`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("\"THIRD\"")
+            createJsonMockResponse("\"THIRD\"")
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class)
             awaitComplete()
          }
       }
    }
 
    @Test
-   internal fun `Include URL in the json parsing exceptions`() = runTest {
+   internal fun `Include URL in the json parsing exceptions`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("\"THIRD\"")
+            createJsonMockResponse("\"THIRD\"")
          }
 
          service.getEnumResult().test {
-            val exception = awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class.java)
+            val exception = awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class)
 
             exception.message.shouldNotBeNull().apply {
                shouldContain(" http://localhost")
@@ -143,7 +154,7 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Parse error with error handler`() = runTest {
+   internal fun `Parse error with error handler`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService =
             createRetrofitService(this@runTest, errorHandler = { response: Response<*>, cause: Exception ->
@@ -152,12 +163,11 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             })
 
          mockResponse("/data") {
-            setStatus("HTTP/1.1 404 NOT FOUND")
-            setJsonBody("\"TEST ERROR MESSAGE\"")
+            createJsonMockResponse("\"TEST ERROR MESSAGE\"", code = 404)
          }
 
          service.getEnumResult().test {
-            val exception = awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class.java)
+            val exception = awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class)
 
             exception.cause.shouldNotBeNull().message.apply {
                shouldContain(" http://localhost")
@@ -170,12 +180,12 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Just return single success when there is no cache`() = runTest {
+   internal fun `Just return single success when there is no cache`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"")
          }
 
          service.getEnumResult().test {
@@ -186,19 +196,18 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Return cached version as Progress, followed by real request as Success`() = runTest {
+   internal fun `Return cached version as Progress, followed by real request as Success`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult().test {
@@ -210,14 +219,12 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Return cache as success if cached version is still fresh`() = runTest {
+   internal fun `Return cache as success if cached version is still fresh`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult().collect()
@@ -232,20 +239,18 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Ignore cache freshness when synthetic force refresh header is set`() = runTest {
+   internal fun `Ignore cache freshness when synthetic force refresh header is set`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult(force = true).test {
@@ -257,20 +262,18 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
    }
 
    @Test
-   internal fun `Remove synthetic force refresh header when set`() = runTest {
+   internal fun `Remove synthetic force refresh header when set`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult(force = true).test {
@@ -279,13 +282,13 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
             awaitComplete()
          }
 
-         server.takeRequest().getHeader(SyntheticHeaders.HEADER_FORCE_REFRESH).shouldBeNull()
-         server.takeRequest().getHeader(SyntheticHeaders.HEADER_FORCE_REFRESH).shouldBeNull()
+         server.takeRequest().headers[SyntheticHeaders.HEADER_FORCE_REFRESH].shouldBeNull()
+         server.takeRequest().headers[SyntheticHeaders.HEADER_FORCE_REFRESH].shouldBeNull()
       }
    }
 
    @Test
-   internal fun `Transform network errors using exceptionInterceptor`() = runTest {
+   internal fun `Transform network errors using exceptionInterceptor`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(
             this@runTest,
@@ -294,41 +297,41 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
                   throw TestIOException()
                }
             },
-            exceptionInterceptor = {
-               if (it is TestIOException) {
-                  TestErrorResponseException(cause = it.cause)
+            causeExceptionFactory = { e, info ->
+               if (e is TestIOException) {
+                  TestErrorResponseException(cause = e.cause)
                } else {
-                  null
+                  MoshiRetrofitCauseExceptionFactory(DefaultRetrofitCauseExceptionFactory)(e, info)
                }
             }
          )
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
          }
 
          service.getEnumResult().test {
-            awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class.java)
+            awaitItem().shouldBeErrorWith(exceptionType = TestErrorResponseException::class)
             awaitComplete()
          }
       }
    }
 
    @Test
-   internal fun `Properly respond when server 304 to cache response`() = runTest {
+   internal fun `Properly respond when server 304 to cache response`() = scope.runTest {
       mockWebServer {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
          }
 
          service.getEnumResult().collect()
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setResponseCode(304)
+            MockResponse(headers = headersOf("ETag", "a"), code = 304)
          }
 
          service.getEnumResult().test {
@@ -339,17 +342,65 @@ internal class StaleWhileRevalidateCallAdapterFactoryTest {
       }
    }
 
+   @Test
+   internal fun `Return cached version as the data of the Failure, when network request fails`() = scope.runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/data") {
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
+         }
+
+         service.getEnumResult().collect()
+
+         mockResponse("/data") {
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
+         }
+
+         service.getEnumResult().test {
+            awaitItem() // Ignore first loading
+            awaitItem().shouldBeErrorWith(exceptionType = NoNetworkException::class, expectedData = FakeEnumResult.FIRST)
+            awaitComplete()
+         }
+      }
+   }
+
+   @Test
+   internal fun `Return cached version as the data of the Failure, when parsing fails`() = scope.runTest {
+      mockWebServer {
+         val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
+
+         mockResponse("/data") {
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a"))
+         }
+
+         service.getEnumResult().collect()
+
+         mockResponse("/data") {
+            createJsonMockResponse("{")
+         }
+
+         service.getEnumResult().test {
+            awaitItem() // Ignore first loading
+            awaitItem().shouldBeErrorWith(exceptionType = DataParsingException::class, expectedData = FakeEnumResult.FIRST)
+            awaitComplete()
+         }
+      }
+   }
+
    private interface TestRetrofitService {
       @GET("/data")
       fun getEnumResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
-         force: Boolean = false
+         force: Boolean = false,
       ): Flow<Outcome<FakeEnumResult>>
    }
 
    private enum class FakeEnumResult {
       FIRST,
-      SECOND
+      SECOND,
    }
 
    private class TestErrorResponseException(message: String? = null, cause: Throwable? = null) : CauseException(message, cause)

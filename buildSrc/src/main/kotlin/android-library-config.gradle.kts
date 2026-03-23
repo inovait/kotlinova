@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,8 +14,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
+import jacoco.setupJacocoMergingAndroid
 import org.gradle.accessors.dm.LibrariesForLibs
+import util.commonAndroidComponents
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -39,15 +42,6 @@ plugins {
    id("com.android.library")
    kotlin("android")
    id("android-commons")
-   id("kotlin-parcelize")
-}
-
-android {
-   testOptions {
-      unitTests.all {
-         it.useJUnitPlatform()
-      }
-   }
 }
 
 mavenPublishing {
@@ -77,6 +71,21 @@ afterEvaluate {
    }
 }
 
+val runDebugTestsTask = tasks.register("runDebugTests")
+val runDebugDetektTask = tasks.register("runDebugDetekt")
+
+commonAndroidComponents {
+   onVariants { variant ->
+      if (variant.buildType == "debug") {
+         runDebugTestsTask.dependsOn(variant.computeTaskName("test", "UnitTest"))
+
+         runDebugDetektTask.dependsOn(variant.computeTaskName("detekt", "UnitTest"))
+         runDebugDetektTask.dependsOn(variant.computeTaskName("detekt", "AndroidTest"))
+         runDebugDetektTask.dependsOn("detekt${variant.name.replaceFirstChar { it.uppercaseChar() }}")
+      }
+   }
+}
+
 afterEvaluate {
    publishing {
       publications {
@@ -89,3 +98,5 @@ afterEvaluate {
       }
    }
 }
+
+setupJacocoMergingAndroid()

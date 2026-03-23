@@ -51,7 +51,7 @@ object LoadingCountingIdlingResource : IdlingResource {
       }
 
    override fun getDiagnosticMessageIfBusy(): String {
-      return "Resources ${flows.filter { it.value is Outcome.Progress<*> }.map { it.value }.toList()} are busy"
+      return "Resources ${flows.asSequence().filter { it.value is Outcome.Progress<*> }.map { it.value }.toList()} are busy"
    }
 }
 
@@ -60,6 +60,7 @@ object LoadingCountingIdlingResource : IdlingResource {
       "Use waitUntil instead. " +
       "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
 )
+@Suppress("DEPRECATION")
 class RegisteringCoroutineResourceManager(scope: CoroutineScope, reportService: ErrorReporter) :
    CoroutineResourceManager(scope, reportService) {
    override fun <T> launchResourceControlTask(
@@ -67,9 +68,10 @@ class RegisteringCoroutineResourceManager(scope: CoroutineScope, reportService: 
       currentValue: T?,
       context: CoroutineContext,
       keepDataOnExceptions: Boolean,
-      block: suspend ResourceControlBlock<T>.() -> Unit
+      block: suspend ResourceControlBlock<T>.() -> Unit,
    ) {
-      registerResource(resource)
+      // Use FQN so we can suppress deprecation
+      si.inova.kotlinova.compose.androidtest.idlingresource.LoadingCountingIdlingResource.registerResource(resource)
       super.launchResourceControlTask(resource, currentValue, context, keepDataOnExceptions, block)
    }
 }

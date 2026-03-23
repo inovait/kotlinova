@@ -52,20 +52,9 @@ jobs:
         run:
           ref=$(git rev-parse HEAD);echo "git_hash=$ref" > $GITHUB_OUTPUT
         working-directory: repo
-      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
-        with:
-          packages: 'tools platform-tools build-tools;36.1.0'
-
       - name: "Run instrumented tests on Firebase test lab"
         if: steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk') != ''
         run: |
-          set -x
-          tree artifacts/results/kotlinova/kotlinova/navigation
-          md5sum artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk
-          md5sum artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
-          $ANDROID_HOME/build-tools/36.1.0/apksigner verify --verbose --print-certs artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk
-          $ANDROID_HOME/build-tools/36.1.0/apksigner verify --verbose --print-certs artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
-        
           gcloud auth login --cred-file=test-lab-key.json
           gcloud config set project androidarchitectureplayground
           
@@ -117,6 +106,17 @@ jobs:
           check_run: 'true'
 
       # Compile the project if jacoco test exec is present, to generate classes for jacoco report
+      # Preparation
+      - name: Globally enable build cache and parallel execution
+        if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
+        run: |
+          mkdir -p ~/.gradle
+          
+          cat >> ~/.gradle/gradle.properties<< EOF
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx6G
+          EOF
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 #v5
         if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/core/build/jacoco/jvmTest.exec') != ''
         with:

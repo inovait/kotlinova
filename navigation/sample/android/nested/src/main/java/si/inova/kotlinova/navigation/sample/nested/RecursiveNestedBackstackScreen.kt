@@ -1,0 +1,62 @@
+/*
+ * Copyright 2026 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+ *  is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package si.inova.kotlinova.navigation.sample.nested
+
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import si.inova.kotlinova.navigation.backstack.Backstack
+import si.inova.kotlinova.navigation.di.MainNavigation
+import si.inova.kotlinova.navigation.di.NavigationInjection
+import si.inova.kotlinova.navigation.navigation3.BaseNestedBackstackScreen
+import si.inova.kotlinova.navigation.navigation3.BaseNestedNavigationScreenKey
+import si.inova.kotlinova.navigation.navigation3.NavDisplay
+import si.inova.kotlinova.navigation.navigation3.Navigation3EntryProvider
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
+import si.inova.kotlinova.navigation.services.CurrentScopeTag
+
+/**
+ * Override of the NestedNavigation3BackstackScreen that provides
+ * ViewModelStore decorator to the inner NavDisplay, allowing recursive nested navigation.
+ */
+@InjectNavigationScreen
+class RecursiveNestedBackstackScreen(
+   navigationStackComponentFactory: NavigationInjection.Factory,
+   @MainNavigation
+   private val mainBackstack: Backstack,
+   @CurrentScopeTag
+   scope: String,
+) : BaseNestedBackstackScreen<RecursiveNestedNavigationScreenKey>(navigationStackComponentFactory, mainBackstack, scope) {
+   @Composable
+   override fun NavDisplay(navigation3EntryProvider: Navigation3EntryProvider) {
+      navigation3EntryProvider.NavDisplay(
+         entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+         )
+      )
+   }
+}
+
+@Serializable
+data class RecursiveNestedNavigationScreenKey(
+   override val initialHistory: List<@Contextual ScreenKey>,
+   override val id: String = "SINGLE",
+) : BaseNestedNavigationScreenKey()

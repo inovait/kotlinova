@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,9 +23,10 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import kotlinx.coroutines.test.runTest
+import mockwebserver3.MockResponse
+import mockwebserver3.SocketEffect
 import okhttp3.Cache
-import okhttp3.mockwebserver.SocketPolicy
-import okio.Buffer
+import okhttp3.Headers.Companion.headersOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -35,9 +36,11 @@ import retrofit2.http.Header
 import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.outcome.CauseException
+import si.inova.kotlinova.retrofit.DefaultRetrofitCauseExceptionFactory
 import si.inova.kotlinova.retrofit.SyntheticHeaders
+import si.inova.kotlinova.retrofit.createJsonMockResponse
 import si.inova.kotlinova.retrofit.mockWebServer
-import si.inova.kotlinova.retrofit.setJsonBody
+import si.inova.kotlinova.retrofit.moshi.MoshiRetrofitCauseExceptionFactory
 import java.io.File
 import java.io.IOException
 
@@ -47,7 +50,7 @@ class SuspendCallAdapterFactoryTest {
    @BeforeEach
    internal fun setUp(
       @TempDir
-      cacheDirectory: File
+      cacheDirectory: File,
    ) {
       tempCache = Cache(cacheDirectory, 100_000)
    }
@@ -61,7 +64,7 @@ class SuspendCallAdapterFactoryTest {
          )
 
          mockResponse("/data") {
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"")
          }
 
          service.getEnumResult() shouldBe FakeEnumResult.FIRST
@@ -76,7 +79,9 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.NO_RESPONSE
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.Stall)
+               .build()
          }
 
          shouldThrow<NoNetworkException> {
@@ -91,7 +96,9 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.CloseStream())
+               .build()
          }
 
          shouldThrow<NoNetworkException> {
@@ -106,7 +113,7 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("{")
+            createJsonMockResponse("{")
          }
 
          shouldThrow<DataParsingException> {
@@ -121,7 +128,7 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("\"THIRD\"")
+            createJsonMockResponse("\"THIRD\"")
          }
 
          shouldThrow<DataParsingException> {
@@ -136,7 +143,7 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest)
 
          mockResponse("/data") {
-            setJsonBody("\"THIRD\"")
+            createJsonMockResponse("\"THIRD\"")
          }
 
          val exception = shouldThrow<DataParsingException> {
@@ -163,8 +170,7 @@ class SuspendCallAdapterFactoryTest {
             )
 
          mockResponse("/data") {
-            setStatus("HTTP/1.1 404 NOT FOUND")
-            setJsonBody("\"TEST ERROR MESSAGE\"")
+            createJsonMockResponse("\"TEST ERROR MESSAGE\"", code = 404)
          }
 
          val exception = shouldThrow<TestErrorResponseException> {
@@ -184,9 +190,7 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult()
@@ -203,15 +207,13 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult(force = true) shouldBe FakeEnumResult.SECOND
@@ -224,21 +226,19 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/data") {
-            setHeader("ETag", "a")
-            setHeader("Cache-Control", "max-age=100000")
-            setJsonBody("\"FIRST\"")
+            createJsonMockResponse("\"FIRST\"", headers = headersOf("ETag", "a", "Cache-Control", "max-age=100000"))
          }
 
          service.getEnumResult()
 
          mockResponse("/data") {
-            setJsonBody("\"SECOND\"")
+            createJsonMockResponse("\"SECOND\"")
          }
 
          service.getEnumResult(force = true) shouldBe FakeEnumResult.SECOND
 
-         server.takeRequest().getHeader(SyntheticHeaders.HEADER_FORCE_REFRESH).shouldBeNull()
-         server.takeRequest().getHeader(SyntheticHeaders.HEADER_FORCE_REFRESH).shouldBeNull()
+         server.takeRequest().headers[SyntheticHeaders.HEADER_FORCE_REFRESH].shouldBeNull()
+         server.takeRequest().headers[SyntheticHeaders.HEADER_FORCE_REFRESH].shouldBeNull()
       }
    }
 
@@ -248,8 +248,7 @@ class SuspendCallAdapterFactoryTest {
          val service: TestRetrofitService = createRetrofitService(this@runTest, cache = tempCache)
 
          mockResponse("/dataBlank") {
-            setResponseCode(204)
-            setBody(Buffer())
+            MockResponse(code = 204)
          }
 
          service.getUnitResult()
@@ -270,8 +269,11 @@ class SuspendCallAdapterFactoryTest {
             )
 
          mockResponse("/data") {
-            setStatus("HTTP/1.1 404 NOT FOUND")
-            setJsonBody("\"TEST ERROR MESSAGE\"")
+            MockResponse.Builder()
+               .status("HTTP/1.1 404 NOT FOUND")
+               .addHeader("Content-Type", "application/json")
+               .body("\"TEST ERROR MESSAGE\"")
+               .build()
          }
 
          val exception = shouldThrow<DataParsingException> {
@@ -297,19 +299,19 @@ class SuspendCallAdapterFactoryTest {
                   throw TestIOException()
                }
             },
-            exceptionInterceptor = {
-               if (it is TestIOException) {
-                  TestErrorResponseException(
-                     cause = it.cause
-                  )
+            causeExceptionFactory = { e, info ->
+               if (e is TestIOException) {
+                  TestErrorResponseException(cause = e.cause)
                } else {
-                  null
+                  MoshiRetrofitCauseExceptionFactory(DefaultRetrofitCauseExceptionFactory)(e, info)
                }
             }
          )
 
          mockResponse("/data") {
-            socketPolicy = SocketPolicy.NO_RESPONSE
+            MockResponse.Builder()
+               .onResponseStart(SocketEffect.Stall)
+               .build()
          }
 
          shouldThrow<TestErrorResponseException> {
@@ -322,19 +324,19 @@ class SuspendCallAdapterFactoryTest {
       @GET("/data")
       suspend fun getEnumResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
-         force: Boolean = false
+         force: Boolean = false,
       ): FakeEnumResult
 
       @GET("/dataBlank")
       suspend fun getUnitResult(
          @Header(SyntheticHeaders.HEADER_FORCE_REFRESH)
-         force: Boolean = false
+         force: Boolean = false,
       )
    }
 
    private enum class FakeEnumResult {
       FIRST,
-      SECOND
+      SECOND,
    }
 
    private class TestErrorResponseException(message: String? = null, cause: Throwable? = null) : CauseException(message, cause)

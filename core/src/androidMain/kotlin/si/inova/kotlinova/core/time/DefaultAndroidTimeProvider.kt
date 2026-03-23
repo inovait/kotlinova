@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,8 +23,9 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.time.Clock
 
-object DefaultAndroidTimeProvider : AndroidTimeProvider {
+object DefaultAndroidTimeProvider : AndroidTimeProvider, Clock by Clock.System {
    override fun currentTimeMillis(): Long {
       return System.currentTimeMillis()
    }
@@ -67,5 +68,9 @@ object DefaultAndroidTimeProvider : AndroidTimeProvider {
 
    override fun uptimeMillis(): Long {
       return SystemClock.uptimeMillis()
+   }
+
+   override fun now(): kotlin.time.Instant {
+      return super.now()
    }
 }

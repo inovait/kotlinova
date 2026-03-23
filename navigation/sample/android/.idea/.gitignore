@@ -1,0 +1,9 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/androidTestResultsUserPreferences.xml
+/deploymentTargetSelector.xml
+/other.xml
+/git_toolbox_blame.xml
+/ktlint-plugin.xml
+/runConfigurations.xml

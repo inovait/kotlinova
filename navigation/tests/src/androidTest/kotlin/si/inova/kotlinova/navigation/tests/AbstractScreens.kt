@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,17 +20,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import kotlinx.parcelize.Parcelize
+import dev.zacsweers.metro.Inject
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.di.ContributesScreenBinding
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
-import javax.inject.Inject
 
 class AbstractScreens {
    @get:Rule
@@ -64,37 +64,44 @@ class AbstractScreens {
       rule.onNodeWithText("Hello from Inner Screen").assertIsDisplayed()
    }
 
-   @Parcelize
-   object OuterScreenReferencingAbstractScreenKey : NoArgsScreenKey()
+   @Serializable
+   data object OuterScreenReferencingAbstractScreenKey : ScreenKey()
 
+   @Serializable
+   data object AbstractScreenKey : ScreenKey()
+
+   @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreen(
-      private val innerScreen: TestAbstractScreen
+      private val innerScreen: TestAbstractScreen,
    ) : Screen<OuterScreenReferencingAbstractScreenKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingAbstractScreenKey) {
          Column {
-            innerScreen.Content(key)
+            innerScreen.Content(AbstractScreenKey)
          }
       }
    }
 
-   abstract class TestAbstractScreen : Screen<ScreenKey>()
+   abstract class TestAbstractScreen : Screen<AbstractScreenKey>()
 
    @ContributesScreenBinding
-   class TestAbstractScreenImpl @Inject constructor() : TestAbstractScreen() {
+   @InjectNavigationScreen
+   @Inject
+   class TestAbstractScreenImpl : TestAbstractScreen() {
       @Composable
-      override fun Content(key: ScreenKey) {
+      override fun Content(key: AbstractScreenKey) {
          Column {
             Text("Hello from Inner Screen")
          }
       }
    }
 
-   @Parcelize
-   object OuterScreenReferencingAbstractScreenWithServiceKey : NoArgsScreenKey()
+   @Serializable
+   data object OuterScreenReferencingAbstractScreenWithServiceKey : ScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingAbstractScreenWithService(
-      private val innerScreen: TestAbstractScreenWithService
+      private val innerScreen: TestAbstractScreenWithService<ScreenKey>,
    ) : Screen<OuterScreenReferencingAbstractScreenWithServiceKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingAbstractScreenWithServiceKey) {
@@ -104,13 +111,16 @@ class AbstractScreens {
       }
    }
 
-   abstract class TestAbstractScreenWithService : Screen<ScreenKey>()
+   abstract class TestAbstractScreenWithService<K : ScreenKey> : Screen<K>()
 
    @ContributesScreenBinding
    @Suppress("unused")
-   class TestAbstractScreenWithServiceImpl @Inject constructor(
-      private val service: ServiceScopes.SharedService
-   ) : TestAbstractScreenWithService() {
+   @InjectNavigationScreen
+   @Inject
+   class TestAbstractScreenWithServiceImpl(
+      @Suppress("UnusedPrivateProperty") // Needed for DI
+      service: ServiceScopes.SharedService,
+   ) : TestAbstractScreenWithService<ScreenKey>() {
       @Composable
       override fun Content(key: ScreenKey) {
          Column {
@@ -119,11 +129,12 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
-   object OuterScreenReferencingGenericScreenKey : NoArgsScreenKey()
+   @Serializable
+   data object OuterScreenReferencingGenericScreenKey : ScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingGenericScreen(
-      private val innerScreen: Screen<InnerScreenKey>
+      private val innerScreen: Screen<InnerScreenKey>,
    ) : Screen<OuterScreenReferencingGenericScreenKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingGenericScreenKey) {
@@ -133,11 +144,12 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
-   object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : NoArgsScreenKey()
+   @Serializable
+   data object OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey : ScreenKey()
 
+   @InjectNavigationScreen
    class OuterScreenReferencingGenericScreenWithExplicitBoundType(
-      private val innerScreen: Screen<InnerScreenKeyWithExplicitBoundType>
+      private val innerScreen: Screen<InnerScreenKeyWithExplicitBoundType>,
    ) : Screen<OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey>() {
       @Composable
       override fun Content(key: OuterScreenReferencingGenericScreenWithExplicitBoundTypeKey) {
@@ -149,8 +161,11 @@ class AbstractScreens {
 
    @Suppress("unused")
    @ContributesScreenBinding
-   class TestAbstractScreenReferencingCustomKey @Inject constructor(
-      private val service: ServiceScopes.SharedService
+   @InjectNavigationScreen
+   @Inject
+   class TestAbstractScreenReferencingCustomKey(
+      @Suppress("UnusedPrivateProperty") // Needed for DI
+      private val service: ServiceScopes.SharedService,
    ) : Screen<InnerScreenKey>() {
       @Composable
       override fun Content(key: InnerScreenKey) {
@@ -160,13 +175,16 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
-   object InnerScreenKey : NoArgsScreenKey()
+   @Serializable
+   data object InnerScreenKey : ScreenKey()
 
    @Suppress("unused")
    @ContributesScreenBinding(boundType = Screen::class)
-   class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType @Inject constructor(
-      private val service: ServiceScopes.SharedService
+   @InjectNavigationScreen
+   @Inject
+   class TestAbstractScreenReferencingCustomKeyWithExplicitBoundType(
+      @Suppress("UnusedPrivateProperty") // Needed for DI
+      service: ServiceScopes.SharedService,
    ) : Screen<InnerScreenKeyWithExplicitBoundType>() {
       @Composable
       override fun Content(key: InnerScreenKeyWithExplicitBoundType) {
@@ -176,6 +194,6 @@ class AbstractScreens {
       }
    }
 
-   @Parcelize
-   object InnerScreenKeyWithExplicitBoundType : NoArgsScreenKey()
+   @Serializable
+   data object InnerScreenKeyWithExplicitBoundType : ScreenKey()
 }

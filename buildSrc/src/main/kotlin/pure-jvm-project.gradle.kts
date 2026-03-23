@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,9 +14,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.android.build.gradle.tasks.asJavaVersion
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
+import jacoco.setupJacocoMergingPureKotlin
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
@@ -42,12 +44,13 @@ plugins {
    id("java-library")
    id("org.jetbrains.kotlin.jvm")
    id("standard-config")
+   jacoco
 }
 
 mavenPublishing {
    configure(
       KotlinJvm(
-         javadocJar = JavadocJar.Dokka("dokkaJavadoc"),
+         javadocJar = JavadocJar.Dokka("dokkaGenerateHtml"),
          sourcesJar = true,
       )
    )
@@ -55,7 +58,18 @@ mavenPublishing {
 
 tasks.test {
    useJUnitPlatform()
+
+   // Better test output
+   systemProperty("kotest.assertions.collection.print.size", "300")
+   systemProperty("kotest.assertions.collection.enumerate.size", "300")
 }
+
+val runDebugTestsTask = tasks.register("runDebugTests")
+runDebugTestsTask.dependsOn(tasks.test)
+
+val runDebugDetektTask = tasks.register("runDebugDetekt")
+runDebugDetektTask.dependsOn("detektMain")
+runDebugDetektTask.dependsOn("detektTest")
 
 java {
    // Ensure that target compatiblity is equal to kotlin's jvmToolchain
@@ -64,3 +78,10 @@ java {
    sourceCompatibility = javaVersion
    targetCompatibility = javaVersion
 }
+
+jacoco {
+   val libs = the<LibrariesForLibs>()
+   toolVersion = libs.versions.jacoco.get()
+}
+
+setupJacocoMergingPureKotlin()

@@ -23,7 +23,7 @@ import org.gradle.api.tasks.TaskProvider
 
 internal fun Project.registerAndroidLintSarifMerging(
    localSarifMergeTask: TaskProvider<SarifMergeTask>,
-   sarifFiles: ConfigurableFileCollection
+   sarifFiles: ConfigurableFileCollection,
 ) {
    tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
       if (lintTask.name.contains("Baseline") || lintTask.name.startsWith("lintVital")) {

@@ -16,13 +16,16 @@
 
 package si.inova.kotlinova.core.math
 
+import kotlin.math.acos
+import kotlin.math.sqrt
+
 /**
  * Structure that represents 3D vector
  */
 data class Vector3(val x: Double, val y: Double, val z: Double)
 
 fun Vector3.magnitude(): Double {
-   return Math.sqrt(x * x + y * y + z * z)
+   return sqrt(x * x + y * y + z * z)
 }
 
 fun Vector3.normalize(): Vector3 {
@@ -51,7 +54,7 @@ fun Vector3.angleBetweenVectors(vec2: Vector3): Double {
 
    val cosAlpha = this.scalarProduct(vec2) / (magA * magB)
 
-   return Math.acos(cosAlpha)
+   return acos(cosAlpha)
 }
 
 internal fun Vector3.projectOntoPlane(planeNormal: Vector3): Vector3 {

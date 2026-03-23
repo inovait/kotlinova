@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,15 +17,16 @@
 import util.publishLibrary
 
 plugins {
-   androidLibraryModule
-   id("kotlin-parcelize")
-   id("kotlin-kapt")
+   fullMultiplatformModule
+   id("kotlinx-serialization")
    id("org.jetbrains.kotlin.plugin.compose")
+   alias(libs.plugins.metro)
+   unmock
 }
 
 publishLibrary(
    userFriendlyName = "Navigation",
-   description = "Anvil-based navigation system",
+   description = "Metro-based navigation system",
    githubPath = "navigation"
 )
 
@@ -33,33 +34,41 @@ android {
    namespace = "si.inova.kotlinova.navigation"
 }
 
+kotlin {
+   sourceSets {
+      androidMain {
+         dependencies {
+            api(libs.androidx.activity.compose)
+            implementation(libs.androidx.core)
+         }
+      }
+      commonMain {
+         dependencies {
+            api(libs.androidx.savedState)
+
+            implementation(libs.composeMultiplatform.animation)
+            implementation(libs.composeMultiplatform.ui)
+            implementation(libs.composeMultiplatform.material3)
+            implementation(libs.androidx.lifecycle.viewModel.compose)
+            implementation(libs.kotlin.serialization)
+         }
+      }
+
+      androidUnitTest {
+         dependencies {
+            implementation(projects.navigation.navigationTest)
+            implementation(libs.turbine)
+            implementation(libs.kotlin.coroutines.test)
+            implementation(libs.kotest.assertions)
+            implementation(libs.junit5.api)
+            runtimeOnly(libs.junit5.engine)
+            runtimeOnly(libs.junit5.launcher)
+         }
+      }
+   }
+}
+
 dependencies {
-   api(libs.simpleStack)
-   api(libs.dagger.runtime) // This needs to be API to ensure generated files compile
-   api(libs.androidx.activity.compose)
-
-   implementation(projects.kotlinova.core)
-
-   implementation(libs.androidx.core)
-   implementation(libs.androidx.compose.animation)
-   implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.ui.util)
-   implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.compose)
-   implementation(libs.androidx.lifecycle.viewModel.compose)
-
-   anvil(projects.navigation.navigationCompiler)
-
-   debugImplementation(libs.androidx.compose.ui.tooling)
-   debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-   testImplementation(projects.navigation.navigationTest)
-   testImplementation(libs.turbine)
-   testImplementation(libs.kotlin.coroutines.test)
-   testImplementation(libs.kotest.assertions)
-   testImplementation(libs.junit5.api)
-   testRuntimeOnly(libs.junit5.engine)
-   testRuntimeOnly(libs.junit5.launcher)
+   add("detektPlugins", projects.navigation.navigationDetekt)
+   add("detektPlugins", libs.detekt.compose)
 }

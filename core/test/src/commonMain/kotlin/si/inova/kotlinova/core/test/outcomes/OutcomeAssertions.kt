@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -19,7 +19,6 @@ package si.inova.kotlinova.core.test.outcomes
 import io.kotest.assertions.Actual
 import io.kotest.assertions.Expected
 import io.kotest.assertions.assertSoftly
-import io.kotest.assertions.intellijFormattedComparison
 import io.kotest.assertions.print.Printed
 import io.kotest.assertions.withClue
 import io.kotest.matchers.Matcher
@@ -30,6 +29,7 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import si.inova.kotlinova.core.outcome.CauseException
 import si.inova.kotlinova.core.outcome.LoadingStyle
 import si.inova.kotlinova.core.outcome.Outcome
+import kotlin.reflect.KClass
 
 infix fun <T> Outcome<T>.shouldBeSuccessWithData(expectedData: T) {
    assertSoftly {
@@ -68,7 +68,7 @@ infix fun <T> Outcome<T>.shouldBeProgressWithData(expectedData: T?) {
 fun <T> Outcome<T>.shouldBeProgressWith(
    expectedData: T? = data,
    expectedProgress: Float? = null,
-   expectedStyle: LoadingStyle? = null
+   expectedStyle: LoadingStyle? = null,
 ) {
    assertSoftly {
       this should beInstanceOfOutcome<Outcome.Progress<T>>()
@@ -106,10 +106,11 @@ fun <T> Outcome<T>.shouldBeProgressWith(
    }
 }
 
+@Suppress("CognitiveComplexMethod") // Just a bunch of successive type checks
 fun <T> Outcome<T>.shouldBeErrorWith(
    expectedData: T? = data,
-   exceptionType: Class<out CauseException>? = null,
-   exceptionMessage: String? = null
+   exceptionType: KClass<out CauseException>? = null,
+   exceptionMessage: String? = null,
 ): Exception {
    lateinit var returnException: Exception
 
@@ -140,11 +141,11 @@ fun <T> Outcome<T>.shouldBeErrorWith(
             }
 
             if (exceptionType != null) {
-               javaClass
+               this::class
                   .let {
-                     if (exception.javaClass != exceptionType) {
-                        val expected = Expected(Printed(exceptionType.name))
-                        val actual = Actual(Printed(it.name))
+                     if (exception::class != exceptionType) {
+                        val expected = Expected(Printed(exceptionType.simpleName.orEmpty()))
+                        val actual = Actual(Printed(it.simpleName.orEmpty()))
                         throw AssertionError("Exception type: ${intellijFormattedComparison(expected, actual)}", exception)
                      }
                   }
@@ -161,13 +162,33 @@ private inline fun <reified T : Outcome<*>> beInstanceOfOutcome() = object : Mat
          value is T,
          {
             if (value is Outcome.Error) {
-               "Outcome should be a ${T::class.simpleName} but was an Outcome.Error " +
+               "Outcome should be a ${T::class.simpleName ?: "NULL"} but was an Outcome.Error " +
                   "with exception ${value.exception.stackTraceToString()}"
             } else {
-               "Outcome should be a ${T::class.simpleName} but was a ${value.javaClass.simpleName}."
+               "Outcome should be a ${T::class.simpleName ?: "NULL"} but was a ${value::class.simpleName.orEmpty()}."
             }
          },
-         { "Outcome should not be a ${T::class.simpleName} but it was." }
+         { "Outcome should not be a ${T::class.simpleName ?: "NULL"} but it was." }
       )
    }
+}
+
+// Copied from https://github.com/kotest/kotest/blob/04f888183b35a3c834000efc673c9410b2d39c87/kotest-assertions/kotest-assertions-shared/src/jvmMain/kotlin/io/kotest/assertions/AssertionErrorBuilder.jvm.kt#L59
+private fun intellijFormattedComparison(expected: Expected, actual: Actual): String {
+   // only include types if they are different and neither is null
+   val includeTypes = when {
+      expected.value.type == null || actual.value.type == null -> false
+      expected.value.type != actual.value.type -> true
+      else -> false
+   }
+
+   fun format(printed: Printed): String {
+      val qualifiedName = printed.type?.qualifiedName
+      return if (includeTypes && qualifiedName != null) {
+         "$qualifiedName<${printed.value}>"
+      } else {
+         "<${printed.value}>"
+      }
+   }
+   return "expected:${format(expected.value)} but was:${format(actual.value)}"
 }

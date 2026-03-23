@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   fullMultiplatformModule
 }
 
 android {
@@ -39,12 +39,16 @@ kotlin {
             implementation(libs.kotlin.coroutines.test)
             implementation(libs.kotest.assertions)
             implementation(libs.turbine)
-            implementation(libs.dispatch)
          }
       }
       val androidMain by getting {
          dependencies {
             implementation(libs.androidx.core)
+         }
+      }
+      val jvmCommon by getting {
+         dependencies {
+            implementation(libs.dispatch)
          }
       }
    }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,6 +21,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import kotlinx.coroutines.CompletableDeferred
@@ -41,7 +42,11 @@ import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWithData
 internal class CoroutineResourceManagerTest {
    private val reportedErrors = ArrayList<Throwable>()
    private val scope = TestScope()
-   private val manager = CoroutineResourceManager(scope.backgroundScope) { reportedErrors += it }
+   private val manager = CoroutineResourceManager(
+      scope = scope.backgroundScope,
+      reportService = { reportedErrors += it },
+      tag = "TestManager",
+   )
 
    @Test
    internal fun `Launch job`() = scope.runTest {
@@ -281,7 +286,7 @@ internal class CoroutineResourceManagerTest {
 
       runCurrent()
 
-      resource.value.shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+      resource.value.shouldBeErrorWith(exceptionType = NoNetworkException::class)
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
    }
 
@@ -304,7 +309,38 @@ internal class CoroutineResourceManagerTest {
             it.cause shouldBeSameInstanceAs exception
          }
 
-      reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<IndexOutOfBoundsException>()
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause.shouldBeInstanceOf<IndexOutOfBoundsException>()
+         it.message.shouldContain("TestManager")
+      }
+   }
+
+   @Test
+   internal fun `launchResourceControlTask should keep catch and report unknown errors inside block`() = scope.runTest {
+      val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
+
+      val error = StackOverflowError()
+
+      manager.launchResourceControlTask(resource) {
+         throw error
+      }
+
+      runCurrent()
+
+      val value = resource.value
+      value.shouldBeInstanceOf<Outcome.Error<*>>()
+         .exception.let {
+            it.shouldBeInstanceOf<UnknownCauseException>()
+            it.cause shouldBeSameInstanceAs error
+            it.message.shouldContain("TestManager")
+         }
+
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause shouldBeSameInstanceAs error
+         it.message.shouldContain("TestManager")
+      }
    }
 
    @Test
@@ -384,7 +420,7 @@ internal class CoroutineResourceManagerTest {
 
       resource.value.shouldBeErrorWith(
          expectedData = 18,
-         exceptionType = NoNetworkException::class.java,
+         exceptionType = NoNetworkException::class,
       )
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
    }
@@ -402,7 +438,7 @@ internal class CoroutineResourceManagerTest {
 
       resource.value.shouldBeErrorWith(
          expectedData = null,
-         exceptionType = NoNetworkException::class.java,
+         exceptionType = NoNetworkException::class,
       )
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
    }
@@ -416,5 +452,30 @@ internal class CoroutineResourceManagerTest {
       runCurrent()
 
       reportedErrors.shouldHaveSize(1).first().shouldBeInstanceOf<NoNetworkException>()
+   }
+
+   @Test
+   internal fun `launchWithExceptionReporting report errors that occur inside block`() = scope.runTest {
+      manager.launchWithExceptionReporting {
+         throw StackOverflowError()
+      }
+
+      runCurrent()
+
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause.shouldBeInstanceOf<StackOverflowError>()
+      }
+   }
+
+   @Test
+   internal fun `launchWithExceptionReporting should include tag with reported non-cause exceptions`() = scope.runTest {
+      manager.launchWithExceptionReporting {
+         throw IllegalStateException()
+      }
+
+      runCurrent()
+
+      reportedErrors.shouldHaveSize(1).first().message.shouldContain("TestManager")
    }
 }

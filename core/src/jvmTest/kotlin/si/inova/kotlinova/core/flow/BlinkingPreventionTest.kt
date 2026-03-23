@@ -150,7 +150,7 @@ internal class BlinkingPreventionTest {
 
          source.value = Outcome.Error(NoNetworkException(), data = 3)
          runCurrent()
-         awaitItem().shouldNotBeNull().shouldBeErrorWith(expectedData = 3, exceptionType = NoNetworkException::class.java)
+         awaitItem().shouldNotBeNull().shouldBeErrorWith(expectedData = 3, exceptionType = NoNetworkException::class)
       }
    }
 
@@ -220,7 +220,7 @@ internal class BlinkingPreventionTest {
 
          advanceTimeBy(400)
          runCurrent()
-         awaitItem().shouldNotBeNull().shouldBeErrorWith(expectedData = 2, exceptionType = NoNetworkException::class.java)
+         awaitItem().shouldNotBeNull().shouldBeErrorWith(expectedData = 2, exceptionType = NoNetworkException::class)
       }
    }
 
@@ -262,7 +262,7 @@ internal class BlinkingPreventionTest {
          advanceTimeBy(1000)
          source.value = Outcome.Error(NoNetworkException())
          runCurrent()
-         awaitItem().shouldNotBeNull().shouldBeErrorWith(exceptionType = NoNetworkException::class.java)
+         awaitItem().shouldNotBeNull().shouldBeErrorWith(exceptionType = NoNetworkException::class)
       }
    }
 }

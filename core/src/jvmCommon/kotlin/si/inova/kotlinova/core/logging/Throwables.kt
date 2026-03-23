@@ -30,6 +30,7 @@ import java.io.StringWriter
  * From https://github.com/square/logcat/blob/f877f806e8dce98a3abbc2ca80e6447b38cd8f42/logcat/src/main/java/logcat/Throwables.kt
  */
 @Deprecated("Upstream logcat now supports KMP. Use that instead", replaceWith = ReplaceWith("this.asLog()", "logcat.asLog"))
+@Suppress("MissingUseCall") // Copy from the library
 actual fun Throwable.asLog(): String {
    val stringWriter = StringWriter(DEFAULT_WRITER_SIZE)
    val printWriter = PrintWriter(stringWriter, false)

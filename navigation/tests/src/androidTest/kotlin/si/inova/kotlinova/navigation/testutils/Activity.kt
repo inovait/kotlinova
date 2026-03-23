@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,10 +21,19 @@ import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStore
 
+/**
+ * Remove backstack from memory without calling onCleared() on its entries
+ */
 @Suppress("UNCHECKED_CAST")
 fun ComposeTestRule.removeBackstackFromMemory() {
    val vmStore = (this as AndroidComposeTestRule<*, *>).activity.viewModelStore
    val map: MutableMap<String, ViewModel> = ViewModelStore::class.java.getDeclaredField("map").also { it.isAccessible = true }
       .get(vmStore) as MutableMap<String, ViewModel>
-   map.remove("androidx.lifecycle.ViewModelProvider.DefaultKey:com.zhuinden.simplestack.navigator.BackstackHolderViewModel")
+   map.remove("androidx.lifecycle.ViewModelProvider.DefaultKey:si.inova.kotlinova.navigation.backstack.BackstackHolderViewModel")
+}
+
+@Suppress("UNCHECKED_CAST")
+fun ComposeTestRule.clearBackstackFromMemory() {
+   val vmStore = (this as AndroidComposeTestRule<*, *>).activity.viewModelStore
+   vmStore.clear()
 }

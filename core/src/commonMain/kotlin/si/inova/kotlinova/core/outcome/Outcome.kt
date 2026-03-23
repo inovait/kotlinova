@@ -17,9 +17,6 @@
 package si.inova.kotlinova.core.outcome
 
 import androidx.compose.runtime.Immutable
-import si.inova.kotlinova.core.outcome.Outcome.Error
-import si.inova.kotlinova.core.outcome.Outcome.Progress
-import si.inova.kotlinova.core.outcome.Outcome.Success
 
 /**
  * Standard wrapper for an operation. It can be either [Progress], [Success] or [Error].
@@ -32,7 +29,7 @@ sealed class Outcome<out T> {
    data class Progress<out T>(
       override val data: T? = null,
       val progress: Float? = null,
-      val style: LoadingStyle = LoadingStyle.NORMAL
+      val style: LoadingStyle = LoadingStyle.NORMAL,
    ) : Outcome<T>()
 
    @Immutable
@@ -45,5 +42,5 @@ sealed class Outcome<out T> {
 enum class LoadingStyle {
    NORMAL,
    ADDITIONAL_DATA,
-   USER_REQUESTED_REFRESH
+   USER_REQUESTED_REFRESH,
 }

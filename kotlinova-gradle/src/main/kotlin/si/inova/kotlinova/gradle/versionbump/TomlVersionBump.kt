@@ -69,7 +69,7 @@ open class UpdateTomlLibs : DefaultTask() {
       }
 
       if (targetBumps.isEmpty()) {
-         println("Nothing to update")
+         logger.warn("Nothing to update")
          return
       }
 
@@ -78,7 +78,7 @@ open class UpdateTomlLibs : DefaultTask() {
          val currentVersion = libsToml.get("versions.${bump.key}") as? String?
             ?: error("Missing ${bump.key} in the toml file. Is the toml file valid?")
 
-         println("Bumping ${bump.key} from $currentVersion to ${bump.value}")
+         logger.warn("Bumping ${bump.key} from $currentVersion to ${bump.value}")
 
          updatedText = updatedText.replace("${bump.key} = \"$currentVersion\"", "${bump.key} = \"${bump.value}\"")
       }
@@ -121,7 +121,7 @@ open class UpdateTomlLibs : DefaultTask() {
       }
 
       for (failedUpdate in failedUpdates) {
-         println(
+         logger.warn(
             "WARNING: Failed to check for updates for '$failedUpdate'. " +
                "Please check and update manually. See dependencyUpdates output for more info."
          )

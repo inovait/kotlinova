@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -28,22 +28,22 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setContainerAvailable
 import androidx.lifecycle.withStarted
-import com.zhuinden.simplestack.ScopedServices
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import si.inova.kotlinova.navigation.fragment.util.requireActivity
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import java.lang.ref.WeakReference
-import javax.inject.Inject
 import kotlin.random.Random
 
 /**
  * A navigation screen that displays a fragment
  */
 abstract class FragmentScreen<K>(
-   private val scopeExitListener: ScopeExitListener
+   private val scopeExitListener: ScopeExitListener,
 ) : Screen<K>() where K : FragmentScreenKey, K : ScreenKey {
    @OptIn(ExperimentalCoroutinesApi::class)
    @Composable
@@ -84,7 +84,7 @@ abstract class FragmentScreen<K>(
                      .commitNow()
                }
 
-               scopeExitListener.fragments[key.javaClass] = WeakReference(fragmentManager to currentFragment)
+               scopeExitListener.fragments[key.javaClass] = fragmentManager to WeakReference(currentFragment)
 
                if (currentFragment.isDetached) {
                   fragmentManager
@@ -121,19 +121,23 @@ abstract class FragmentScreen<K>(
    abstract fun createFragment(key: K, fragmentManager: FragmentManager): Fragment
 }
 
-class ScopeExitListener @Inject constructor() : ScopedServices.Registered, ScopedService {
-   val fragments = HashMap<Class<ScreenKey>, WeakReference<Pair<FragmentManager, Fragment>>>()
+@ContributesScopedService
+@Inject
+class ScopeExitListener : ScopedService.Registered, ScopedService {
+   val fragments = HashMap<Class<ScreenKey>, Pair<FragmentManager, WeakReference<Fragment>>>()
 
    override fun onServiceRegistered() {}
 
    override fun onServiceUnregistered() {
-      fragments.values.mapNotNull { it.get() }.forEach { (fragmentManager, fragment) ->
-         if (!fragment.isStateSaved) {
-            fragmentManager.beginTransaction()
-               .remove(fragment)
-               .commit()
+      fragments.values
+         .mapNotNull { (fragmentManager, weakFragment) -> weakFragment.get()?.let { fragmentManager to it } }
+         .forEach { (fragmentManager, fragment) ->
+            if (!fragment.isStateSaved) {
+               fragmentManager.beginTransaction()
+                  .remove(fragment)
+                  .commit()
+            }
          }
-      }
    }
 }
 

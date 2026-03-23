@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -23,12 +23,9 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
    repositories {
       google()
       mavenCentral()
-      maven("https://jitpack.io")
    }
 
    versionCatalogs {
@@ -51,9 +48,12 @@ include(":compose:compose-android-test")
 includeBuild("kotlinova-gradle") // Include kotlinova gradle build to allow common maven publishing and checking
 include(":navigation")
 include(":navigation:navigation-compiler")
+include(":navigation:navigation-deeplink")
 include(":navigation:navigation-detekt")
 include(":navigation:navigation-fragment")
+include(":navigation:navigation-navigation3")
 include(":navigation:navigation-test")
 include(":navigation:tests")
 include(":retrofit")
+include(":retrofit:retrofit-moshi")
 include(":retrofit:retrofit-test")

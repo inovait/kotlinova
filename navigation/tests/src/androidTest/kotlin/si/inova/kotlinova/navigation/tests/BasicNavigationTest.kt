@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,16 +21,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
 import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
@@ -62,10 +63,12 @@ class BasicNavigationTest {
       rule.onNodeWithText("Hello").assertIsDisplayed()
    }
 
-   @Parcelize
+   @Serializable
    data class TestScreenAKey(val text: String) : ScreenKey()
+
+   @InjectNavigationScreen
    class TestScreenA(
-      private val navigator: Navigator
+      private val navigator: Navigator,
    ) : Screen<TestScreenAKey>() {
       @Composable
       override fun Content(key: TestScreenAKey) {
@@ -78,10 +81,12 @@ class BasicNavigationTest {
       }
    }
 
-   @Parcelize
+   @Serializable
    data class TestScreenBKey(val text: String) : ScreenKey()
+
+   @InjectNavigationScreen
    class TestScreenB(
-      private val navigator: Navigator
+      private val navigator: Navigator,
    ) : Screen<TestScreenBKey>() {
       @Composable
       override fun Content(key: TestScreenBKey) {

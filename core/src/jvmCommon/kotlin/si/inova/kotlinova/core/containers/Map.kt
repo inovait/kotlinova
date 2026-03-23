@@ -21,6 +21,7 @@ package si.inova.kotlinova.core.containers
 /**
  * Method that puts value into map only if said value is not *null*.
  */
+@Suppress("CanBeNonNullable") // Whole point of this function is the null check
 fun <K, V> MutableMap<K, V>.putIfNotNull(key: K, value: V?) {
    if (value != null) {
       put(key, value)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -109,7 +109,7 @@ fun <A, B> Flow<Outcome<A>>.flatMapLatestOutcome(mapper: (A) -> Flow<Outcome<B>>
  * * Otherwise, [Outcome.Success] is returned, with the data of [this].
  */
 fun <T> Outcome<T>.downgradeTo(
-   targetType: Outcome<*>
+   targetType: Outcome<*>,
 ): Outcome<T> {
    return when {
       this is Outcome.Error -> this

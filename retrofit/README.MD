@@ -4,6 +4,7 @@ Direct gradle usage:
 
 ```kotlin
 implementation("si.inova.kotlinova:retrofit:X.Y.Z")
+testImplementation("si.inova.kotlinova:retrofit-moshi:X.Y.Z")
 testImplementation("si.inova.kotlinova:retrofit-test:X.Y.Z")
 ```
 
@@ -17,11 +18,13 @@ kotlinova = "X.Y.Z"
 ```toml
 [libraries]
 kotlinova-retrofit = { module = "si.inova.kotlinova:retrofit", version.ref = "kotlinova" }
+kotlinova-retrofit-moshi = { module = "si.inova.kotlinova:retrofit-moshi", version.ref = "kotlinova" }
 kotlinova-retrofit-test = { module = "si.inova.kotlinova:retrofit-test", version.ref = "kotlinova" }
 ```
 
 ```kotlin
 implementation(libs.kotlinova.retrofit)
+implementation(libs.kotlinova.retrofit.moshi)
 testImplementation(libs.kotlinova.retrofit.test)
 ```
 
@@ -30,7 +33,8 @@ version.
 
 # Features
 
-Library is a collection of utilities for [Retrofit](https://square.github.io/retrofit/). Notable features include:
+Library is a collection of utilities for network and http fetching. While the library is named `Retrofit` for
+historical reasons, it does not necessarily require the use of Retrofit. Notable features include:
 
 ## Call Adapters
 
@@ -169,8 +173,8 @@ A builder that allows you to easily create OKHttp mock server and perform servic
 @Test
 fun `A MockWebServer test`() {
    mockWebServer {
-      mockJsonResponse("/data") {
-         setJsonBody("""{"key": "value"}""")
+      mockResponse("/data") {
+         createJsonMockResponse("""{"key": "value"}""")
       }
 
       val service: TestRetrofitService = createRetrofitService(this.baseUrl)
@@ -188,8 +192,8 @@ val serverScope = MockWebServerScope()
 @Test
 fun `A MockWebServer test`() {
    serverScope.runServer {
-      mockJsonResponse("/data") {
-         setJsonBody("""{"key": "value"}""")
+      mockResponse("/data", ) {
+         createJsonMockResponse("""{"key": "value"}""")
       }
 
       val service: TestRetrofitService = createRetrofitService(this.baseUrl)

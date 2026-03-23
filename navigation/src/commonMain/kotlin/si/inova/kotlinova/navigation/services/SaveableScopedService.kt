@@ -1,0 +1,237 @@
+/*
+ * Copyright 2026 INOVA IT d.o.o.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software
+ *  is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ *   BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package si.inova.kotlinova.navigation.services
+
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
+import androidx.savedstate.savedState
+import androidx.savedstate.write
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.modules.SerializersModule
+import si.inova.kotlinova.navigation.serialization.defaultNavigationSerializersModule
+import si.inova.kotlinova.navigation.util.get
+import si.inova.kotlinova.navigation.util.put
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
+
+/**
+ * Scoped service that can save its state and gets recreated after process kill.
+ * To use, create properties using "by saved" delegation. For example:
+ *
+ * ```
+ * class MyService: SaveableScopedService() {
+ *   val savedNumber by saved(10)
+ * }
+ * ```
+ *
+ * @param [coroutineScope] See documentation for [CoroutineScopedService]
+ * @param [serializersModule] Serializers module used to serialize any Serializable types into the state
+ */
+abstract class SaveableScopedService(
+   coroutineScope: CoroutineScope,
+   private val serializersModule: SerializersModule = defaultNavigationSerializersModule,
+) : CoroutineScopedService(coroutineScope), ScopedService.Saveable {
+   protected var savedState = savedState()
+
+   /**
+    * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> saved(
+      defaultValue: () -> T,
+   ): ReadWriteProperty<SaveableScopedService, T> {
+      return saved(null, defaultValue)
+   }
+
+   /**
+    * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> saved(
+      serializer: KSerializer<T>? = null,
+      defaultValue: () -> T,
+   ): ReadWriteProperty<SaveableScopedService, T> {
+      return StateSavedProperty(defaultValue, serializer)
+   }
+
+   /**
+    * Flow of a property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> savedFlow(
+      defaultValue: () -> T,
+   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
+      return savedFlow(null, defaultValue)
+   }
+
+   /**
+    * Flow of a property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    */
+   fun <T> savedFlow(
+      serializer: KSerializer<T>? = null,
+      defaultValue: () -> T,
+   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
+      return StateSavedFlowProperty(defaultValue, serializer)
+   }
+
+   /**
+    * Property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
+    */
+   fun <T> saved(
+      defaultValue: T,
+      serializer: KSerializer<T>? = null,
+   ): ReadWriteProperty<SaveableScopedService, T> = saved(serializer) { defaultValue }
+
+   /**
+    * Flow of a property that gets automatically saved and restored when this ScopedService gets recreated after a process kill.
+    *
+    * @param defaultValue Default value that property has. This value is only saved on the first read.
+    * @param serializer If [T] is serializable, you need to provide a serializer for it here.
+    */
+   fun <T> savedFlow(
+      defaultValue: T,
+      serializer: KSerializer<T>? = null,
+   ): ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> = savedFlow(serializer) { defaultValue }
+
+   override fun saveState(): SavedState {
+      return savedState
+   }
+
+   override fun restoreState(savedState: SavedState) {
+      this.savedState = savedState
+   }
+
+   private class StateSavedProperty<T>(
+      private val defaultValue: () -> T,
+      private val serializer: KSerializer<T>? = null,
+   ) : ReadWriteProperty<SaveableScopedService, T> {
+      var value: T? = null
+      var initialized = false
+
+      @Suppress("UNCHECKED_CAST")
+      override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): T {
+         if (!initialized) {
+            thisRef.savedState.read {
+               if (contains(property.name)) {
+                  value = if (isNull(property.name)) {
+                     null
+                  } else {
+                     @Suppress("DEPRECATION")
+                     thisRef.savedState.get(serializer, thisRef.serializersModule, property.name) as T
+                  }
+               } else {
+                  val default = defaultValue()
+                  value = default
+                  save(default, thisRef, property)
+               }
+
+               initialized = true
+            }
+         }
+
+         return value as T
+      }
+
+      override fun setValue(thisRef: SaveableScopedService, property: KProperty<*>, value: T) {
+         initialized = true
+         this.value = value
+
+         save(value, thisRef, property)
+      }
+
+      private fun save(
+         value: T,
+         thisRef: SaveableScopedService,
+         property: KProperty<*>,
+      ) {
+         thisRef.savedState.write {
+            this.put(serializer, thisRef.serializersModule, property.name, value)
+         }
+      }
+   }
+
+   private class StateSavedFlowProperty<T>(
+      private val defaultValue: () -> T,
+      private val serializer: KSerializer<T>? = null,
+   ) : ReadOnlyProperty<SaveableScopedService, MutableStateFlow<T>> {
+      var flow: MutableStateFlow<T>? = null
+
+      override fun getValue(thisRef: SaveableScopedService, property: KProperty<*>): MutableStateFlow<T> {
+         val existingFlow = flow
+         if (existingFlow != null) {
+            return existingFlow
+         }
+
+         @Suppress("UNCHECKED_CAST")
+         val initialValue = thisRef.savedState.read {
+            if (contains(property.name)) {
+               if (isNull(property.name)) {
+                  null as T
+               } else {
+                  @Suppress("DEPRECATION")
+                  thisRef.savedState.get(
+                     serializer,
+                     thisRef.serializersModule,
+                     property.name
+                  ) as T
+               }
+            } else {
+               defaultValue()
+            }
+         }
+
+         val newFlow = MutableStateFlow<T>(initialValue)
+         newFlow.startObserving(thisRef, property)
+
+         this.flow = newFlow
+         return newFlow
+      }
+
+      private fun StateFlow<T>.startObserving(
+         thisRef: SaveableScopedService,
+         property: KProperty<*>,
+      ) {
+         thisRef.coroutineScope.launch {
+            collect { value ->
+               thisRef.savedState.write {
+                  this.put(
+                     serializer,
+                     thisRef.serializersModule,
+                     property.name,
+                     value
+                  )
+               }
+            }
+         }
+      }
+   }
+}

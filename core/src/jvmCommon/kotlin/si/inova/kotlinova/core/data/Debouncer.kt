@@ -46,8 +46,10 @@ class Debouncer(
       previousJob?.cancel()
 
       previousJob = scope.launch(targetContext) {
-         if (!triggerFirstImmediately || (lastStart != 0L &&
-               (timeProvider.currentTimeMillis() - lastStart) < debouncingTimeMs)
+         if (!triggerFirstImmediately || (
+               lastStart != 0L &&
+                  (timeProvider.currentTimeMillis() - lastStart) < debouncingTimeMs
+               )
          ) {
             delay(debouncingTimeMs)
          }

@@ -42,7 +42,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun <T> Flow<Outcome<T>>.withBlinkingPrevention(
    waitThisLongToShowLoadingMs: Long = 100,
    keepLoadingActiveForAtLeastMs: Long = 500,
-   doNotWaitForInterimLoadings: Boolean = false
+   doNotWaitForInterimLoadings: Boolean = false,
 ): Flow<Outcome<T>> {
    return BlinkingPrevention(
       this,
@@ -56,7 +56,7 @@ private class BlinkingPrevention<T>(
    private val upstream: Flow<Outcome<T>>,
    private val waitThisLongToShowLoadingMs: Long = 100,
    private val keepLoadingActiveForAtLeastMs: Long = 500,
-   private val doNotWaitForInterimLoadings: Boolean = false
+   private val doNotWaitForInterimLoadings: Boolean = false,
 ) : Flow<Outcome<T>> {
    var waitingToSeeIfLoadingJustFlashes = false
    var waitingForProlongedLoadingToFinish = false
@@ -66,6 +66,7 @@ private class BlinkingPrevention<T>(
    var gotSuccessDuringLoading = false
    var gotAtLeastOneSuccess = false
 
+   @Suppress("CognitiveComplexMethod") // Splitting this would make it even worse
    override suspend fun collect(collector: FlowCollector<Outcome<T>>) {
       flow {
          coroutineScope {
@@ -130,7 +131,7 @@ private class BlinkingPrevention<T>(
 
    private fun continueAfterLoadingFinishes(
       selectBuilder: SelectBuilder<Unit>,
-      flowCollector: FlowCollector<Outcome<T>>
+      flowCollector: FlowCollector<Outcome<T>>,
    ) {
       selectBuilder.onTimeout(keepLoadingActiveForAtLeastMs.milliseconds) {
          val currentLastError = lastError
@@ -147,7 +148,7 @@ private class BlinkingPrevention<T>(
 
    private fun showLoadingAfterTimeout(
       selectBuilder: SelectBuilder<Unit>,
-      flowCollector: FlowCollector<Outcome<T>>
+      flowCollector: FlowCollector<Outcome<T>>,
    ) {
       selectBuilder.onTimeout(waitThisLongToShowLoadingMs.milliseconds) {
          flowCollector.emitCurrentProgress()

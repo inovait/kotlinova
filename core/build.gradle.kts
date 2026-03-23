@@ -17,7 +17,7 @@
 import util.publishLibrary
 
 plugins {
-   multiplatformModule
+   fullMultiplatformModule
 }
 
 android {
@@ -35,14 +35,18 @@ kotlin {
       val androidMain by getting {
          dependencies {
             implementation(libs.androidx.core)
-            implementation(libs.dagger.runtime)
          }
       }
       val commonMain by getting {
          dependencies {
             implementation(libs.kotlin.coroutines)
-            implementation(libs.dispatch)
+            api(libs.androidx.compose.runtime.annotation)
             compileOnly(libs.androidx.compose.runtime.annotation)
+         }
+      }
+      val jvmCommon by getting {
+         dependencies {
+            implementation(libs.dispatch)
          }
       }
       val jvmTest by getting {

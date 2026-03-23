@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,13 +17,15 @@
 package si.inova.kotlinova.navigation.testutils
 
 import androidx.compose.runtime.Composable
-import kotlinx.parcelize.Parcelize
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
+import kotlinx.serialization.Serializable
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 
-@Parcelize
-object BlankScreenKey : NoArgsScreenKey()
+@Serializable
+data object BlankScreenKey : ScreenKey()
 
+@InjectNavigationScreen
 class BlankScreen : Screen<BlankScreenKey>() {
    @Composable
    override fun Content(key: BlankScreenKey) {

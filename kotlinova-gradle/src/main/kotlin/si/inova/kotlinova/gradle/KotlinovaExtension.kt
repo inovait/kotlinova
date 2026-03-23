@@ -20,9 +20,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import si.inova.kotlinova.gradle.util.newInstance
 import si.inova.kotlinova.gradle.versionbump.TomlVersionBumpExtension
-import javax.inject.Inject
 
-abstract class KotlinovaExtension @Inject constructor(objects: ObjectFactory) {
+abstract class KotlinovaExtension(objects: ObjectFactory) {
    internal val tomlVersionBump: TomlVersionBumpExtension = objects.newInstance<TomlVersionBumpExtension>()
 
    @Deprecated("Feature is deprecated and will not be updated anymore. Use version-catalog-update-plugin instead.")

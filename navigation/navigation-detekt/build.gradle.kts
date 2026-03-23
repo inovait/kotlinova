@@ -45,6 +45,7 @@ publishLibrary(
 dependencies {
     implementation(libs.detekt.api)
     testImplementation(libs.detekt.test)
+    testImplementation(libs.detekt.test.junit)
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.junit5.api)
     testRuntimeOnly(libs.junit5.engine)

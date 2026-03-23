@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -20,17 +20,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import kotlinx.parcelize.Parcelize
+import dev.zacsweers.metro.Inject
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
-import si.inova.kotlinova.navigation.screenkeys.NoArgsScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
+import si.inova.kotlinova.navigation.services.ContributesScopedService
 import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
-import javax.inject.Inject
 
 class ComposedScreen {
    @get:Rule
@@ -44,34 +45,43 @@ class ComposedScreen {
       rule.onNodeWithText("Inner screen: 20").assertIsDisplayed()
    }
 
-   @Parcelize
-   object OuterScreenKey : NoArgsScreenKey()
+   @Serializable
+   data object OuterScreenKey : ScreenKey()
 
+   @Serializable
+   data object InnerScreenKey : ScreenKey()
+
+   @InjectNavigationScreen
    class OuterScreen(
       private val outerScreenService: OuterScreenService,
-      private val innerScreen: InnerScreen
+      private val innerScreen: InnerScreen,
    ) : Screen<OuterScreenKey>() {
       @Composable
       override fun Content(key: OuterScreenKey) {
          Column {
             Text("Outer screen: ${outerScreenService.number}")
-            innerScreen.Content(key)
+            innerScreen.Content(InnerScreenKey)
          }
       }
    }
 
-   class InnerScreen(private val innerScreenService: InnerScreenService) : Screen<ScreenKey>() {
+   @InjectNavigationScreen
+   class InnerScreen(private val innerScreenService: InnerScreenService) : Screen<InnerScreenKey>() {
       @Composable
-      override fun Content(key: ScreenKey) {
+      override fun Content(key: InnerScreenKey) {
          Text("Inner screen: ${innerScreenService.number}")
       }
    }
 
-   class OuterScreenService @Inject constructor() : ScopedService {
+   @ContributesScopedService
+   @Inject
+   class OuterScreenService : ScopedService {
       val number = 10
    }
 
-   class InnerScreenService @Inject constructor() : ScopedService {
+   @ContributesScopedService
+   @Inject
+   class InnerScreenService : ScopedService {
       val number = 20
    }
 }

@@ -39,7 +39,7 @@ import kotlin.coroutines.CoroutineContext
       "See https://medium.com/androiddevelopers/alternatives-to-idling-resources-in-compose-tests-8ae71f9fc473"
 )
 class FixedIdlingDispatcher(
-   val delegate: CoroutineDispatcher
+   val delegate: CoroutineDispatcher,
 ) : CoroutineDispatcher() {
 
    /**
