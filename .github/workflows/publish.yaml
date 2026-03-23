@@ -91,8 +91,8 @@ jobs:
           tmp_file=$(mktemp)
           gcloud firebase test android run \
           --type instrumentation \
-          --app artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk \
-          --test artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk \
+          --app navigation/tests/build/outputs/apk/debug/tests-debug.apk \
+          --test navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk \
           --device model=MediumPhone.arm,version=26 \
           --use-orchestrator \
           --environment-variables clearPackageData=true \
@@ -100,7 +100,7 @@ jobs:
           
           TEST_EXIT_CODE=${PIPESTATUS[0]}
           RESULTS=$(cat "$tmp_file")
-          rm "$tmp_fil"e
+          rm "$tmp_file"
           
           BUCKET=$(echo $RESULTS | grep -oP "browser/\K[^]]+")
           mkdir -p instrumented_tests_results
