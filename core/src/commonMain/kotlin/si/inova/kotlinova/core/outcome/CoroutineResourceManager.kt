@@ -81,7 +81,7 @@ open class CoroutineResourceManager(
          val exception = if (e is CauseException) {
             e
          } else {
-            val message = tag?.let { "Got an error during a coroutine launched from '$tag'" }
+            val message = tag?.let { "Got an error during a coroutine launched from '$it'" }
 
             UnknownCauseException(message = message, cause = e)
          }
@@ -171,7 +171,7 @@ open class CoroutineResourceManager(
          } catch (e: CauseException) {
             reportService.report(e)
          } catch (e: Throwable) {
-            val message = tag?.let { "Got an error during a coroutine launched from '$tag'" }
+            val message = tag?.let { "Got an error during a coroutine launched from '$it'" }
             reportService.report(UnknownCauseException(message, e))
          }
       }
