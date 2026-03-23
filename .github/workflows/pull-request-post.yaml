@@ -28,6 +28,7 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           path: artifacts
           allow_forks: true
+          search_artifacts: true
       - name: Set the PR_NUM
         if: steps.download.outcome == 'success'
         id: pr-meta
@@ -51,10 +52,20 @@ jobs:
         run:
           ref=$(git rev-parse HEAD);echo "git_hash=$ref" > $GITHUB_OUTPUT
         working-directory: repo
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
+        with:
+          packages: 'tools platform-tools build-tools;36.1.0'
 
       - name: "Run instrumented tests on Firebase test lab"
         if: steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk') != ''
         run: |
+          set -x
+          tree artifacts/results/kotlinova/kotlinova/navigation
+          md5sum artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk
+          md5sum artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
+          $ANDROID_HOME/build-tools/36.1.0/apksigner verify --verbose --print-certs artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/debug/tests-debug.apk
+          $ANDROID_HOME/build-tools/36.1.0/apksigner verify --verbose --print-certs artifacts/results/kotlinova/kotlinova/navigation/tests/build/outputs/apk/androidTest/debug/tests-debug-androidTest.apk
+        
           gcloud auth login --cred-file=test-lab-key.json
           gcloud config set project androidarchitectureplayground
           
@@ -67,7 +78,7 @@ jobs:
           --use-orchestrator \
           --environment-variables clearPackageData=true,coverage=true,coverageFilePath=/sdcard/Download/ \
           --directories-to-pull /sdcard/Download \
-          |& tee tmp_file
+          |& tee "$tmp_file"
           
           TEST_EXIT_CODE=${PIPESTATUS[0]}
           RESULTS=$(cat "$tmp_file")
@@ -78,7 +89,7 @@ jobs:
           gcloud storage cp -r gs://$BUCKET repo/instrumented_tests_results/
           
           if [[ TEST_EXIT_CODE -ne 0 ]] then
-            exit 1
+            exit $TEST_EXIT_CODE
           fi
       - name: Post SARIF findings as comments in the pull request
         if: always() && steps.download.outcome == 'success' && hashFiles('artifacts/results/kotlinova/kotlinova/merge.sarif') != ''
