@@ -84,7 +84,7 @@ abstract class FragmentScreen<K>(
                      .commitNow()
                }
 
-               scopeExitListener.fragments[key.javaClass] = WeakReference(fragmentManager to currentFragment)
+               scopeExitListener.fragments[key.javaClass] = fragmentManager to WeakReference(currentFragment)
 
                if (currentFragment.isDetached) {
                   fragmentManager
@@ -124,18 +124,20 @@ abstract class FragmentScreen<K>(
 @ContributesScopedService
 @Inject
 class ScopeExitListener : ScopedService.Registered, ScopedService {
-   val fragments = HashMap<Class<ScreenKey>, WeakReference<Pair<FragmentManager, Fragment>>>()
+   val fragments = HashMap<Class<ScreenKey>, Pair<FragmentManager, WeakReference<Fragment>>>()
 
    override fun onServiceRegistered() {}
 
    override fun onServiceUnregistered() {
-      fragments.values.mapNotNull { it.get() }.forEach { (fragmentManager, fragment) ->
-         if (!fragment.isStateSaved) {
-            fragmentManager.beginTransaction()
-               .remove(fragment)
-               .commit()
+      fragments.values
+         .mapNotNull { (fragmentManager, weakFragment) -> weakFragment.get()?.let { fragmentManager to it } }
+         .forEach { (fragmentManager, fragment) ->
+            if (!fragment.isStateSaved) {
+               fragmentManager.beginTransaction()
+                  .remove(fragment)
+                  .commit()
+            }
          }
-      }
    }
 }
 
