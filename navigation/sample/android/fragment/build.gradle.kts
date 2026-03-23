@@ -54,6 +54,7 @@ dependencies {
    implementation(libs.androidx.compose.material3)
    implementation(libs.androidx.fragment)
    implementation(libs.kotlinova.navigation)
+   implementation(libs.kotlinova.navigation.deeplink)
    implementation(libs.kotlinova.navigation.fragment)
 
    ksp(libs.kotlinova.navigation.compiler)

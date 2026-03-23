@@ -81,6 +81,7 @@ dependencies {
    implementation(libs.kotlin.serialization.runtime)
    implementation(libs.kotlinova.compose)
    implementation(libs.kotlinova.navigation)
+   implementation(libs.kotlinova.navigation.deeplink)
    implementation(libs.kotlinova.navigation.navigation3)
 
    ksp(libs.kotlinova.navigation.compiler)

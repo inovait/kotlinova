@@ -14,52 +14,27 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import util.publishLibrary
+
 plugins {
-   id("com.android.library")
-   id("org.jetbrains.kotlin.android")
-   id("com.google.devtools.ksp")
+   androidLibraryModule
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
-   alias(libs.plugins.kotlin.serialization)
 }
+
+publishLibrary(
+   userFriendlyName = "Navigation Deep links",
+   description = "Module with deep link handling helpers for the Kotlinova Navigation",
+   githubPath = "navigation"
+)
 
 android {
-   namespace = "si.inova.kotlinova.navigation.nested"
-   compileSdk = 36
-
-   defaultConfig {
-      minSdk = 24
-      targetSdk = 34
-   }
-
-   compileOptions {
-      sourceCompatibility = JavaVersion.VERSION_21
-      targetCompatibility = JavaVersion.VERSION_21
-   }
-}
-
-kotlin {
-   jvmToolchain(21)
+   namespace = "si.inova.kotlinova.navigation.deeplink"
 }
 
 dependencies {
-   implementation(projects.keys)
+   api(projects.navigation)
 
-   implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.navigation3)
-   implementation(libs.androidx.navigation3)
-   implementation(libs.androidx.navigation3.ui)
-   implementation(libs.kotlin.serialization.runtime)
-
-   implementation(libs.kotlinova.navigation)
-   implementation(libs.kotlinova.navigation.deeplink)
-   implementation(libs.kotlinova.navigation.navigation3)
-
-   ksp(libs.kotlinova.navigation.compiler)
-
-   debugImplementation(libs.androidx.compose.ui.test.manifest)
-   debugImplementation(libs.androidx.compose.ui.tooling)
+   add("detektPlugins", projects.navigation.navigationDetekt)
+   add("detektPlugins", libs.detekt.compose)
 }

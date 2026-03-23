@@ -35,7 +35,7 @@ import si.inova.kotlinova.navigation.di.NavigationInjection
 @Composable
 fun MainDeepLinkHandler.HandleNewIntentDeepLinks(activity: ComponentActivity, backstack: Backstack) {
    DisposableEffect(this, activity, backstack) {
-      val navigator = NavigationInjection.Companion.fromBackstack(backstack).navigator()
+      val navigator = NavigationInjection.fromBackstack(backstack).navigator()
 
       val newIntentListener = Consumer<Intent> { intent ->
          intent.data?.let { deepLink ->

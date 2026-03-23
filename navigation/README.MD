@@ -5,6 +5,7 @@ Direct gradle usage:
 ```kotlin
 implementation("si.inova.kotlinova:navigation:X.Y.Z")
 ksp("si.inova.kotlinova:navigation-compiler:X.Y.Z")
+implementation("si.inova.kotlinova:navigation-deeplink:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-fragment:X.Y.Z")
 implementation("si.inova.kotlinova:navigation-navigation3:X.Y.Z")
 testImplementation("si.inova.kotlinova:navigation-test:X.Y.Z")
@@ -22,6 +23,7 @@ kotlinova = "X.Y.Z"
 [libraries]
 kotlinova-navigation = { module = "si.inova.kotlinova:navigation", version.ref = "kotlinova" }
 kotlinova-navigation-compiler = { module = "si.inova.kotlinova:navigation-compiler", version.ref = "kotlinova" }
+kotlinova-navigation-deeplink = { module = "si.inova.kotlinova:navigation-deeplink", version.ref = "kotlinova" }
 kotlinova-navigation-detekt = { module = "si.inova.kotlinova:navigation-detekt", version.ref = "kotlinova" }
 kotlinova-navigation-fragment = { module = "si.inova.kotlinova:navigation-fragment", version.ref = "kotlinova" }
 kotlinova-navigation-navigation3 = { module = "si.inova.kotlinova:navigation-navigation3", version.ref = "kotlinova" }
