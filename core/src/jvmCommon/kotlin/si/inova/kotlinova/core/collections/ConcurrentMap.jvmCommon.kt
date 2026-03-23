@@ -21,3 +21,14 @@ import java.util.concurrent.ConcurrentHashMap
 internal actual fun <K, V> createConcurrentMap(): MutableMap<K, V> {
    return ConcurrentHashMap()
 }
+
+internal actual fun <K, V> MutableMap<K, V>.removeConcurrently(key: K, value: V): Boolean {
+   return if (this is ConcurrentHashMap) {
+      remove(key, value)
+   } else if (this[key] == value) {
+      remove(key)
+      true
+   } else {
+      false
+   }
+}

@@ -23,3 +23,12 @@ internal actual fun <K, V> createConcurrentMap(): MutableMap<K, V> {
    // CoroutineResourceManager anyway
    return HashMap()
 }
+
+internal actual fun <K, V> MutableMap<K, V>.removeConcurrently(key: K, value: V): Boolean {
+   return if (this[key] == value) {
+      remove(key)
+      true
+   } else {
+      false
+   }
+}

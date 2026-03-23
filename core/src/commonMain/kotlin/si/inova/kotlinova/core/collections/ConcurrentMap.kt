@@ -17,3 +17,11 @@
 package si.inova.kotlinova.core.collections
 
 internal expect fun <K, V> createConcurrentMap(): MutableMap<K, V>
+
+/**
+ * Removes the entry for a key only if currently mapped to a given value.
+ *
+ * If this map is not backed by a map implementation that supports concurrent operation, this just
+ * falls back to the non-concurrent check.
+ */
+internal expect fun <K, V> MutableMap<K, V>.removeConcurrently(key: K, value: V): Boolean
