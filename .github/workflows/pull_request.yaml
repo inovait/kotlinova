@@ -56,7 +56,7 @@ jobs:
       - name: Compile Unit Tests
         run: "./gradlew jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses :navigation:tests:assembleDebug"
       - name: Lint
-        run: "./gradlew --continue buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint"
+        run: "./gradlew --continue buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint reportMerge"
       - name: Run Unit Tests
         run: "./gradlew runDebugTests"
 
