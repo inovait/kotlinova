@@ -1,7 +1,6 @@
 package si.inova.kotlinova.navigation.kmmsample
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
@@ -15,25 +14,31 @@ fun main() {
     configureWebResources {
         resourcePathMapping { "/$it" }
     }
+
+
     ComposeViewport {
+        val browserNavigation = rememberAndLinkBrowserNavigationToKotlinovaNavigation(
+            "/app/",
+            MainBrowserUrlMatcher,
+        )
+
         val viewModelStoreOwner = remember { MyViewModelStoreOwner() }
         val saveableStateRegistry = remember { BrowserSaveableStateRegistry() }
-
-
-        DisposableEffect(viewModelStoreOwner) {
-            onDispose {
-            }
-        }
 
         CompositionLocalProvider(
             LocalViewModelStoreOwner provides viewModelStoreOwner,
             LocalSaveableStateRegistry provides saveableStateRegistry,
         ) {
-            App()
+            App(
+                initialHistory = browserNavigation::getInitialBackstackHistory,
+                onBackstackReady = browserNavigation::onBackstackInitialized
+            )
         }
 
+        val browserWindow = refBrowserWindow()
+
         LaunchedEffect(Unit) {
-            refBrowserWindow().visibilityChangeEvent().collect {
+            browserWindow.visibilityChangeEvent().collect {
                 // Save state whenever the window goes into the background
                 // This allows us to restore the state if/when tab is killed and restored
                 saveableStateRegistry.save()
@@ -41,10 +46,9 @@ fun main() {
         }
 
         LaunchedEffect(Unit) {
-            refBrowserWindow().unloadEvent().collect {
+            browserWindow.unloadEvent().collect {
                 viewModelStoreOwner.viewModelStore.clear()
             }
         }
     }
 }
-

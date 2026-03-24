@@ -14,15 +14,26 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample.first
+package si.inova.kotlinova.navigation.kmmsample
 
-import kotlinx.serialization.Serializable
-import si.inova.kotlinova.navigation.kmmsample.WebScreenKey
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.kmmsample.browsernavigation.MultiBrowserUrlMatcher
+import si.inova.kotlinova.navigation.kmmsample.first.FirstScreenKey
+import si.inova.kotlinova.navigation.kmmsample.second.SecondScreenKey
+import si.inova.kotlinova.navigation.kmmsample.third.ThirdScreenKey
 
-@Serializable
-data object FirstScreenKey : ScreenKey(), WebScreenKey {
-    override fun getPathLink(): String {
-        return "first"
-    }
-}
+val MainBrowserUrlMatcher = MultiBrowserUrlMatcher(
+    PatternMatcher("first") {
+        listOf(FirstScreenKey)
+    },
+
+    PatternMatcher("second") {
+        listOf(FirstScreenKey, SecondScreenKey)
+    },
+
+    PatternMatcher("third?id={number}") {
+        listOf(FirstScreenKey, SecondScreenKey, ThirdScreenKey(it.getValue("number").toIntOrNull() ?: 0))
+    },
+)
+
+
+

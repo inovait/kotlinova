@@ -14,58 +14,40 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample.second
+package si.inova.kotlinova.navigation.kmmsample.third
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.update
-import si.inova.kotlinova.navigation.instructions.navigateTo
-import si.inova.kotlinova.navigation.kmmsample.third.ThirdScreenKey
+import si.inova.kotlinova.navigation.instructions.goBack
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 
 @InjectNavigationScreen
-class SecondScreen(
-   private val viewModel: SecondScreenViewModel,
+class ThirdScreen(
    private val navigator: Navigator,
-) : Screen<SecondScreenKey>() {
+) : Screen<ThirdScreenKey>() {
    @Composable
-   override fun Content(key: SecondScreenKey) {
+   override fun Content(key: ThirdScreenKey) {
       Column(
          Modifier.safeDrawingPadding().padding(horizontal = 16.dp),
+         Arrangement.spacedBy(16.dp)
       ) {
-         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-         ) {
-            Button(onClick = { viewModel.number.update { it - 1 } }) {
-               Text("-")
-            }
-
-            Text(viewModel.number.collectAsState().value.toString())
-
-            Button(onClick = { viewModel.number.update { it + 1 } }) {
-               Text("+")
-            }
-         }
+         Text("Received number: ${key.number}")
 
          Button(
             onClick = {
-               navigator.navigateTo(ThirdScreenKey(viewModel.number.value))
+               navigator.goBack()
             }
          ) {
-            Text("Open third screen")
+            Text("Go back")
          }
       }
    }

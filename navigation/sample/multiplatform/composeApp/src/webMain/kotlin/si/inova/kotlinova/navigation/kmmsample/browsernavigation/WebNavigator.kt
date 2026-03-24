@@ -14,15 +14,19 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample.first
+package si.inova.kotlinova.navigation.kmmsample.browsernavigation
 
-import kotlinx.serialization.Serializable
-import si.inova.kotlinova.navigation.kmmsample.WebScreenKey
-import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.instructions.GoBack
+import si.inova.kotlinova.navigation.instructions.NavigationInstruction
+import si.inova.kotlinova.navigation.kmmsample.refBrowserWindow
+import si.inova.kotlinova.navigation.navigator.Navigator
 
-@Serializable
-data object FirstScreenKey : ScreenKey(), WebScreenKey {
-    override fun getPathLink(): String {
-        return "first"
+class WebNavigator(private val defaultNavigator: Navigator): Navigator {
+    override fun navigate(navigationInstruction: NavigationInstruction) {
+        if (navigationInstruction is GoBack) {
+            refBrowserWindow().history.back()
+        } else {
+            defaultNavigator.navigate(navigationInstruction)
+        }
     }
 }

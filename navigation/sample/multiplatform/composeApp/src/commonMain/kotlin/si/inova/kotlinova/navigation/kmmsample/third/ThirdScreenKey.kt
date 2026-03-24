@@ -14,15 +14,15 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample.first
+package si.inova.kotlinova.navigation.kmmsample.third
 
 import kotlinx.serialization.Serializable
 import si.inova.kotlinova.navigation.kmmsample.WebScreenKey
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 @Serializable
-data object FirstScreenKey : ScreenKey(), WebScreenKey {
+data class ThirdScreenKey(val number: Int) : ScreenKey(), WebScreenKey {
     override fun getPathLink(): String {
-        return "first"
+        return "third?id=$number"
     }
 }
