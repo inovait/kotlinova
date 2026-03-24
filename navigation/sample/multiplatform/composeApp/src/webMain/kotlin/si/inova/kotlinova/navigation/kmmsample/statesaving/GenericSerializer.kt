@@ -1,4 +1,4 @@
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.statesaving
 
 import androidx.savedstate.SavedState
 import androidx.savedstate.serialization.serializers.SavedStateSerializer

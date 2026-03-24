@@ -14,10 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.browsernavigation
 
 import com.eygraber.uri.Uri
-import si.inova.kotlinova.navigation.kmmsample.browsernavigation.BrowserUrlMatcher
+import si.inova.kotlinova.navigation.kmmsample.WebScreenKey
 
 /**
  * Attempt to match deep link with one of the provided patterns.

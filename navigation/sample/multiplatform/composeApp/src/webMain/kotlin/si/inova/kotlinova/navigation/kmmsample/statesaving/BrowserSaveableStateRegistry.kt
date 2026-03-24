@@ -1,6 +1,7 @@
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.statesaving
 
 import androidx.compose.runtime.saveable.SaveableStateRegistry
+import si.inova.kotlinova.navigation.kmmsample.DependencyInjectionHolder
 
 private const val SAVE_KEY = "COMPOSE_SAVED_STATE"
 

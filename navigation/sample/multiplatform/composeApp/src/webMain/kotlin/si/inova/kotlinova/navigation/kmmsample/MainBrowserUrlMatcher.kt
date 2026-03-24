@@ -17,6 +17,7 @@
 package si.inova.kotlinova.navigation.kmmsample
 
 import si.inova.kotlinova.navigation.kmmsample.browsernavigation.MultiBrowserUrlMatcher
+import si.inova.kotlinova.navigation.kmmsample.browsernavigation.PatternMatcher
 import si.inova.kotlinova.navigation.kmmsample.first.FirstScreenKey
 import si.inova.kotlinova.navigation.kmmsample.second.SecondScreenKey
 import si.inova.kotlinova.navigation.kmmsample.third.ThirdScreenKey

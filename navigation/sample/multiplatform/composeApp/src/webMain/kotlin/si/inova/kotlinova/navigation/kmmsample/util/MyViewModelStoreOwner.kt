@@ -1,4 +1,4 @@
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.util
 
 import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel

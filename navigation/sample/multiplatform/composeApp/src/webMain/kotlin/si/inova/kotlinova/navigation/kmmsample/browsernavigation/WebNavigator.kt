@@ -18,7 +18,7 @@ package si.inova.kotlinova.navigation.kmmsample.browsernavigation
 
 import si.inova.kotlinova.navigation.instructions.GoBack
 import si.inova.kotlinova.navigation.instructions.NavigationInstruction
-import si.inova.kotlinova.navigation.kmmsample.refBrowserWindow
+import si.inova.kotlinova.navigation.kmmsample.util.refBrowserWindow
 import si.inova.kotlinova.navigation.navigator.Navigator
 
 class WebNavigator(private val defaultNavigator: Navigator): Navigator {

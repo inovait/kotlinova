@@ -1,4 +1,4 @@
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.statesaving
 
 external interface BrowserStorage {
     fun setItem(key: String, value: String)

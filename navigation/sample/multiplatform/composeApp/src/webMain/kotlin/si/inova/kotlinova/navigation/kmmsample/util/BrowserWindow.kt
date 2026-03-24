@@ -1,4 +1,4 @@
-package si.inova.kotlinova.navigation.kmmsample
+package si.inova.kotlinova.navigation.kmmsample.util
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose

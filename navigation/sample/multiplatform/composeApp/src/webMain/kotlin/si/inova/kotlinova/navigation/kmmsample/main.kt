@@ -8,6 +8,12 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import org.jetbrains.compose.resources.configureWebResources
+import si.inova.kotlinova.navigation.kmmsample.browsernavigation.rememberAndLinkBrowserNavigationToKotlinovaNavigation
+import si.inova.kotlinova.navigation.kmmsample.statesaving.BrowserSaveableStateRegistry
+import si.inova.kotlinova.navigation.kmmsample.util.MyViewModelStoreOwner
+import si.inova.kotlinova.navigation.kmmsample.util.refBrowserWindow
+import si.inova.kotlinova.navigation.kmmsample.util.unloadEvent
+import si.inova.kotlinova.navigation.kmmsample.util.visibilityChangeEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {

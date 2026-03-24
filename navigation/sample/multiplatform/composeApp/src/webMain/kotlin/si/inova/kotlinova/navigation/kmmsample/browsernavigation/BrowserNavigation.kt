@@ -25,10 +25,10 @@ import kotlinx.coroutines.launch
 import si.inova.kotlinova.navigation.backstack.Backstack
 import si.inova.kotlinova.navigation.kmmsample.DEFAULT_INITIAL_HISTORY
 import si.inova.kotlinova.navigation.kmmsample.WebScreenKey
-import si.inova.kotlinova.navigation.kmmsample.decodeURIComponent
-import si.inova.kotlinova.navigation.kmmsample.encodeURIComponent
-import si.inova.kotlinova.navigation.kmmsample.popState
-import si.inova.kotlinova.navigation.kmmsample.refBrowserWindow
+import si.inova.kotlinova.navigation.kmmsample.util.decodeURIComponent
+import si.inova.kotlinova.navigation.kmmsample.util.encodeURIComponent
+import si.inova.kotlinova.navigation.kmmsample.util.popState
+import si.inova.kotlinova.navigation.kmmsample.util.refBrowserWindow
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 
 @Composable
