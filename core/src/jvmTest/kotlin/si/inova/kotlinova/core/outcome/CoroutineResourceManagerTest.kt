@@ -27,6 +27,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
@@ -38,6 +39,7 @@ import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWithData
+import java.util.concurrent.CancellationException
 
 internal class CoroutineResourceManagerTest {
    private val reportedErrors = ArrayList<Throwable>()
@@ -477,5 +479,73 @@ internal class CoroutineResourceManagerTest {
       runCurrent()
 
       reportedErrors.shouldHaveSize(1).first().message.shouldContain("TestManager")
+   }
+
+   @Test
+   internal fun `launchResourceControlTask should ignore cancellation exceptions caused by real cancellation`() = scope.runTest {
+      val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
+
+      manager.launchResourceControlTask(resource) {
+         awaitCancellation()
+      }
+
+      runCurrent()
+
+      manager.cancelResource(resource)
+      runCurrent()
+
+      val value = resource.value
+      value.shouldBeInstanceOf<Outcome.Progress<Int>>()
+   }
+
+   @Test
+   internal fun `launchResourceControlTask should not ignore cancellation exceptions not caused by real cancellation`() =
+      scope.runTest {
+         val resource = MutableStateFlow<Outcome<Int>>(Outcome.Success(12))
+
+         val cancellationExcetpion = CancellationException()
+         manager.launchResourceControlTask(resource) {
+            throw cancellationExcetpion
+         }
+
+         runCurrent()
+
+         manager.cancelResource(resource)
+         runCurrent()
+
+         val value = resource.value
+         value.shouldBeInstanceOf<Outcome.Error<*>>()
+            .exception.let {
+               it.shouldBeInstanceOf<UnknownCauseException>()
+               it.cause shouldBeSameInstanceAs cancellationExcetpion
+            }
+      }
+
+   @Test
+   internal fun `launchWithExceptionReporting should not report cancellation exceptions caused by real cancellation`() =
+      scope.runTest {
+         manager.launchWithExceptionReporting {
+            awaitCancellation()
+         }
+         runCurrent()
+
+         manager.scope.cancel()
+         runCurrent()
+
+         reportedErrors.shouldBeEmpty()
+      }
+
+   @Test
+   internal fun `launchWithExceptionReporting should not ignore cancellation not caused by real cancellation`() = scope.runTest {
+      val cancellationExcetpion = CancellationException()
+      manager.launchWithExceptionReporting {
+         throw cancellationExcetpion
+      }
+      runCurrent()
+
+      reportedErrors.shouldHaveSize(1).first().let {
+         it.shouldBeInstanceOf<UnknownCauseException>()
+         it.cause shouldBeSameInstanceAs cancellationExcetpion
+      }
    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -16,22 +16,40 @@
 
 package si.inova.kotlinova.core.outcome
 
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import si.inova.kotlinova.core.exceptions.UnknownCauseException
-import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * Execute passed [block], returning its value, or [Outcome.Error] if block throws any exception
+ * Execute passed [block], returning its value, or [Outcome.Error] if block throws any exception.
+ *
+ * If this is called from a suspending context, you should use [catchIntoOutcomeSuspending] instead.
  */
 inline fun <T> catchIntoOutcome(block: () -> Outcome<T>): Outcome<T> {
    return try {
       block()
-   } catch (e: CancellationException) {
-      throw e
    } catch (e: CauseException) {
       Outcome.Error(e)
    } catch (e: Exception) {
+      Outcome.Error(UnknownCauseException(cause = e))
+   }
+}
+
+/**
+ * Execute passed [block], returning its value, or [Outcome.Error] if block throws any exception.
+ *
+ * Unlike regular [catchIntoOutcome], this one properly handles cancellation exceptions
+ * (see https://github.com/Kotlin/kotlinx.coroutines/issues/3658).
+ */
+@Suppress("SuspendFunSwallowedCancellation") // https://github.com/detekt/detekt/issues/8902
+suspend inline fun <T> catchIntoOutcomeSuspending(block: suspend () -> Outcome<T>) {
+   try {
+      block()
+   } catch (e: Exception) {
+      if (e is CancellationException) currentCoroutineContext().ensureActive()
       Outcome.Error(UnknownCauseException(cause = e))
    }
 }
