@@ -21,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.onEach
@@ -75,9 +77,9 @@ open class CoroutineResourceManager(
          resource.value = Outcome.Progress(currentValue)
 
          block(ResourceControlBlock(resource, this))
-      } catch (e: CancellationException) {
-         throw e
       } catch (e: Throwable) {
+         if (e is CancellationException) currentCoroutineContext().ensureActive()
+
          val exception = if (e is CauseException) {
             e
          } else {
@@ -166,11 +168,10 @@ open class CoroutineResourceManager(
       scope.launch(context, start) {
          try {
             block()
-         } catch (e: CancellationException) {
-            throw e
          } catch (e: CauseException) {
             reportService.report(e)
          } catch (e: Throwable) {
+            if (e is CancellationException) currentCoroutineContext().ensureActive()
             val message = tag?.let { "Got an error during a coroutine launched from '$it'" }
             reportService.report(UnknownCauseException(message, e))
          }

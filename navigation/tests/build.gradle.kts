@@ -69,6 +69,7 @@ android {
 
 dependencies {
    // Dependencies need to be "implementation" to be included in the coverage report
+   implementation(projects.kotlinova.compose)
    implementation(projects.kotlinova.navigation)
    implementation(projects.kotlinova.navigation.navigationDeeplink)
    implementation(projects.kotlinova.navigation.navigationFragment)

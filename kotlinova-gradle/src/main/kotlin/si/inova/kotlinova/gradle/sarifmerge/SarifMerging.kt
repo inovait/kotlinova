@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -102,7 +102,7 @@ internal fun Project.registerSarifMerging(extension: KotlinovaExtension) {
       }
 
       dataElementsVariant.configure { configuration ->
-         configuration.outgoing.artifact(localSarifMergeTask.map { it.output })
+         configuration.outgoing.artifact(localSarifMergeTask.flatMap { it.output })
       }
 
       extension.tomlVersionBump.apply {
@@ -131,7 +131,7 @@ private fun Project.registerDetektSarifMerging(
       }
 
       sarifFiles.from(
-         detektTask.reports.sarif.outputLocation.orElse { error("task ${detektTask.path} did not expose a sarif file") }
+         detektTask.reports.sarif.outputLocation.orNull ?: error("task ${detektTask.path} did not expose a sarif file")
       )
 
       detektTask.finalizedBy(localSarifMergeTask)
