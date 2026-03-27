@@ -21,7 +21,9 @@ package si.inova.kotlinova.compose.result
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.currentCompositeKeyHashCode
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.toLong
 
 /**
@@ -45,9 +47,15 @@ fun <T> registerResultReceiver(callback: (T) -> Unit): ResultKey<T> {
    val store = LocalResultPassingStore.current
    val key = currentCompositeKeyHashCode
 
-   val resultKey = remember { store.registerCallback(key.toLong(), callback) }
+   val updatedCallback by rememberUpdatedState(callback)
+   val innerCallback: (T) -> Unit = remember {
+      {
+         updatedCallback.invoke(it)
+      }
+   }
+   val resultKey = remember { store.registerCallback(key.toLong(), innerCallback) }
 
-   DisposableEffect(callback) {
+   DisposableEffect(resultKey) {
       onDispose {
          store.unregisterCallback(resultKey)
       }

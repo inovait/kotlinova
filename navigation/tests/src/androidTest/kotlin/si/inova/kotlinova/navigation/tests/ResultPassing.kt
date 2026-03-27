@@ -186,6 +186,29 @@ class ResultPassing {
       receivedResults.shouldContainExactly(11, 22, 33)
    }
 
+   @Test
+   fun retainKeyWhenCallbackRecomposes() {
+      lateinit var key: ResultKey<Int>
+      var onResult by mutableStateOf<(Int) -> Unit>({
+         receivedResults.add(it * 10)
+      })
+
+      rule.setContentWithLocals {
+         key = registerResultReceiver<Int>(onResult)
+      }
+      rule.waitForIdle()
+
+      onResult = {
+         receivedResults.add(it * 20)
+      }
+      rule.waitForIdle()
+
+      resultPassingStore.sendResult(key, 1)
+      rule.waitForIdle()
+
+      receivedResults.shouldContainExactly(20)
+   }
+
    private fun ComposeContentTestRule.setContentWithLocals(content: @Composable () -> Unit) {
       setContent {
          CompositionLocalProvider(LocalResultPassingStore provides resultPassingStore) {
