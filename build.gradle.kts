@@ -14,9 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
 import jacoco.setupJacocoMergingRoot
-import nl.littlerobots.vcu.plugin.resolver.ModuleVersionCandidate
-import nl.littlerobots.vcu.plugin.versionSelector
+import si.inova.kotlinova.gradle.sarifmerge.SarifMergeTask
 
 /*
  * Copyright 2025 INOVA IT d.o.o.
@@ -39,26 +40,21 @@ import nl.littlerobots.vcu.plugin.versionSelector
 
 plugins {
    id("kotlinova")
-   alias(libs.plugins.versionCatalogUpdate)
    jacoco
 }
 
 setupJacocoMergingRoot()
 
-versionCatalogUpdate {
-   catalogFile.set(file("config/libs.toml"))
+// Workaround for the https://youtrack.jetbrains.com/issue/QD-13913
+// We remove the %SRCROOT% from the final merged sarif
+tasks.named("reportMerge", SarifMergeTask::class.java).configure {
+   @Suppress("UNCHECKED_CAST")
+   doLast {
+      val sarifJson = JsonSlurper().parse(output.get().asFile) as Map<String, Any>
+      val runs = sarifJson.get("runs") as List<Map<String, Any>>
 
-   fun ModuleVersionCandidate.newlyContains(keyword: String): Boolean {
-      return !currentVersion.contains(keyword, ignoreCase = true) && candidate.version.contains(keyword, ignoreCase = true)
-   }
-
-   versionSelector {
-      !it.newlyContains("alpha") &&
-         !it.newlyContains("beta") &&
-         !it.newlyContains("RC") &&
-         !it.newlyContains("M") &&
-         !it.newlyContains("eap") &&
-         !it.newlyContains("dev") &&
-         !it.newlyContains("pre")
+      val runsWithoutSrcRoot = runs.map { run -> run.filterKeys { it -> it != "originalUriBaseIds" } }
+      val newSarifJson = sarifJson + mapOf("runs" to runsWithoutSrcRoot)
+      output.get().asFile.writeText(JsonBuilder(newSarifJson).toPrettyString())
    }
 }
