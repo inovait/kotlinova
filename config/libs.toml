@@ -46,7 +46,6 @@ tomlj = "1.1.1"
 turbine = "1.2.1"
 unmock-androidJar = "16-robolectric-13921718"
 unmock-plugin = "0.9.0"
-versionCatalogUpdate = "1.1.0"
 
 [libraries]
 android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
@@ -129,4 +128,3 @@ dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 mavenPublish = { id = "com.vanniktech.maven.publish.base", version.ref = "mavenPublish" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
-versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }

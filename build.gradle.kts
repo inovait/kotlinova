@@ -17,8 +17,6 @@
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import jacoco.setupJacocoMergingRoot
-import nl.littlerobots.vcu.plugin.resolver.ModuleVersionCandidate
-import nl.littlerobots.vcu.plugin.versionSelector
 import si.inova.kotlinova.gradle.sarifmerge.SarifMergeTask
 
 /*
@@ -42,29 +40,10 @@ import si.inova.kotlinova.gradle.sarifmerge.SarifMergeTask
 
 plugins {
    id("kotlinova")
-   alias(libs.plugins.versionCatalogUpdate)
    jacoco
 }
 
 setupJacocoMergingRoot()
-
-versionCatalogUpdate {
-   catalogFile.set(file("config/libs.toml"))
-
-   fun ModuleVersionCandidate.newlyContains(keyword: String): Boolean {
-      return !currentVersion.contains(keyword, ignoreCase = true) && candidate.version.contains(keyword, ignoreCase = true)
-   }
-
-   versionSelector {
-      !it.newlyContains("alpha") &&
-         !it.newlyContains("beta") &&
-         !it.newlyContains("RC") &&
-         !it.newlyContains("M") &&
-         !it.newlyContains("eap") &&
-         !it.newlyContains("dev") &&
-         !it.newlyContains("pre")
-   }
-}
 
 // Workaround for the https://youtrack.jetbrains.com/issue/QD-13913
 // We remove the %SRCROOT% from the final merged sarif
