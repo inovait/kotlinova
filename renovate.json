@@ -28,6 +28,12 @@
         "digest"
       ],
       "enabled": false
+    },
+    {
+      "matchFileNames": [
+        "navigation/sample/**"
+      ],
+      "enabled": false
     }
   ]
 }
