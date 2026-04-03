@@ -41,7 +41,7 @@ kotlinova {
 }
 ```
 
-##Sarif merging
+## Sarif merging
 
 Sarif merging feature allows you to simply enable merging of all sarif reports of all static checks in sub-modules into
 one big top level `merge.sarif`.
