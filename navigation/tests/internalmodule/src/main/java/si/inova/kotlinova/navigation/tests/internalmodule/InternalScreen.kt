@@ -14,47 +14,24 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-pluginManagement {
-   repositories {
-      google()
-      mavenCentral()
-      gradlePluginPortal()
+package si.inova.kotlinova.navigation.tests.internalmodule
+
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import kotlinx.serialization.Serializable
+import si.inova.kotlinova.navigation.di.ContributesScreenBinding
+import si.inova.kotlinova.navigation.screenkeys.ScreenKey
+import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
+import si.inova.kotlinova.navigation.screens.Screen
+
+@Serializable
+data object InternalScreenKey : ScreenKey()
+
+@InjectNavigationScreen
+@ContributesScreenBinding
+internal class InternalScreen : Screen<InternalScreenKey>() {
+   @Composable
+   override fun Content(key: InternalScreenKey) {
+      Text("Hello from Internal Screen")
    }
 }
-
-dependencyResolutionManagement {
-   repositories {
-      google()
-      mavenCentral()
-   }
-
-   versionCatalogs {
-      create("libs") {
-         from(files("config/libs.toml"))
-      }
-   }
-
-   includeBuild("kotlinova-gradle")
-}
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-rootProject.name = "kotlinova"
-
-include(":core")
-include(":core:test")
-include(":compose")
-include(":compose:compose-android-test")
-includeBuild("kotlinova-gradle") // Include kotlinova gradle build to allow common maven publishing and checking
-include(":navigation")
-include(":navigation:navigation-compiler")
-include(":navigation:navigation-deeplink")
-include(":navigation:navigation-detekt")
-include(":navigation:navigation-fragment")
-include(":navigation:navigation-navigation3")
-include(":navigation:navigation-test")
-include(":navigation:tests")
-include(":navigation:tests:internalmodule")
-include(":retrofit")
-include(":retrofit:retrofit-moshi")
-include(":retrofit:retrofit-test")

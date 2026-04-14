@@ -84,3 +84,8 @@ internal val ANNOTATION_INJECT_SCOPED_SERVICE = ClassName(
    "si.inova.kotlinova.navigation.services",
    "ContributesScopedService"
 )
+
+internal val BINDING_ANNOTATION_TARGET_MARKER = ClassName(
+   "dev.zacsweers.metro",
+   "binding"
+)

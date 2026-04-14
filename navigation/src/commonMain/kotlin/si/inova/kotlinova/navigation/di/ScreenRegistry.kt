@@ -63,7 +63,7 @@ class ScreenRegistry(
 }
 
 data class ScreenRegistration<T : ScreenKey>(val mainScreenClass: KClass<out Screen<T>>)
-class ScreenFactory<T : Screen<*>>(
+open class ScreenFactory<T : Screen<*>>(
    val requiredScopedServices: List<KClass<out ScopedService>>,
    val composedScreenFactories: List<ScreenFactory<*>>,
    private val factory: (String, Backstack) -> T,
