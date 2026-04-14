@@ -73,7 +73,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
          .addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
          .build()
 
-      val provideServiceFunction = createBindsServiceFunction(serviceClassName)
+      val provideServiceFunction = createBindsServiceFunction(serviceClassName, serviceClassName)
       val provideFromBackstackFunction = createProvideFromBackstackFunction(serviceClassName, serviceClassName)
 
       val contributesBindingAnnotation =
@@ -87,12 +87,12 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
          .addFunction(provideFromBackstackFunction)
          .addFunction(provideServiceFunction)
          .apply {
-            if (contributesBindingAnnotation != null) {
+            if (contributesBindingAnnotation != null || boundTypeFromAnnotation(contributesScopedServiceAnnotation) != null) {
                // We cannot read the target class from the ContributesBinding annotation, because the type there
                // is solely determined by the type of the generic annotation and KSP does not support generic annotations
                // So we are forced to use another annotation for that
                val boundType = boundType(service, contributesScopedServiceAnnotation).toClassName()
-               addFunction(createBindsServiceFunction(boundType))
+               addFunction(createBindsServiceFunction(serviceClassName, boundType))
                addFunction(createProvideFromBackstackFunction(serviceClassName, boundType))
             }
          }
@@ -108,11 +108,12 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
    }
 
    private fun createBindsServiceFunction(
+      serviceClassName: ClassName,
       targetClassName: ClassName,
    ): FunSpec {
       return FunSpec.builder("bind${targetClassName.simpleName}Constructor")
          .returns(SCOPED_SERVICE_BASE_CLASS)
-         .addParameter("service", targetClassName)
+         .addParameter("service", serviceClassName)
          .addAnnotation(Binds::class)
          .addAnnotation(IntoMap::class)
          .addAnnotation(

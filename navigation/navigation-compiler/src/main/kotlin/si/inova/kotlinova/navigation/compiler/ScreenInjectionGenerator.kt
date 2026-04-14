@@ -19,6 +19,7 @@ package si.inova.kotlinova.navigation.compiler
 import com.google.auto.service.AutoService
 import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.getClassDeclarationByName
+import com.google.devtools.ksp.getVisibility
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
@@ -32,6 +33,7 @@ import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.KSValueParameter
+import com.google.devtools.ksp.symbol.Visibility
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -49,10 +51,12 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.buildCodeBlock
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
+import com.squareup.kotlinpoet.ksp.toKModifier
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
-import dev.zacsweers.metro.Binds
 import dev.zacsweers.metro.ClassKey
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Provider
@@ -107,20 +111,19 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
 
       val constructorParameters = clas.primaryConstructor?.parameters.orEmpty()
 
-      val screenFactoryProvider = createScreenFactoryProvider(
-         screenClass,
-         constructorParameters
-      )
+      val screenFactoryToParentFactoryBindingType = getScreenBindingType(clas)
 
-      val bindScreenFactoryToFactoryMultibindsFunction =
-         createBindScreenFactoryToFactoryMultibindsFunction(screenClass)
+      val screenFactoryClass = createScreenFactoryClass(
+         screenClass,
+         constructorParameters,
+         clas.getVisibility(),
+         screenFactoryToParentFactoryBindingType,
+      )
 
       val screenRegistrationFunction = createScreenServiceRegistrationFunction(
          screenClass,
          screenKeyType
       )
-
-      val screenFactoryToParentFactoryBindingFunction = createScreenFactoryToParentFactoryBindingFunction(clas)
 
       val suppressAnnotation = AnnotationSpec
          .builder(ClassName("kotlin", "Suppress"))
@@ -138,37 +141,14 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(contributesToAnnotation)
             .addAnnotation(suppressAnnotation)
-            .addFunction(bindScreenFactoryToFactoryMultibindsFunction)
-            .addFunction(screenFactoryProvider)
             .addFunction(screenRegistrationFunction)
-            .also {
-               if (screenFactoryToParentFactoryBindingFunction != null) {
-                  it.addFunction(screenFactoryToParentFactoryBindingFunction)
-               }
-            }
             .build()
 
          addType(componentInterfaceSpec)
+         addType(screenFactoryClass)
       }
          .build()
          .writeTo(codeGenerator, false, dependencies)
-   }
-
-   private fun createBindScreenFactoryToFactoryMultibindsFunction(
-      screenClass: ClassName,
-   ): FunSpec {
-      return FunSpec.builder("binds${screenClass.simpleName}ToMultibindsFactory")
-         .returns(SCREEN_FACTORY.parameterizedBy(STAR))
-         .addAnnotation(Binds::class)
-         .addAnnotation(IntoMap::class)
-         .addAnnotation(
-            AnnotationSpec.builder(ClassKey::class)
-               .addMember("%T::class", screenClass)
-               .build()
-         )
-         .addParameter("screenFactory", SCREEN_FACTORY.parameterizedBy(screenClass))
-         .addModifiers(KModifier.ABSTRACT)
-         .build()
    }
 
    private fun createScreenServiceRegistrationFunction(
@@ -192,14 +172,14 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
          .build()
    }
 
-   private fun createScreenFactoryToParentFactoryBindingFunction(
+   private fun getScreenBindingType(
       clas: KSClassDeclaration,
-   ): FunSpec? {
+   ): TypeName? {
       val contributeScreenBindingAnnotation = clas.annotations.firstOrNull {
          it.annotationType.toTypeName() == ANNOTATION_CONTRIBUTES_SCREEN_BINDING
       }
 
-      val screenBindingFunction = if (contributeScreenBindingAnnotation != null) {
+      return if (contributeScreenBindingAnnotation != null) {
          var boundType = contributeScreenBindingAnnotation
             .arguments.firstOrNull { it.name?.asString() == "boundType" }
             ?.run { value as KSType? }
@@ -216,23 +196,18 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
             boundType = SCREEN_BASE_CLASS.parameterizedBy(screenKey)
          }
 
-         val returnType = SCREEN_FACTORY.parameterizedBy(boundType)
-         FunSpec.builder("provides${clas.simpleName.asString()}FactoryToParentType")
-            .returns(returnType)
-            .addAnnotation(Provides::class)
-            .addParameter("screenFactory", SCREEN_FACTORY.parameterizedBy(clas.toClassName()))
-            .addStatement("return screenFactory as %T", returnType)
-            .build()
+         boundType
       } else {
          null
       }
-      return screenBindingFunction
    }
 
-   private fun createScreenFactoryProvider(
+   private fun createScreenFactoryClass(
       className: ClassName,
       allConstructorParameters: List<KSValueParameter>,
-   ): FunSpec {
+      visibility: Visibility,
+      bindingType: TypeName? = null,
+   ): TypeSpec {
       val (scopedServiceConstructorParameters, nonScopedServiceParameters) = allConstructorParameters.filterNot {
          it.annotations.any { annotation ->
             annotation.annotationType.toTypeName() == ANNOTATION_CURRENT_SCOPE_TAG
@@ -257,9 +232,28 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
 
       val lambdaParameters = "scope, backstack ->"
 
-      return FunSpec.builder("provides${className.simpleName}Factory")
-         .returns(SCREEN_FACTORY.parameterizedBy(className))
-         .addAnnotation(Provides::class)
+      return TypeSpec.classBuilder("${className.simpleName}Factory")
+         .createBindingAnnotations(className, visibility, bindingType)
+         .createConstructor(externalDependenciesConstructorParameters, nestedScreenConstructorParameters)
+         .addSuperclassConstructorParameter(
+            "listOf(${allRequiredScopedServices.joinToString { "%T::class" }})",
+            *allRequiredScopedServices.map { it.type.toTypeName() }.toTypedArray()
+         )
+         .addSuperclassConstructorParameter(
+            "listOf(${nestedScreenConstructorParameters.joinToString { "%L" }})",
+            *nestedScreenConstructorParameters.map { "${it.nameOrThrow().asString()}Factory" }.toTypedArray(),
+         )
+         .addSuperclassConstructorParameter("{ $lambdaParameters \n %L}", factoryLambda)
+         .superclass(SCREEN_FACTORY.parameterizedBy(className))
+         .addModifiers(visibility.toKModifier() ?: KModifier.PUBLIC)
+         .build()
+   }
+
+   private fun TypeSpec.Builder.createConstructor(
+      externalDependenciesConstructorParameters: List<KSValueParameter>,
+      nestedScreenConstructorParameters: List<KSValueParameter>,
+   ): TypeSpec.Builder = primaryConstructor(
+      FunSpec.constructorBuilder()
          .addParameters(
             externalDependenciesConstructorParameters.map { parameter ->
                ParameterSpec.builder(
@@ -287,15 +281,45 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
                   .build()
             }
          )
-         .addStatement(
-            "return %L(listOf(${allRequiredScopedServices.joinToString { "%T::class" }}), " +
-               "listOf(${nestedScreenConstructorParameters.joinToString { "%L" }})) { $lambdaParameters \n %L}",
-            SCREEN_FACTORY,
-            *allRequiredScopedServices.map { it.type.toTypeName() }.toTypedArray(),
-            *nestedScreenConstructorParameters.map { "${it.nameOrThrow().asString()}Factory" }.toTypedArray(),
-            factoryLambda
-         )
          .build()
+   )
+
+   private fun TypeSpec.Builder.createBindingAnnotations(
+      className: ClassName,
+      visibility: Visibility,
+      bindingType: TypeName? = null,
+   ): TypeSpec.Builder {
+      return addAnnotation(
+         AnnotationSpec.builder(ContributesIntoMap::class).addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
+            .addMember("binding=%T<%T>()", BINDING_ANNOTATION_TARGET_MARKER, SCREEN_FACTORY.parameterizedBy(STAR)).build()
+      )
+         .addAnnotation(
+            AnnotationSpec.builder(ClassKey::class).addMember("%T::class", className).build()
+         )
+         .run {
+            if (visibility == Visibility.PUBLIC) {
+               // Only generate ScreenFactory<ConcreteClass> if the screen is public.
+               // Metro does not support internal bindings
+               addAnnotation(
+                  AnnotationSpec.builder(ContributesBinding::class).addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
+                     .addMember("binding=%T<%T>()", BINDING_ANNOTATION_TARGET_MARKER, SCREEN_FACTORY.parameterizedBy(className))
+                     .build()
+               )
+            } else {
+               this
+            }
+         }
+         .run {
+            if (bindingType != null) {
+               addAnnotation(
+                  AnnotationSpec.builder(ContributesBinding::class).addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
+                     .addMember("binding=%T<%T>()", BINDING_ANNOTATION_TARGET_MARKER, SCREEN_FACTORY.parameterizedBy(bindingType))
+                     .build()
+               )
+            } else {
+               this
+            }
+         }
    }
 
    private fun createScreenFactoryLamda(

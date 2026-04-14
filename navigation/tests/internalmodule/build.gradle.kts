@@ -14,7 +14,7 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import jacoco.setupJacocoMergingAndroid
+import dev.zacsweers.metro.gradle.ExperimentalMetroGradleApi
 
 /*
  * Copyright 2026 INOVA IT d.o.o.
@@ -36,67 +36,38 @@ import jacoco.setupJacocoMergingAndroid
 // so we just use an empty app module with android tests
 
 plugins {
-   id("com.android.application")
+   id("com.android.library")
    kotlin("android")
    androidCommon
    id("com.google.devtools.ksp")
-   id("kotlin-parcelize")
    id("kotlinx-serialization")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
 }
 
 android {
-   namespace = "si.inova.kotlinova.navigation.tests"
+   namespace = "si.inova.kotlinova.navigation.tests.internalmodule"
 
    defaultConfig {
-      applicationId = namespace
-      versionCode = 1
-      versionName = "1.0"
       targetSdk = 33
    }
+}
 
-   // Force static signing config to ensure apks across CI attempts are compatible with each other
-   signingConfigs {
-      getByName("debug") {
-         storeFile = File(rootDir, "config/instrumented_tests_key.jks")
-         storePassword = "android"
-         keyAlias = "androiddebugkey"
-         keyPassword = "android"
-      }
-   }
+@OptIn(ExperimentalMetroGradleApi::class)
+metro {
+   generateContributionProviders = true
 }
 
 dependencies {
    // Dependencies need to be "implementation" to be included in the coverage report
-   implementation(projects.kotlinova.compose)
    implementation(projects.kotlinova.navigation)
-   implementation(projects.kotlinova.navigation.navigationDeeplink)
-   implementation(projects.kotlinova.navigation.navigationFragment)
-   implementation(projects.kotlinova.navigation.navigationNavigation3)
-   implementation(projects.kotlinova.navigation.tests.internalmodule)
 
    implementation(libs.androidx.core)
    implementation(libs.androidx.activity.compose)
    implementation(libs.androidx.fragment)
    implementation(libs.androidx.compose.ui)
-   implementation(libs.androidx.compose.ui.graphics)
-   implementation(libs.androidx.compose.ui.test.manifest)
-   implementation(libs.androidx.compose.ui.tooling)
-   implementation(libs.androidx.compose.ui.tooling.preview)
-   implementation(libs.androidx.compose.ui.util)
    implementation(libs.androidx.compose.material3)
-   implementation(libs.androidx.lifecycle.compose)
-   implementation(libs.androidx.lifecycle.navigation3)
-   implementation(libs.androidx.lifecycle.viewModel.compose)
-   implementation(libs.kotlin.serialization)
 
-   kspAndroidTest(projects.navigation.navigationCompiler)
-
-   androidTestImplementation(libs.junit4)
-   androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-   androidTestImplementation(libs.androidx.test.espresso)
-   androidTestImplementation(libs.kotest.assertions)
+   ksp(projects.kotlinova.navigation.navigationCompiler)
 }
 
-setupJacocoMergingAndroid()
