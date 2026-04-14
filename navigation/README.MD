@@ -290,6 +290,39 @@ class MyScreen(
 }
 ```
 
+### Internal scoped service
+
+There is a partial support for scoped services that are `internal` instead of `public`. To enable this, you have to use
+a `@ContributesIntoMap` instead of a `@ContributesScopedService`:
+
+```kotlin
+@ContributesIntoMap(BackstackScope::class, binding = binding<ScopedService>())
+@ClassKey(BasicInternalService::class)
+class MyService : ScopedService {
+
+}
+```
+
+If you use an interface, just specify that interface in the `@ClassKey` annotation:
+
+```kotlin
+@ContributesIntoMap(BackstackScope::class, binding = binding<ScopedService>())
+@ClassKey(MyService::class)
+@Inject
+internal class MyServiceImpl() : MyService {
+   ...
+}
+
+internal interface MyService : ScopedService {
+   ...
+}
+```
+
+For this to work, you need to
+enable [generateContributionProviders](https://zacsweers.github.io/metro/latest/aggregation/#generatecontributionproviders).
+Your screens also need to be `internal` and some features (such as injecting this service into another service via
+`@FromBackstack`) will not work.
+
 ## Custom animations
 
 To customize animations, you can override `forwardAnimation` and `backwardAnimation` methods of the screen's key.

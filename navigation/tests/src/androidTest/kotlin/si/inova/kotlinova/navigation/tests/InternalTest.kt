@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.Test
@@ -27,6 +28,8 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.tests.internalmodule.InternalScreenKey
+import si.inova.kotlinova.navigation.tests.internalmodule.InternalScreenWithBasicServiceInterfaceKey
+import si.inova.kotlinova.navigation.tests.internalmodule.InternalScreenWithBasicServiceKey
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
 
 class InternalTest {
@@ -45,6 +48,26 @@ class InternalTest {
       rule.insertTestNavigation(ScreenReferencingInternalScreenKey)
 
       rule.onNodeWithText("Hello from Internal Screen").assertIsDisplayed()
+   }
+
+   @Test
+   fun allowInternalScreensToInteractWithInternalServices() {
+      rule.insertTestNavigation(InternalScreenWithBasicServiceKey)
+      rule.waitForIdle()
+
+      rule.onNodeWithText("Number: 0").assertIsDisplayed()
+      rule.onNodeWithText("Increase").performClick()
+      rule.onNodeWithText("Number: 1").assertIsDisplayed()
+   }
+
+   @Test
+   fun allowInternalScreensToInteractWithInternalServiceInterface() {
+      rule.insertTestNavigation(InternalScreenWithBasicServiceInterfaceKey)
+      rule.waitForIdle()
+
+      rule.onNodeWithText("Number: 0").assertIsDisplayed()
+      rule.onNodeWithText("Increase").performClick()
+      rule.onNodeWithText("Number: 1").assertIsDisplayed()
    }
 }
 
