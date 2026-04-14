@@ -28,7 +28,6 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.binding
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -348,7 +347,6 @@ class ServicesTest {
    }
 
    @ContributesScopedService(BasicServiceWithInterfaceAndMultipleParents::class)
-   @ContributesBinding(BackstackScope::class, binding<BasicServiceWithInterfaceAndMultipleParents>())
    @Inject
    class BasicServiceWithInterfaceAndMultipleParentsImpl : DummyParent, BasicServiceWithInterfaceAndMultipleParents {
       override val data = MutableStateFlow(0)

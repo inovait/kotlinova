@@ -247,12 +247,10 @@ you also must inject all shared services into all screens.
 
 ### Service interfaces
 
-You can use `ContributesBinding` annotation to inject a service interface into a screen, the same way it works with normal
-injection:
+You can specify target type in the `ContributesScopedService` annotation to inject a service interface into a screen:
 
 ```kotlin
-@ContributesScopedService
-@contributesBinding(BackstackScope::class)
+@ContributesScopedService(MyService::class)
 @Inject
 class MyServiceImpl() : MyService {
    ...
@@ -270,11 +268,11 @@ class MyScreen(
 }
 ```
 
-If your service has multiple parents, you have to specify which interface to bind to in the `ContributesScopedService` annotation:
+Similarly, if your service has multiple parents,
+you have to specify which interface to bind to in the `ContributesScopedService` annotation:
 
 ```kotlin
 @ContributesScopedService(MyService::class)
-@contributesBinding(BackstackScope::class, binding<MyService>())
 @Inject
 class MyServiceImpl() : MyService, AnotherInterface {
    ...
