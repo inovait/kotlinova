@@ -127,7 +127,7 @@ jobs:
       - name: 'Push tag'
         run: 'git push origin ${{ env.VERSION }}'
       - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action/composite@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
+        uses: EnricoMi/publish-unit-test-result-action/composite@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         if: always()
         with:
           comment_mode: failures
