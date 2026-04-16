@@ -26,7 +26,6 @@ plugins {
    id("com.android.library")
    kotlin("multiplatform")
    id("android-commons")
-   id("kotlin-parcelize")
    jacoco
 }
 
