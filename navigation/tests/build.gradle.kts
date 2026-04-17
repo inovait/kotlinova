@@ -86,6 +86,8 @@ dependencies {
    implementation(libs.androidx.compose.ui.tooling.preview)
    implementation(libs.androidx.compose.ui.util)
    implementation(libs.androidx.compose.material3)
+   // We don't need this library directly, but we need to force a higher version to work around version conflicts
+   implementation(libs.androidx.concurrent.futures)
    implementation(libs.androidx.lifecycle.compose)
    implementation(libs.androidx.lifecycle.navigation3)
    implementation(libs.androidx.lifecycle.viewModel.compose)

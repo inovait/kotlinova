@@ -3,6 +3,7 @@ androidGradleCacheFix = "3.0.3"
 androidGradlePlugin = "8.13.2"
 androidx-activity = "1.13.0"
 androidx-core = "1.18.0"
+androidx-concurrent = "1.3.0"
 androidx-fragment = "1.8.9"
 androidx-lifecycle = "2.11.0-alpha03"
 androidx-navigation3 = "1.0.0-alpha06"
@@ -61,6 +62,7 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
+androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "androidx-concurrent" }
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "androidx-fragment" }
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
