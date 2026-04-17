@@ -22,7 +22,7 @@ dokka = "2.1.0"
 # Do not update this until we update gradle
 # there is a version conflict with a gradle-supplied grpc, resulting in
 # AbstractManagedChannelImplBuilder error
-googleCloud-monitoring = "3.87.0"
+googleCloud-monitoring = "3.89.0"
 # Do not update, new version not compatible with the AGP https://issuetracker.google.com/issues/371158364
 googleCloud-protobufUtil = "4.34.1"
 jacoco = "0.8.14"
