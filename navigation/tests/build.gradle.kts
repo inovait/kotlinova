@@ -40,7 +40,6 @@ plugins {
    kotlin("android")
    androidCommon
    id("com.google.devtools.ksp")
-   id("kotlin-parcelize")
    id("kotlinx-serialization")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)

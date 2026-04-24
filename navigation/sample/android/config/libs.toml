@@ -8,11 +8,11 @@ androidx-fragment = "1.8.5"
 androidx-lifecycle = "2.10.0"
 androidx-navigation3 = "1.0.0"
 desugarJdkLibs = "2.1.5"
-kotlin = "2.3.0"
-kotlinova = "4.0.0"
+kotlin = "2.3.20"
+kotlinova = "4.0.2"
 kotlin-serializationRuntime = "1.10.0"
 ksp = "2.3.3"
-metro = "0.10.2"
+metro = "1.0.0-RC1"
 
 [libraries]
 android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
