@@ -29,6 +29,7 @@ import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.Scene
+import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
@@ -39,6 +40,10 @@ import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import kotlin.jvm.JvmSuppressWildcards
 
+@Deprecated(
+   message = "Deprecated in favor of NavDisplay that takes a List<SceneStrategy>",
+   level = DeprecationLevel.HIDDEN,
+)
 @Composable
 // This function is a replacement for the original Nav3 NavDisplay, so it must be named the same
 @Suppress("ComposableNaming")
@@ -52,6 +57,32 @@ fun NavigationInjection.Factory.NavDisplay(
    sceneStrategy: SceneStrategy<ScreenKey> = SinglePaneSceneStrategy(),
    sizeTransform: SizeTransform? = null,
 ): Backstack {
+   return NavDisplay(
+      initialHistory = initialHistory,
+      modifier = modifier,
+      generateExtraNavEntryMetadata = generateExtraNavEntryMetadata,
+      contentAlignment = contentAlignment,
+      entryDecorators = entryDecorators,
+      sceneStrategies = listOf(sceneStrategy),
+      sceneDecoratorStrategies = emptyList(),
+      sizeTransform = sizeTransform
+   )
+}
+
+@Composable
+// This function is a replacement for the original Nav3 NavDisplay, so it must be named the same
+@Suppress("ComposableNaming")
+fun NavigationInjection.Factory.NavDisplay(
+   initialHistory: () -> List<ScreenKey>,
+   modifier: Modifier = Modifier,
+   generateExtraNavEntryMetadata: ((ScreenKey) -> Map<String, String>) = { emptyMap() },
+   contentAlignment: Alignment = Alignment.TopStart,
+   entryDecorators: List<NavEntryDecorator<ScreenKey>> =
+      listOf(rememberSaveableStateHolderNavEntryDecorator()),
+   sceneStrategies: List<SceneStrategy<ScreenKey>> = listOf(SinglePaneSceneStrategy()),
+   sceneDecoratorStrategies: List<SceneDecoratorStrategy<ScreenKey>> = emptyList(),
+   sizeTransform: SizeTransform? = null,
+): Backstack {
    val backstack = rememberBackstack { initialHistory() }
 
    val entryProvider = backstack.rememberNavigation3EntryProvider(
@@ -59,14 +90,38 @@ fun NavigationInjection.Factory.NavDisplay(
    )
 
    entryProvider.NavDisplay(
-      modifier,
-      contentAlignment,
-      entryDecorators,
-      sceneStrategy,
-      sizeTransform,
+      modifier = modifier,
+      contentAlignment = contentAlignment,
+      entryDecorators = entryDecorators,
+      sceneStrategies = sceneStrategies,
+      sceneDecoratorStrategies = sceneDecoratorStrategies,
+      sizeTransform = sizeTransform,
    )
 
    return backstack
+}
+
+@Deprecated(
+   message = "Deprecated in favor of NavDisplay that takes a List<SceneStrategy>",
+   level = DeprecationLevel.HIDDEN,
+)
+@Composable
+fun Navigation3EntryProvider.NavDisplay(
+   modifier: Modifier = Modifier,
+   contentAlignment: Alignment = Alignment.TopStart,
+   entryDecorators: List<NavEntryDecorator<out ScreenKey>> =
+      listOf(rememberSaveableStateHolderNavEntryDecorator()),
+   sceneStrategy: SceneStrategy<ScreenKey> = SinglePaneSceneStrategy(),
+   sizeTransform: SizeTransform? = null,
+) {
+   NavDisplay(
+      modifier,
+      contentAlignment,
+      entryDecorators,
+      listOf(sceneStrategy),
+      emptyList(),
+      sizeTransform
+   )
 }
 
 @Composable
@@ -75,7 +130,8 @@ fun Navigation3EntryProvider.NavDisplay(
    contentAlignment: Alignment = Alignment.TopStart,
    entryDecorators: List<NavEntryDecorator<out ScreenKey>> =
       listOf(rememberSaveableStateHolderNavEntryDecorator()),
-   sceneStrategy: SceneStrategy<ScreenKey> = SinglePaneSceneStrategy(),
+   sceneStrategies: List<SceneStrategy<ScreenKey>> = listOf(SinglePaneSceneStrategy()),
+   sceneDecoratorStrategies: List<SceneDecoratorStrategy<ScreenKey>> = emptyList(),
    sizeTransform: SizeTransform? = null,
 ) {
    BackstackProvider(this.backstack) {
@@ -93,7 +149,8 @@ fun Navigation3EntryProvider.NavDisplay(
 
       NavDisplay(
          entries = decoratedNavEntries,
-         sceneStrategy = sceneStrategy,
+         sceneStrategies = sceneStrategies,
+         sceneDecoratorStrategies = sceneDecoratorStrategies,
          modifier = modifier,
          contentAlignment = contentAlignment,
          sizeTransform = sizeTransform,

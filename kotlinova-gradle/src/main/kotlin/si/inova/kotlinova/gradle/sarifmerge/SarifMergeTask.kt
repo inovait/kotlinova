@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.gradle.sarifmerge
 
 import io.github.detekt.sarif4k.Level
+import io.github.detekt.sarif4k.MergingConfig
 import io.github.detekt.sarif4k.ReportingConfiguration
 import io.github.detekt.sarif4k.SarifSerializer
 import io.github.detekt.sarif4k.merge
@@ -55,7 +56,11 @@ abstract class SarifMergeTask : DefaultTask() {
       } else {
          val sarifFiles = inputFiles.map { SarifSerializer.fromJson(it.readText()) }
 
-         val merged = sarifFiles.reduce { a, b -> a.merge(b) }
+         val mergingConfig = MergingConfig(
+            selectSchema = { first, second -> first ?: second }
+         )
+
+         val merged = sarifFiles.reduce { a, b -> a.merge(b, mergingConfig) }
 
          val fixedSeverity = merged.copy(
             runs = merged.runs.map { run ->
