@@ -41,8 +41,7 @@ import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import kotlin.jvm.JvmSuppressWildcards
 
 @Deprecated(
-   message =
-      "Deprecated in favor of NavDisplay that takes a List<SceneStrategy>",
+   message = "Deprecated in favor of NavDisplay that takes a List<SceneStrategy>",
    level = DeprecationLevel.HIDDEN,
 )
 @Composable
@@ -103,8 +102,7 @@ fun NavigationInjection.Factory.NavDisplay(
 }
 
 @Deprecated(
-   message =
-      "Deprecated in favor of NavDisplay that takes a List<SceneStrategy>",
+   message = "Deprecated in favor of NavDisplay that takes a List<SceneStrategy>",
    level = DeprecationLevel.HIDDEN,
 )
 @Composable
