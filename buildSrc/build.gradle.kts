@@ -58,6 +58,19 @@ tasks.register("pre-commit-hook", Copy::class) {
    into("$rootDir/../.git/hooks")
 }
 
+tasks.register("code-style", Copy::class) {
+   // Due to the https://issuetracker.google.com/issues/479683689, we cannot just directly share
+   // IDE code style via git. As a workaround, we share it in a separate place and
+   // copy it to the .idea folder
+
+   from("$rootDir/../config/ideaCodeStyle.xml") {
+      rename("ideaCodeStyle.xml", "Project.xml")
+   }
+   into("$rootDir/../.idea/codeStyles/")
+}
+
 afterEvaluate {
-   tasks.getByName("jar").dependsOn("pre-commit-hook")
+   tasks.getByName("jar")
+      .dependsOn("pre-commit-hook")
+      .dependsOn("code-style")
 }
