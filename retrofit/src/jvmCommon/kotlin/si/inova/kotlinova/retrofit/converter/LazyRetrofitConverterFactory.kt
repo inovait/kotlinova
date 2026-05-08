@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -43,7 +43,7 @@ class LazyRetrofitConverterFactory(private val parentFactory: Lazy<Converter.Fac
                annotations,
                retrofit
             )
-         ) { "Moshi converter should never be null" }
+         ) { "Parent converter should never be null" }
       }
 
       return Converter { lazyConverter.value.convert(it) }
@@ -64,7 +64,7 @@ class LazyRetrofitConverterFactory(private val parentFactory: Lazy<Converter.Fac
                methodAnnotations,
                retrofit
             ) as Converter<Any?, RequestBody>?
-         ) { "Moshi converter should never be null" }
+         ) { "Parent converter should never be null" }
       }
 
       return Converter<Any?, RequestBody> { value: Any -> lazyConverter.value.convert(value) }
