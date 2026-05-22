@@ -25,7 +25,7 @@ import si.inova.kotlinova.navigation.serialization.defaultNavigationSerializersM
 import si.inova.kotlinova.navigation.services.ScopedService
 import kotlin.reflect.KClass
 
-interface NavigationInjection: ScopedService {
+interface NavigationInjection : ScopedService {
    fun screenRegistry(): ScreenRegistry
    fun scopedServicesFactories(): Map<KClass<*>, Provider<ScopedService>>
    fun navigator(): Navigator
