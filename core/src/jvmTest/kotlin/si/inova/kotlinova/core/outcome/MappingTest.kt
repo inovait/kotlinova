@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
+import si.inova.kotlinova.core.exceptions.DataParsingException
 import si.inova.kotlinova.core.exceptions.NoNetworkException
 import si.inova.kotlinova.core.test.outcomes.shouldBeErrorWith
 import si.inova.kotlinova.core.test.outcomes.shouldBeProgressWith
@@ -37,6 +38,26 @@ internal class MappingTest {
          Outcome.Progress(30).mapData { it.toString() } shouldBeProgressWithData "30"
          Outcome.Error(NoNetworkException(), 30).mapData { it * 2 }.shouldBeErrorWith(expectedData = 60)
          Outcome.Error(NoNetworkException(), 30).mapData { it.toString() }.shouldBeErrorWith(expectedData = "30")
+      }
+   }
+
+   @Test
+   internal fun `mapDataIntoOutcome`() {
+      assertSoftly {
+         Outcome.Success(30).mapDataIntoOutcome { Outcome.Success(it * 2) } shouldBeSuccessWithData 60
+         Outcome.Success(30).mapDataIntoOutcome { Outcome.Progress(it * 2) } shouldBeProgressWithData 60
+         Outcome.Progress(30).mapDataIntoOutcome { Outcome.Success(it * 2) } shouldBeProgressWithData 60
+         Outcome.Progress<Int>().mapDataIntoOutcome { Outcome.Success(it * 2) } shouldBeProgressWithData null
+         Outcome.Progress<Int>().mapDataIntoOutcome { Outcome.Error<Int>(NoNetworkException()) } shouldBeProgressWithData null
+         Outcome.Error(DataParsingException(), 15)
+            .mapDataIntoOutcome { Outcome.Success(it * 2) }
+            .shouldBeErrorWith(expectedData = 30, exceptionType = DataParsingException::class)
+         Outcome.Error(DataParsingException(), 15)
+            .mapDataIntoOutcome { Outcome.Error<Int>(NoNetworkException()) }
+            .shouldBeErrorWith(expectedData = null, exceptionType = NoNetworkException::class)
+         Outcome.Error<Int>(DataParsingException(), null)
+            .mapDataIntoOutcome { Outcome.Success(it * 2) }
+            .shouldBeErrorWith(expectedData = null, exceptionType = DataParsingException::class)
       }
    }
 

@@ -47,6 +47,24 @@ fun <A, B> Outcome<A>.mapNullableData(mapper: (A?) -> B): Outcome<B> {
       is Outcome.Progress -> Outcome.Progress(mapper(data), progress, style)
       is Outcome.Success -> Outcome.Success(mapper(data))
    }
+
+}
+/**
+ * Map data of this outcome into another outcome.
+ *
+ * * If this outcome does not have any data, existing outcome type is just copied over.
+ * * If this outcome has any data, it is mapped using a [mapper] and then worse outcome between the result
+ *   and the original is selected (see [downgradeTo]).
+ */
+fun <A, B> Outcome<A>.mapDataIntoOutcome(mapper: (A) -> Outcome<B>): Outcome<B> {
+   val data = this@mapDataIntoOutcome.data
+
+   return if (data == null) {
+      @Suppress("UNCHECKED_CAST")
+      this as Outcome<B>
+   } else {
+      mapper(data).downgradeTo(this)
+   }
 }
 
 /**
