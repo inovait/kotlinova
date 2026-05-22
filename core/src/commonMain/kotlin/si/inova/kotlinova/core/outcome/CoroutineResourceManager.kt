@@ -66,6 +66,7 @@ open class CoroutineResourceManager(
     *    (unless [keepDataOnExceptions] is disabled)
     * 6. Automatically reports exceptions to the provided ReportService
     */
+   @Suppress("SuspendFunSwallowedCancellation") // False positive https://github.com/detekt/detekt/issues/8902
    open fun <T> launchResourceControlTask(
       resource: MutableStateFlow<Outcome<T>>,
       currentValue: T? = resource.value.data,
@@ -160,6 +161,7 @@ open class CoroutineResourceManager(
    /**
     * Launch a coroutine and report any exceptions that happen in that scope to the [reportService]
     */
+   @Suppress("SuspendFunSwallowedCancellation") // False positive https://github.com/detekt/detekt/issues/8902
    fun launchWithExceptionReporting(
       context: CoroutineContext = EmptyCoroutineContext,
       start: CoroutineStart = CoroutineStart.DEFAULT,

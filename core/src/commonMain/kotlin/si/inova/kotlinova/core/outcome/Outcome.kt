@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -22,6 +22,7 @@ import androidx.compose.runtime.Immutable
  * Standard wrapper for an operation. It can be either [Progress], [Success] or [Error].
  */
 @Immutable
+@Suppress("AbstractClassCanBeInterface") // Backwards compatibility
 sealed class Outcome<out T> {
    abstract val data: T?
 
