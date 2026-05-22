@@ -27,6 +27,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
 
+@Suppress("AbstractClassCanBeInterface") // Backwards compatibility
 abstract class ScreenKey {
    open val navigationConditions: List<NavigationCondition>
       get() = emptyList()
