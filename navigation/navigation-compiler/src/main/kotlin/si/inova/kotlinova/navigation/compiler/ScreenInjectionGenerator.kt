@@ -41,13 +41,13 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.LambdaTypeName
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.buildCodeBlock
 import com.squareup.kotlinpoet.ksp.toAnnotationSpec
 import com.squareup.kotlinpoet.ksp.toClassName
@@ -59,7 +59,6 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.IntoMap
-import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.Provides
 import si.inova.kotlinova.navigation.compiler.util.fail
 
@@ -258,7 +257,7 @@ class ScreenInjectionGenerator(private val codeGenerator: CodeGenerator, private
             externalDependenciesConstructorParameters.map { parameter ->
                ParameterSpec.builder(
                   "${parameter.nameOrThrow().asString()}Provider",
-                  Provider::class.asClassName().parameterizedBy(parameter.type.toTypeName()),
+                  LambdaTypeName.get(returnType = parameter.type.toTypeName())
                ).apply {
                   for (annotation in parameter.annotations) {
                      addAnnotation(annotation.toAnnotationSpec())
