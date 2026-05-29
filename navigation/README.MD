@@ -323,6 +323,12 @@ enable [generateContributionProviders](https://zacsweers.github.io/metro/latest/
 Your screens also need to be `internal` and some features (such as injecting this service into another service via
 `@FromBackstack`) will not work.
 
+
+### Singletons in scoped service
+
+If you want an object to be a singleton inside a specific scoped service instance, you can annotate it with the 
+`@SingleIn(ServiceScope::class)` annotation. 
+
 ## Custom animations
 
 To customize animations, you can override `forwardAnimation` and `backwardAnimation` methods of the screen's key.

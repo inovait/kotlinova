@@ -39,10 +39,10 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
-import dev.zacsweers.metro.Binds
 import dev.zacsweers.metro.ClassKey
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Provides
 import kotlin.reflect.KClass
@@ -73,7 +73,8 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
          .addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
          .build()
 
-      val provideServiceFunction = createBindsServiceFunction(serviceClassName, serviceClassName)
+      val subGraph = generateScopedServiceSubGraph(serviceClassName)
+      val provideServiceFunction = createProvideServiceIntoMapFunction(serviceClassName, serviceClassName)
       val provideFromBackstackFunction = createProvideFromBackstackFunction(serviceClassName, serviceClassName)
 
       val contributesBindingAnnotation =
@@ -92,7 +93,7 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
                // is solely determined by the type of the generic annotation and KSP does not support generic annotations
                // So we are forced to use another annotation for that
                val boundType = boundType(service, contributesScopedServiceAnnotation).toClassName()
-               addFunction(createBindsServiceFunction(serviceClassName, boundType))
+               addFunction(createProvideServiceIntoMapFunction(serviceClassName, boundType))
                addFunction(createProvideFromBackstackFunction(serviceClassName, boundType))
             }
          }
@@ -102,26 +103,69 @@ class ScopedServiceInjectionGenerator(private val codeGenerator: CodeGenerator, 
 
       FileSpec.builder(service.packageName.asString(), outputClassName).apply {
          addType(fromBackstackProviderProviders)
+         addType(subGraph)
       }
          .build()
          .writeTo(codeGenerator, false, dependencies)
    }
 
-   private fun createBindsServiceFunction(
+   private fun generateScopedServiceSubGraph(
+      serviceClassName: ClassName,
+   ): TypeSpec {
+      val subgraphName = serviceClassName.simpleName + "SubGraph"
+
+      return TypeSpec.interfaceBuilder(subgraphName)
+         .addAnnotation(
+            AnnotationSpec.builder(GraphExtension::class)
+               .addMember("%T::class", SERVICE_SCOPE_ANNOTATION)
+               .build()
+         )
+         .addFunction(
+            FunSpec
+               .builder("create${serviceClassName.simpleName}Service")
+               .returns(serviceClassName)
+               .addModifiers(KModifier.ABSTRACT)
+               .build()
+         )
+         .addType(
+            TypeSpec.interfaceBuilder("Factory")
+               .addAnnotation(
+                  GraphExtension.Factory::class
+               )
+               .addAnnotation(
+                  AnnotationSpec.builder(ContributesTo::class)
+                     .addMember("%T::class", BACKSTACK_SCOPE_ANNOTATION)
+                     .build()
+               )
+               .addFunction(
+                  FunSpec
+                     .builder("create${serviceClassName.simpleName}")
+                     .returns(ClassName("", subgraphName))
+                     .addModifiers(KModifier.ABSTRACT)
+                     .build()
+               )
+               .build()
+         )
+         .build()
+   }
+
+   private fun createProvideServiceIntoMapFunction(
       serviceClassName: ClassName,
       targetClassName: ClassName,
    ): FunSpec {
-      return FunSpec.builder("bind${targetClassName.simpleName}Constructor")
+      val subgraphName = serviceClassName.simpleName + "SubGraph.Factory"
+
+      return FunSpec.builder("provide${targetClassName.simpleName}IntoMap")
          .returns(SCOPED_SERVICE_BASE_CLASS)
-         .addParameter("service", serviceClassName)
-         .addAnnotation(Binds::class)
+         .addParameter("subGraphFactory", ClassName(serviceClassName.packageName, subgraphName))
+         .addAnnotation(Provides::class)
          .addAnnotation(IntoMap::class)
          .addAnnotation(
             AnnotationSpec.builder(ClassKey::class)
                .addMember("%T::class", targetClassName)
                .build()
          )
-         .addModifiers(KModifier.ABSTRACT)
+         .addCode("return subGraphFactory.create${serviceClassName.simpleName}().create${serviceClassName.simpleName}Service()")
          .build()
    }
 

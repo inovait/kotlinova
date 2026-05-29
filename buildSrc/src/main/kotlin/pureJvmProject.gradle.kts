@@ -43,7 +43,7 @@ val libs = the<LibrariesForLibs>()
 plugins {
    id("java-library")
    id("org.jetbrains.kotlin.jvm")
-   id("standard-config")
+   id("standardConfig")
    jacoco
 }
 

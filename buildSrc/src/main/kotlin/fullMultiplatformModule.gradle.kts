@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("multiplatform-jvm")
+   id("jvmMultiplatformModule")
 }
 
 kotlin {

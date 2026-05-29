@@ -14,11 +14,10 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import jacoco.setupJacocoMergingAndroid
+import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
-import util.commonAndroidComponents
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import util.commonAndroid
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -39,64 +38,62 @@ import util.commonAndroidComponents
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("com.android.library")
-   kotlin("android")
-   id("android-commons")
+   id("standardConfig")
 }
 
-mavenPublishing {
-   configure(
-      AndroidSingleVariantLibrary(
-         variant = "release",
-         sourcesJar = true,
-         publishJavadocJar = false
-      )
-   )
-}
+commonAndroid {
+   compileSdk = 36
 
-// We cannot reuse empty-javadoc.jar over different projects, because that breaks Gradle's project isolation.
-// Instead, we copy empty javadoc to project's build folder and then use this one
-val dummyJavadocFolder = File(project.layout.buildDirectory.asFile.get(), "emptyJavadoc").also { it.mkdirs() }
-val copyJavadocTask = tasks.register<Copy>("copyJavadoc") {
-   from("${rootProject.rootDir}/config/empty-javadoc.jar")
-   into(dummyJavadocFolder)
-}
+   compileOptions {
+      // Android still creates java tasks, even with 100% Kotlin.
+      // Ensure that target compatiblity is equal to kotlin's jvmToolchain
+      lateinit var javaVersion: JavaVersion
+      the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
+      targetCompatibility = javaVersion
 
-afterEvaluate {
-   tasks.withType<Sign>().configureEach {
-      dependsOn(copyJavadocTask)
+      isCoreLibraryDesugaringEnabled = true
    }
-   tasks.withType<AbstractPublishToMaven>().configureEach {
-      dependsOn(copyJavadocTask)
+
+   defaultConfig {
+      minSdk = 23
+
+      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
    }
-}
 
-val runDebugTestsTask = tasks.register("runDebugTests")
-val runDebugDetektTask = tasks.register("runDebugDetekt")
+   testOptions {
+      unitTests.all {
+         it.useJUnitPlatform()
 
-commonAndroidComponents {
-   onVariants { variant ->
-      if (variant.buildType == "debug") {
-         runDebugTestsTask.dependsOn(variant.computeTaskName("test", "UnitTest"))
-
-         runDebugDetektTask.dependsOn(variant.computeTaskName("detekt", "UnitTest"))
-         runDebugDetektTask.dependsOn(variant.computeTaskName("detekt", "AndroidTest"))
-         runDebugDetektTask.dependsOn("detekt${variant.name.replaceFirstChar { it.uppercaseChar() }}")
+         // Better test output
+         it.systemProperty("kotest.assertions.collection.print.size", "300")
+         it.systemProperty("kotest.assertions.collection.enumerate.size", "300")
       }
    }
-}
 
-afterEvaluate {
-   publishing {
-      publications {
-         getByName<MavenPublication>("maven") {
-            // Add empty javadoc until https://github.com/Kotlin/dokka/issues/2956 is resolved
-            artifact("$dummyJavadocFolder/empty-javadoc.jar") {
-               classifier = "javadoc"
-            }
+   packaging {
+      resources {
+         excludes += "/META-INF/{AL2.0,LGPL2.1}"
+      }
+   }
+
+   lint {
+      lintConfig = file("$rootDir/config/android-lint.xml")
+      abortOnError = true
+
+      warningsAsErrors = true
+   }
+
+   buildTypes {
+      debug {
+         testCoverage {
+            jacocoVersion = libs.versions.jacoco.get()
          }
+         enableUnitTestCoverage = true
+         enableAndroidTestCoverage = true
       }
    }
 }
 
-setupJacocoMergingAndroid()
+dependencies {
+   add("coreLibraryDesugaring", libs.desugarJdkLibs)
+}

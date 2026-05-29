@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -14,20 +14,9 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import org.gradle.plugin.use.PluginDependenciesSpec
-import org.gradle.plugin.use.PluginDependencySpec
+package si.inova.kotlinova.navigation.di
 
-inline val PluginDependenciesSpec.jvmMultiplatformModule: PluginDependencySpec
-   get() = id("multiplatform-jvm")
-
-inline val PluginDependenciesSpec.fullMultiplatformModule: PluginDependencySpec
-   get() = id("multiplatform-full")
-
-inline val PluginDependenciesSpec.androidLibraryModule: PluginDependencySpec
-   get() = id("android-library-config")
-
-inline val PluginDependenciesSpec.androidCommon: PluginDependencySpec
-   get() = id("android-commons")
-
-inline val PluginDependenciesSpec.pureJvmProject: PluginDependencySpec
-   get() = id("pure-jvm-project")
+/**
+ * Metro scope that exists for the entire duration of a specific scoped service.
+ */
+class ServiceScope private constructor()

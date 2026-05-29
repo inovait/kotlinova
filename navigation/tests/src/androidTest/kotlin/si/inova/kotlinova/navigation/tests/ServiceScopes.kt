@@ -27,21 +27,29 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.Serializable
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import si.inova.kotlinova.navigation.di.OuterNavigationScope
+import si.inova.kotlinova.navigation.di.ServiceScope
 import si.inova.kotlinova.navigation.instructions.navigateTo
 import si.inova.kotlinova.navigation.navigator.Navigator
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
 import si.inova.kotlinova.navigation.screens.InjectNavigationScreen
 import si.inova.kotlinova.navigation.screens.Screen
 import si.inova.kotlinova.navigation.services.ContributesScopedService
+import si.inova.kotlinova.navigation.services.CoroutineScopedService
 import si.inova.kotlinova.navigation.services.SaveableScopedService
+import si.inova.kotlinova.navigation.services.ScopedService
 import si.inova.kotlinova.navigation.testutils.BlankScreenKey
 import si.inova.kotlinova.navigation.testutils.goBack
 import si.inova.kotlinova.navigation.testutils.insertTestNavigation
@@ -133,6 +141,36 @@ class ServiceScopes {
       unregisterCalled shouldBe true
    }
 
+   @Test
+   internal fun singleInServiceScopeClassesMustBeSameInstance() {
+      rule.insertTestNavigation(
+         ServiceWithSingletonsScreenKey()
+      )
+
+      rule.onNodeWithText("+").performClick()
+
+      rule.onNodeWithText("2").assertIsDisplayed()
+   }
+
+   @Test
+   internal fun singleInServiceScopeMustNotBeKeptWhenScreenGoesOutOfBackstack() {
+      val backstack = rule.insertTestNavigation(
+         ServiceWithSingletonsScreenKey()
+      )
+
+      rule.onNodeWithText("+").performClick()
+      rule.waitForIdle()
+
+      backstack.updateBackstack(listOf(BlankScreenKey))
+      rule.waitForIdle()
+
+      backstack.updateBackstack(listOf(ServiceWithSingletonsScreenKey()))
+      rule.waitForIdle()
+
+      rule.onNodeWithText("0").assertIsDisplayed()
+
+   }
+
    @Serializable
    data class NotSharedServiceScreenKey(val id: Int = Random.nextInt()) : ScreenKey()
 
@@ -196,5 +234,49 @@ class ServiceScopes {
          super.onServiceUnregistered()
          unregisterCalled = true
       }
+   }
+
+   @Serializable
+   data class ServiceWithSingletonsScreenKey(val id: Int = Random.nextInt()) : ScreenKey() {
+      override fun getScopeTag(): String {
+         return "SharedScope"
+      }
+   }
+
+   @InjectNavigationScreen
+   class ServiceWithSingletonsScreen(private val service: ServiceWithSingletons, navigator: Navigator) :
+      Screen<ServiceWithSingletonsScreenKey>() {
+      @Composable
+      override fun Content(key: ServiceWithSingletonsScreenKey) {
+         Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+               Text(service.combined.collectAsState(-1).value.toString())
+
+               Button(onClick = { service.increment() }) {
+                  Text("+")
+               }
+            }
+         }
+      }
+   }
+
+
+   @ContributesScopedService
+   @Inject
+   class ServiceWithSingletons(
+      private val first: DataHolder,
+      private val second: DataHolder,
+   ) : ScopedService {
+      val combined = combine(first.amount, second.amount) { a, b -> a + b }
+
+      fun increment() {
+         first.amount.update { it + 1 }
+      }
+   }
+
+   @Inject
+   @SingleIn(ServiceScope::class)
+   class DataHolder {
+      val amount = MutableStateFlow(0)
    }
 }

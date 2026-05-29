@@ -16,14 +16,18 @@
 
 package si.inova.kotlinova.navigation.di
 
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ClassKey
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.IntoMap
 import dev.zacsweers.metro.Multibinds
 import dev.zacsweers.metro.Provides
 import si.inova.kotlinova.navigation.backstack.Backstack
 import si.inova.kotlinova.navigation.conditions.NavigationCondition
+import si.inova.kotlinova.navigation.services.ScopedService
 import kotlin.reflect.KClass
 
 @GraphExtension(BackstackScope::class)
@@ -31,6 +35,11 @@ interface NavigationStackSubGraph : NavigationInjection {
    @MainNavigation
    @Provides
    fun provideMainBackstack(mainBackstackWrapper: MainBackstackWrapper): Backstack = mainBackstackWrapper.backstack
+
+   @Binds
+   @IntoMap
+   @ClassKey(NavigationInjection::class)
+   public fun bindSingleScreenViewModelServiceConstructor(graph: NavigationStackSubGraph): ScopedService
 
    @GraphExtension.Factory
    @ContributesTo(OuterNavigationScope::class)

@@ -23,6 +23,11 @@ internal val BACKSTACK_SCOPE_ANNOTATION = ClassName(
    "BackstackScope"
 )
 
+internal val SERVICE_SCOPE_ANNOTATION = ClassName(
+   "si.inova.kotlinova.navigation.di",
+   "ServiceScope"
+)
+
 internal val FROM_BACKSTACK_QUALIFIER_ANNOTATION = ClassName(
    "si.inova.kotlinova.navigation.di",
    "FromBackstack"

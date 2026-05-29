@@ -17,7 +17,6 @@
 package si.inova.kotlinova.navigation.backstack
 
 import androidx.compose.runtime.Composable
-import dev.zacsweers.metro.Provider
 import si.inova.kotlinova.navigation.di.MainBackstackWrapper
 import si.inova.kotlinova.navigation.di.NavigationInjection
 import si.inova.kotlinova.navigation.screenkeys.ScreenKey
@@ -43,8 +42,7 @@ fun NavigationInjection.Factory.rememberBackstack(
       val backstack = createBackstack(
          initialHistory(),
          scopedServicesFactories = lazy {
-            navigationInjection.scopedServicesFactories() +
-               mapOf(NavigationInjection::class to Provider { navigationInjection })
+            navigationInjection.scopedServicesFactories()
          },
          screenRegistry = lazy { navigationInjection.screenRegistry() },
          serializersModule = lazy { navigationInjection.serializers() },
