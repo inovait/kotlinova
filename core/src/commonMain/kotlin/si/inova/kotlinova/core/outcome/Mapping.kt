@@ -47,8 +47,8 @@ fun <A, B> Outcome<A>.mapNullableData(mapper: (A?) -> B): Outcome<B> {
       is Outcome.Progress -> Outcome.Progress(mapper(data), progress, style)
       is Outcome.Success -> Outcome.Success(mapper(data))
    }
-
 }
+
 /**
  * Map data of this outcome into another outcome.
  *

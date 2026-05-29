@@ -30,7 +30,7 @@ internal fun Project.registerAndroidLintSarifMerging(
       if (lintTask.autoFix.get() ||
          lintTask.lintMode.get() == LintMode.UPDATE_BASELINE ||
          lintTask.fatalOnly.get()
-         ) {
+      ) {
          // Baseline tasks, vital lint tasks and lint fix tasks do not expose sarif files
          return@configureEach
       }

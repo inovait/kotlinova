@@ -42,7 +42,7 @@ internal class MappingTest {
    }
 
    @Test
-   internal fun `mapDataIntoOutcome`() {
+   internal fun mapDataIntoOutcome() {
       assertSoftly {
          Outcome.Success(30).mapDataIntoOutcome { Outcome.Success(it * 2) } shouldBeSuccessWithData 60
          Outcome.Success(30).mapDataIntoOutcome { Outcome.Progress(it * 2) } shouldBeProgressWithData 60
