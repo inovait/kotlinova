@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -17,6 +17,7 @@
 package si.inova.kotlinova.gradle.sarifmerge
 
 import com.android.build.gradle.internal.lint.AndroidLintTask
+import com.android.build.gradle.internal.lint.LintMode
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.TaskProvider
@@ -26,8 +27,11 @@ internal fun Project.registerAndroidLintSarifMerging(
    sarifFiles: ConfigurableFileCollection,
 ) {
    tasks.withType(AndroidLintTask::class.java).configureEach { lintTask ->
-      if (lintTask.name.contains("Baseline") || lintTask.name.startsWith("lintVital")) {
-         // Baseline tasks and vital lint tasks do not expose sarif files
+      if (lintTask.autoFix.get() ||
+         lintTask.lintMode.get() == LintMode.UPDATE_BASELINE ||
+         lintTask.fatalOnly.get()
+         ) {
+         // Baseline tasks, vital lint tasks and lint fix tasks do not expose sarif files
          return@configureEach
       }
 
