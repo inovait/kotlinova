@@ -23,7 +23,7 @@ dokka = "2.2.0"
 # Before updating googleCloud libraries, check that instrumented tests and regular builds work
 # These could cause version conflicts inside AGP
 # See https://issuetracker.google.com/issues/371158364
-googleCloud-monitoring = "3.92.0"
+googleCloud-monitoring = "3.94.0"
 googleCloud-protobufUtil = "4.35.0"
 jacoco = "0.8.14"
 junit4 = "4.13.2"
