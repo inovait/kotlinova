@@ -17,7 +17,7 @@ composeMultiplatform = "1.11.1"
 composeMultiplatform-material3 = "1.9.0"
 desugarJdkLibs = "2.1.5"
 detekt = "2.0.0-alpha.3"
-detekt-compose = "0.6.0"
+detekt-compose = "0.6.2"
 dispatch = "1.0.0-beta10"
 dokka = "2.2.0"
 # Before updating googleCloud libraries, check that instrumented tests and regular builds work
