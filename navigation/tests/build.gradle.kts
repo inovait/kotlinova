@@ -37,7 +37,6 @@ import jacoco.setupJacocoMergingAndroid
 
 plugins {
    id("com.android.application")
-   kotlin("android")
    androidCommon
    id("com.google.devtools.ksp")
    id("kotlinx-serialization")

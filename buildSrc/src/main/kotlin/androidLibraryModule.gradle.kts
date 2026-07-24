@@ -44,7 +44,6 @@ val libs = the<LibrariesForLibs>()
 
 plugins {
    id("com.android.library")
-   kotlin("android")
    id("androidCommon")
 }
 

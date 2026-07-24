@@ -14,11 +14,11 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import util.COMMON_COMPILE_SDK
 import util.COMMON_MIN_SDK
 import util.commonAndroid
@@ -46,33 +46,31 @@ plugins {
 }
 
 if (project.pluginManager.hasPlugin("com.android.kotlin.multiplatform.library")) {
-   configure<KotlinMultiplatformExtension> {
-      androidLibrary {
-         compileSdk = COMMON_COMPILE_SDK
-         minSdk = COMMON_MIN_SDK
-      }
+   val multiplatformExtension = extensions.getByType<KotlinMultiplatformExtension>()
+   multiplatformExtension.extensions.configure<KotlinMultiplatformAndroidLibraryTarget>() {
+      compileSdk = COMMON_COMPILE_SDK
+      minSdk = COMMON_MIN_SDK
    }
 } else {
    commonAndroid {
       compileSdk = 36
 
-      compileOptions {
+      compileOptions.apply {
          // Android still creates java tasks, even with 100% Kotlin.
          // Ensure that target compatiblity is equal to kotlin's jvmToolchain
          lateinit var javaVersion: JavaVersion
-         the<KotlinProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
+         project.the<KotlinAndroidProjectExtension>().jvmToolchain { javaVersion = this.languageVersion.get().asJavaVersion() }
          targetCompatibility = javaVersion
-
          isCoreLibraryDesugaringEnabled = true
       }
 
-      defaultConfig {
+      defaultConfig.apply {
          minSdk = 23
 
          testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
       }
 
-      testOptions {
+      testOptions.apply {
          unitTests.all {
             it.useJUnitPlatform()
 
@@ -82,22 +80,22 @@ if (project.pluginManager.hasPlugin("com.android.kotlin.multiplatform.library"))
          }
       }
 
-      packaging {
+      packaging.apply {
          resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
          }
       }
 
-      lint {
+      lint.apply {
          lintConfig = file("$rootDir/config/android-lint.xml")
          abortOnError = true
 
          warningsAsErrors = true
       }
 
-      buildTypes {
-         debug {
-            testCoverage {
+      buildTypes.apply {
+         getByName("debug") {
+            testCoverage.apply {
                jacocoVersion = libs.versions.jacoco.get()
             }
             enableUnitTestCoverage = true

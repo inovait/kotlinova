@@ -37,7 +37,6 @@ import dev.zacsweers.metro.gradle.ExperimentalMetroGradleApi
 
 plugins {
    id("com.android.library")
-   kotlin("android")
    androidCommon
    id("com.google.devtools.ksp")
    id("kotlinx-serialization")
@@ -48,7 +47,7 @@ plugins {
 android {
    namespace = "si.inova.kotlinova.navigation.tests.internalmodule"
 
-   defaultConfig {
+   testOptions {
       targetSdk = 33
    }
 }
