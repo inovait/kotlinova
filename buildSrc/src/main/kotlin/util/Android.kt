@@ -45,5 +45,5 @@ fun Project.commonAndroidComponents(
    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("androidComponents", block)
 }
 
-const val COMMON_COMPILE_SDK = 36
+const val COMMON_COMPILE_SDK = 37
 const val COMMON_MIN_SDK = 23

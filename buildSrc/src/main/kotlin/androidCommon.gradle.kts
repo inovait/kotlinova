@@ -53,7 +53,7 @@ if (project.pluginManager.hasPlugin("com.android.kotlin.multiplatform.library"))
    }
 } else {
    commonAndroid {
-      compileSdk = 36
+      compileSdk = COMMON_COMPILE_SDK
 
       compileOptions.apply {
          // Android still creates java tasks, even with 100% Kotlin.
@@ -65,7 +65,7 @@ if (project.pluginManager.hasPlugin("com.android.kotlin.multiplatform.library"))
       }
 
       defaultConfig.apply {
-         minSdk = 23
+         minSdk = COMMON_MIN_SDK
 
          testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
       }
