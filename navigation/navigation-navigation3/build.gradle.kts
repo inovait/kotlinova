@@ -29,12 +29,11 @@ publishLibrary(
    githubPath = "navigation"
 )
 
-android {
-   namespace = "si.inova.kotlinova.navigation.navigation3"
-}
-
-
 kotlin {
+   androidLibrary {
+      namespace = "si.inova.kotlinova.navigation.navigation3"
+   }
+
    sourceSets {
       commonMain {
          dependencies {

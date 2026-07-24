@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 INOVA IT d.o.o.
+ * Copyright 2026 INOVA IT d.o.o.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
@@ -15,6 +15,7 @@
  */
 
 import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
 import org.gradle.accessors.dm.LibrariesForLibs
 import si.inova.kotlinova.gradle.KotlinovaExtension
 import util.commonAndroid
@@ -23,13 +24,14 @@ import util.isAndroidProject
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("dev.detekt")
    id("kotlinova")
 }
 
+apply(plugin = "dev.detekt")
+
 if (isAndroidProject()) {
    commonAndroid {
-      lint {
+      lint.apply {
          lintConfig = file("$rootDir/config/android-lint.xml")
          abortOnError = true
 
@@ -47,7 +49,7 @@ configure<KotlinovaExtension> {
    }
 }
 
-detekt {
+configure<DetektExtension> {
    config.from(files("$rootDir/config/detekt.yml"))
 }
 
@@ -60,5 +62,5 @@ tasks.withType<Detekt>().configureEach {
 }
 
 dependencies {
-   detektPlugins(libs.detekt.ktlint)
+   add("detektPlugins", libs.detekt.ktlint)
 }

@@ -15,9 +15,13 @@
  */
 
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.android.build.gradle.tasks.asJavaVersion
 import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import jacoco.setupJacocoMergingAndroid
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import util.COMMON_COMPILE_SDK
+import util.COMMON_MIN_SDK
 import util.commonAndroidComponents
 
 /*
@@ -40,7 +44,6 @@ val libs = the<LibrariesForLibs>()
 
 plugins {
    id("com.android.library")
-   kotlin("android")
    id("androidCommon")
 }
 

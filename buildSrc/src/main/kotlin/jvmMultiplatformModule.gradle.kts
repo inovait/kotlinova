@@ -23,16 +23,18 @@ import org.gradle.accessors.dm.LibrariesForLibs
 val libs = the<LibrariesForLibs>()
 
 plugins {
-   id("com.android.library")
+   id("com.android.kotlin.multiplatform.library")
    kotlin("multiplatform")
    id("androidCommon")
    jacoco
 }
 
 kotlin {
-   androidTarget()
-
    applyDefaultHierarchyTemplate()
+
+   compilerOptions {
+      freeCompilerArgs.add("-Xexpect-actual-classes")
+   }
 
    jvm {
       testRuns["test"].executionTask.configure {
@@ -66,18 +68,13 @@ kotlin {
          dependsOn(jvmCommon)
       }
    }
-
-   compilerOptions {
-      freeCompilerArgs.add("-Xexpect-actual-classes")
-   }
 }
 
 val runDebugTestsTask = tasks.register("runDebugTests")
 runDebugTestsTask.dependsOn("jvmTest")
-runDebugTestsTask.dependsOn("testDebugUnitTest")
 
 val runDebugDetektTask = tasks.register("runDebugDetekt")
-runDebugDetektTask.dependsOn("detektDebugAndroid")
+runDebugDetektTask.dependsOn("detektMainAndroid")
 runDebugDetektTask.dependsOn("detektJvmMainSourceSet")
 runDebugDetektTask.dependsOn("detektCommonMainSourceSet")
 runDebugDetektTask.dependsOn("detektJvmTestSourceSet")

@@ -70,7 +70,7 @@ jobs:
       # Tests
 
       - name: Compile Unit Tests
-        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestKotlinAndroid compileReleaseUnitTestKotlinAndroid assembleAndroidTest testClasses  :navigation:tests:assembleDebug"
+        run: "./gradlew --parallel jvmTestClasses compileDebugUnitTestSources assembleAndroidTest testClasses  :navigation:tests:assembleDebug"
       - name: Lint
         run: "./gradlew --continue --parallel buildSrc:detekt runDebugDetekt :kotlinova-gradle:detektMain lint"
       - name: Run Unit Tests

@@ -1,6 +1,6 @@
 [versions]
 androidGradleCacheFix = "3.0.3"
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.2.1"
 androidx-activity = "1.13.0"
 androidx-core = "1.18.0"
 androidx-concurrent = "1.3.0"
@@ -45,7 +45,7 @@ sarif4k = "0.7.0"
 tomlj = "1.1.1"
 turbine = "1.2.1"
 unmock-androidJar = "16-robolectric-13921718"
-unmock-plugin = "0.9.0"
+unmock-plugin = "0.11.0"
 
 [libraries]
 android-agp = { module = "com.android.tools.build:gradle", version.ref = "androidGradlePlugin" }
