@@ -49,7 +49,15 @@ kotlin {
 
 
 dependencies {
-   add("ksp", projects.navigation.navigationCompiler)
+   kotlin.targets.forEach { target ->
+      if (target.name != "metadata") {
+         add(
+            "ksp${target.name.replaceFirstChar { it.uppercaseChar() }}",
+            projects.navigation.navigationCompiler
+         )
+      }
+   }
+
    add("detektPlugins", projects.navigation.navigationDetekt)
    add("detektPlugins", libs.detekt.compose)
 }
