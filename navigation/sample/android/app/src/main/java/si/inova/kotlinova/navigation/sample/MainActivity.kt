@@ -88,7 +88,7 @@ class MainActivity(
                            rememberSaveableStateHolderNavEntryDecorator(),
                            rememberViewModelStoreNavEntryDecorator()
                         ),
-                        sceneStrategy = remember { DialogSceneStrategy() }
+                        sceneStrategies = remember { listOf(DialogSceneStrategy()) }
                      )
 
                      mainDeepLinkHandler.HandleNewIntentDeepLinks(this@MainActivity, backstack)

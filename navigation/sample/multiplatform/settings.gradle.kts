@@ -29,4 +29,7 @@ dependencyResolutionManagement {
    }
 }
 
-include(":composeApp")
+include(":shared")
+include(":androidApp")
+include(":webApp")
+include(":iosKotlinApp")

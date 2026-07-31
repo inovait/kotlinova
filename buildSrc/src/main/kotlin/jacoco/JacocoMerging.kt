@@ -36,9 +36,9 @@ fun Project.setupJacocoMergingMultiplatform() {
 
          if (name.startsWith("navigation")) {
             // Navigation is the only module with the instrumented tests. For coverage to work on those, we must use Android
-            // processed classes from the tmp folder
+            // processed classes
             // otherwise, we use normal JVM generated classes
-            add(CONFIGURATION_JACOCO_CLASSES, layout.buildDirectory.dir("tmp/kotlin-classes/debug").map { it.asFile })
+            add(CONFIGURATION_JACOCO_CLASSES, layout.buildDirectory.dir("classes/kotlin/android/main").map { it.asFile })
          } else {
             add(CONFIGURATION_JACOCO_CLASSES, layout.buildDirectory.dir("classes/kotlin/jvm/main").map { it.asFile })
          }
@@ -103,8 +103,7 @@ fun Project.setupJacocoMergingRoot() {
                   // DI
                   exclude("**/*Providers.class")
                   exclude("**/*Providers$*.class")
-               }
-                  .files
+               }.files
             }
                // With KMM, there might be identical classes in some cases (for example, actual/expect). Filter them out.
                .distinctBy { it.name }
@@ -116,6 +115,10 @@ fun Project.setupJacocoMergingRoot() {
                   fileTree(execDirectory) {
                      include("**/*.exec")
                      include("**/*.ec")
+                  }.apply {
+                     forEach {
+                        println("ec file $it")
+                     }
                   }
                },
             // Merge results from Firebase Test Lab instrumented tests

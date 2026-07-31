@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 /*
  * Copyright 2025 INOVA IT d.o.o.
  *
@@ -14,7 +16,6 @@
  *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.android.build.gradle.BaseExtension
 
 buildscript {
    repositories {
@@ -33,9 +34,11 @@ buildscript {
 
 subprojects {
    afterEvaluate {
-      extensions.configure<BaseExtension>("android") {
-         compileOptions {
-            isCoreLibraryDesugaringEnabled = true
+      if (pluginManager.hasPlugin("com.android.library")) {
+         extensions.configure<LibraryExtension>("android") {
+            compileOptions {
+               isCoreLibraryDesugaringEnabled = true
+            }
          }
       }
 

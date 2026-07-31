@@ -41,7 +41,6 @@ kotlin {
       val commonMain by getting {
          dependencies {
             implementation(libs.kotlin.coroutines)
-            api(libs.androidx.compose.runtime.annotation)
             compileOnly(libs.androidx.compose.runtime.annotation)
          }
       }
