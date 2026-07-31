@@ -2,5 +2,8 @@ build
 .gradle
 .kotlin
 .idea
-composeApp/build
+shared/build
+androidApp/build
+webApp/build
+iosKotlinApp/build
 /kotlin-js-store
