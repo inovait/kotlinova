@@ -16,7 +16,6 @@
 
 plugins {
    id("com.android.library")
-   id("org.jetbrains.kotlin.android")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
@@ -25,11 +24,10 @@ plugins {
 
 android {
    namespace = "si.inova.kotlinova.navigation.conditional"
-   compileSdk = 36
+   compileSdk = 37
 
    defaultConfig {
       minSdk = 24
-      targetSdk = 34
    }
 
    compileOptions {

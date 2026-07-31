@@ -16,28 +16,22 @@
 
 plugins {
    id("com.android.library")
-   id("org.jetbrains.kotlin.android")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
 }
 
 android {
-   namespace = "si.inova.kotlinova.navigation.fragment"
-   compileSdk = 36
+   namespace = "si.inova.kotlinova.navigation.sample.fragment"
+   compileSdk = 37
 
    defaultConfig {
       minSdk = 24
-      targetSdk = 34
    }
 
    compileOptions {
       sourceCompatibility = JavaVersion.VERSION_21
       targetCompatibility = JavaVersion.VERSION_21
-   }
-
-   kotlinOptions {
-
    }
 }
 

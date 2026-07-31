@@ -16,7 +16,6 @@
 
 plugins {
    id("com.android.application")
-   id("org.jetbrains.kotlin.android")
    id("com.google.devtools.ksp")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
@@ -26,7 +25,7 @@ plugins {
 android {
    namespace = "si.inova.kotlinova.navigation.sample"
 
-   compileSdk = 36
+   compileSdk = 37
 
    defaultConfig {
       applicationId = "si.inova.kotlinova.navigation.sample"
@@ -39,10 +38,8 @@ android {
    compileOptions {
       sourceCompatibility = JavaVersion.VERSION_21
       targetCompatibility = JavaVersion.VERSION_21
-   }
 
-   kotlinOptions {
-
+      isCoreLibraryDesugaringEnabled = true
    }
 
    packaging {

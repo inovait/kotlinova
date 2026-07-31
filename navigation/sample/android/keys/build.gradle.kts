@@ -16,7 +16,6 @@
 
 plugins {
    id("com.android.library")
-   id("org.jetbrains.kotlin.android")
    id("org.jetbrains.kotlin.plugin.compose")
    alias(libs.plugins.metro)
    alias(libs.plugins.kotlin.serialization)
@@ -24,20 +23,15 @@ plugins {
 
 android {
    namespace = "si.inova.kotlinova.navigation.keys"
-   compileSdk = 36
+   compileSdk = 37
 
    defaultConfig {
       minSdk = 24
-      targetSdk = 34
    }
 
    compileOptions {
       sourceCompatibility = JavaVersion.VERSION_21
       targetCompatibility = JavaVersion.VERSION_21
-   }
-
-   kotlinOptions {
-
    }
 }
 
