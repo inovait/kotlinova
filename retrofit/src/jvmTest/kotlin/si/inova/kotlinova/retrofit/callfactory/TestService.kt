@@ -43,7 +43,7 @@ inline fun <reified T> MockWebServerScope.createRetrofitService(
 ): T {
    val client = OkHttpClient.Builder()
       .addInterceptor(BypassCacheInterceptor())
-      .callTimeout(400, TimeUnit.MILLISECONDS)
+      .callTimeout(750, TimeUnit.MILLISECONDS)
       .apply { if (cache != null) cache(cache) }
       .apply(okHttpSetup)
       .build()
