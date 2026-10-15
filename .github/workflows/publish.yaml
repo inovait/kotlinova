@@ -35,7 +35,7 @@ jobs:
           ssh-key: ${{ secrets.RELEASE_SSH_KEY }}
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: temurin
       - uses: burrunan/gradle-cache-action@663fbad34e03c8f12b27f4999ac46e3d90f87eca
         with:
