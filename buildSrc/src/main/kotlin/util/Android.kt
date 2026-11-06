@@ -46,4 +46,4 @@ fun Project.commonAndroidComponents(
 }
 
 const val COMMON_COMPILE_SDK = 37
-const val COMMON_MIN_SDK = 23
+const val COMMON_MIN_SDK = 24
