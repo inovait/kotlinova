@@ -44,7 +44,7 @@ retrofit = "3.0.0"
 sarif4k = "0.8.0"
 tomlj = "2.2.0"
 turbine = "1.2.1"
-unmock-androidJar = "17-robolectric-15733970"
+unmock-androidJar = "17-robolectric-16653203"
 unmock-plugin = "0.11.0"
 
 [libraries]
