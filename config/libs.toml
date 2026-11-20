@@ -1,6 +1,6 @@
 [versions]
 androidGradleCacheFix = "3.0.3"
-androidGradlePlugin = "9.4.1"
+androidGradlePlugin = "9.5.1"
 androidx-activity = "1.13.0"
 androidx-core = "1.19.1"
 androidx-concurrent = "1.3.0"
