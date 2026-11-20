@@ -19,7 +19,7 @@ desugarJdkLibs = "2.1.5"
 detekt = "2.0.0-alpha.6"
 detekt-compose = "0.6.8"
 dispatch = "1.0.0-beta10"
-dokka = "2.2.0"
+dokka = "2.3.0"
 # Before updating googleCloud libraries, check that instrumented tests and regular builds work
 # These could cause version conflicts inside AGP
 # See https://issuetracker.google.com/issues/371158364
