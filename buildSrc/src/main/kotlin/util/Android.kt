@@ -17,6 +17,7 @@
 package util
 
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.CompileSdkSpec
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.Variant
 import com.android.build.api.variant.VariantBuilder
@@ -45,5 +46,10 @@ fun Project.commonAndroidComponents(
    (this as org.gradle.api.plugins.ExtensionAware).extensions.configure("androidComponents", block)
 }
 
-const val COMMON_COMPILE_SDK = 37
+fun CompileSdkSpec.commonCompileSdkVersion() {
+   version = release(37) {
+      minorApiLevel = 2
+   }
+}
+
 const val COMMON_MIN_SDK = 24

@@ -19,9 +19,9 @@ import com.android.build.gradle.tasks.asJavaVersion
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import util.COMMON_COMPILE_SDK
 import util.COMMON_MIN_SDK
 import util.commonAndroid
+import util.commonCompileSdkVersion
 
 /*
  * Copyright 2023 INOVA IT d.o.o.
@@ -48,12 +48,16 @@ plugins {
 if (project.pluginManager.hasPlugin("com.android.kotlin.multiplatform.library")) {
    val multiplatformExtension = extensions.getByType<KotlinMultiplatformExtension>()
    multiplatformExtension.extensions.configure<KotlinMultiplatformAndroidLibraryTarget>() {
-      compileSdk = COMMON_COMPILE_SDK
+      compileSdk {
+         commonCompileSdkVersion()
+      }
       minSdk = COMMON_MIN_SDK
    }
 } else {
    commonAndroid {
-      compileSdk = COMMON_COMPILE_SDK
+      compileSdk {
+         commonCompileSdkVersion()
+      }
 
       compileOptions.apply {
          // Android still creates java tasks, even with 100% Kotlin.
